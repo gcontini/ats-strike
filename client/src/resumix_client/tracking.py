@@ -28,7 +28,8 @@ STATUS_VALUES = (
     "applied",
     "wait 1st interview",
     "wait follow up",
-    "discarded",
+    "skip_application",
+    "candidate rejected",
 )
 
 #: Column names of a freshly seeded spreadsheet, in order.

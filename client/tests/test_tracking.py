@@ -51,8 +51,8 @@ def test_the_cv_path_is_recorded(tracker, tmp_path):
     assert read_row(tracker.xlsx_path)["cv_path"] == str(cv)
 
 
-def test_discarded_is_in_the_status_dropdown(tracker, tmp_path):
-    assert "discarded" in STATUS_VALUES
+def test_skip_application_is_in_the_status_dropdown(tracker, tmp_path):
+    assert "skip_application" in STATUS_VALUES
     tracker.record(tmp_path / "job", analysis())
     sheet = openpyxl.load_workbook(tracker.xlsx_path).active
     (dropdown,) = sheet.data_validations.dataValidation
