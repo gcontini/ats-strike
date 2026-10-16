@@ -1,0 +1,20 @@
+[
+  {"id": 1, "requirement": "Senior IT presales", "keywords": ["Presales", "Pre-Sales", "Presale", "Presales Engineer", "Solutions Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "Solution architecture or ICT solution design (5+ years)", "keywords": ["Solution Architecture", "Solution Architect", "Solution Design", "progettazione di soluzioni ICT"], "importance": "must"},
+  {"id": 3, "requirement": "High-level design of IT, networking and security solutions", "keywords": ["High-Level Design", "High Level Design", "HLD"], "importance": "must"},
+  {"id": 4, "requirement": "Hybrid cloud architecture design (IaaS, PaaS, SaaS)", "keywords": ["Cloud Architecture", "Hybrid Cloud", "IaaS", "PaaS", "SaaS"], "importance": "must"},
+  {"id": 5, "requirement": "Hyperscaler cloud platforms (AWS, Azure, Google Cloud)", "keywords": ["AWS", "Azure", "Google Cloud", "GCP", "Hyperscaler"], "importance": "must"},
+  {"id": 6, "requirement": "Cybersecurity and cloud security", "keywords": ["Cybersecurity", "Cyber Security", "Cloud Security", "Information Security"], "importance": "must"},
+  {"id": 7, "requirement": "SASE", "keywords": ["SASE", "Secure Access Service Edge"], "importance": "must"},
+  {"id": 8, "requirement": "SOC services", "keywords": ["SOC", "Security Operations Center", "Security Operations Centre", "Managed SOC"], "importance": "must"},
+  {"id": 9, "requirement": "Project management and management tools", "keywords": ["Project Management", "Project Manager", "gestione progetti"], "importance": "must"},
+  {"id": 10, "requirement": "Customer requirements analysis in support of sales", "keywords": ["Requirements Analysis", "Customer Requirements", "Sales Support", "analisi dei requisiti"], "importance": "must"},
+  {"id": 11, "requirement": "Business case and implementation cost estimation", "keywords": ["Business Case", "Cost Estimation", "Cost Analysis"], "importance": "must"},
+  {"id": 12, "requirement": "Presales support on public tenders and complex bids", "keywords": ["Public Tenders", "Tender", "RFP", "Bid", "gare pubbliche"], "importance": "must"},
+  {"id": 13, "requirement": "Vendor and technology partner coordination", "keywords": ["Vendor Management", "Partner Management", "Supplier Management", "Technology Partners"], "importance": "must"},
+  {"id": 14, "requirement": "Technology scouting and market trend monitoring", "keywords": ["Technology Scouting", "Market Trends", "Technology Evaluation"], "importance": "must"},
+  {"id": 15, "requirement": "Service feasibility analysis and technical sizing", "keywords": ["Feasibility Analysis", "Feasibility Study", "Technical Sizing", "analisi di fattibilità", "dimensionamento tecnico"], "importance": "must"},
+  {"id": 16, "requirement": "Technical training for delivery, assurance and sales", "keywords": ["Technical Training", "Sales Enablement", "Knowledge Transfer", "formazione"], "importance": "must"},
+  {"id": 17, "requirement": "Networking and infrastructure", "keywords": ["Networking", "Network Infrastructure", "IT Infrastructure", "Network Design"], "importance": "nice"},
+  {"id": 18, "requirement": "Unified Communication & Collaboration", "keywords": ["Unified Communications", "Unified Communication & Collaboration", "UC&C", "UCaaS"], "importance": "nice"}
+]

@@ -4,7 +4,10 @@ If needed you can use search  to search the web for distance or company profile.
 Output:
 - job_title: copy it from the JD - if none write NA
 - work_location: extract the location from the JD. If full_remote or not stated NA.
-- match_percentage: int[0-100] - Scoring guidance for match_percentage. Match JD with CANDIDATE_PROFILE: weigh job_title match and hard-skill overlap first, domain and industry relevance, seniority, soft skills.
+- match_percentage: int[0-100] - how well the CANDIDATE_PROFILE fits the JD. First find the CORE of the role: what the technical work is about (e.g. energy storage, Azure, embedded firmware) and the hard skills and degree the JD requires for it (requirements are usually in a bulleted list sort by importance, core requirements are the first two-three), what the candidate is required to do in its day to day (his responsibilities). A generic job_title (Solution Manager, Project Manager, Product Manager, Product Owner, Business Analyst...) takes its meaning from the field. 
+   * weigh in order the CORE of the job against the experiences in CANDIDATE_PROFILE: hard-skill overlap, job_title match, domain and industry relevance, seniority, soft skills.
+   * CAP: if the CORE field, industry or platform of the JD (e.g. SAP, Salesforce, insurance, payments, automotive, energy) is absent from the CANDIDATE_PROFILE, match_percentage is at most 65, whatever the soft-skill overlap (stakeholder management, requirements gathering, project management).
+   * CAP: if the JD asks for entry-level experience (about 0-3 years; junior, graduate, associate or intern level) and the candidate has 10+ years of experience, match_percentage is at most 50.
 - match_rationale: Criteria and evaluations that brought to the match_percentage above. Max 90 characters.
 - work_mode: [full_remote|hybrid|on_site|not_specified] take it from JD.
 - expected_salary: the salary range as stated in the JD, else null.
@@ -23,4 +26,4 @@ Output:
     1. determine the hiring company (the one where the candidate will go to work): if the poster of the job is a recruiting agency or headhunter (randstad, chatberton...) search in the JD for the real hiring company name. If the hiring company name is not specified do not proceed in further evaluations. Return company_evaluation="Hiring Company Unknown". 
     2. if PERSONAL_PREFERENCES->company_evaluation is specifed use the rules in there. 
     3. If PERSONAL_PREFERENCES->company_evaluation is NOT specified: search the web for reviews of the hiring company (e.g. trustpilot.com, glassdoor.it) and write a short evaluation the ratings you found with their source, and the recurring pros and cons. Do not invent evaluations. If you find nothing say so. 
-Answer with one JSON object; 
+Answer with one JSON object;

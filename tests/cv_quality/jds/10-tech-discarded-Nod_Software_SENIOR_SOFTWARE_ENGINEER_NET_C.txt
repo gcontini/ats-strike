@@ -1,0 +1,57 @@
+POSTING_URL: https://jobs.example.com/10
+Nod Software
+
+SENIOR SOFTWARE ENGINEER
+
+Milan, Lombardy, Italy
+
+35K EUR/yr - 45K EUR/yr
+
+Nod Software Srl (https://jobs.example.com/10) è una software house e società di consulenza IT leader in Italia nello sviluppo di soluzioni informatiche gestionali, contabili, fiscali e documentali. Realtà dinamica e in forte espansione sull'intero territorio nazionale, oggi Nod Software vanta un team di oltre 370 collaboratori distribuiti su 14 sedi in tutta Italia.
+
+Per l'evoluzione e la manutenzione dei nostri prodotti in produzione, in contesti enterprise e SaaS, siamo alla ricerca di
+
+
+
+
+SENIOR SOFTWARE ENGINEER (.NET/C#)
+
+
+
+
+La risorsa farà parte di un team di lavoro composto da 3 risorse e si interfaccerà con il Product Management e altri team multidisciplinari.
+
+
+
+
+Principali attività:
+
+Progettazione e sviluppo di software complessi, assumendo la responsabilità delle scelte architetturali end-to-end (analisi, design, implementazione, test e rilascio).
+Definizione di architetture full-stack scalabili e modulari, con focus su performance, sicurezza e alta disponibilità.
+Disegno e implementazione di API REST, modellazione dei dati e integrazione con sistemi esterni e di terze parti (ERP, servizi cloud, dispositivi).
+Evoluzione e manutenzione evolutiva di prodotti in produzione, garantendo la continuità del servizio e l'affidabilità delle release.
+Promozione della qualità del codice attraverso test automatici, code review, documentazione tecnica, refactoring e miglioramento continuo.
+Definizione di soluzioni tecniche basate sui requisiti funzionali.
+Supporto e affiancamento tecnico (mentoring) agli sviluppatori meno senior nelle scelte architetturali e best practice.
+Ottimizzazione delle performance applicative e della manutenibilità della piattaforma (profiling, caching, tuning delle query SQL).
+
+Competenze tecniche richieste:
+
+Esperienza pluriennale nello sviluppo software su prodotti in produzione, preferibilmente in contesti enterprise o SaaS.
+Ottima padronanza di C# e dell'ecosistema .NET recente (.NET 6/8+) per sviluppo backend, servizi e applicazioni web.
+Solide competenze in architettura del software: design pattern, principi SOLID, clean architecture e architetture a servizi/distribuite.
+Comprovata esperienza nella progettazione e implementazione di API REST e applicazioni distribuite (autenticazione, autorizzazione, versioning, scalabilità).
+Solida esperienza con database relazionali (in particolare SQL Server; gradita conoscenza di MySQL/PostgreSQL) e ORM (Entity Framework Core).
+Pratica consolidata con Git, code review, metodologie agili (Scrum/Kanban) e pipeline CI/CD.
+Piena autonomia sulla gestione di feature end-to-end (dall'analisi al supporto post-rilascio).
+
+Competenze gradite:
+
+Esperienza nell'uso di strumenti AI a supporto dello sviluppo software.
+Esperienza nello sviluppo di prodotti SaaS multi-tenant ad alto numero di utenti.
+Conoscenza di sistemi di caching e messaging (Redis, RabbitMQ, Azure Service Bus o equivalenti).
+Conoscenza di Docker, orchestratori di container (Kubernetes) e pratiche di observability (logging, metriche, tracing).
+Familiarità con ambienti cloud (Azure e/o AWS).
+Esperienza nello sviluppo mobile o cross-platform (.NET MAUI, React Native, Flutter).
+Conoscenza di ulteriori stack backend (es. PHP/Laravel, Java/Spring Boot, Python) o esperienza in contesti IoT / Industria 4.0.
+Competenza in sicurezza applicativa (OWASP, hardening di API)

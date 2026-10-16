@@ -1,0 +1,88 @@
+Enterprise Architect
+Woodgrove Bank — Milan, Lombardy, Italy (Hybrid)
+JOB_POSTING: https://jobs.example.com/05
+
+Woodgrove Bank
+Enterprise Architect
+Milan, Lombardy, Italy
+
+Woodgrove Bank è un'organizzazione che ridefinisce il panorama finanziario con oltre tre decenni di innovazione. Attraverso le società che ne fanno parte, si dedica a fornire servizi finanziari, bancari e assicurativi su misura che rispondano alle esigenze uniche di ogni Cliente.. La Banca si impegna a costruire relazioni durature basate sulla fiducia, trasparenza e sull'attenzione ai dettagli. La nostra è una realtà dinamica, fondata su relazioni, responsabilità e libertà. La nostra cultura promuove la positività, la responsabilità e l’innovazione sostenibile. Siamo convinti che il successo di un'azienda sia il risultato del successo individuale dei suoi membri. In Gruppo Woodgrove, ti offriamo più di un lavoro: l'opportunità di contribuire a un cambiamento positivo e di crescere insieme a noi.
+
+ Posizione: Enterprise Architect 
+
+Per ampliare l’ufficio IT Enterprise Architecture, stiamo cercando una figura di Enterprise Architect esperta e motivata per unirsi al nostro team. La risorsa ideale ha ampia esperienza nell’utilizzo dei principali paradigmi architetturali nel contesto di progetti di trasformazione tecnologica e di Enterprise Architecture e IT Strategy, maturata in società di consulenza o aziende strutturate. Ha una visione sistemica del contesto enterprise, con capacità di sintesi e astrazione.
+
+
+
+Responsabilità:
+
+
+
+ Governare a livello enterprise la modellazione e l’evoluzione del sistema informativo aziendale
+ Seguire gli assessment IT periodici derivanti da auditing interni ed esterni
+ Gestire la condivisione delle tematiche architetturali in sede di board aziendali dedicati e non solo
+ Gestire più progetti contemporaneamente.
+
+
+
+
+Requisiti:
+
+
+
+ Almeno 10 anni di esperienza in ruoli simili, preferibilmente in ambienti complessi e di grandi dimensioni nel settore finanziario.
+ Esperienza nella modellazione strutturata del sistema informativo a livello enterprise
+ Familiarità con ambienti cloud, architetture ibride e paradigmi di integrazione (SOA, API, microservizi, event-driven, container, ecc);
+ Conoscenze tecniche client/server side;
+ Conoscenza degli strumenti di modellazione architetturale (UML, BPMN, Archi, ecc.);
+ Conoscenza ed esperienza nella realizzazione di sistemi di intelligenza artificiale;
+ Capacità di analisi e astrazione rispetto al contesto di riferimento e capacità critiche che permettono di identificare roadmap evolutive architetturali a partire dall’analisi dei processi di business e/o dall’analisi del contesto tecnologico, mediante rappresentazione efficace sia sintetica che di dettaglio.
+ Esperienza nella definizione di business case per valutazione costi/benefici delle evoluzioni architetturali
+ Spiccate doti comunicative che permettono di interagire con stakeholder sia di Business che IT, anche C-Level
+ Orientamento al problem solving
+ Conoscenza di framework di Enterprise Architecture e IT Governance e relativa esperienza maturata in progetti realizzati.
+
+
+
+Altre Competenze Desiderate
+
+
+
+ Conoscenza di TOGAF e del Framework architetturale ABILab; la certificazione TOGAF sarà considerata un plus.
+ Conoscenza della lingua inglese (almeno B2).
+
+
+
+Cosa Offriamo:
+
+Contratto, Inquadramento e Retribuzione: CCNL del Credito, Contratto a Tempo Indeterminato, RAL di Riferimento €60.000 – €75.000 euro lordi. Il livello di inquadramento e la retribuzione saranno commisurati all'esperienza e alle competenze maturate.
+
+Benefit
+
+Premio di produzione
+
+Piano Welfare e contributo per adesione allo smart working
+
+Polizza sanitaria e Servizio di Medico online
+
+Fondo Pensione con contributo integrativo aziendale
+
+Servizi finanziari e assicurativi agevolati
+
+Woodgrove Corporate University (Polo Formativo)
+
+Asilo aziendale
+
+Ristorazione in loco
+
+Transfer di collegamento con la Sede (da/per Fermata Metro Famagosta M2 e San Donato M3)
+
+Sede di lavoro: Milan (MI) smart-working 2 giorni a settimana.
+
+Il presente annuncio è rivolto a candidati di entrambi i sessi, a tutte le identità di genere e orientamenti, a persone di ogni età, origine e abilità, in conformità con il D.Lgs 198/2006 e con D.Lgs. 96/2026, in attuazione delle Direttiva UE 970/2023.
+
+Il Gruppo Woodgrove si impegna a garantire la parità di trattamento a tutti i candidati secondo i principi di Diversity and Inclusion.
+
+I dati richiesti verranno trattati nell’assoluto rispetto delle disposizioni contenute nel Regolamento Europeo 679/2016 (General Data Protection Regulation - “GDPR” o “Normativa Privacy”) e sue successive modificazioni ed integrazioni.
+
+E’ possibile visionare l’informativa di Woodgrove Bank SPA, accedendo al seguente link: https://jobs.example.com/05

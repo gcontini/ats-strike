@@ -1,0 +1,20 @@
+[
+  {"id": 1, "requirement": "Senior cloud platform tech lead", "keywords": ["Cloud Platform Tech Lead", "Tech Lead", "Technical Lead", "Cloud Platform Lead", "Platform Engineering Lead"], "importance": "must"},
+  {"id": 2, "requirement": "Design, implementation and operation of enterprise cloud platforms", "keywords": ["cloud platform", "private cloud", "enterprise cloud", "platform engineering", "piattaforme cloud"], "importance": "must"},
+  {"id": 3, "requirement": "OpenStack, Nutanix, VMware vSphere or on-premise/bare-metal Kubernetes (at least one)", "keywords": ["OpenStack", "Nutanix", "VMware vSphere", "Kubernetes", "K8s"], "importance": "must"},
+  {"id": 4, "requirement": "Terraform and Infrastructure as Code", "keywords": ["Terraform", "Infrastructure as Code", "IaC"], "importance": "must"},
+  {"id": 5, "requirement": "Advanced networking: VLAN, routing, firewalling, VXLAN, BGP, EVPN", "keywords": ["VLAN", "VXLAN", "BGP", "EVPN", "routing"], "importance": "must"},
+  {"id": 6, "requirement": "Linux systems", "keywords": ["Linux", "Linux administration", "Linux systems"], "importance": "must"},
+  {"id": 7, "requirement": "Advanced troubleshooting across application, OS, network and storage layers", "keywords": ["troubleshooting", "root cause analysis", "RCA", "troubleshooting avanzato"], "importance": "must"},
+  {"id": 8, "requirement": "Software development in Go, Python or Rust", "keywords": ["Go", "Golang", "Python", "Rust"], "importance": "must"},
+  {"id": 9, "requirement": "Design and build of REST APIs and infrastructure services", "keywords": ["REST API", "RESTful", "API design", "API"], "importance": "must"},
+  {"id": 10, "requirement": "Technical leadership through expertise, without people management", "keywords": ["technical leadership", "technical direction", "technical decisions", "architecture decisions"], "importance": "must"},
+  {"id": 11, "requirement": "Architecture standards and guidelines for exposing infrastructure services to applications", "keywords": ["architecture standards", "architectural guidelines", "cloud architecture", "infrastructure architecture", "end-to-end architecture"], "importance": "must"},
+  {"id": 12, "requirement": "Observability and monitoring systems", "keywords": ["observability", "monitoring", "alerting"], "importance": "must"},
+  {"id": 13, "requirement": "Multi-tenant, highly available, scalable cloud environments", "keywords": ["multi-tenant", "multi-tenancy", "high availability", "HA", "scalability"], "importance": "must"},
+  {"id": 14, "requirement": "Platform automation and shared platform components", "keywords": ["automation", "platform automation", "platform components", "automazioni"], "importance": "must"},
+  {"id": 15, "requirement": "Compute, virtualization and storage infrastructure", "keywords": ["virtualization", "compute", "storage", "hypervisor"], "importance": "must"},
+  {"id": 16, "requirement": "Git and collaborative development workflows", "keywords": ["Git", "GitHub", "GitLab", "code review", "pull requests"], "importance": "must"},
+  {"id": 17, "requirement": "Technical support, training and knowledge transfer to internal teams", "keywords": ["mentoring", "training", "knowledge transfer", "knowledge sharing", "trasferimento di know-how"], "importance": "must"},
+  {"id": 18, "requirement": "Proofs of concept and evaluation of new infrastructure solutions", "keywords": ["Proof of Concept", "PoC", "technology evaluation", "innovation"], "importance": "must"}
+]

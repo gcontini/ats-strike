@@ -1,0 +1,91 @@
+Globex
+
+Senior Enterprise IT Transformation Architect
+
+Milan, Lombardy, Italy
+
+Who We Are
+
+At Globex, we run and reimagine the mission-critical technology systems that drive advantage for the world’s leading businesses. We are at the heart of progress; with proven expertise and a continuous flow of AI-powered insight, enabling smarter decisions, faster innovation, and a lasting competitive edge. For our people—Globexers—that means doing purposeful work that powers human progress. Join us and experience a flexible, supportive environment where your well-being is prioritized and your potential can thrive.
+
+The Role
+
+We are looking for an architect that can manage complex infrastructure and application transformations of Enterprise level customers. The ideal candidate has significant experience in complex Cloud migration and adoption, integrated hybrid architectures, design and deployment of cloud-native architectures.
+
+They should be adept at leading and driving transition and transformation projects for infrastructure services and Application Modernizations supporting the Digital Transformation of our clients and transforming to a new modern operating model. They have experience transforming Enterprise Outsourcing Infrastructure Services on distributed, mainframe, and hybrid cloud environments.
+
+Key responsibilities will include:
+
+    Manage complex infrastructure and application transformations for enterprise-level customers. 
+    Lead strategic planning and business analysis for cloud migration, adoption, and modernization initiatives. 
+    Design and deploy integrated hybrid architectures and cloud-native solutions that align with business goals. 
+    Drive transition and transformation (T&T) projects for infrastructure services across diverse environments. 
+    Transform Enterprise Outsourcing Infrastructure Services, including distributed systems, mainframes, and hybrid cloud platforms. 
+    Develop and evaluate enterprise architecture designs, ensuring alignment with technology governance and best practices. 
+    Engage and manage stakeholders, including technical teams and business leaders, to ensure architectural alignment and adoption. 
+    Assess risks and oversee implementation, ensuring compliance
+
+As an Enterprise Architect with Globex, you will have the chance to work with some of the world's most innovative and dynamic companies, helping them to achieve their business goals through the strategic implementation of technology, including AI and Cloud adoption, Cloud Optimization, Cloud engineering, Data platforms.
+
+You will need to be able to understand our customers’ needs and constraints and apply industry knowledge and best practices in areas such as Platform Engineering, Modern Operation, and Hybrid IT Optimization and Management, to develop effective IT solutions.
+
+In addition to your technical skills, you will also need to be a skilled communicator, able to influence customers and sell our services using your in-depth knowledge of leading-edge technology solutions and your understanding of their business and industry.
+
+If you're passionate about connecting an organization's business mission to its IT strategy, designing solutions that are effective, agile, sustainable, and flexible, and enjoy working with a talented team of IT professionals – join us at Globex as an Enterprise Architect and help build a better digital future for our customers.
+
+If you're passionate about connecting an organization's business mission to its IT strategy, designing solutions that are effective, agile, sustainable, and flexible, and enjoy working with a talented team of IT professionals – we’d love to hear from you. Join us at Globex as an Enterprise Architect and help build a better digital future for our customers.
+
+Your Future at Globex
+
+Every position at Globex offers a way forward to grow your career, from a Junior Architect to Principal Architect – we have opportunities for that you won’t find anywhere else, including hands-on experience, learning opportunities, and the chance to certify in all four major platforms.
+
+Who You Are
+
+You’re good at what you do and possess the required experience to prove it. However, equally as important – you have a growth mindset; keen to drive your own personal and professional development. You are customer-focused – someone who prioritizes customer success in their work. And finally, you’re open and borderless – naturally inclusive in how you work with others.
+
+Required Technical And Professional Expertise
+
+    5+ years of experience developing and maintaining Enterprise Architectures with a focus on infrastructure and application transformation projects. 
+    3-5 years of experience as Enterprise Architect for Banking, Financial Services, Industrial, Retail, Government or Travel & Transportation sectors. 
+    Significant experience in complex Cloud migration and adoption projects; expertise in integrated hybrid architectures and cloud-native architecture design. 
+    Proven track record in leading and driving transition and transformation projects for infrastructure services. 
+    Experience in transformation of Enterprise Outsourcing Infrastructure Services on distributed, mainframe and hybrid cloud environments. 
+    Proven experience in designing, integrating and implementing complex IT systems across various technology domains (cloud, data, applications, network, infrastructure)
+    Strong knowledge of cloud platforms (AWS, Azure, Google Cloud), enterprise architecture frameworks (TOGAF, Zachman), infrastructure governance and consulting methods. 
+    Proven track record of successfully delivering large scale technology projects with cross-functional architecture teams
+    Excellent communication and presentation skills, and stakeholder management skills. 
+    Strong analytical and problem-solving skills to identify and address technical challenges
+
+Preferred Technical And Professional Experience
+
+     Master degree in Computer Science, Information Technology, or a related field
+     Relevant industry certifications (TOGAF, OpenGroup Certified Architect, Hyperscaler, etc.)
+     Experience with Enterprise Architecture Tooling (Alfabet, LeanIX, others)
+     Experience with hyperscale cloud providers, automation, DevOps, and agile methodologies. 
+
+The position will be governed by the Italian National Collective Bargaining Agreement for Employees of the Metalworking Industry (Contratto Collettivo Nazionale di Lavoro per i dipendenti dell’Industria Metalmeccanica e della Installazione di Impianti), with classification as
+  Quadro.
+
+The employment contract may be offered as a permanent employment contract (contratto a tempo indeterminato).
+
+The salary range for the position in Italy is 60.060,00 euros to 107.900,00 euros, based on a full-time schedule at the time of posting. The level assigned and the corresponding remuneration within the salary range indicated above will be determined in accordance with several factors such as, geographical tier, job-related skills, education and experience that selected candidates bring to the team.
+
+For part-time roles, the compensation will be adjusted appropriately.
+
+Being You
+
+The “Glo” in Globex means global, which represents the strong bonds we have with each other, our customers and our communities. We focus on ensuring all Globexers feel included and we welcome people of all cultures, backgrounds, and experiences. Even if you don’t meet every requirement, we encourage you to apply. We believe in growth, and we’re excited to see what you can bring. At Globex, employee feedback has told us that our number one driver of employee engagement is belonging. That sense of belonging — being a valued, respected, trusted member of the team — is fundamental to our culture and fueling great experiences for our customers. This dedication to welcoming everyone into our company means that Globex gives you the ability to thrive and contribute to our culture of empathy and shared success. That’s The Globex Way.
+
+What You Can Expect
+
+Your career with us isn’t just a job—it’s an adventure with purpose. We offer a dynamic, hybrid-friendly culture that supports your well-being and empowers you to grow. Our Be Well programs are thoughtfully designed to support your financial, mental, physical, and social health—because we know that when you feel your best, you do your best.
+
+From your very first day, you’ll dive into impactful work that powers the systems our customers rely on every day. You won’t just contribute—you’ll make a difference, tackling meaningful projects that sharpen your skills and fuel your growth.
+
+We’re here to champion your journey. With powerful tools to chart your career path, personalized development goals aligned with your ambitions, and continuous feedback to keep you inspired and on track, you’ll have everything you need to thrive and evolve. You’ll develop in-demand skills to grow your career and achieve your ambitions with access to cutting-edge learning opportunities—from certifications with Microsoft, Google, and Amazon to coaching and hands-on experiences. And through it all, you’ll be part of a culture that values empathy, restless learning, and a devotion to shared success.
+
+We want you to thrive here—and we’re committed to helping you do just that. Ready to make an impact? Join us and help shape what’s next.
+
+Get Referred!
+
+If you know someone that works at Globex, when asked ‘How Did You Hear About Us’ during the application process, select ‘Employee Referral’ and enter your contact's Globex email address.

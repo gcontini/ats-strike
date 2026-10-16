@@ -1,0 +1,70 @@
+Lead Cloud Engineer
+Contoso Consulting — Milan, Lombardy, Italy (On-site)
+JOB_POSTING: https://jobs.example.com/36
+
+Contoso Consulting
+Lead Cloud Engineer
+Milan, Lombardy, Italy
+
+Scegliere Contoso Consulting significa scegliere un’azienda in cui sarà possibile plasmare la propria carriera nel modo desiderato, dove si sarà supportati e ispirati da una comunità collaborativa di colleghi in tutto il mondo e dove si potrà reinventare ciò che è possibile. Unisciti a noi e contribuisci ad aiutare le principali organizzazioni globali a sbloccare il valore della tecnologia e a costruire un mondo più sostenibile e più inclusivo.
+
+IL TUO RUOLO
+
+Come Lead Cloud Engineer presso Contoso Consulting ti occuperai di supportare la Service Line Cloud. Siamo alla ricerca di una figura con consolidata esperienza nella guida di team Cloud e nel coordinamento di offering quali Cloud Advisory, Cloud Architecture, FinOps e programmi di migrazione verso cloud pubblici e ibridi.
+
+In questo ruolo sarai un elemento chiave nelle seguenti attività:
+
+
+Guidare la Service Line Cloud assicurando la definizione, l’evoluzione e l’implementazione delle offering tecniche (Cloud Advisory, Cloud Architecture, FinOps, programmi di migrazione), garantendo standard elevati in termini di architettura e qualità del servizio.
+Supervisionare il Platform Team (IaC, Container, DevOps, SRE) assicurando l’adozione di strumenti e framework moderni, la definizione di architetture infrastrutturali scalabili e la corretta applicazione delle best practice di automazione.
+Definire reference architecture, linee guida tecniche e pattern cloud-native per progetti complessi, supportando il team nelle decisioni ingegneristiche e nel troubleshooting avanzato.
+Assicurare la governance tecnica di progetti cloud end‑to‑end (assessment, design, migrazione, operatività), presidiando KPI di resilienza, performance, sicurezza, cost optimization e compliance.
+Contribuire alle attività di pre-sales fornendo supporto tecnico-specialistico: valutazione requisiti, design di soluzioni multi‑cloud/ibrido, stime complesse, workshop con cliente, PoC e revisione tecnica di offerte.
+Guidare l’adozione di metodologie moderne (DevOps, GitOps, Infrastructure as Code, container orchestration) e introdurre nuove tecnologie/strumenti che aumentino il livello di automazione, reliability e osservabilità dei sistemi Cloud.
+
+
+LE TUE CARATTERISTICHE
+
+
+Esperienza consolidata nel settore IT, con un percorso consolidato nel mondo Cloud e in ruoli manageriali.
+Competenze manageriali: esperienza nella gestione di team multidisciplinari e distribuiti, con ottime abilità di leadership e organizzazione. Capacità di pianificazione delle attività, gestione del delivery e monitoraggio dei risultati (KPI/OKR). Esperienza nel coordinamento di progetti complessi assicurando tempi, costi e qualità.
+Competenza nel dialogo con stakeholder tecnici e non, con ottime abilità comunicative e relazionali.
+Visione strategica, orientamento all’innovazione e capacità di anticipare trend nel Cloud computing.
+Spiccato orientamento ai risultati, problem solving e capacità di gestire priorità multiple.
+
+
+Mandatory
+
+Esperienza in Cloud Advisory, Cloud Architecture e programmi di migrazione verso cloud pubblici e ibridi.Padronanza di AWS, Azure e/o GCP, strumenti IaC (Terraform, CloudFormation) e tecnologie container (Docker, Kubernetes). Conoscenza delle metodologie DevOps e principi SRE.
+
+PERCHE' TI PIACERA' LAVORARE CON NOI
+
+
+Riconosciamo l’importanza di soluzioni di lavoro flessibili per offrirti supporto. Che si tratti di lavoro da remoto, orari flessibili o entrambi, troverai un ambiente che favorisce l’equilibrio tra vita privata e vita lavorativa;
+Al centro della nostra missione c'è la tua carriera, attraverso percorsi di crescita professionale pensati per supportarti nell'esplorare un mondo di opportunità;
+Ci impegniamo a promuovere la responsabilità sociale creando un ambiente di lavoro inclusivo, dove talenti diversi sono valorizzati. La diversità è un pilastro della nostra cultura aziendale, arricchendo il nostro lavoro attraverso esperienze, culture, etnie, stili di comunicazione e comportamenti
+
+
+Location: Milano, Roma
+
+Tipo di contratto: contratto a tempo indeterminato
+
+Inquadramento: CCNL Metalmeccanico – livello A1
+
+Mansione: Lead Cloud Engineer
+
+Retribuzione annua lorda (RAL): da € 37.791 a € 75.000
+
+La fascia retributiva indicata è definita in conformità alla normativa europea e nazionale in materia di trasparenza retributiva.
+
+Il valore minimo della fascia corrisponde al trattamento economico minimo previsto dal CCNL applicabile per il livello e mansione sopra indicati e non rappresenta necessariamente la retribuzione di ingresso. La retribuzione che sarà proposta all’esito del processo di selezione sarà determinata sulla base delle competenze, dell’esperienza professionale, del livello di seniority e delle caratteristiche specifiche del profilo selezionato ed in coerenza con il sistema retributivo e di classificazione aziendale, nel rispetto di criteri oggettivi e neutri sotto il profilo del genere.
+
+SUL GRUPPO CONTOSO
+
+Contoso Consulting è un partner globale per la trasformazione tecnologica e di business delle aziende, che sfrutta la potenza dell’AI per offrire valore ai propri clienti. Immaginiamo il futuro delle organizzazioni e lo trasformiamo in realtà grazie all’AI, alla tecnologia e alle persone. Forti di quasi 60 anni di esperienza, siamo un gruppo responsabile e diversificato di 420.000 persone presente in più di 50 paesi nel mondo. Forniamo servizi e soluzioni end-to-end grazie alla nostra profonda esperienza settoriale e a un solido ecosistema di partner, facendo leva sulle nostre competenze in ambito di strategia, tecnologia, progettazione, ingegneria e gestione operativa. Nel 2024 il Gruppo ha registrato ricavi complessivi pari a 22,5 miliardi di euro.
+
+Build it better | https://jobs.example.com/36
+
+Candidati ora!
+
+L'offerta di lavoro si intende rivolta all'uno e all'altro sesso in ottemperanza al D.Lgs. 198/2006. Inoltre, prestiamo attenzione e sensibilità alle future risorse appartenenti alle categorie protette, ai sensi degli articoli 1 e 18 della legge 68 del ‘99. I dati personali saranno trattati in conformità alle disposizioni contenute nel regolamento UE 2016/679.

@@ -1,0 +1,67 @@
+POSTING_URL: https://jobs.example.com/42
+Datavista Europe & Latam
+
+Back-end Java Technical Leader
+
+Milan, Lombardy, Italy
+
+Nell'ambito del potenziamento della struttura di Digital Technology, Datavista è alla ricerca di Tech Leader Back-end Developer con una consolidata conoscenza del mondo dei microservizi web.
+
+Il tuo contributo in questo ruolo
+
+
+ Lavorerai sulle più moderne architetture di back-end; 
+ Implementerai soluzioni basate sui più moderni framework e tecnologie (es. Spring Boot, Quarkus, JPA, Kafka, RabbitMQ); 
+ Sarai responsabile della progettazione dei sistemi, della pianificazione e del monitoraggio delle attività; 
+ Ti occuperai della supervisione tecnica e del coordinamento di profili di diversa seniority che comporranno il team, gestendo dinamiche di gruppo per stimolare un ambiente di lavoro positivo; 
+ Sarai focal point verso il cliente per le attività progettuali. 
+
+
+
+Il profilo ideale
+
+Required Skills
+
+
+ Almeno 7 anni di esperienza nello sviluppo back-end o full-stack; 
+ Esperienza nel coordinamento di team di piccole-medie dimensioni; 
+ Ottima conoscenza di Java SE 8/17 e versioni successive, nonché di Java EE 7 e Jakarta EE 8 (e successive), comprese le tecnologie JPA, JSF, JAX-WS e JAX-RS; 
+ Esperienza nella configurazione di Application Server (JBoss/Wildfly, WebLogic e simili) e Web Server (Tomcat e simili); 
+ Esperienza consolidata con architettura a microservizi e distribuite; 
+ Ottima conoscenza del framework Quarkus; 
+ Ottima conoscenza del framework Spring 5 e 6, Spring Boot 2 e 3; 
+ Ottima conoscenza di librerie e framework ORM (Hibernate, JPA); 
+ Ottima conoscenza del sistema di controllo del versionamento distribuito Git; 
+ Ottima conoscenza dei sistemi di build automation/project management tool come Maven e Gradle; 
+ Buona conoscenza delle Architetture serverless/event-driven; 
+ Buona conoscenza di paradigma REST per l'implementazione e fruizione di servizi; 
+ Esperienza nella progettazione e implementazione di API; 
+ Conoscenza dei principali DB SQL e No-SQL; 
+ Conoscenza dei design pattern di sviluppo e dei pattern architetturali; 
+ Esperienza lavorativa su progettualità organizzate con metodologia Agile; 
+ Buona conoscenza della lingua inglese. 
+
+
+
+Nice To Have
+
+
+ Laurea triennale o magistrale in discipline STEM; 
+ Conoscenza delle principali tecnologie di containerizzazione (Docker, Kubernetes, Openshift); 
+ Conoscenza base delle principali tecnologie/Framework di FE; 
+ Conoscenza delle principali infrastrutture cloud (AWS, Google Cloud Platform, Azure); 
+ Familiarità con l'approccio DevOps e conoscenza dei relativi tool. 
+
+
+
+Sedi di lavoro: Milano, Roma, Torino, Napoli, Bologna, Cosenza, Pisa, Bari, Genova, Salerno, Treviso (con possibilità di modalità di lavoro ibrida - Smart Working).
+
+Costruisci il tuo futuro con Datavista.
+
+Entra a far parte di un’azienda globale, leader nei servizi di business e tecnologici, che ascolta la tua voce e riconosce il valore del tuo lavoro. Collaborerai con clienti, partner e colleghi di tutto il mondo per creare soluzioni innovative capaci di avere un impatto reale sulla società. Qui potrai sviluppare nuove competenze e ampliare il tuo network.
+
+Siamo presenti in Italia con oltre 6000 dipendenti a Milano, Roma, Torino, Genova, Bologna, Treviso, Pisa, Padova, Napoli, Cosenza, Bari e Salerno .
+
+Make this the place where you grow . 
+
+Unisciti a noi!

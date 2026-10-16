@@ -1,0 +1,19 @@
+[
+  {"id": 1, "requirement": "Product delivery manager", "keywords": ["Product Delivery Manager", "Product Manager", "Delivery Manager", "Product Owner"], "importance": "must"},
+  {"id": 2, "requirement": "End-to-end product ownership and roadmap", "keywords": ["product roadmap", "roadmap", "product ownership", "product strategy"], "importance": "must"},
+  {"id": 3, "requirement": "Building products from scratch and scaling them", "keywords": ["0-to-1", "zero-to-one", "greenfield", "new product development", "from scratch"], "importance": "must"},
+  {"id": 4, "requirement": "Hands-on leadership of a team of developers", "keywords": ["engineering management", "people management", "team leadership", "line management"], "importance": "must"},
+  {"id": 5, "requirement": "Device fleet management at scale", "keywords": ["device fleet management", "device management", "fleet management", "terminal management", "MDM"], "importance": "must"},
+  {"id": 6, "requirement": "Owning commercial relationships with key partners and customers", "keywords": ["partner management", "key account management", "partnerships", "commercial relationship"], "importance": "must"},
+  {"id": 7, "requirement": "Commercial acumen", "keywords": ["commercial acumen", "commercial awareness", "business acumen", "commercial affinity"], "importance": "must"},
+  {"id": 8, "requirement": "Customer empathy from working closely with users and customers", "keywords": ["customer discovery", "user research", "customer feedback", "customer empathy"], "importance": "must"},
+  {"id": 9, "requirement": "Technical background", "keywords": ["technical background", "software engineering", "computer science", "software developer"], "importance": "must"},
+  {"id": 10, "requirement": "Building APIs and tools for partners and multi-store merchants", "keywords": ["API", "APIs", "API products", "API platform"], "importance": "must"},
+  {"id": 11, "requirement": "Taking a product from proof of concept to general availability", "keywords": ["proof of concept", "PoC", "General Availability", "product launch", "go-to-market"], "importance": "must"},
+  {"id": 12, "requirement": "Defining KPIs for performance and reliability", "keywords": ["KPIs", "key performance indicators", "performance metrics", "reliability metrics"], "importance": "must"},
+  {"id": 13, "requirement": "Automating manual processes across the device lifecycle", "keywords": ["process automation", "workflow automation", "device lifecycle", "device provisioning"], "importance": "must"},
+  {"id": 14, "requirement": "Representing the domain to senior stakeholders", "keywords": ["stakeholder management", "senior stakeholders", "executive stakeholders", "senior leadership"], "importance": "must"},
+  {"id": 15, "requirement": "Driving cross-functional alignment", "keywords": ["cross-functional", "cross functional", "cross-functional alignment", "cross-functional collaboration"], "importance": "must"},
+  {"id": 16, "requirement": "Payments and fintech domain", "keywords": ["payments", "fintech", "in-person payments", "point of sale", "POS"], "importance": "nice"},
+  {"id": 17, "requirement": "Using AI in day-to-day work", "keywords": ["AI", "generative AI", "AI tools", "LLM"], "importance": "nice"}
+]

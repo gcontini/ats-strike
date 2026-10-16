@@ -1,0 +1,147 @@
+POSTING_URL: https://jobs.example.com/41
+Hirewell Global AG
+
+Tech Lead - AI
+
+Milan, Lombardy, Italy
+
+Hirewell Global, an Internationally renowned staffing and managed services organization specializing in providing staffing solutions for leading corporations in AI, IT & Telecoms, Engineering, Digital Media, Automotive and Renewable Energy is recruiting for Tech Lead - AI on behalf of one of their blue-chip international clients to join their organization in Italy. 
+
+
+
+Job Title: 
+
+
+Tech Lead - AI 
+
+
+Employment: 
+
+
+Full time 
+
+
+Start Date: 
+
+
+November/2026 
+
+
+Country: 
+
+
+Milano - On site - Italy 
+
+
+Salary range: 
+
+
+60 000.00 EUR - 75 000.00 EUR per year, dependent upon experience 
+
+
+Contact: 
+
+
+Bojan Ulemek on: +49 (0) 89 23 88 98 671 
+
+
+ 
+
+
+Key Responsibilities 
+
+
+ 
+
+
+ 
+ 
+
+Lead the architectural vision, governance and evolution of enterprise-grade Conversational AI and GenAI platforms driving multi-cloud, LLM orchestration and integration design for large-scale telecom ( preferred)) deployments.   
+
+
+ 
+ 
+ 
+
+Own solution architecture for multi-channel virtual assistant and GenAI-powered agent support platforms.   
+
+
+ 
+ 
+ 
+
+Govern data pipelines processing very high volume events via Python ETL to cloud analytics platforms   
+
+
+ 
+ 
+ 
+
+Lead P1/P2 incident escalations and cross-functional war room resolution across platform stack.   
+
+
+ 
+
+ 
+
+
+Experience/Qualifications:  
+
+
+ 
+
+
+ 
+ 
+
+Strong focus on AI/ML and cloud-native platforms.   
+
+
+ 
+ 
+ 
+
+Deep expertise in AI services around AWS Kiro & Bedrock — OpenAI, ML PromptFlow, Cognitive Services (CLU, Speech, Q&A).   
+
+
+ 
+ 
+ 
+
+Hands-on experience with LLM orchestration frameworks — LangChain, LangGraph, LangSmith, and RAG patterns.   
+
+
+ 
+ 
+ 
+
+Proven ability to design multi-cloud architectures spanning AWS, Azure, and Google Cloud Platform.   
+
+
+ 
+ 
+ 
+
+Strong knowledge of graph databases (Neo4j), NoSQL (Cosmos DB, MongoDB), and event-driven architectures (Kafka).   
+
+
+ 
+ 
+ 
+
+Experience with DevSecOps toolchains — GitHub Actions, SonarQube, JFrog, shift-left security practices.   
+
+
+ 
+ 
+ 
+
+Excellent stakeholder management skills — ability to present architectural decisions to CXO-level audiences.   
+
+
+ 
+ 
+ 
+
+English language, Italian desired

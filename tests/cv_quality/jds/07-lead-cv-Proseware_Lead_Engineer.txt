@@ -1,0 +1,48 @@
+Proseware
+
+Lead Engineer
+
+Milan, Lombardy, Italy
+
+73K EUR/yr - 108K EUR/yr
+
+Proseware, briefly
+
+At Proseware, we're building an everyday finance network, helping over 120 million consumers across 26 countries save time and money, and worry less about their finances. Working here means taking on problems most companies never get to solve, and being hands-on enough that the interesting part of the work lands with you, not someone else, you'll build with AI, not watch it happen.
+
+This is the stretch zone. Come find out what you're capable of.
+
+About The Role
+
+Being an engineer at Proseware means building and owning the systems that move money for millions of people, and that responsibility doesn't end when those systems ship. Your team and your focus can also change as the business changes, and the domain you join may look different in a year. Either way, this stays a hands-on role: you're still writing code, still making architecture calls, still in the codebase, and your influence comes from the quality of that work and the engineers you work most closely with.
+
+We are searching for someone who brings expertise that changes what we are capable of. You've built something we haven't. You've gone deep somewhere we haven't been yet. The engineers here are strong; what they don't have is your specific experience, and that's exactly the gap we're hiring into.
+
+What You'll Do
+
+    Make sound, defensible technical decisions, and be able to say clearly what you decided against and why.
+    Think past your own contribution: how it fits the wider architecture, where failures propagate, what breaks first under load, and who feels it downstream.
+    Tie technical choices to business outcomes and size the solution to the problem's actual value - including when the right answer is something small.
+    Design for the constraints that come with being a regulated bank - reliability, auditability, controls - and treat them as part of the engineering problem rather than an obstacle to it.
+    Mentor engineers and raise the technical bar across teams. You act as a multiplier and elevate the people and teams around you, not just your own output.
+    Set the standard for how your domain uses AI in everyday practice - not as a demo, as a working method.
+
+Who you are
+
+    You bring a capability Proseware doesn't have today. Your experience doesn't just improve what's already there - it unlocks something new entirely.
+    You have built and operated systems with real reliability and performance demands at scale, ideally in Java, JavaScript, or Python environments.
+    You make trade-offs and can articulate the roads not taken.
+    You optimize for business outcomes over engineering elegance, and you know the difference between right-sizing and gold-plating.
+    You explain complex systems clearly to technical and non-technical audiences alike.
+    You lead through your work, not your title. 
+    You're comfortable with ambiguity and can move an initiative forward across several teams without formal authority over any of them.
+    You have scar tissue and you talk about it - the incident, the design that didn't survive contact with production, what you changed afterwards. 
+
+Things you should know before applying
+
+    Working together: We value co-located teams; most teams currently meet in the office 2–3 days per week, and this varies by team and can change over time.
+    Non-obvious backgrounds are welcome. Diversity of skills, perspectives and backgrounds is how we create, innovate, and disrupt like no other.
+    Final compensation will be based on the candidate's qualifications, skills, and experience.
+    This is a general Lead Engineer opening, not tied to one fixed team. Depending on need at the time of hiring, you could be placed in one of several domains. A domain is a group of teams working on a related set of problems, for example, everything to do with risk, or everything to do with checkout.
+
+Please include a CV in English. Concrete beats comprehensive, what you built, what it did, what it cost. Curious about Proseware and what it's like to work here? Explore our career site.

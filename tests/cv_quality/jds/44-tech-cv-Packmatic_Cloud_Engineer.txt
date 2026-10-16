@@ -1,0 +1,75 @@
+Packmatic S.p.A.
+
+Cloud Engineer
+
+Metropolitan City of Bologna, Emilia-Romagna, Italy
+
+About the Company
+
+Packmatic is a group of innovation-based industrial and packaging solutions companies operating globally, headquartered in Bologna, Italy, and fully owned.
+
+Packmatic’s companies are leaders in automation solutions for multiple industries, ranging from automated processing and packaging machinery, testing and vision systems, to digital printing technologies, factory flow solutions and high-performance transmissions.
+
+Our customers include leading players in a wide range of sectors, including Aerospace, Automotive, Consumer and Luxury Goods, Ceramics, Electronics and Semiconductors, Pharma and Healthcare, Energy Storage Systems, Tobacco and next-generation products.
+
+
+Packmatic develops artificial intelligence solutions based on cloud architecture for industrial applications, supported by a dedicated team focused on transforming these technologies into products and services for machines and production lines.
+
+Packmatic operates in 34 countries with 21 different companies and employs over 8,000 people as of 2026.
+
+
+About the Role
+
+The Cloud Engineer is responsible for defining, leading and executing a strategic alignment with the Corporate Cloud strategy. Transform business goals into scalable cloud architectures ready for AI applications, ensuring technology investments support long-term digital technology strategy. Supports business needs, ensuring the success and alignment of the digital services portfolio and AI strategy with Packmatic's overall objectives and guidelines, reporting directly to the IT Cloud Infrastructure Manager.
+
+
+Main responsibilities
+
+    Design, implement, and maintain the cloud infrastructure required for the development and operation of AI solutions, including networking, compute, storage, and identity services.
+    Build the cloud infrastructure on which AI solutions are developed, trained, and deployed into production: scalable, secure, and observable environments designed for AI workloads and industrial data.
+    Design and execute a strong program for Optimization & Cost Control ensuring observability and high availability
+    Define and automate cloud environments using an Infrastructure-as-Code approach to ensure consistency, scalability, and efficient deployment.
+    Manage cloud resources and services dedicated to all workloads with special attention to the AI onces, including GPUs, training and inference services, and vector stores.
+    Ensure security, compliance, and data protection in line with the regulatory requirements and enterprise security standards, mitigating risks and maintaining trust.
+    Cross-Functional Collaboration: Acts as a bridge between development, operations, and business teams, enabling seamless integration and faster delivery cycles.
+    In coordination with Packmatic Digital Product Managers ensure the implementation of the Packmatic digital roadmap, supervising and managing the Digital&ICT dedicated team to the company's Digital Services function, including information management systems and software platforms.
+    Define the service roll-out plan for Packmatic with Digital Product Managers and deliver it to business owners and software project managers for execution.
+
+
+What You Need to Be Successful
+
+
+Key Skills
+
+    Bold experience in AWS & Azure Architecture (GCP is plus)
+    Experienced in Infrastructure as Code (Terraform), Kubernetes / Containers, DevOps & CI/CD
+    Competences in Security & IAM, Cloud Networking, Observability & Monitoring
+    Experience in infrasdtructure fot Python Automation, FinOps / Cost Optimization, AI/ML Platform & MLOps
+    Broad understanding of technical concepts and architectures relevant to digital services.
+    Knowledge of Agile project management, familiarity with Scrum.
+    Excellent communication skills to effectively engage stakeholders and facilitate alignment.
+
+
+Required Qualifications
+
+    Bachelor's Degree in Computer Science, Computer Engineering or a related field.
+    Proven experience, at least 2 years, in managing cloud architecture projects.
+    Analytical and problem-solving skills to address technical and business challenges.
+    Deep knowledge of Agile and Scrum methodologies for project management, oriented to automation of the processes.
+    Ability to work in an international dynamic and constantly evolving environment.
+    Data-driven decision approach
+    Continuous learning
+
+
+Our offer
+
+Compensation for this role includes a base salary starting from EUR 44000, in line with experience. The actual offer may exceed this minimum based on the candidate's qualifications and fit for the role.
+
+A range of additional benefits (e.g., insurances, etc.) is also available in accordance with Company policy.
+
+The applicable collective agreement is the CCNL Metalmeccanico.
+
+
+Join the Team!
+
+Packmatic is an equal opportunity employer. We believe in fair, merit-based recruitment and assess all candidates exclusively on the basis of their qualifications, skills, experience and suitability for the role.

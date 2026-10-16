@@ -1,0 +1,21 @@
+[
+  {"id": 1, "requirement": "IT strategy senior consultant", "keywords": ["IT Strategy Senior Consultant", "IT Strategy Consultant", "Senior Consultant", "IT Consultant", "CIO Advisory"], "importance": "must"},
+  {"id": 2, "requirement": "Consulting firm or large international ICT company experience", "keywords": ["consulting", "consultancy", "società di consulenza", "ICT"], "importance": "must"},
+  {"id": 3, "requirement": "ICT strategy and technology operating models", "keywords": ["ICT Strategy", "IT Strategy", "technology strategy", "operating model", "digital transformation"], "importance": "must"},
+  {"id": 4, "requirement": "ICT architecture for applications, infrastructure and TLC", "keywords": ["ICT Architecture", "IT architecture", "enterprise architecture", "infrastructure", "TLC"], "importance": "must"},
+  {"id": 5, "requirement": "Data management solutions and architecture design", "keywords": ["Data Management", "data architecture", "gestione del dato"], "importance": "must"},
+  {"id": 6, "requirement": "ICT planning and budgeting of technology investments", "keywords": ["ICT Planning & Budgeting", "IT budgeting", "IT planning", "technology investments"], "importance": "must"},
+  {"id": 7, "requirement": "Strategic sourcing and vendor selection for ICT services", "keywords": ["Strategic Sourcing", "vendor selection", "supplier selection", "selezione dei fornitori"], "importance": "must"},
+  {"id": 8, "requirement": "ICT governance and organization sizing", "keywords": ["ICT Governance", "IT Governance", "IT organization", "IT Governance and Organization"], "importance": "must"},
+  {"id": 9, "requirement": "ICT cost right-sizing and spend optimisation", "keywords": ["ICT Cost right-sizing", "IT cost optimization", "IT spend", "cost reduction"], "importance": "must"},
+  {"id": 10, "requirement": "Cloud journey advisory for CIOs", "keywords": ["cloud", "cloud migration", "cloud journey", "cloud strategy"], "importance": "must"},
+  {"id": 11, "requirement": "Bachelor's degree in a technical or scientific discipline", "keywords": ["Bachelor's degree", "Laurea", "Engineering", "Computer Science", "STEM"], "importance": "must"},
+  {"id": 12, "requirement": "English at B2 level or above", "keywords": ["English", "B2", "inglese"], "importance": "must"},
+  {"id": 13, "requirement": "IT process design based on market best practices", "keywords": ["IT process design", "process design", "best practices", "disegno dei processi IT"], "importance": "nice"},
+  {"id": 14, "requirement": "Knowledge of IT governance tools", "keywords": ["IT Governance tools", "IT Governance"], "importance": "nice"},
+  {"id": 15, "requirement": "ITIL v4 certification", "keywords": ["ITIL", "ITIL v4", "ITIL 4"], "importance": "nice"},
+  {"id": 16, "requirement": "TOGAF 9 certification", "keywords": ["TOGAF", "TOGAF 9", "Togaf v9"], "importance": "nice"},
+  {"id": 17, "requirement": "PRINCE2 certification", "keywords": ["PRINCE2", "Prince"], "importance": "nice"},
+  {"id": 18, "requirement": "Scrum certification", "keywords": ["Scrum", "Scrum Master", "PSM", "CSM"], "importance": "nice"},
+  {"id": 19, "requirement": "Cloud certifications (AWS, Azure, Google)", "keywords": ["AWS", "Azure", "Google Cloud", "GCP", "Professional Cloud Service Manager"], "importance": "nice"}
+]

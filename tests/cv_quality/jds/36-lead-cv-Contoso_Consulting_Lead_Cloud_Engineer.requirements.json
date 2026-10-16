@@ -1,0 +1,20 @@
+[
+  {"id": 1, "requirement": "Lead Cloud Engineer", "keywords": ["Lead Cloud Engineer", "Cloud Engineering Lead", "Cloud Lead", "Cloud Engineering Manager"], "importance": "must"},
+  {"id": 2, "requirement": "Leading multidisciplinary, distributed cloud teams", "keywords": ["team leadership", "team lead", "people management", "distributed teams", "gestione di team"], "importance": "must"},
+  {"id": 3, "requirement": "Cloud advisory", "keywords": ["Cloud Advisory", "cloud consulting", "cloud strategy", "cloud assessment"], "importance": "must"},
+  {"id": 4, "requirement": "Cloud architecture", "keywords": ["Cloud Architecture", "Cloud Architect", "cloud solution architecture", "infrastructure architecture"], "importance": "must"},
+  {"id": 5, "requirement": "Cloud migration programmes", "keywords": ["cloud migration", "migration to the cloud", "migration programs", "programmi di migrazione"], "importance": "must"},
+  {"id": 6, "requirement": "Public, hybrid and multi-cloud solutions", "keywords": ["hybrid cloud", "multi-cloud", "multicloud", "public cloud", "cloud ibrido"], "importance": "must"},
+  {"id": 7, "requirement": "AWS, Azure or GCP", "keywords": ["AWS", "Azure", "GCP", "Google Cloud", "Amazon Web Services"], "importance": "must"},
+  {"id": 8, "requirement": "Infrastructure as Code with Terraform or CloudFormation", "keywords": ["Infrastructure as Code", "IaC", "Terraform", "CloudFormation"], "importance": "must"},
+  {"id": 9, "requirement": "Containers with Docker and Kubernetes", "keywords": ["Docker", "Kubernetes", "K8s", "containers", "container orchestration"], "importance": "must"},
+  {"id": 10, "requirement": "DevOps and GitOps methodologies", "keywords": ["DevOps", "GitOps"], "importance": "must"},
+  {"id": 11, "requirement": "SRE principles and observability", "keywords": ["SRE", "Site Reliability Engineering", "observability", "monitoring", "osservabilità"], "importance": "must"},
+  {"id": 12, "requirement": "Leading a cloud service line and its offerings", "keywords": ["service line", "cloud practice", "practice lead", "service offerings"], "importance": "must"},
+  {"id": 13, "requirement": "FinOps and cloud cost optimisation", "keywords": ["FinOps", "cost optimization", "cost optimisation", "cloud cost management"], "importance": "must"},
+  {"id": 14, "requirement": "Pre-sales support: solution design, estimates, client workshops, PoCs", "keywords": ["pre-sales", "presales", "proof of concept", "PoC", "client workshops"], "importance": "must"},
+  {"id": 15, "requirement": "Reference architectures and cloud-native patterns", "keywords": ["reference architecture", "cloud-native", "architecture patterns", "technical guidelines", "linee guida tecniche"], "importance": "must"},
+  {"id": 16, "requirement": "Technical governance of end-to-end cloud projects", "keywords": ["technical governance", "cloud governance", "governance tecnica", "compliance"], "importance": "must"},
+  {"id": 17, "requirement": "Delivery management of complex projects with KPIs and OKRs", "keywords": ["delivery management", "project management", "KPI", "OKR", "gestione del delivery"], "importance": "must"},
+  {"id": 18, "requirement": "Stakeholder management", "keywords": ["stakeholder management", "stakeholder engagement", "stakeholder communication"], "importance": "must"}
+]

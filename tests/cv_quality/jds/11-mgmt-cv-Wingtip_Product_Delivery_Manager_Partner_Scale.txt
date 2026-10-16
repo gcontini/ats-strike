@@ -1,0 +1,61 @@
+Product Delivery Manager - Partner Scale
+Wingtip — Milan, Lombardy, Italy (Hybrid)
+JOB_POSTING: https://jobs.example.com/11
+
+Wingtip
+Product Delivery Manager - Partner Scale
+Milan, Lombardy, Italy
+
+Build with us
+
+Businesses deserve better from finance. Less friction, more freedom. Since 2004, Wingtip has been on a mission to make payments and money management effortless for every business in Europe.
+
+Today, more than 250,000 companies trust our all-in-one platform to get paid, manage money and grow on their terms. Simple, scalable and built with real businesses in mind.
+
+We’re one of Europe’s fastest-growing fintechs, with 900+ Wingtippers across 12+ locations. Our people make this growth possible. We move fast, build with purpose and care deeply about our customers. Whether you’re solving problems, building market-leading products or exploring how AI can make work smarter, you’ll have the freedom to create and the trust to deliver.
+
+If you’re ready to grow, shape the future of fintech and join an ambitious, high-performing team, this is the place for you.
+
+Your impact
+
+Wingtip helps businesses across Europe get paid, manage money and grow. In Person Payments is a core part of that mission, and every customer who activates it will touch the Partner Scale team's solution in one way or another.
+
+Partner Scale is one of four core teams within In Person Payments, and its focus is device fleet management at scale. You'll build the tools and APIs that let partners and large multi-store merchants manage hundreds or thousands of devices programmatically, cutting operational overhead and letting customers scale with us without friction.
+
+This is a green field for Wingtip, so you'll have the rare chance to build this space from scratch and shape the future of the solution. You'll own the end to end commercial relationship with Wingtip's key partners and customers, and work with your own dedicated engineering team to build a product that delights them and saves our internal teams the operational hassle.
+
+What You'll Ship
+
+
+Own the end to end product and roadmap of the Partner Scale team, staying close to key partners and customers.
+Take our device management solution from proof of concept to General Availability.
+Define your own KPIs for performance and reliability metrics.
+Automate manual processes across the device lifecycle, from ordering to deployment, configuration and customization.
+Put partners and merchants in control of their fleet.
+
+
+What You'll Bring
+
+
+A proven track record of building products from scratch and/or scaling them.
+Experience running a team of developers, this role calls for hands on ownership, not a process focused PM.
+Strong commercial affinity, with genuine customer empathy built from working closely with users and customers.
+Some form of technical background.
+The ability to work independently, represent your domain in senior forums, and drive cross functional alignment without needing heavy management support.
+
+
+Grow your way
+
+At Wingtip, growth is personal. We believe everyone should have the chance to develop their skills, explore new challenges and shape their career on their own terms.
+
+In this role, you’ll have the unique opportunity to build a meaningful distribution channel from the ground up. As we expand across Europe, you will grow alongside the product area you own. You’ll get regular feedback and performance reviews to support your development, with fair and transparent salary reviews along the way.
+
+Unlock your full potential and join us to eliminate financial bureaucracy
+
+If you're excited by the idea of building what's next, for yourself and for thousands of businesses across Europe.
+
+Want a peek behind the scenes? Check out what life at Wingtip is really like.
+
+AI at Wingtip
+
+We believe in Always Be Shipping, and AI brings that philosophy to life across every team, every role, every day. AI is core to how we build. It helps us move faster, simplify work and make smarter decisions, creating real impact for the businesses we serve. We're looking for people who are excited to use AI to shape the future of finance with us.

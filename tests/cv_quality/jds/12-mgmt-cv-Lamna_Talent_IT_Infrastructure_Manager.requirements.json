@@ -1,0 +1,21 @@
+[
+  {"id": 1, "requirement": "IT Infrastructure Manager", "keywords": ["Infrastructure Manager", "IT Infrastructure Manager", "Head of Infrastructure", "Infrastructure Lead"], "importance": "must"},
+  {"id": 2, "requirement": "Management of complex enterprise IT infrastructure and mission-critical services", "keywords": ["IT Infrastructure", "enterprise infrastructure", "mission critical", "infrastrutture IT", "IT operations"], "importance": "must"},
+  {"id": 3, "requirement": "Cloud and hybrid cloud strategy and management", "keywords": ["Cloud Computing", "Hybrid Cloud", "cloud strategy", "ambienti ibridi"], "importance": "must"},
+  {"id": 4, "requirement": "Data center management", "keywords": ["Data Center", "Datacenter", "DC"], "importance": "must"},
+  {"id": 5, "requirement": "Networking and connectivity", "keywords": ["Networking", "Network", "Connectivity", "Network & Connectivity"], "importance": "must"},
+  {"id": 6, "requirement": "Leading technical teams and people management", "keywords": ["people management", "team leadership", "conduzione di team", "talent development"], "importance": "must"},
+  {"id": 7, "requirement": "Multi-vendor and supplier management, contract performance monitoring", "keywords": ["Vendor Management", "multi-vendor", "supplier management", "gestione fornitori", "contract management"], "importance": "must"},
+  {"id": 8, "requirement": "Infrastructure and operations budget management, cost optimization", "keywords": ["budget management", "IT budget", "cost optimization", "spend rationalization"], "importance": "must"},
+  {"id": 9, "requirement": "Infrastructure architecture design, simplification and standardization", "keywords": ["infrastructure architecture", "standardization", "IT modernization", "scalability"], "importance": "must"},
+  {"id": 10, "requirement": "Platform consolidation and optimization", "keywords": ["platform consolidation", "consolidation", "platform optimization", "consolidamento"], "importance": "must"},
+  {"id": 11, "requirement": "Identity and Access Management", "keywords": ["Identity & Access Management", "Identity and Access Management", "IAM"], "importance": "must"},
+  {"id": 12, "requirement": "Cybersecurity and IT risk management", "keywords": ["Cybersecurity", "IT risk management", "gestione del rischio IT", "security"], "importance": "must"},
+  {"id": 13, "requirement": "IT service management framework", "keywords": ["Service Management Framework", "IT Service Management", "ITSM", "service management"], "importance": "must"},
+  {"id": 14, "requirement": "Infrastructure automation", "keywords": ["Automation", "infrastructure automation", "automated services"], "importance": "must"},
+  {"id": 15, "requirement": "Monitoring, observability and performance management", "keywords": ["Monitoring", "Observability", "Performance Management"], "importance": "must"},
+  {"id": 16, "requirement": "Service availability, reliability and continuous improvement of operations", "keywords": ["availability", "reliability", "operating model", "continuous improvement"], "importance": "must"},
+  {"id": 17, "requirement": "Business partnership with executive stakeholders, translating needs into solutions", "keywords": ["business partnership", "stakeholder management", "executive stakeholders", "digital transformation"], "importance": "must"},
+  {"id": 18, "requirement": "Degree in computer science, engineering or equivalent", "keywords": ["Computer Science", "Engineering", "degree", "Laurea"], "importance": "must"},
+  {"id": 19, "requirement": "International and structured organizations", "keywords": ["international", "global", "multinational", "contesti internazionali"], "importance": "must"}
+]

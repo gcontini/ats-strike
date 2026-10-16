@@ -1,0 +1,113 @@
+C/C++ Embedded Software Engineer | Industrial Automation | Bologna
+Tasman Consulting | Part of Tasman Group — Bologna, Emilia-Romagna, Italy (On-site)
+JOB_POSTING: https://jobs.example.com/46
+
+Tasman Consulting | Part of Tasman Group
+C/C++ Embedded Software Engineer | Industrial Automation | Bologna
+Bologna, Emilia-Romagna, Italy
+
+Vuoi iniziare una nuova avventura professionale come C/C++ Embedded Software Engineer in una delle nostre opportunità nel settore Automazione Industriale a Bologna?
+
+
+
+
+👉 Cosa farai? 
+
+• Sviluppo di software e firmware in C/C++ per dispositivi embedded dedicati alla logistica e all’automazione industriale.
+
+• Progettazione e integrazione di componenti firmware con interfacce hardware (camere, dimensionatori, controller e dispositivi di automazione).
+
+• Sviluppo su microcontrollori e sistemi embedded Linux, con particolare attenzione alla comunicazione Ethernet.
+
+• Allestimento, esecuzione e manutenzione di test funzionali e di integrazione su dispositivi embedded.
+
+• Attività di debug su sistemi embedded, analisi delle anomalie e implementazione delle soluzioni correttive.
+
+• Collaborazione quotidiana con il team hardware per la definizione dei requisiti e la risoluzione di problematiche di integrazione.
+
+• Supporto alla documentazione tecnica del software/firmware sviluppato e delle attività di test.
+
+• Partecipazione a trasferte occasionali presso il cliente o siti produttivi per attività di test, integrazione e supporto tecnico.
+
+
+
+
+✍️ Cosa Richiediamo?
+
+• Laurea in Ingegneria (Informatica, Elettronica, Telecomunicazioni, Automazione o affini) o esperienza equivalente.
+
+• Esperienza di almeno 3 anni nello sviluppo embedded su microcontrollori con linguaggi C/C++ e sistemi Linux.
+
+• Conoscenza di sistemi embedded, microcontrollori, Linux embedded e protocolli di comunicazione (es. Ethernet).
+
+• Conoscenza della lingua italiana a livello madrelingua o equivalente e della lingua inglese a livello minimo B2.
+
+• Capacità di lavorare in team multidisciplinari, adattarsi a un ambiente dinamico e disponibilità a lavorare in modalità ibrida (3 giorni on-site, 2 giorni smart working) con auto propria.
+
+Nice to have:
+
+• Gradita esperienza in attività di debug avanzato su sistemi embedded, strumenti di analisi e testing per dispositivi di automazione industriale.
+
+✨ Che cosa offriamo?
+
+• Una comunità internazionale che riunisce oltre 110 nazionalità diverse.
+
+• Un ambiente in cui la fiducia è centrale e la crescita interna è valorizzata.
+
+• Un solido sistema di formazione con Academy interna e moduli disponibili.
+
+• An environment di lavoro dinamico con eventi interni (afterwork, team building, ecc.).
+
+• Un forte impegno verso benessere e work-life balance.
+
+Benefici locali in Italia:
+
+• Buoni pasto.
+
+• Opzioni di lavoro flessibili secondo policy aziendale (modalità ibrida: 3 giorni in presenza, 2 giorni da remoto).
+
+• Assicurazione sanitaria e programmi di benessere, ove applicabili.
+
+
+
+
+💰 Remunerazione e trasparenza
+
+• Gross Annual Salary Range: EUR 26.000 – EUR 50.000.
+
+• CCNL del Commercio.
+
+• La fascia retributiva è definita secondo criteri oggettivi e neutri rispetto al genere.
+
+• Durante il processo di selezione non chiederemo informazioni sulla tua retribuzione attuale o precedente.
+
+Le nostre fasce retributive sono volutamente ampie, perché cerchiamo persone di talento, non “profili standard”. Uno stesso ruolo può attrarre candidature molto diverse tra loro, e crediamo sia importante lasciare spazio a questa varietà. La collocazione all’interno della fascia dipenderà dalla tua esperienza specifica, dalle tue competenze e da ciò che potrai portare nel ruolo.
+
+
+
+
+🙌 La persona ideale si riconosce in questi valori:
+
+Boldness: il nostro spirito di avventura imprenditoriale è ciò che ci unisce tutti e ci porta al successo.
+
+Trust: la fiducia è il fondamento di tutte le relazioni, la fiducia ci consente di promuovere la libertà di espressione, creatività e innovazione.
+
+Performance: questo si traduce in un desiderio costante di andare avanti e non smettere mai di chiedere di più a noi stessi.
+
+Commitment: non ci limitiamo a rispettare i nostri impegni e lavoriamo duramente per ottenere grandi risultati.
+
+Independence: Tasman Consulting appartiene a chi l'ha creata e a chi la sviluppa ogni giorno.
+
+Candidandoti per questa posizione, potresti avere l'opportunità di entrare a far parte di un'azienda che supporta i propri partner nei settori Automotive & Motorsport, Avionic & Aerospace, Difesa, Railway, Industrial, Domotica e Robotica, con attività di ingegneria meccanica ed elettronica nelle aree Development & Design, Testing & Validation, System engineering, R&D e Project Management.
+
+
+
+
+Diversità e Inclusione
+
+Tasman Consulting promuove pari opportunità e valuta le candidature sulla base di competenze, esperienza e potenziale. Accogliamo candidature qualificate senza discriminazioni legate a genere, identità o espressione di genere, orientamento sessuale, origine etnica, nazionalità, religione o convinzioni personali, età, disabilità, stato civile o familiare, o altre caratteristiche protette.
+
+
+
+
+Se hai bisogno di adattamenti ragionevoli durante il processo di selezione, comunicacelo: faremo il possibile per supportarti.

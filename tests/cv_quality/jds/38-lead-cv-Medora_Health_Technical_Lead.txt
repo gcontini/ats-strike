@@ -1,0 +1,47 @@
+Kairos Risorse Umane
+Technical Lead
+Milan, Lombardy, Italy
+
+Medora Health è la Corporate Startup di Medora Spa che offre soluzioni dedicate a digitalizzare e umanizzare la relazione tra strutture sanitarie, pazienti e familiari lungo tutto il percorso di cura, attraverso soluzioni di Patient Relationship Management (PRM) potenziate da un'Intelligenza Artificiale Empatica.
+
+
+La mission di Medora Health è mettere l’innovazione al servizio dello Human Care, favorendo lo sviluppo della Digital Patient Experience (DPX), per superare i canali relazionali tradizionali con le strutture sanitarie, a favore di una relazione bidirezionale, continua e con risultati misurabili.
+
+
+Stiamo selezionando il/la Technical Lead, che avrà l’obiettivo di guidare e presidiare l’evoluzione tecnologica delle soluzioni Medora Health, garantendo solidità architetturale, qualità del software, scalabilità e sicurezza delle piattaforme.
+
+
+Le principali responsabilità saranno:
+
+
+
+Guidare le scelte architetturali e tecnologiche della piattaforma insieme al team di sviluppo;
+Definire e tenere aggiornati standard di codice, buone pratiche, code review e criteri di rilascio;
+Presidiare qualità e sicurezza, con attenzione ai dati sanitari: GDPR, ISO 27001, requisiti ACN e, se applicabile, MDR per il software come dispositivo medico;
+Progettare e supportare le integrazioni con sistemi ospedalieri, RSA e app di terze parti (HL7/FHIR);
+Fare da riferimento per gli strumenti comuni (CI/CD, monitoring, ticketing, repository), riducendo sovrapposizioni e licenze non necessarie;
+Valutare nuove tecnologie AI (LLM, modelli, servizi cloud) e proporne l'adozione;
+Affiancare il team commerciale nelle fasi di prevendita ed essere il riferimento tecnico per i clienti strategici;
+Lavorare in coppia con il Project Manager;
+Far crescere tecnicamente gli sviluppatori e organizzare momenti periodici di confronto per far circolare le soluzioni che funzionano;
+
+
+I requisiti richiesti sono:
+
+
+
+Esperienza come sviluppatore senior o tech lead in ambito sanitario/healthtech;
+Esperienza concreta su cloud, integrazione tra sistemi e ciclo di vita del software (CI/CD, ambienti);
+Conoscenza degli standard di interoperabilità sanitaria (HL7, FHIR) e dei requisiti di sicurezza e privacy sui dati sanitari;
+Competenza pratica su AI applicata;
+Chiarezza nella comunicazione, anche verso clienti non tecnici;
+Capacità di lavorare con team diversi;
+Ottima conoscenza della lingua italiana e buona della lingua inglese.
+
+
+L’azienda offre:CCNL Metalmeccanico
+Livello B2-B3
+Range retributivo: 55.000 €/65.000 €;
+Modalità di lavoro ibrida, con base a Milano.
+Buoni pasto
+Ruolo trasversale in una realtà in crescita, tra tecnologia, AI e sanità

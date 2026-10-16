@@ -50,3 +50,6 @@ dist/
 
 .qwen
 .vscode
+# --- CV quality runs -----------------------------------------------------------
+# Generated CVs carry your contact details.
+/tests/cv_quality/runs/

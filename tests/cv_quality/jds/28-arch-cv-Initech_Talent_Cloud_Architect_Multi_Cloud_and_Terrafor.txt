@@ -1,0 +1,65 @@
+Cloud Architect | Multi-Cloud and Terraform
+Initech Talent — Milan, Lombardy, Italy (Hybrid)
+JOB_POSTING: https://jobs.example.com/28
+
+Initech Talent
+Cloud Architect | Multi-Cloud and Terraform
+Milan, Lombardy, Italy
+
+50K EUR/yr - 70K EUR/yr
+
+La nostra realtà è un primario gruppo nazionale operante nel settore dei servizi informativi e professionali, rivolti prevalentemente al mercato B2B. La realtà si distingue per un'offerta articolata di contenuti, servizi e soluzioni dedicate ad aziende, professionisti e manager, all'interno di un contesto strutturato e altamente organizzato.
+
+Cerchiamo un Cloud Architect  con esperienza nella progettazione di architetture cloud scalabili e sicure, prevalentemente su Google Cloud Platform , e conoscenza di AWS. Richieste competenze in Terraform  e Infrastructure as Code per sviluppare soluzioni automatizzate e allineate alle esigenze di business.
+
+Responsabilità
+
+La figura si occuperà delle seguenti attività:
+
+
+Cloud Architecture – Progettare architetture cloud e ibride su Google Cloud Platform, Azure e AWS, garantendo scalabilità, sicurezza e affidabilità. 
+Cloud Strategy – Supportare l’evoluzione delle piattaforme cloud, definendo roadmap e soluzioni innovative. 
+Infrastructure as Code – Sviluppare e gestire infrastrutture tramite Terraform, promuovendo standardizzazione e automazione. 
+Governance & Security – Definire standard, policy e best practice per sicurezza, compliance e gestione degli ambienti cloud. 
+DevOps & Automation – Collaborare con i team tecnici per integrare CI/CD e processi automatizzati. 
+FinOps & Optimization – Ottimizzare costi, performance e utilizzo delle risorse cloud. 
+Technical Leadership – Fornire supporto architetturale e linee guida tecniche ai team progettuali. 
+
+
+Profilo
+
+Verranno prese in considerazione figure in possesso dei seguenti requisiti:
+
+
+Esperienza concreta nella progettazione e gestione di architetture cloud enterprise, preferibilmente in contesti multi-cloud o hybrid cloud. 
+ Conoscenza approfondita di Google Cloud Platform , con capacità di confrontare e integrare, ove necessario, servizi, pattern architetturali, modelli di sicurezza, networking e costi anche su Azure e AWS. 
+Ottima padronanza di Terraform  per la gestione dell’infrastruttura come codice, inclusa la creazione di moduli, gestione dello state, workspace, variabili, provider, policy e integrazione con repository Git. 
+Conoscenza dei principali servizi cloud: compute, networking, storage, database, IAM, secret management, container platform, logging, monitoring e servizi di sicurezza. 
+Competenze di cloud networking: VPC/VNet, subnetting, routing, peering, VPN, private connectivity, firewall, load balancing, DNS e integrazione con ambienti on-premise. 
+Conoscenza delle configurazioni database in ambito cloud, inclusi aspetti di provisioning, networking, sicurezza, backup, replica, alta disponibilità e performance tuning; costituiscono titolo preferenziale esperienze su AlloyDB e PostgreSQL. 
+Conoscenza di Docker e Kubernetes per la progettazione, gestione e governance di workload containerizzati, con attenzione a deployment, networking, sicurezza, scalabilità, osservabilità e integrazione con pipeline CI/CD. 
+Conoscenza dei principi di DevOps e automazione, con familiarità nell’utilizzo di pipeline CI/CD, Git, scripting e strumenti di configuration management. 
+Capacità di applicare requisiti di sicurezza, compliance, business continuity, disaster recovery, logging e monitoraggio all’interno delle architetture cloud. 
+Capacità di comunicare efficacemente con stakeholder tecnici e non tecnici, traducendo requisiti funzionali, vincoli di sicurezza e obiettivi di business in soluzioni architetturali concrete. 
+
+
+Nice to have
+
+Certificazioni in ambito Cloud Architecture, preferibilmente Google Cloud Professional Cloud Architect e/o Google Cloud Professional Cloud DevOps Engineer. Saranno considerate un plus anche certificazioni equivalenti conseguite su Microsoft Azure o Amazon Web Services.
+
+Cosa offriamo
+
+
+Un ruolo strategico e ad alto impatto, con responsabilità diretta nella definizione, evoluzione e governance delle architetture cloud aziendali. 
+L’opportunità di lavorare su progetti innovativi e complessi in un contesto tecnologicamente avanzato e in continua evoluzione. 
+Un ambiente che valorizza la crescita professionale, la specializzazione su Cloud Architecture, Infrastructure as Code e modelli di governance multi-cloud. 
+Ampia autonomia decisionale e possibilità di contribuire attivamente alle scelte tecnologiche e all’innovazione dell’ecosistema cloud aziendale. 
+
+
+RAL: €50.000 - €70.000, commisurata all'esperienza, oltre a ticket restaurant da €7 riconosciuti anche nelle giornate di smart working.
+
+Modalità di lavoro: formula ibrida con 2 giorni di smart working a settimana.
+
+«I candidati, nel rispetto del D.lgs. 198/2006, D.lgs. 215/2003 e D.lgs. 216/2003, sono invitati a leggere l’informativa sulla privacy consultabile sotto il form di richiesta dati della pagina di candidatura (Regolamento UE n. 2016/679).
+
+L’offerta è rivolta a candidati di entrambi i sessi, nel rispetto del D.lgs. 198/2006 e della normativa vigente in materia di pari opportunità. L’azienda promuove un ambiente di lavoro inclusivo e garantisce pari opportunità a tutte le persone, indipendentemente da genere, età, origine, orientamento sessuale o disabilità.»

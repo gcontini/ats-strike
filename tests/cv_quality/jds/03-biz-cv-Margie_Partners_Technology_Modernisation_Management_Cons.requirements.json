@@ -1,0 +1,21 @@
+[
+  {"id": 1, "requirement": "Technology modernisation management consultant", "keywords": ["Management Consultant", "Technology Consultant", "IT Consultant", "Technology Modernisation Consultant", "Technology Modernization Consultant"], "importance": "must"},
+  {"id": 2, "requirement": "4-7 years in IT consulting or IT operations", "keywords": ["IT Consulting", "Technology Consulting", "Management Consulting", "IT Operations"], "importance": "must"},
+  {"id": 3, "requirement": "Technology strategy and roadmaps aligned with business goals", "keywords": ["Technology Strategy", "IT Strategy", "Technology Roadmap", "IT Roadmap", "Digital Strategy"], "importance": "must"},
+  {"id": 4, "requirement": "Platform modernisation, legacy tech-debt assessment and re-platforming", "keywords": ["Legacy Modernization", "Platform Modernization", "Application Modernization", "Re-platforming", "Technical Debt"], "importance": "must"},
+  {"id": 5, "requirement": "Digital and technology transformation programs", "keywords": ["Digital Transformation", "IT Transformation", "Technology Transformation", "Transformation Program"], "importance": "must"},
+  {"id": 6, "requirement": "IT project and program management, including program assurance and recovery", "keywords": ["IT Project Management", "Program Management", "Program Assurance", "Program Recovery", "Workstream Lead"], "importance": "must"},
+  {"id": 7, "requirement": "Practical IT knowledge in software delivery, infrastructure, solutions architecture or IT governance", "keywords": ["Software Delivery", "IT Infrastructure", "Solutions Architecture", "IT Governance", "IT Audit"], "importance": "must"},
+  {"id": 8, "requirement": "Operating model design and transformation", "keywords": ["Operating Model", "Target Operating Model", "TOM", "Product Operating Model", "Product-Oriented Delivery"], "importance": "must"},
+  {"id": 9, "requirement": "Technology cost optimisation, benchmarking and spend analysis", "keywords": ["IT Cost Optimization", "Cost Optimization", "IT Benchmarking", "Spend Analysis", "Cost Transparency"], "importance": "must"},
+  {"id": 10, "requirement": "Technology diagnostics and assessments to find performance gaps and root causes", "keywords": ["IT Assessment", "Technology Assessment", "Diagnostic", "Root Cause Analysis", "Gap Analysis"], "importance": "must"},
+  {"id": 11, "requirement": "Business process modernisation with automation and AI agents", "keywords": ["Business Process Automation", "Process Automation", "RPA", "AI Agents", "Business Process Modernization"], "importance": "must"},
+  {"id": 12, "requirement": "Client and stakeholder advisory and presenting at CXO level", "keywords": ["Stakeholder Management", "Client Management", "C-level", "CXO", "Executive Presentations"], "importance": "must"},
+  {"id": 13, "requirement": "Project delivery methodologies and frameworks", "keywords": ["Agile", "Scrum", "Waterfall", "PRINCE2", "PMP"], "importance": "must"},
+  {"id": 14, "requirement": "Fluent English", "keywords": ["English", "Fluent English", "C1", "C2"], "importance": "must"},
+  {"id": 15, "requirement": "Fluent Italian", "keywords": ["Italian", "Native Italian", "Fluent Italian"], "importance": "must"},
+  {"id": 16, "requirement": "Master's degree in a STEM discipline", "keywords": ["Master's Degree", "MSc", "Master of Science", "Engineering", "Computer Science"], "importance": "must"},
+  {"id": 17, "requirement": "Financial literacy and financial analysis", "keywords": ["Financial Analysis", "Business Case", "Financial Modeling", "ROI", "P&L"], "importance": "must"},
+  {"id": 18, "requirement": "Technology due diligence, carve-out and post-merger integration in M&A", "keywords": ["Technology Due Diligence", "IT Due Diligence", "M&A", "Carve-out", "Post-Merger Integration"], "importance": "nice"},
+  {"id": 19, "requirement": "MBA", "keywords": ["MBA", "Master of Business Administration"], "importance": "nice"}
+]

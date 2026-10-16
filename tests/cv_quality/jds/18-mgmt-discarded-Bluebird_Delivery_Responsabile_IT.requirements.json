@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "IT manager", "keywords": ["IT Manager", "Responsabile IT", "Head of IT", "IT Coordinator", "Coordinatore IT"], "importance": "must"},
+  {"id": 2, "requirement": "IT strategy and technology roadmap aligned with business", "keywords": ["IT Strategy", "Technology Roadmap", "Business Alignment", "Digitalization", "Process Automation"], "importance": "must"},
+  {"id": 3, "requirement": "Network architecture and administration", "keywords": ["LAN", "WAN", "VPN", "Firewall", "Wi-Fi"], "importance": "must"},
+  {"id": 4, "requirement": "Server and virtualization environments", "keywords": ["VMware", "Hyper-V", "Virtualization", "Virtualizzazione", "Server"], "importance": "must"},
+  {"id": 5, "requirement": "Operating systems administration", "keywords": ["Windows", "Linux", "macOS"], "importance": "must"},
+  {"id": 6, "requirement": "First and second level helpdesk and user support", "keywords": ["Helpdesk", "IT Support", "Second-level support", "Supporto Utenti", "Remote Support"], "importance": "must"},
+  {"id": 7, "requirement": "Cybersecurity policies", "keywords": ["Cybersecurity", "Security Policies", "Sicurezza Informatica", "Information Security"], "importance": "must"},
+  {"id": 8, "requirement": "Backup, disaster recovery and business continuity", "keywords": ["Backup", "Disaster Recovery", "Business Continuity", "DR"], "importance": "must"},
+  {"id": 9, "requirement": "GDPR data protection compliance", "keywords": ["GDPR", "Data Protection", "Compliance", "Protezione dei dati"], "importance": "must"},
+  {"id": 10, "requirement": "Cloud and productivity suite administration", "keywords": ["Microsoft 365", "Office 365", "Google Workspace", "Cloud"], "importance": "must"},
+  {"id": 11, "requirement": "ERP and database management", "keywords": ["ERP", "Database", "Sistemi gestionali"], "importance": "must"},
+  {"id": 12, "requirement": "User and access management", "keywords": ["Active Directory", "User Management", "Access Management", "Permissions"], "importance": "must"},
+  {"id": 13, "requirement": "IT vendor and contract management and IT budget", "keywords": ["Vendor Management", "Gestione Vendor", "Gestione fornitori", "IT Budget", "Licensing"], "importance": "must"},
+  {"id": 14, "requirement": "Workstation and hardware asset management", "keywords": ["IT Asset Management", "Hardware", "Workstations", "Parco Macchine", "Device Management"], "importance": "must"},
+  {"id": 15, "requirement": "Incident troubleshooting and service restoration", "keywords": ["Troubleshooting", "Incident Management", "Risoluzione Guasti", "Downtime"], "importance": "must"},
+  {"id": 16, "requirement": "Security awareness training for staff", "keywords": ["Security Awareness", "Phishing", "User Training", "Formazione", "Change Management"], "importance": "must"},
+  {"id": 17, "requirement": "IT documentation and asset register", "keywords": ["IT Documentation", "Technical Documentation", "Asset Register", "Documentazione IT"], "importance": "must"},
+  {"id": 18, "requirement": "Degree in computer science or computer engineering", "keywords": ["Computer Science", "Computer Engineering", "Informatica", "Ingegneria Informatica"], "importance": "must"},
+  {"id": 19, "requirement": "English, written and spoken", "keywords": ["English", "Inglese"], "importance": "must"},
+  {"id": 20, "requirement": "IT certifications", "keywords": ["Microsoft Certified", "Cisco", "ITIL", "Cybersecurity Certification", "Certificazioni informatiche"], "importance": "nice"}
+]

@@ -1,0 +1,73 @@
+POSTING_URL: https://jobs.example.com/34
+Tailwind Energia
+
+LEAD DATA & AI ARCHITECT (IT)
+
+Milan, Lombardy, Italy
+
+Job Description
+
+Come Lead Data & Ai Architect farai parte della funzione Digital Information Technologies di Tailwind Energia. Con un profilo dalla leadership tecnica riconosciuta, sarai in grado di guidare la visione e la strategia Data e AI a livello Enterprise, definirai roadmap pluriennali e fungerai da punto di riferimento tecnico. Avrai un ruolo chiave nella definizione delle practice tecniche, nella progettazione di soluzioni piattaforme e applicative complesse, garantendo l'evoluzione dell'offerta di servizi Data e AI nel rispetto costante delle policy di governance interne.
+
+Attività Principali
+
+
+ Delivery e governance di programma
+ Definire strategie e roadmap data & AI a livello aziendale, guidando la scelta architetturale tra paradigmi consolidati e più recenti/innovativi (e.g. Data lakehouse, Data Mesh) in funzione del contesto 
+ Assumere la leadership tecnica di programmi complessi e multi-stream, presidiando e valutando i trade-off architetturali per i costi, le performance tecniche e gli aspetti di compliance 
+ Definire ed evolvere reference architecture, pattern architetturali riusabili e best practice da introdurre a livello di organizzazione 
+ Svolgere attività di tutoraggio per figure Data & AI Architect di livello expert e junior, contribuendo allo sviluppo delle competenze della intera unità 
+ Rappresentare l'azienda in contesti esterni come eventi, conferenze, advisory board, partnership con vendor tecnologici e/o strategici. 
+
+Caratteristiche Richieste
+
+
+ Laurea magistrale in Informatica, Ingegneria; potranno essere presi in considerazione titoli di studio differenti, anche inferiori, a valle di significativa esperienza nell’ambito 
+ Almeno 8 anni di esperienza nel settore Dati e AI, di cui almeno 5 in ambiti architettura con ruolo senior e/o lead 
+ Esperienza sia nel design che nella delivery di soluzioni realizzative per piattaforme dati e applicazioni Generative AI in contesto Enterprise 
+ Esperienza concreta in progetti di Generative AI in produzione: RAG avanzato, Agentic AI patterns, orchestrazione multi-agent, ottimizzazione costi esecuzione e performance tecniche, valutazione qualitativa output 
+ Esperienza su tematiche legate a FinOps applicato in ambito Data e AI (e.g. ottimizzazione spesa per risorse compute intensive o generative ai) 
+ Conoscenza approfondita di almeno due dei principali cloud provider (e.g. Azure, AWS o GCP) e della loro offering lato Data e AI, con capacità di analisi e confronto per servizi omologhi e relativi trade-off (e.g. costi, architetture, sicurezza) 
+ Padronanza di paradigmi architetturali moderni in ambito Data (e.g. Data Lakehouse, Data Mesh, event-driven, real-time analytics) e in ambito AI (e.g. microservcices, event driven, distributed system, asynchronous programming) unitamente alla capacità di saperli coniugare in base allo use-case business 
+ Solida competenza end-to-end su processi DevSecOps, DataOps, MLOps e AIOps per la realizzazione di soluzioni produttive in ambito Data e AI 
+ Conoscenza approfondita delle tematiche di Data governance, AI governance (EU AI Act e responsible AI), privacy (GDPR) e sicurezza dei dati 
+
+
+Completano Il Profilo
+
+
+ MBA o specializzazioni in AI/Data Strategy 
+ Esperienza nella definizione e nella conduzione di workshop strategici/decisionali e sessioni di advisory con interlocutori non tecnici (e.g. responsabili unità, C-Level) ed eterogenei 
+ Career track con comprovata esperienza nella delivery di programmi complessi in contesti industry 
+ Leadership tecnica riconosciuta e attitudine al mentoring verso team 
+
+
+Sede
+
+Milan
+
+Promuoviamo forme flessibili di lavoro, offrendo opzioni di Smart working ed orari flessibili al fine di sostenere il maggior equilibrio tra vita professionale e personale.
+
+Proponiamo
+
+
+ Contratto di lavoro a Tempo Indeterminato 
+ Il nostro contratto collettivo nazionale di lavoro di riferimento è il CCNL Energia e Petrolio 
+ Proponiamo una retribuzione annua lorda compresa tra 60.000€ e 85.000€ 
+ L’offerta finale sarà formulata in coerenza con l’esperienza professionale, le competenze tecniche e trasversali possedute dalla risorsa funzionali per il ruolo e apprezzabili per l’azienda 
+ L’Azienda in presenza di esperienze professionali e competenze tecniche e trasversali particolarmente rilevanti potrà valutare un’offerta con un livello di inquadramento/RAL migliorativo 
+ Sistema di reward e programma articolato di benefits e iniziative di welfare in ambito sanitario, previdenziale, di supporto al reddito e per la conciliazione vita-lavoro. Scopri di più: link welfare 
+ Ambiente di lavoro in cui ogni risorsa possa sentirsi riconosciuta e apprezzata nella propria unicità 
+
+
+Le candidature ritenute di maggior interesse saranno contattate per le fasi successive.
+
+Per informazioni sul processo di selezione e consigli utili puoi cliccare qui .
+
+Chi Siamo
+
+Tailwind Energia è una società integrata lungo l’intera catena del valore e impegnata con azioni concrete a fornire energia sempre più sicura, diversificata e a emissioni progressivamente ridotte.
+
+Il modello di business punta alla creazione di valore di lungo termine per tutti gli stakeholder.
+
+Le nostre persone sono il motore di questa strategia, il cui talento, know-how e impegno guidano una crescita costante e trasformano la nostra visione in progressi concreti.

@@ -1,0 +1,70 @@
+DevOps Engineer (Italy based)
+Quantra AI — Milan, Lombardy, Italy (Hybrid)
+JOB_POSTING: https://jobs.example.com/43
+
+Quantra AI
+DevOps Engineer (Italy based)
+Milan, Lombardy, Italy
+
+About Quantra AI
+
+Quantra AI is a global leading provider of AI-driven investment solutions, growing across our offices in London, Milan, and New York. We recently closed a $27M growth equity round, led by Northstar Growth Partners, to support our continued international expansion. Our proprietary platform, Sphere, currently supports over $100B in assets under management for institutional clients including Morgan Stanley, Amundi, and Zurich Bank.
+
+
+
+
+Role Overview
+
+Quantra AI, a leading provider of AI-driven investment solutions, is looking for an Intermediate DevOps Engineer to join our Platform Team. You will play a key role in supporting, enhancing, and maintaining the foundational infrastructure and tools that empower our product teams — contributing to a reliable, scalable, and efficient developer platform that enables fast and secure software delivery for Sphere, our proprietary AI-driven investment platform.
+
+
+
+
+Key Responsibilities
+
+Contribute to the design, implementation, and automation of CI/CD pipelines (GitLab CI/CD) to ensure fast, safe, and repeatable releases across all environments.
+Assist in the adoption and management of Infrastructure as Code using Terraform and Ansible, helping provision and manage on-premise and AWS resources in a controlled, auditable, and reproducible manner.
+Work with Docker and Kubernetes to package and operate services, contributing to declarative configuration, GitOps practices, and efficient resource utilization.
+Help implement and maintain monitoring, logging, and tracing solutions (Prometheus, Grafana, ELK, Zabbix), and participate in on-call rotations to ensure high availability and low Mean Time To Recovery (MTTR).
+Contribute to embedding security best practices (OWASP Top 10, least privilege IAM, shift-left testing) into the SDLC and help automate security controls within pipelines.
+Support the management and automation of database infrastructure (MySQL, MongoDB), including provisioning, backups, and automated schema migrations.
+Automate and support the deployment, scaling, and operational health of core platform services (authentication, data pipelines, messaging) for internal consumers.
+Participate in technical design discussions, learn from architectural decisions related to infrastructure and operations, and help document runbooks and standards.
+Champion DevOps culture ("you build it, you run it") and share knowledge through demos, pair programming, and internal workshops.
+
+
+
+
+Skills Required
+
+Proven experience in a DevOps or Site Reliability Engineering (SRE) role, with a focus on automation, infrastructure, and CI/CD
+Hands-on experience working with and contributing to CI/CD pipelines
+Practical experience with Docker and exposure to Kubernetes, including writing Dockerfiles and debugging containerized applications
+Familiarity with Infrastructure as Code tools such as Terraform or Ansible
+Experience with at least one monitoring, logging, or alerting system (e.g., Prometheus, Grafana, ELK Stack, Zabbix), and curiosity for SRE principles
+Proficiency in at least one scripting language (e.g., Python, Bash) for automating common tasks
+Basic understanding of security best practices in the SDLC
+Good analytical skills and a methodical approach to troubleshooting system and infrastructure issues
+Clear English communication, collaborative spirit, and a growth mindset aligned with a culture of shared ownership and rapid feedback
+
+
+
+
+Bonus points:
+
+Experience with event-driven systems (e.g., ActiveMQ)
+Contributions to open-source projects
+Familiarity with backend development concepts (e.g., Java/Spring Boot)
+Working knowledge of AWS fundamentals (EC2, S3, IAM)
+Financial-services or high-throughput data processing background
+
+
+
+
+Why Join Us?
+
+Work at the leading edge of technology, leveraging our decade of experience in proprietary AI to power a platform trusted by top-tier institutional clients.
+Truly flexible work environment, we care about output, not hours logged.
+Collaborate daily with an ultra-international team (18+ nationalities) across our Milan, London, and New York offices.
+Annual company retreat at a stunning location, because we invest in our people beyond the day job.
+Real, fast-track career progression, with outsized growth opportunities for early team members.

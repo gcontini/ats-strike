@@ -1,0 +1,19 @@
+[
+  {"id": 1, "requirement": "Technology associate manager", "keywords": ["Technology Associate Manager", "Technology Manager", "IT Manager", "Associate Manager"], "importance": "must"},
+  {"id": 2, "requirement": "IT project management and coordination (schedule, budget, quality, risk)", "keywords": ["Project Management", "IT Project Management", "Project Manager", "gestione dei progetti"], "importance": "must"},
+  {"id": 3, "requirement": "Digital transformation initiatives", "keywords": ["Digital Transformation", "trasformazione digitale"], "importance": "must"},
+  {"id": 4, "requirement": "Agile and/or Waterfall methodologies", "keywords": ["Agile", "Waterfall", "Scrum"], "importance": "must"},
+  {"id": 5, "requirement": "Multi-stakeholder management with business and technical counterparts", "keywords": ["Stakeholder Management", "stakeholder", "gestione di stakeholder"], "importance": "must"},
+  {"id": 6, "requirement": "IT architecture and cloud services", "keywords": ["IT Architecture", "Cloud", "Cloud Services", "servizi cloud"], "importance": "must"},
+  {"id": 7, "requirement": "Cybersecurity", "keywords": ["Cybersecurity", "Cyber Security", "IT Security", "sicurezza"], "importance": "must"},
+  {"id": 8, "requirement": "IT infrastructure and IT service management (reliability, business continuity)", "keywords": ["IT Infrastructure", "IT Services", "Business Continuity", "infrastruttura IT"], "importance": "must"},
+  {"id": 9, "requirement": "Vendor and technology partner management, SLA monitoring", "keywords": ["Vendor Management", "Supplier Management", "SLA", "gestione dei fornitori"], "importance": "must"},
+  {"id": 10, "requirement": "Functional and organizational requirements analysis", "keywords": ["Requirements Analysis", "Functional Requirements", "Business Analysis", "analisi dei requisiti"], "importance": "must"},
+  {"id": 11, "requirement": "Technology governance, process documentation and policy/regulatory compliance", "keywords": ["IT Governance", "Technology Governance", "Compliance", "Process Documentation"], "importance": "must"},
+  {"id": 12, "requirement": "Technology solution evaluation and selection", "keywords": ["Solution Evaluation", "Technology Assessment", "valutazione delle soluzioni"], "importance": "must"},
+  {"id": 13, "requirement": "Technology strategy and roadmap aligned with business goals", "keywords": ["Technology Strategy", "IT Strategy", "Roadmap", "iniziative tecnologiche"], "importance": "must"},
+  {"id": 14, "requirement": "Rollout and adoption of new tools and processes, change management", "keywords": ["Change Management", "Technology Adoption", "Implementation", "Rollout"], "importance": "must"},
+  {"id": 15, "requirement": "Performance monitoring of IT services and continuous improvement", "keywords": ["Continuous Improvement", "KPI", "Performance Monitoring", "miglioramento continuo"], "importance": "must"},
+  {"id": 16, "requirement": "Degree in Computer Science, Computer/Management Engineering or STEM", "keywords": ["Computer Science", "Computer Engineering", "Management Engineering", "STEM", "Ingegneria Gestionale"], "importance": "must"},
+  {"id": 17, "requirement": "Fluent English, written and spoken", "keywords": ["English", "Fluent English", "inglese"], "importance": "must"}
+]

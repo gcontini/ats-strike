@@ -1,0 +1,21 @@
+[
+  {"id": 1, "requirement": "Business Consultant / Business Analyst", "keywords": ["Business Consultant", "Business Analyst", "Functional Consultant", "Functional Analyst"], "importance": "must"},
+  {"id": 2, "requirement": "Requirements gathering and analysis", "keywords": ["Requirements Gathering", "Requirements Analysis", "Requirements Elicitation", "Business Requirements", "Functional Requirements"], "importance": "must"},
+  {"id": 3, "requirement": "Delivery of SaaS and enterprise software solutions", "keywords": ["SaaS", "Enterprise Software", "Software Implementation", "Software Delivery", "Professional Services"], "importance": "must"},
+  {"id": 4, "requirement": "Solution design and business blueprint", "keywords": ["Solution Design", "Business Blueprint", "Solution Blueprint"], "importance": "must"},
+  {"id": 5, "requirement": "Stakeholder management", "keywords": ["Stakeholder Management", "Stakeholder Engagement"], "importance": "must"},
+  {"id": 6, "requirement": "Software Development Life Cycle", "keywords": ["SDLC", "Software Development Life Cycle", "Software Development Lifecycle"], "importance": "must"},
+  {"id": 7, "requirement": "UML and software design modeling tools", "keywords": ["UML", "Unified Modeling Language", "Software Modeling", "Modeling Tools"], "importance": "must"},
+  {"id": 8, "requirement": "Italian at professional working proficiency", "keywords": ["Italian", "Italiano"], "importance": "must"},
+  {"id": 9, "requirement": "English, written and spoken", "keywords": ["English", "Fluent English", "Business English"], "importance": "must"},
+  {"id": 10, "requirement": "Leading customer workshops", "keywords": ["Workshop Facilitation", "Customer Workshops", "Requirements Workshops", "Workshops"], "importance": "must"},
+  {"id": 11, "requirement": "Functional specifications and documentation", "keywords": ["Functional Specifications", "Detailed Specifications", "Functional Documentation", "Documentation"], "importance": "must"},
+  {"id": 12, "requirement": "QA and UAT support with acceptance criteria", "keywords": ["UAT", "User Acceptance Testing", "Acceptance Criteria", "QA", "Quality Assurance"], "importance": "must"},
+  {"id": 13, "requirement": "Pre-sales support: RFPs, RFIs and solution demos", "keywords": ["Pre-Sales", "Presales", "RFP", "RFI", "Solution Demonstrations"], "importance": "must"},
+  {"id": 14, "requirement": "Functional subject matter expert", "keywords": ["Subject Matter Expert", "SME", "Functional Expert"], "importance": "must"},
+  {"id": 15, "requirement": "Data migration rules", "keywords": ["Data Migration", "Data Mapping", "Migration Rules"], "importance": "must"},
+  {"id": 16, "requirement": "Business rules definition", "keywords": ["Business Rules", "Business Logic"], "importance": "must"},
+  {"id": 17, "requirement": "Prototyping", "keywords": ["Prototyping", "Prototypes", "Mockups", "Wireframes"], "importance": "must"},
+  {"id": 18, "requirement": "Product Lifecycle Management", "keywords": ["PLM", "Product Lifecycle Management"], "importance": "nice"},
+  {"id": 19, "requirement": "Food & Beverage or Chemical industry", "keywords": ["Food & Beverage", "Food and Beverage", "F&B", "Chemical Industry", "Chemicals"], "importance": "nice"}
+]

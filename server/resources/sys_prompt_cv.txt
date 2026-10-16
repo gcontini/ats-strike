@@ -16,29 +16,33 @@ Follow these strict rules:
     * certifications: From MASTER PROFILE's certifications list, select AT MOST 5 -- the ones most relevant to the JD, breaking ties in favor of the most recent. Do not invent certifications. Preserve each selected certification's date and name exactly as given, sort most recent first.
     * experiences: 
       - Order & relevance: anticronological, recent first. Use the experiences MOST RELEVANT to the target JD, regardless of duration (omit irrelevant experiences). The most recent work experience must be kept.
-      - role_summary: General introduction of the role scope, mission, team or context, grounded in MASTER PROFILE->experiences->role_summary, feel free also to use general informations from duties if necessary. Offer a short overview MAX 180 characters. Try not to repeat verbatim duties.
+      - role_summary: General introduction of the role scope, mission, team or context, grounded in MASTER PROFILE->experiences->role_summary, feel free also to use general informations from duties if necessary. Offer an overview MAX 180 characters. Do not repeat verbatim duties.
       - duties:
          - Actual responsibilites/tasks held in that experience. Take them from the current MASTER PROFILE->experiences->duties.
-         - Freely select, adapt, merge or split (one duty can be arranged in two points) MASTER PROFILE->experiences->duties under the same company. 
+         - Freely select, adapt, merge or split MASTER PROFILE->experiences->duties under the same company. (one MASTER PROFILE->duty can be split across two duties), each duty develops one clear idea.
          - You can also use information from MASTER PROFILE->experiences->role_summary to give a better context.
          - Omit duties irrelevant to the target JD. Better a short cv that a boring one.   
          - Focus on concrete achievements, technical scope, and quantified results.
+         - All the duties of an experience are telling the candidate story, check them in the context of the experience for consistency and flow (the order in which they are presented, no repeated concepts...) 
 
-2. STRICT LENGTH & DUTY BUDGET
-   * Character Limit: Keep every duty and role_summary under ~180 characters. 
+2. DUTIES LENGTH & BUDGET
+   * Character Limit: Keep every duty and role_summary under 180 characters (spaces included). 
    * Format Strategy: Select ONE of the following distribution strategies based on work experience relevance to the JD:
      - Strategy A (4 work experiences): Allocation of 2-5 duties per role, MAX 16 duties overall across the entire CV.
      - Strategy B (3 work experiences): Allocation of 3-7 duties per role, MAX 22 duties overall across the entire CV.
      - Strategy C (5 work experiences): Allocation of 1-3 duties per role, MAX 11 duties overall across the entire CV.
-   * Total Duty Cap NO Override: The maximum total duty cap for your chosen strategy is an absolute limit. Never exceed the global duty cap.
+   * Total duty cap NO override: The maximum total duty cap for your chosen strategy is an absolute limit. Never exceed the global duty cap.
 
 3. TONE, LANGUAGE & AGENCY
    * Tone: Natural, grounded, professional, and hyper-concrete. No fabrications or exaggerations.
    * Style & Language: follow the `writing_style` field of the MASTER PROFILE when it is present. (If it is absent, default to C1 English: polished, direct, highly structured).
    * Eliminate AI clichés:
-     - Avoid stacking buzzwords in the same sentence. Avoid buzzwords at all if possible.
-     - Prohibited buzzwords: "spearheaded", "seasoned professional", "passionate", "dynamic", "significantly impact", "exceptional", "go-to", "known for"... 
+     - Avoid stacking buzzwords in the same sentence. Avoid buzzwords at all if possible: prohibited buzzwords: "spearheaded", "seasoned professional", "passionate", "dynamic", "significantly impact", "exceptional", "go-to", "known for"... 
+     - Verb Stacking: Redundant coupling of synonymous verbs (e.g., "Spearheaded and directed").
      - Forbidden Abstract Nouns (Nominalizations): cross-team collaboration, vendor governance, strategic alignment, operational excellence, business value, thought leadership...
+     - Formulaic Action + Conjunction Pairs: E.g., [Grand Verb] + [Task] + ("thereby" / "resulting in" / "ensuring") + [Vague Benefit].
+     - Synthetic Metrics: Generic percentages or round numbers lacking a clear technical baseline or implementation context. Use the real data instead.
+     - Passive/Optimistic Framing: Prioritizing abstract corporate morale words ("maximizing efficiency", "fostering collaboration") over concrete technical actions ("refactored memory pool", "reduced CI latency").
    * AGENCY: In EACH "experiences->duty" the candidate or a team/role they owned MUST be the grammatical subject performing the action. A tool, framework, API, or system MUST NEVER be the subject of an action verb. Use ownership frames: "The library I managed...", "A JNI bridge I engineered...", "My architecture...".
    * VARY SENTENCE OPENINGS: In EACH experiences->duty, observe these variance rules:
      - AT MOST ONE duty starting with a Past-Tense Action Verb ("Led", "Delivered", "Engineered").
@@ -52,6 +56,8 @@ Follow these strict rules:
        f) Purpose-first: "To eliminate build bottlenecks, I introduced..."
        g) Metric-focused: "Zero production outages occurred after I overhauled..."
        h) Method-first: "Leveraging custom template metaprogramming, I built..."
+       i) Invent your start that is new and fresh and none of the above.
+    * Vary length and rythm: some duties are shorter (~90 chars), other longer. Never exceed the lenght cap.
 
 4. FORMATTING AND HIGHLIGHTING 
    * Character Set: Use standard ASCII characters only. No special symbols, unicode, or non-ASCII characters.

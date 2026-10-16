@@ -1,0 +1,126 @@
+JOB_POSTING: https://jobs.example.com/25
+
+Paymora
+
+Product Owner expert Business Processing ambito Pagamenti
+
+Bologna, Emilia-Romagna, Italy
+
+Paymora SpA, multinazionale specializzata in soluzioni software per la monetica, i pagamenti, i mercati finanziari e i sistemi per l'Extended Enterprise, ricerca per la propria sede di Bologna un Product Owner expert Business Processing con pregressa esperienza nel ruolo, per la gestione di iniziative di prodotto in ambito Sistemi di Pagamento.
+
+
+
+
+Compiti e Responsabilità
+
+La persona selezionata, adeguatamente introdotta e formata sui prodotti Paymora, avrà le seguenti responsabilità:
+
+Contribuire a garantire lo sviluppo tecnologico della Business Line e la diffusione del know how all’interna della stessa
+Mantenersi costantemente aggiornata su evoluzioni tecnologiche e/o funzionali e di mercato per la Business Line Digital Payments
+Supportare le funzioni operative o di business nell’identificazione di nuovi servizi/prodotti e nell’evoluzione di quelli esistenti
+Collaborare con il team architecture e con quello funzionale per la definizione delle architetture di nuovi prodotti e/o alle modifiche delle architetture di prodotti esistenti
+Assicurare la visibilità di Paymora come leader di soluzioni tecnologiche
+Fornire consulenza interna ed esterna (ai clienti) nel proprio ambito di conoscenza
+Collaborare con i/le manager delle varie aree per la definizione delle necessità formative e partecipare direttamente alla realizzazione di iniziative di formazione.
+
+
+
+
+Requisiti professionali
+
+Almeno 10 anni di esperienza nel ruolo, preferibilmente in realtà complesse e/o aziende multinazionali
+Conoscenza professionale della lingua Inglese – livello minimo richiesto: B2
+
+
+
+
+Competenze di Dominio:
+
+Pagamenti SEPA SCT, SEPA SDD, SEPA SCTInst, ESTERO, Corporate Banking (CBI e SCORE), CIT
+Normativa PSD2, GDPR
+Protocolli di rete Bancarie EBICS, SwiftNet, SiaNet
+Formati Bancari (RNI, FIN, ISO20022, EDIFACT)
+Procedure Bancarie come Anagrafiche Clienti, Condizioniere, Conti Correnti
+Segnalazioni Bancarie come Centrale Rischi, Anacredit
+Soluzioni di Payment HUB per il mercato SEPA e Internazionale in ambito
+Soluzioni di pagamento nell'ambito mobile Payment/Commerce e e-Payment/Commerce
+
+
+
+
+Competenze tecnologiche:
+
+J2EE
+Micro Service
+API Management
+BlockChain
+Big Data
+Cybersecurity
+
+
+
+
+Principali attitudini e abilità
+
+Capacità di confronto continuo ed efficace con gli stakeholder interni ed esterni
+Ottime doti di leadership e capacità di gestione di team multilocati
+Capacità analitiche, precisione e affidabilità
+Proattività, problem solving e orientamento agli obiettivi
+
+
+
+
+Cosa offriamo
+
+Formazione e opportunità di inserimento all’interno di un’azienda multinazionale in forte espansione, un ambiente dinamico e stimolante, la possibilità di sperimentare logiche di lavoro in team e di confronto con diverse figure professionali a tutti i livelli.
+
+
+
+
+Titolo di studio: Laurea in Ingegneria Informatica, Scienze Informatiche o equivalenti; apprezzabile Master o formazione ad hoc post-universitaria
+
+
+
+
+Sede di lavoro: Bologna (modalità Ibrida)
+
+
+
+
+Contratto: Metalmeccanico
+
+
+
+
+Retribuzione:
+
+La retribuzione per questo ruolo è compresa tra 50.000 € e 60.000 €.
+
+La definizione del posizionamento all’interno di questa fascia è determinata dai seguenti parametri:
+
+Esperienza e Seniority: Livello di autonomia maturato nel ruolo
+Competenze e Hard Skills: Padronanza tecnica degli strumenti e dei processi richiesti
+Titoli e Certificazioni: Background accademico e qualifiche professionali specifiche
+Cultural Fit: Allineamento con i valori, la visione e la cultura della nostra azienda
+Potenziale di crescita: Prospettive di sviluppo professionale all'interno del team
+
+
+
+
+Elementi accessori:
+
+Pacchetto welfare per i neo genitori
+Buoni pasto
+Buono welfare come stabilito dal CCNL
+Orario flessibile ed elastico e accordo di smart working
+Coperture assicurative a tutela della salute e convenzioni riservate
+
+
+
+
+Il presente annuncio è rivolto a persone di tutti i generi, ai sensi delle leggi 903/77 e 125/91, e di tutte le età ed etnie, ai sensi dei decreti legislativi 215/03 e 216/03.
+
+
+
+
+Per ulteriori informazioni, consultare la nostra informativa privacy tramite il seguente link https://jobs.example.com/25

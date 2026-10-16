@@ -1,0 +1,211 @@
+[
+  {
+    "id": 1,
+    "requirement": "AI project manager",
+    "keywords": [
+      "AI Project Manager",
+      "Project Manager",
+      "AI Delivery Manager",
+      "Technical Project Manager"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 2,
+    "requirement": "Delivery track record on MLOps, AI products or generative models",
+    "keywords": [
+      "MLOps",
+      "AI products",
+      "Generative AI",
+      "GenAI",
+      "Machine Learning"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 3,
+    "requirement": "Client-facing delivery management as direct client counterpart",
+    "keywords": [
+      "client delivery",
+      "client interface",
+      "stakeholder management",
+      "client-facing"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 4,
+    "requirement": "C-level steering and executive communication",
+    "keywords": [
+      "steering committee",
+      "C-level",
+      "executive communication",
+      "status reporting"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 5,
+    "requirement": "Delivery phase planning with exit criteria and scheduling around scarce shared resources",
+    "keywords": [
+      "project planning",
+      "delivery plan",
+      "exit criteria",
+      "scheduling",
+      "dependency management"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 6,
+    "requirement": "Budgeting and tracking effort, allocation and timeline against plan",
+    "keywords": [
+      "budgeting",
+      "budget management",
+      "resource allocation",
+      "effort estimation"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 7,
+    "requirement": "Scope management through formal change control",
+    "keywords": [
+      "change control",
+      "change management",
+      "scope management",
+      "change requests"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 8,
+    "requirement": "Reading eval reports and sanity-checking GPU-hour and token estimates",
+    "keywords": [
+      "eval reports",
+      "model evaluation",
+      "GPU-hour",
+      "token estimates",
+      "compute budget"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 9,
+    "requirement": "Workshop facilitation with domain experts",
+    "keywords": [
+      "workshops",
+      "facilitation",
+      "domain experts",
+      "requirements workshops"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 10,
+    "requirement": "Project and portfolio management tooling",
+    "keywords": [
+      "project management tools",
+      "portfolio management",
+      "project portfolio"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 11,
+    "requirement": "Coordinating data dependencies with security and legal (DPAs, licensing, anonymisation)",
+    "keywords": [
+      "DPA",
+      "data processing agreement",
+      "data licensing",
+      "anonymisation",
+      "anonymization"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 12,
+    "requirement": "Degree in engineering, management engineering or economics",
+    "keywords": [
+      "Management Engineering",
+      "Engineering",
+      "Economics"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 13,
+    "requirement": "Fluent English",
+    "keywords": [
+      "English",
+      "fluent English"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 14,
+    "requirement": "Delivery of foundation model / LLM training, distillation, optimisation or agentic AI programmes",
+    "keywords": [
+      "LLM",
+      "Foundation Model",
+      "distillation",
+      "Agentic AI",
+      "AI agents"
+    ],
+    "importance": "nice"
+  },
+  {
+    "id": 15,
+    "requirement": "Data-platform rollout delivery",
+    "keywords": [
+      "data platform",
+      "platform rollout",
+      "data-platform programmes"
+    ],
+    "importance": "nice"
+  },
+  {
+    "id": 16,
+    "requirement": "Project management certification",
+    "keywords": [
+      "PMP",
+      "PRINCE2",
+      "Agile certification",
+      "Agile"
+    ],
+    "importance": "nice"
+  },
+  {
+    "id": 17,
+    "requirement": "Regulated or public-sector programmes",
+    "keywords": [
+      "public sector",
+      "public institutions",
+      "regulated industries",
+      "regulated sector"
+    ],
+    "importance": "nice"
+  },
+  {
+    "id": 18,
+    "requirement": "Pre-sales and proposal work",
+    "keywords": [
+      "pre-sales",
+      "presales",
+      "proposals",
+      "proposal writing"
+    ],
+    "importance": "nice"
+  },
+  {
+    "id": 19,
+    "requirement": "Multi-vendor or EU-funded programme management",
+    "keywords": [
+      "programme management",
+      "program management",
+      "multi-vendor",
+      "EU-funded"
+    ],
+    "importance": "nice"
+  }
+]

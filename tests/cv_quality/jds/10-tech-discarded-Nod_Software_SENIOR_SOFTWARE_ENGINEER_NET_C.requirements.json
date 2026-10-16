@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Senior software engineer (.NET/C#)", "keywords": ["Senior Software Engineer", "Senior .NET Developer", "Senior C# Developer", ".NET Engineer", "Software Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "C# and modern .NET (.NET 6/8+) for backend, services and web apps", "keywords": ["C#", ".NET", ".NET 8", ".NET Core", "ASP.NET Core"], "importance": "must"},
+  {"id": 3, "requirement": "REST API design and implementation (authentication, authorization, versioning)", "keywords": ["REST API", "RESTful", "API Design", "Web API", "API REST"], "importance": "must"},
+  {"id": 4, "requirement": "Software architecture: design patterns, SOLID, clean architecture, distributed services", "keywords": ["Software Architecture", "Design Patterns", "SOLID", "Clean Architecture", "Microservices"], "importance": "must"},
+  {"id": 5, "requirement": "Relational databases, especially SQL Server", "keywords": ["SQL Server", "Microsoft SQL Server", "MSSQL", "T-SQL", "Relational Database"], "importance": "must"},
+  {"id": 6, "requirement": "Entity Framework Core ORM", "keywords": ["Entity Framework Core", "EF Core", "Entity Framework", "ORM"], "importance": "must"},
+  {"id": 7, "requirement": "Automated testing, code review and refactoring", "keywords": ["Automated Testing", "Unit Testing", "Code Review", "Refactoring", "test automatici"], "importance": "must"},
+  {"id": 8, "requirement": "Git and CI/CD pipelines", "keywords": ["Git", "CI/CD", "Continuous Integration", "Continuous Delivery"], "importance": "must"},
+  {"id": 9, "requirement": "Agile methodologies (Scrum/Kanban)", "keywords": ["Agile", "Scrum", "Kanban"], "importance": "must"},
+  {"id": 10, "requirement": "Integration with external and third-party systems (ERP, cloud services, devices)", "keywords": ["System Integration", "ERP Integration", "Third-party Integration", "API Integration"], "importance": "must"},
+  {"id": 11, "requirement": "Application performance optimization and SQL query tuning", "keywords": ["Performance Optimization", "Performance Tuning", "Profiling", "Query Optimization", "tuning delle query"], "importance": "must"},
+  {"id": 12, "requirement": "Mentoring junior developers", "keywords": ["Mentoring", "Technical Mentoring", "Coaching", "affiancamento"], "importance": "must"},
+  {"id": 13, "requirement": "End-to-end feature ownership on production products, from analysis to post-release support", "keywords": ["End-to-end", "Software Development Lifecycle", "SDLC", "Post-release Support", "Production Support"], "importance": "must"},
+  {"id": 14, "requirement": "Enterprise or multi-tenant SaaS products with many users", "keywords": ["SaaS", "Multi-tenant", "Multi-tenancy", "Enterprise Software"], "importance": "nice"},
+  {"id": 15, "requirement": "Caching and messaging systems", "keywords": ["Redis", "RabbitMQ", "Azure Service Bus", "Message Queue", "Caching"], "importance": "nice"},
+  {"id": 16, "requirement": "Docker, Kubernetes and observability (logging, metrics, tracing)", "keywords": ["Docker", "Kubernetes", "K8s", "Observability", "Monitoring"], "importance": "nice"},
+  {"id": 17, "requirement": "Cloud platforms (Azure and/or AWS)", "keywords": ["Azure", "Microsoft Azure", "AWS", "Amazon Web Services", "Cloud"], "importance": "nice"},
+  {"id": 18, "requirement": "Application security (OWASP, API hardening)", "keywords": ["OWASP", "Application Security", "API Security", "API Hardening"], "importance": "nice"},
+  {"id": 19, "requirement": "AI tools for software development", "keywords": ["GitHub Copilot", "AI-assisted Development", "AI Tools", "LLM", "strumenti AI"], "importance": "nice"},
+  {"id": 20, "requirement": "Mobile or cross-platform development", "keywords": [".NET MAUI", "React Native", "Flutter", "Mobile Development", "Cross-platform"], "importance": "nice"}
+]

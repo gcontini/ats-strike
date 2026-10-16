@@ -1,0 +1,72 @@
+POSTING_URL: https://jobs.example.com/08
+Lamna Talent Italia
+
+Senior Cloud Platform Tech Lead
+
+Milan, Lombardy, Italy
+
+60K EUR/yr - 70K EUR/yr
+
+Senior Cloud Platform Tech Lead
+
+Lamna Talent, brand IT & Technology di Lamna Group, è alla ricerca di un/una Senior Cloud Platform Tech Lead per una prestigiosa realtà operante nel settore dei servizi cloud e delle infrastrutture digitali.
+
+La risorsa entrerà a far parte di un contesto altamente tecnologico, caratterizzato dalla gestione di piattaforme cloud complesse e multi-stack, dove infrastruttura e sviluppo software convergono per realizzare servizi innovativi rivolti a clienti enterprise. Il ruolo rappresenta un punto di raccordo strategico tra i team di Infrastructure Engineering e Software Development, contribuendo alla progettazione e all'evoluzione di piattaforme cloud di nuova generazione.
+
+Responsabilità
+
+Progettare e sviluppare API, automazioni e componenti di piattaforma utilizzati trasversalmente dai team tecnici.
+Definire standard e linee guida architetturali per l'esposizione dei servizi infrastrutturali verso i layer applicativi.
+Collaborare con i team Infrastructure e Software per garantire coerenza tra compute, networking, storage e servizi applicativi.
+Realizzare soluzioni Infrastructure as Code mediante Terraform.
+Progettare e implementare sistemi di observability e monitoring.
+Eseguire troubleshooting avanzato su problematiche che coinvolgono più livelli tecnologici: applicativo, sistema operativo, networking e storage.
+Contribuire alla progettazione di ambienti cloud multi-tenant, ad alta affidabilità e scalabilità.
+Fornire supporto tecnico specialistico, formazione e trasferimento di know-how ai team interni.
+Partecipare a iniziative di innovazione tecnologica, Proof of Concept e valutazione di nuove soluzioni infrastrutturali.
+
+Requisiti
+
+Esperienza consolidata nella progettazione, implementazione e gestione di piattaforme cloud enterprise.
+Conoscenza approfondita di almeno uno dei seguenti ecosistemi: OpenStack, Nutanix, VMware vSphere, Kubernetes on-premise/bare metal.
+Solida esperienza in ambienti Linux e troubleshooting avanzato.
+Ottima conoscenza di Terraform e dei principi Infrastructure as Code.
+Esperienza nella gestione e configurazione di networking avanzato (VLAN, routing, firewalling, VXLAN, BGP, EVPN o tecnologie analoghe).
+Competenze di sviluppo software in Go, Python o Rust.
+Esperienza nella progettazione e realizzazione di API REST e servizi infrastrutturali.
+Familiarità con Git e metodologie collaborative di sviluppo.
+Capacità di guidare le scelte tecniche attraverso autorevolezza e competenza, senza responsabilità diretta di people management.
+
+Completano il profilo
+
+Forte orientamento al problem solving.
+Visione architetturale end-to-end.
+Ottime capacità comunicative e di collaborazione con team multidisciplinari.
+Attitudine alla condivisione delle competenze e alla formazione tecnica.
+Approccio pragmatico, orientato all'innovazione e al miglioramento continuo.
+
+Cosa offriamo
+
+Inserimento in un contesto tecnologicamente avanzato e orientato all'innovazione.
+Coinvolgimento diretto nella progettazione di piattaforme cloud enterprise.
+Opportunità di crescita verso ruoli di riferimento tecnico e architetturale.
+Formazione continua e accesso a tecnologie di ultima generazione.
+Smart working ibrido e pacchetto benefit.
+Contratto a tempo indeterminato.
+
+Contratto e retribuzione
+
+Contratto a Tempo Indeterminato - Consulenza
+
+RAL : 60.000 € - 70.000 €, commisurata all'esperienza maturata.
+
+Sede di lavoro: Milano (MI) - modalità ibrida
+
+
+
+
+in Lamna Talent ogni persona disegna il proprio piano di sviluppo professionale insieme al Manager, attraverso percorsi di crescita personalizzati, learning path dedicati e obiettivi annuali monitorati tramite un sistema strutturato di performance review. Lavorerai in un gruppo multinazionale che da anni figura nella classifica delle "World's Most Ethical Companies". Lamna ha scelto di certificare il proprio impegno per la Responsabilità Sociale con la Certificazione Etica SA8000®, garantendo una valutazione oggettiva e trasparente dei propri standard.
+
+Il nostro non è solo uno slogan: crediamo nel talento e lo valorizziamo attraverso percorsi concreti di crescita professionale e personale.
+
+NOTE LEGALI: Lamna Talent è una compagnia eticamente responsabile. Il servizio è gratuito. I candidati ambosessi (L.903/77 - D.Lgs. n.198/2006) sono invitati a leggere l'informativa Privacy su https://jobs.example.com/08. Aut. Min. Prot. N. 1116 - SG - del 26/11/04. Il titolare della registrazione e/o candidatura dichiara di essere a conoscenza delle sanzioni penali previste in caso di dichiarazioni mendaci o contenenti dati non più rispondenti a verità come previsto dal D.P.R. n.445 del 28.12.2000.

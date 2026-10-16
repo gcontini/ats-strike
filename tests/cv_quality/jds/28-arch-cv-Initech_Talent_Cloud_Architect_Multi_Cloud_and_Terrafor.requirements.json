@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Cloud architect", "keywords": ["Cloud Architect", "Cloud Solutions Architect", "Cloud Infrastructure Architect", "Multi-Cloud Architect"], "importance": "must"},
+  {"id": 2, "requirement": "Google Cloud Platform architecture", "keywords": ["Google Cloud Platform", "GCP", "Google Cloud"], "importance": "must"},
+  {"id": 3, "requirement": "Terraform and Infrastructure as Code", "keywords": ["Terraform", "Infrastructure as Code", "IaC", "Terraform modules", "Terraform state"], "importance": "must"},
+  {"id": 4, "requirement": "AWS", "keywords": ["AWS", "Amazon Web Services"], "importance": "must"},
+  {"id": 5, "requirement": "Microsoft Azure", "keywords": ["Azure", "Microsoft Azure"], "importance": "must"},
+  {"id": 6, "requirement": "Design of scalable, secure enterprise cloud architectures", "keywords": ["cloud architecture", "enterprise cloud architecture", "architetture cloud"], "importance": "must"},
+  {"id": 7, "requirement": "Cloud networking", "keywords": ["VPC", "VNet", "VPN", "load balancing", "cloud networking"], "importance": "must"},
+  {"id": 8, "requirement": "Docker and Kubernetes container platforms", "keywords": ["Kubernetes", "K8s", "Docker", "containers"], "importance": "must"},
+  {"id": 9, "requirement": "DevOps, CI/CD pipelines, Git, scripting and configuration management", "keywords": ["CI/CD", "DevOps", "Git", "scripting", "configuration management"], "importance": "must"},
+  {"id": 10, "requirement": "Cloud governance, security and compliance", "keywords": ["cloud governance", "cloud security", "compliance", "IAM", "secret management"], "importance": "must"},
+  {"id": 11, "requirement": "Cloud database configuration", "keywords": ["cloud database", "database provisioning", "high availability", "replication", "backup"], "importance": "must"},
+  {"id": 12, "requirement": "FinOps and cloud cost optimization", "keywords": ["FinOps", "cost optimization", "cloud cost optimization", "ottimizzazione costi"], "importance": "must"},
+  {"id": 13, "requirement": "Business continuity and disaster recovery", "keywords": ["disaster recovery", "DR", "business continuity"], "importance": "must"},
+  {"id": 14, "requirement": "Logging and monitoring", "keywords": ["logging", "monitoring", "observability"], "importance": "must"},
+  {"id": 15, "requirement": "Cloud strategy and roadmap", "keywords": ["cloud strategy", "roadmap", "cloud roadmap"], "importance": "must"},
+  {"id": 16, "requirement": "Technical leadership and architectural guidance for teams", "keywords": ["technical leadership", "architectural guidance", "technical guidelines", "linee guida tecniche"], "importance": "must"},
+  {"id": 17, "requirement": "Communicating with technical and non-technical stakeholders", "keywords": ["stakeholder management", "stakeholders", "business requirements"], "importance": "must"},
+  {"id": 18, "requirement": "Multi-cloud or hybrid cloud environments", "keywords": ["multi-cloud", "hybrid cloud", "on-premise"], "importance": "nice"},
+  {"id": 19, "requirement": "AlloyDB and PostgreSQL", "keywords": ["AlloyDB", "PostgreSQL", "Postgres"], "importance": "nice"},
+  {"id": 20, "requirement": "Google Cloud or equivalent Azure/AWS architecture certifications", "keywords": ["Google Cloud Professional Cloud Architect", "Professional Cloud Architect", "Professional Cloud DevOps Engineer"], "importance": "nice"}
+]

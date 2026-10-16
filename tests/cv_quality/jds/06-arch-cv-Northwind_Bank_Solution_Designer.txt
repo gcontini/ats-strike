@@ -1,0 +1,163 @@
+Northwind Bank Italia
+
+Solution Designer
+
+Milan, Lombardy, Italy
+
+50K EUR/yr
+
+The Solution Designer / IT Integrator is responsible for translating business objectives, functional requirements and non-functional requirements into scalable, secure and maintainable end-to-end technical solutions.
+
+The role acts as the bridge between Business, Architecture and Engineering, ensuring technical coherence across systems, applications, integrations and data flows while supporting successful delivery outcomes.
+
+The Solution Designer / IT Integrator drives solution feasibility, end-to-end design, technical alignment and implementation governance throughout the initiative lifecycle.
+
+
+Key Responsibilities
+
+Business & Solution Analysis
+
+    Analyse business requirements, Epics and User Stories.
+    Support shaping and feasibility activities.
+    Perform impact assessments across applications, services and business processes.
+    Ensure traceability between requirements and technical implementation.
+
+Solution Design
+
+    Design end-to-end technical solutions aligned with enterprise architecture principles.
+    Define integration patterns, APIs, events, data flows and system interactions.
+    Produce solution documentation and technical specifications.
+    Ensure compliance with security, resilience and operational requirements.
+
+Delivery Support
+
+    Support backlog refinement and User Story decomposition.
+    Collaborate with development teams during implementation.
+    Drive technical decision-making and design reviews.
+    Support testing, deployment and production readiness activities.
+
+Stakeholder Management
+
+    Collaborate with Product Owners, Architects, Engineers and Business stakeholders.
+    Manage technical dependencies across squads and domains.
+    Facilitate workshops and solution alignment sessions.
+    Communicate risks, assumptions and constraints.
+
+Quality & Governance
+
+    Promote engineering excellence and best practices.
+    Ensure alignment with architecture, security and compliance standards.
+    Contribute to continuous improvement initiatives.
+    Support operational stability and problem resolution activities.
+
+
+Core Competencies
+
+Technical Competencies
+
+    Solution Design
+    Enterprise Integration
+    API Design
+    Event-Driven Architecture
+    Microservices Architecture
+    Data Modelling
+    Cloud & Platform Architecture
+    Security by Design
+    DevSecOps
+    Observability & Monitoring
+    Systems Integration
+    Agile Delivery
+    Technical Documentation
+
+
+Leadership Competencies
+
+    Stakeholder Management
+    Facilitation
+    Influencing Skills
+    Decision Making
+    Strategic Thinking
+    Coaching & Mentoring
+    Change Leadership
+
+
+Education & General Requirements
+
+    Degree in Information Technology, Engineering, Computer Science or equivalent experience.
+    Strong analytical and problem-solving skills.
+    At least 6 years of experience in the role
+    Excellent communication and stakeholder management capabilities.
+    Strong customer-centric mindset.
+    Fluent English (written and spoken).
+
+
+Preferred Technologies
+
+The specific technology stack may vary by domain. Knowledge in the following areas is considered beneficial:
+
+    Java
+    Spring Boot
+    REST APIs
+    OpenAPI / Swagger
+    Kafka
+    Event Streaming Platforms
+    Oracle / SQL
+    Azure DevOps
+    Git
+    CI/CD Pipelines
+    Grafana
+    Dynatrace
+    Splunk
+    Kubernetes
+    Cloud Platforms
+
+
+Contract offer:
+
+Working conditions: Permanent employment contract
+
+Working hours: Full time (37 hours per week)
+
+Applicable Collective Labour Agreement: National Collective Labour Agreement for employees in the credit sector (NCLA)
+
+Location: Milan (hybrid)
+
+Starting annual base salary: 50.000€
+
+Variable remuneration: in line with the applicable remuneration policies (with a target based on the role, outcomes linked to the Group, Business line/function and individual performance)
+
+Our compensation approach is built on objective, gender-neutral criteria aligned with the role’s core requirements. That said, we believe talent goes beyond any framework: your total reward package will be tailored to reflect your unique experience, skills, and potential, ensuring we fully recognize the value you bring.
+
+
+The benefits of joining Northwind Bank
+
+In addition to being a part of a great team, working in a fun and innovative environment, we offer:
+
+    Flexible Smart Working
+    Competitive base salaries and performance-based bonuses
+    Meal vouchers and corporate restaurant and bar
+    Health insurance and Accident insurance
+    Pension fund and welfare plan
+    Diverse cultures & Innovative mindsets
+    International Environnent and Talent Program
+    Commitment to sustainability
+    Lots of training development opportunities to help you grow
+    Lots of moments dedicated to physical and mental well-being
+    A special day off when it is your birthday: we call it #doyourbirthday!
+    And of course, we can’t forget free water & coffee at the office!
+
+
+About Northwind Bank
+
+Northwind Bank offers many opportunities to build a diverse and rewarding career. You will be joining an international innovative digital bank, the first in Italy to adopt a fully flexible smart working model, and you will be working in a stimulating environment where you can grow both as an individual and as a professional. Our purpose - empowering people to stay a step ahead in life and in business - represents our belief in people’s potential. We don’t judge, coach or to tell people how to live their lives. We empower people and businesses to realize their own vision for a better future.
+
+#bankyourway is our brand direction with us each and every day. It is how we articulate our purpose and our promise to make banking frictionless to the world.
+
+‘bank your way’ is about people being free to live the life they want to live, knowing that they will make their world a little better for it.
+
+Do you think you are "a step ahead"? Apply now!
+
+
+Our Commitment
+
+Diversity is a fundamental element of our corporate culture, and we are fully committed to creating a safe and inclusive environment, based on mutual respect and the value of diversity, offering equal job opportunities to all qualified candidates.

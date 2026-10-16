@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Lead Architect (Payments)", "keywords": ["Lead Architect", "Payments Architect", "Solution Architect", "Enterprise Architect", "Software Architect"], "importance": "must"},
+  {"id": 2, "requirement": "7+ years as architect in high-availability banking or fintech payments", "keywords": ["Payments", "Payment Systems", "Fintech", "Banking", "High Availability"], "importance": "must"},
+  {"id": 3, "requirement": "Java (latest LTS) and Spring Boot 3", "keywords": ["Java", "Spring Boot", "Spring Boot 3", "Spring Framework"], "importance": "must"},
+  {"id": 4, "requirement": "Kubernetes on-premise and managed (EKS, GKE, AKS)", "keywords": ["Kubernetes", "K8s", "EKS", "GKE", "AKS"], "importance": "must"},
+  {"id": 5, "requirement": "mTLS, payload digital signatures and cryptography", "keywords": ["mTLS", "Mutual TLS", "Digital Signatures", "Payload Signing", "Cryptography"], "importance": "must"},
+  {"id": 6, "requirement": "Cryptographic key management with HSM and HashiCorp Vault", "keywords": ["HSM", "Hardware Security Module", "HashiCorp Vault", "Key Management"], "importance": "must"},
+  {"id": 7, "requirement": "Integration with core banking systems", "keywords": ["Core Banking", "Core Banking Integration", "Core Banking Systems"], "importance": "must"},
+  {"id": 8, "requirement": "Banking payments domain: P2P, POS acquiring, issuing, ledgers, treasury", "keywords": ["P2P Payments", "POS Acquiring", "Issuing", "Ledger", "Treasury"], "importance": "must"},
+  {"id": 9, "requirement": "Reactive programming and Java virtual threads", "keywords": ["Reactive Programming", "Project Reactor", "Spring WebFlux", "Virtual Threads", "Project Loom"], "importance": "must"},
+  {"id": 10, "requirement": "Event-driven messaging with Kafka and RabbitMQ", "keywords": ["Kafka", "Apache Kafka", "RabbitMQ", "Event-Driven Architecture", "Message Queues"], "importance": "must"},
+  {"id": 11, "requirement": "Connecting banks to the Digital Euro infrastructure", "keywords": ["Digital Euro", "CBDC", "Central Bank Digital Currency", "Open Finance"], "importance": "must"},
+  {"id": 12, "requirement": "Distributed transactional and NoSQL databases", "keywords": ["NoSQL", "Distributed Databases", "Distributed Transactions", "Transactional Databases"], "importance": "must"},
+  {"id": 13, "requirement": "Docker and cloud-native tooling", "keywords": ["Docker", "Containers", "Cloud-Native"], "importance": "must"},
+  {"id": 14, "requirement": "Application and session security, banking security compliance", "keywords": ["Application Security", "Session Security", "Security Compliance", "Vulnerability Management", "Security Audit"], "importance": "must"},
+  {"id": 15, "requirement": "KYC/AML workflows", "keywords": ["KYC", "AML", "Know Your Customer", "Anti-Money Laundering"], "importance": "must"},
+  {"id": 16, "requirement": "Development standards, code reviews and technical debt reduction", "keywords": ["Code Review", "Coding Standards", "Technical Debt", "Architecture Governance"], "importance": "must"},
+  {"id": 17, "requirement": "Mentoring developers and managing technical and C-level stakeholders", "keywords": ["Mentoring", "Technical Leadership", "Stakeholder Management", "C-level"], "importance": "must"},
+  {"id": 18, "requirement": "Professional English and Italian", "keywords": ["English", "Italian"], "importance": "must"},
+  {"id": 19, "requirement": "Degree in Computer Engineering, Computer Science or STEM", "keywords": ["Computer Engineering", "Computer Science", "STEM"], "importance": "must"},
+  {"id": 20, "requirement": "Mobile development for banking, wallets or payment SDKs", "keywords": ["Mobile Development", "iOS", "Android", "Flutter", "React Native"], "importance": "nice"}
+]

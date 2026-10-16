@@ -1,0 +1,19 @@
+[
+  {"id": 1, "requirement": "Global Data & AI Adoption Program Manager", "keywords": ["AI Adoption Program Manager", "AI Adoption Manager", "AI Program Manager", "Program Manager"], "importance": "must"},
+  {"id": 2, "requirement": "Lead execution and global deployment of strategic AI initiatives", "keywords": ["AI initiatives", "AI deployment", "AI implementation", "AI transformation"], "importance": "must"},
+  {"id": 3, "requirement": "Program management: plans, roadmaps, milestones, scope, budget and timelines", "keywords": ["Program Management", "Delivery Management", "Roadmap", "Milestones", "Budget"], "importance": "must"},
+  {"id": 4, "requirement": "Managing complex transformation or technology programs", "keywords": ["Digital Transformation", "Transformation Program", "Technology Program", "Automation"], "importance": "must"},
+  {"id": 5, "requirement": "Coordinate business stakeholders, technical teams and external partners", "keywords": ["Stakeholder Management", "Cross-functional Coordination", "External Partners", "Cross-functional"], "importance": "must"},
+  {"id": 6, "requirement": "Governance and oversight of AI programs", "keywords": ["AI Governance", "Program Governance", "Governance", "Enterprise Standards"], "importance": "must"},
+  {"id": 7, "requirement": "Translate business requirements into technical specifications", "keywords": ["Business Requirements", "Technical Requirements", "Technical Specifications", "Implementation Plans"], "importance": "must"},
+  {"id": 8, "requirement": "Change management and user adoption", "keywords": ["Change Management", "User Adoption", "Business Adoption", "AI Adoption", "User Engagement"], "importance": "must"},
+  {"id": 9, "requirement": "Monitor risks and dependencies, report progress and escalate", "keywords": ["Risk Management", "Dependencies", "Progress Reports", "Status Reporting", "Escalation"], "importance": "must"},
+  {"id": 10, "requirement": "Communicate with and present to senior executives", "keywords": ["Executive Communication", "Senior Leadership", "Senior Executives", "Presentation Skills"], "importance": "must"},
+  {"id": 11, "requirement": "Understanding of AI technologies, use cases and deployment approaches", "keywords": ["Artificial Intelligence", "AI", "AI Use Cases", "Data & AI"], "importance": "must"},
+  {"id": 12, "requirement": "Transition AI solutions into operations", "keywords": ["Operational Readiness", "Transition to Operations", "Business Integration", "Operational Environments"], "importance": "must"},
+  {"id": 13, "requirement": "Managerial experience owning strategic initiatives and leading teams", "keywords": ["Manager", "Leadership", "Team Coordination", "Strategic Initiatives"], "importance": "must"},
+  {"id": 14, "requirement": "Bachelor's or Master's degree in Data Science, Computer Science, Engineering, IT or AI", "keywords": ["Bachelor's", "Master's", "Computer Science", "Data Science", "Engineering"], "importance": "must"},
+  {"id": 15, "requirement": "Global and multicultural working environment", "keywords": ["Global", "Multicultural", "International"], "importance": "must"},
+  {"id": 16, "requirement": "Full professional proficiency in English", "keywords": ["English", "Full professional proficiency"], "importance": "must"},
+  {"id": 17, "requirement": "Influencing and negotiation", "keywords": ["Negotiation", "Influencing"], "importance": "nice"}
+]

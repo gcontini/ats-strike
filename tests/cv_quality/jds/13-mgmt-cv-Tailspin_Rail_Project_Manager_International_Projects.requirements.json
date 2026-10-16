@@ -1,0 +1,18 @@
+[
+  {"id": 1, "requirement": "Project manager for international projects", "keywords": ["Project Manager", "International Project Manager", "Project Management", "PM"], "importance": "must"},
+  {"id": 2, "requirement": "Managing large-scale infrastructure or transportation projects", "keywords": ["infrastructure projects", "transportation projects", "large-scale projects", "transport infrastructure"], "importance": "must"},
+  {"id": 3, "requirement": "Rail infrastructure domain", "keywords": ["rail", "railway", "rail infrastructure", "rail transportation"], "importance": "must"},
+  {"id": 4, "requirement": "Leading all project phases from concept to delivery", "keywords": ["project lifecycle", "end-to-end delivery", "concept to delivery", "project delivery"], "importance": "must"},
+  {"id": 5, "requirement": "Budget management", "keywords": ["Budget Management", "budget", "on-budget", "cost control"], "importance": "must"},
+  {"id": 6, "requirement": "Schedule and milestone management", "keywords": ["schedule", "scheduling", "milestones", "on-time delivery"], "importance": "must"},
+  {"id": 7, "requirement": "Resource management", "keywords": ["resource management", "resource allocation", "resource planning"], "importance": "must"},
+  {"id": 8, "requirement": "Coordinating cross-functional teams", "keywords": ["cross-functional teams", "cross-functional coordination", "team coordination"], "importance": "must"},
+  {"id": 9, "requirement": "Stakeholder and partner management", "keywords": ["Stakeholder Management", "stakeholders", "partners", "stakeholder satisfaction"], "importance": "must"},
+  {"id": 10, "requirement": "Safety and regulatory compliance", "keywords": ["safety standards", "regulatory compliance", "regulatory standards", "safety"], "importance": "must"},
+  {"id": 11, "requirement": "Project management methodologies and tools", "keywords": ["project management methodologies", "project management tools", "PM methodologies"], "importance": "must"},
+  {"id": 12, "requirement": "Team leadership and motivation", "keywords": ["team leadership", "leadership", "people management"], "importance": "must"},
+  {"id": 13, "requirement": "Engineering or technical background", "keywords": ["Engineering", "Engineering degree", "technical background"], "importance": "must"},
+  {"id": 14, "requirement": "International projects in a multicultural environment", "keywords": ["International Projects", "international", "multicultural"], "importance": "must"},
+  {"id": 15, "requirement": "Quality and sustainability KPIs", "keywords": ["KPI", "performance indicators", "quality", "sustainability"], "importance": "must"},
+  {"id": 16, "requirement": "Continuous improvement and innovation", "keywords": ["continuous improvement", "innovation", "process improvement"], "importance": "must"}
+]

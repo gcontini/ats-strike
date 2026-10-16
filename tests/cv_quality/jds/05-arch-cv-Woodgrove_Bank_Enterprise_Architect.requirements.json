@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Enterprise architect", "keywords": ["Enterprise Architect", "Enterprise Architecture", "IT Architect", "Chief Architect"], "importance": "must"},
+  {"id": 2, "requirement": "Governing enterprise information system modeling and evolution", "keywords": ["enterprise architecture modeling", "information system modeling", "architecture governance", "modellazione del sistema informativo"], "importance": "must"},
+  {"id": 3, "requirement": "IT strategy and technology transformation projects", "keywords": ["IT strategy", "technology transformation", "digital transformation", "trasformazione tecnologica"], "importance": "must"},
+  {"id": 4, "requirement": "Enterprise architecture and IT governance frameworks", "keywords": ["IT governance", "EA framework", "enterprise architecture framework", "COBIT"], "importance": "must"},
+  {"id": 5, "requirement": "Cloud and hybrid architectures", "keywords": ["cloud", "cloud architecture", "hybrid cloud", "hybrid architecture"], "importance": "must"},
+  {"id": 6, "requirement": "Integration paradigms (SOA, APIs, event-driven)", "keywords": ["SOA", "API", "event-driven", "EDA", "integration architecture"], "importance": "must"},
+  {"id": 7, "requirement": "Microservices and containers", "keywords": ["microservices", "containers", "Docker", "Kubernetes"], "importance": "must"},
+  {"id": 8, "requirement": "Architecture modeling tools (UML, BPMN, Archi)", "keywords": ["UML", "BPMN", "Archi", "ArchiMate"], "importance": "must"},
+  {"id": 9, "requirement": "Building artificial intelligence systems", "keywords": ["artificial intelligence", "AI", "machine learning", "intelligenza artificiale"], "importance": "must"},
+  {"id": 10, "requirement": "Architecture roadmaps from business process and technology analysis", "keywords": ["architecture roadmap", "technology roadmap", "business process analysis", "roadmap evolutive"], "importance": "must"},
+  {"id": 11, "requirement": "Business cases and cost-benefit analysis of architecture changes", "keywords": ["business case", "cost-benefit analysis", "costi/benefici"], "importance": "must"},
+  {"id": 12, "requirement": "Communicating with business, IT and C-level stakeholders", "keywords": ["stakeholder management", "C-level", "C-suite", "executive stakeholders"], "importance": "must"},
+  {"id": 13, "requirement": "Presenting architecture topics at company boards", "keywords": ["architecture board", "architecture review board", "ARB", "design authority"], "importance": "must"},
+  {"id": 14, "requirement": "Periodic IT assessments from internal and external audits", "keywords": ["IT audit", "IT assessment", "internal audit", "external audit"], "importance": "must"},
+  {"id": 15, "requirement": "Client-side and server-side technical knowledge", "keywords": ["client-server", "client side", "server side", "frontend", "backend"], "importance": "must"},
+  {"id": 16, "requirement": "Managing multiple projects concurrently", "keywords": ["multiple projects", "project portfolio", "project management"], "importance": "must"},
+  {"id": 17, "requirement": "Financial services and banking sector", "keywords": ["banking", "financial services", "bank", "settore finanziario"], "importance": "nice"},
+  {"id": 18, "requirement": "TOGAF knowledge and certification", "keywords": ["TOGAF", "TOGAF certification", "TOGAF 9", "TOGAF 10"], "importance": "nice"},
+  {"id": 19, "requirement": "ABILab architecture framework", "keywords": ["ABILab", "ABI Lab"], "importance": "nice"},
+  {"id": 20, "requirement": "English at B2 level or above", "keywords": ["English", "B2", "inglese"], "importance": "nice"}
+]

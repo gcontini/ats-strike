@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Head of distribution network software", "keywords": ["Responsabile Software Reti Distributive", "Software Development Manager", "Head of Software Development", "Software Manager"], "importance": "must"},
+  {"id": 2, "requirement": "Solution architect or software tech lead role", "keywords": ["Solution Architect", "Software Tech Lead", "Tech Lead", "Technical Lead"], "importance": "must"},
+  {"id": 3, "requirement": "Software development team management", "keywords": ["Team Management", "Team Lead", "People Management", "gestione team"], "importance": "must"},
+  {"id": 4, "requirement": "Java and Spring Boot", "keywords": ["Java", "Spring Boot", "Spring"], "importance": "must"},
+  {"id": 5, "requirement": "Microservices architecture for complex applications", "keywords": ["Microservices", "Microservice Architecture", "microservizi"], "importance": "must"},
+  {"id": 6, "requirement": "Relational databases, Oracle and IBM DB2", "keywords": ["Oracle", "IBM DB2", "DB2", "Relational Database", "RDBMS"], "importance": "must"},
+  {"id": 7, "requirement": "Coordination of vendors and external development partners", "keywords": ["Vendor Management", "Supplier Management", "External Partners", "coordinamento fornitori"], "importance": "must"},
+  {"id": 8, "requirement": "AI and Generative AI tools applied to software engineering", "keywords": ["Generative AI", "GenAI", "Artificial Intelligence", "AI", "Intelligenza Artificiale"], "importance": "must"},
+  {"id": 9, "requirement": "Master's degree in Computer Science, Computer Engineering or equivalent", "keywords": ["Master's Degree", "Computer Science", "Computer Engineering", "Laurea Magistrale", "Ingegneria Informatica"], "importance": "must"},
+  {"id": 10, "requirement": "Supervising backend and frontend development and application maintenance", "keywords": ["Backend", "Frontend", "Application Maintenance", "manutenzione applicativa"], "importance": "must"},
+  {"id": 11, "requirement": "Application architecture, solution design and validation of partner solutions", "keywords": ["Application Architecture", "Software Architecture", "Solution Design", "Technical Analysis"], "importance": "must"},
+  {"id": 12, "requirement": "Work planning and progress monitoring for internal and third-party resources", "keywords": ["Project Planning", "Resource Planning", "Work Plan", "Progress Monitoring"], "importance": "must"},
+  {"id": 13, "requirement": "IT and business stakeholder management", "keywords": ["Stakeholder Management", "Business Stakeholders", "stakeholder"], "importance": "must"},
+  {"id": 14, "requirement": "Software development lifecycle governance and quality standards", "keywords": ["SDLC", "Software Development Lifecycle", "Software Quality", "ciclo di vita del software"], "importance": "must"},
+  {"id": 15, "requirement": "Feasibility analysis and project estimation", "keywords": ["Feasibility Analysis", "Feasibility Study", "Estimation", "stime progettuali"], "importance": "must"},
+  {"id": 16, "requirement": "Application integration and configuration with other IT functions", "keywords": ["System Integration", "Application Integration", "Integration"], "importance": "must"},
+  {"id": 17, "requirement": "Software for agency distribution networks", "keywords": ["Distribution Network", "Agency Network", "reti agenziali", "rete distributiva"], "importance": "must"},
+  {"id": 18, "requirement": "Financial services domain", "keywords": ["Financial Services", "Finance", "financial services"], "importance": "nice"},
+  {"id": 19, "requirement": "Insurance domain projects", "keywords": ["Insurance", "Insurance Company", "ambito assicurativo"], "importance": "nice"},
+  {"id": 20, "requirement": "Application modernization on COBOL/CICS", "keywords": ["COBOL", "CICS", "Application Modernization", "Legacy Modernization", "modernizzazione applicativa"], "importance": "nice"}
+]

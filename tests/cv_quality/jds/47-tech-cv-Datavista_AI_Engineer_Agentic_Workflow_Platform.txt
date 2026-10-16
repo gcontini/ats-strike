@@ -1,0 +1,67 @@
+AI Engineer/Agentic Workflow Platform
+Datavista Europe & Latam — Ferrara, Emilia-Romagna, Italy (On-site)
+JOB_POSTING: https://jobs.example.com/47
+
+Datavista Europe & Latam
+AI Engineer/Agentic Workflow Platform
+Ferrara, Emilia-Romagna, Italy
+
+Who We Are
+
+We are looking for a hands-on AI Engineer to help improve and scale an internal platform that enables engineering teams to ship faster and safer using AI-powered workflows.
+
+This role is focused on practical AI engineering, not AI research and not pure platform architecture. You will work on agentic workflows, prompt engineering, evaluation pipelines, GitHub-based automation, and developer tooling that helps teams adopt AI agents consistently across repositories.
+
+You will join an existing initiative that already has working foundations in place. The immediate need is to strengthen, stabilise, and mature the current implementation through hands-on engineering, especially in agent development, testing, evaluation, and workflow reliability.
+
+This is an excellent fit for someone who already uses AI coding agents as part of their daily workflow and knows how to turn AI capabilities into reliable engineering tooling.
+
+What You'll Be Doing
+
+
+Build and improve AI workflows across repositories
+Design agent workflows for docs, testing, code quality, reviews, and security
+Create effective prompts and multi-step interactions
+Improve reliability and usability of agents
+Use AI coding tools (e.g., Copilot, Cursor) to accelerate delivery
+Design evaluation pipelines for prompts and agents
+Build datasets with edge and adversarial cases
+Add automated regression and behavior checks
+Use code-based and LLM-based evaluators
+Define quality gates before production
+Build reusable templates and onboarding tools
+Develop CLI/scripts for easy adoption
+Maintain workflow catalog and integrations
+Write clear docs and guides
+Enable self-service usage
+Maintain GitHub Actions and CI/CD patterns
+Ensure secure design (least privilege, secrets, OIDC)
+Improve security controls and automation safety
+Mitigate risks (prompt injection, data leaks)
+Keep changes testable and production-safe
+
+
+
+What You'll Bring Along
+
+
+BSc/MSc in Computer Science or related field
+Minimum 3-6+ years as a Platform Engineer
+Strong hands-on experience with Python for scripting, automation, evaluation tooling, or integrations
+Practical experience building with LLMs, prompts, AI agents, or agentic workflows in real engineering or production contexts
+Daily use of AI coding assistants or coding agents such as Copilot, Cursor, Kiro, Windsurf, Claude Code, or similar
+Experience designing, testing, and iterating prompts for reliable task execution
+Experience building evaluation or testing approaches for non-deterministic AI outputs
+Strong experience with GitHub Actions or equivalent CI/CD tooling, including reusable workflows and pipeline-as-code patterns
+Experience working with YAML, Markdown, JSON, and configuration-driven systems
+Good understanding of authentication, authorisation, secrets handling, and least-privilege access patterns
+Ability to write clear technical documentation for developers
+Strong hands-on engineering mindset with the ability to improve existing implementations quickly and pragmatically
+Preferred / Nice to Have
+Experience with AI evaluation frameworks such as promptfoo, DeepEval, RAGAS, Azure AI Evaluation SDK, or similar
+Experience with agentic frameworks such as LangChain, AutoGen, CrewAI, OpenAI Assistants API, or similar
+Background in internal developer platforms, developer tooling, or developer experience engineering
+Experience with docs-as-code and static documentation sites
+Familiarity with infrastructure-as-code tools such as Terraform, Bicep, Pulumi, or CDK
+Understanding of software supply chain security, dependency scanning, action pinning, and SBOM concepts
+Awareness of AI safety concerns such as prompt injection, adversarial testing, and OWASP Top 10 for LLM

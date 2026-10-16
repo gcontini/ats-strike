@@ -1,0 +1,75 @@
+Senior Presale IT
+
+Bologna, Emilia-Romagna, Italy
+
+Job Description
+
+Il Gruppo Bluewater 
+
+Siamo una delle maggiori multiutility nazionali, quotata in Borsa dal 2003, e abbiamo fatto del rapporto diretto con il territorio un vero e proprio asset che ha migliorato la nostra resilienza e la capacità di rispondere ai cambiamenti e alle nuove esigenze.
+
+I settori in cui operiamo principalmente sono quello ambientale (gestione e trattamento dei rifiuti), idrico (acquedotto, fognature e depurazione) ed energetico (distribuzione e vendita di energia elettrica, gas e servizi energia), ma offriamo anche servizi per l'illuminazione pubblica e telecomunicazioni, adottando sempre un modello di business orientato alla creazione di valore condiviso per tutti gli stakeholder.
+
+Cerchiamo persone curiose, innovative, che condividano con noi mission e valori. Persone pronte ad affrontare le sfide che il nostro contesto, in continua trasformazione, ci pone ogni giorno: ambientali, di business, tecnologiche.
+
+Il tuo nuovo ruolo
+
+Per Bluewater Digital, la Digital Company del Gruppo Bluewater, stiamo cercando una figura Senior Presale IT, in ambito Pre-Sales (Customer Solution) da inserire presso una delle sedi di Bologna, Modena e Treviso (TV). La risorsa sarà responsabile della definizione e progettazione HLD di soluzioni tecnologiche avanzate in ambito IT, Networking e cyber security, oltre ad occuparsi anche della progettazione di architetture Cloud (IaaS, PaaS, SaaS) su ambienti ibridi.
+
+Le attività che ti aspettano
+
+    supportare il team commerciale nell’analisi dei requisiti dei clienti, identificando le migliori soluzioni disponibili, garantendo la sostenibilità economica delle proposte e collabora con le strutture di Delivery e di Assurance per l'attivazione dei servizi custom
+    effettuare lo scouting ed il presidio delle tendenze di mercato, interagendo con i Vendor e Fornitori, per l'individuazione di nuove soluzioni tecnologiche o dell'evoluzione delle attuali, valutandone la maturità e ed il grado d'adozione da parte del settore
+    collaborare con il Marketing per la definizione, l’analisi di fattibilità e il dimensionamento tecnico dei servizi, proponendo soluzioni evolutive/migliorative
+    partendo dai requisisti elabora il disegno High Level servizio, definendone i relativi costi di implementazione, producendo il Business Case, verificando internamente la sostenibilità e le tempistiche in accordo con le altre funzioni aziendali costituenti il Gruppo di Lavoro che governa lo sviluppo del servizio
+    guidare il coordinamento dei partner tecnologici individuati e delle diverse funzioni aziendali verso il completamento dello sviluppo dei servizi nei tempi definiti, monitorando l'avanzamento delle attività
+    offrire supporto in fase di presales su gare pubbliche e offerte complesse
+    promuovere la conoscenza delle tecnologie e dei servizi sviluppati, indirizzando le iniziative di formazione per il Delivery, l’Assurance ed i Sales
+
+Se questo profilo parla di te, sei nel posto giusto
+
+    Possiedi un'esperienza di almeno 5 anni in ruoli di prevendita, solution architecture o progettazione di soluzioni ICT
+    Competenze di gestione progetti e utilizzo di strumenti gestionali
+    Conosci le infrastrutture Cloud dei principali hyperscalers (AWS, Azure, Google Cloud)
+    Hai una buona conoscenza di SASE, Cloud Security e Cyber Security
+    Conoscenza servizio SOC
+    Gradite Conoscenze ed esperienze di interesse in ambito Networking e Infrastrutture ed in ambito Unified Communication & Collaboration
+
+Sede
+
+IMOLA, VIA MOLINO ROSSO 8
+
+MODENA, VIA RAZZABONI 80
+
+SAN VENDEMIANO (TV), VIA FRIULI 11
+
+Perché unirti a noi
+
+    Inserimento contrattuale permanent
+    CCNL applicato TELECOMUNICAZIONI
+    Retribuzione annua lorda compresa tra 40.000€ e 55.000€, comprensiva delle componenti fisse previste dal CCNL e dalla contrattazione aziendale
+    Oltre alle componenti retributive fisse sono previsti elementi aggiuntivi di natura variabile, come premi/benefit legati alla tipologia del ruolo ricoperto
+    Modalità di lavoro ibrida
+    Offriamo un sistema integrato di welfare pensato per supportare le persone con servizi dedicati alla salute, al benessere personale e familiare, alla mobilità sostenibile, al benessere finanziario e alla qualità della vita in ogni sua fase
+    Sosteniamo la crescita delle persone attraverso programmi di formazione continua e sviluppo professionale 
+    Accesso alla mensa aziendale/ristorante convenzionato
+
+Trasparenza nel processo di selezione 
+
+In Coerenza Con i Principi Di Trasparenza
+
+    non richiediamo informazioni sulla retribuzione attuale o pregressa
+    adottiamo criteri di valutazione chiari, coerenti e non discriminatori
+    comunichiamo in modo trasparente le condizioni economiche e contrattuali fin dalle prime fasi del processo
+
+Consulta la nostra nota di trasparenza: Nota di Trasparenza - Gruppo Bluewater Carriere
+
+Diversità e inclusione 
+
+Nel Gruppo Bluewater crediamo che le differenze siano un valore. Esperienze, identità, culture, età, competenze e punti di vista diversi arricchiscono il nostro modo di lavorare e ci aiutano a crescere ogni giorno. Per questo promuoviamo una cultura basata su rispetto, equità e ascolto, in cui ogni persona possa sentirsi accolta, riconosciuta e libera di esprimere il proprio potenziale. Lavoriamo ogni giorno per costruire un ambiente di lavoro sempre più inclusivo, attento al benessere e capace di valorizzare tutte le unicità.
+
+Scopri di più sul Gruppo Bluewater
+
+Lavora con noi - Gruppo Bluewater
+
+La selezione è aperta a tutte le persone, nel rispetto del principio di pari opportunità e non discriminazione, ai sensi della normativa vigente. Tutte le nostre opportunità sono aperte anche a profili tutelati da L. 68/99. I dati personali raccolti verranno trattati nel rispetto del Regolamento Ue 2016/679 (GDPR).

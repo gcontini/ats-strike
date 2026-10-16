@@ -1,0 +1,93 @@
+Cloud Solution Architect
+Relecloud - The Premium Cloud — Milan, Lombardy, Italy (On-site)
+JOB_POSTING: https://jobs.example.com/33
+
+Relecloud - The Premium Cloud
+Cloud Solution Architect
+Milan, Lombardy, Italy
+
+ABOUT THE COMPANY
+
+At Relecloud, an Italian company with offices in Germany and Switzerland and listed on the Italian Stock Exchange, we have chosen to make a difference for our customers.
+
+We are a leading provider of Hosted Private and Hybrid Cloud services for companies with critical application management and business continuity needs.
+
+
+
+
+MISSION
+
+The Solution Architect team at Relecloud supports the Sales function by structuring value-driven solutions for our customers and prospects, as well as responding to RFPs, RFQs, and tenders. On a daily basis, requirements must be analyzed and understood to structure the best solution to propose. The team is responsible for defining and drafting technical offers, supported by Operations teams, determining the effort required from involved departments and the costs of proposed solutions.
+
+
+
+
+RESPONSIBILITIES AND ACTIVITIES
+
+Analyze customer business objectives, technical requirements and pain points
+Collaborate with cross-functional internal teams on strategic projects
+Supporting the design of technical solutions tailored to customer requirements according to Relecloud's methodology and service positioning
+Supporting Sales and Channel Partner teams throughout all phases of the sales process and customer management
+Proactively proposing new solutions consistent with the evolution of Cloud services to be included in Relecloud's service portfolio
+Collaborating with Project, Service Delivery, and Operations teams during service implementation phases, as well as gathering requirements for upselling opportunities with existing customers
+Drafting technical offer documents and presentations for Relecloud services
+
+
+
+
+EXPERIENCE AND EDUCATIONAL QUALIFICATION
+
+At least 2 years of experience in pre-sales or similar roles
+High School Diploma or Scientific Degree
+
+
+
+
+SKILLS AND KNOWLEDGE
+
+Knowledge of VMware and KVM virtualization architectures and products
+Knowledge of IBM Power ecosystem architectures (IBM i, AIX)
+Knowledge of Windows and Linux server operating systems
+Knowledge of major IaaS and PaaS services on Public Cloud platforms (Azure, AWS, Google Cloud)
+Understanding of Disaster Recovery processes and Business Continuity mechanisms (RPO, RTO, SLA, etc.)
+Knowledge of industry-standard strategies and tools for server and system migrations.
+Knowledge in preparing and presenting economic P&L related to an offer
+Professional proficiency in English, both written and spoken
+Strong proficiency in Microsoft Office suite (Excel, Word, PowerPoint)
+Preferred: Skills in Cybersecurity Managed Services
+Preferred: Knowledge of AI platforms
+Preferred: Recognized industry certifications in Cloud Architecture, Enterprise Solutions or Security Management.
+
+
+
+
+ATTITUDES AND SKILLS
+
+Capability to assimilate and process information from various sources
+Rapid learning ability and curiosity for emerging technologies
+Goal-oriented mindset with strong focus on deliverables and deadlines
+Collaborative approach in working with multiple internal stakeholders
+Excellent communication skills, with a talent for explaining complex technical topics to business buyers.
+Strategic thinking to understand business applications of new technologies
+Strong analytical and problem-solving capabilities with creative approach to solution design
+Business acumen to understand and articulate revenue and cost implications
+
+
+
+
+Location: Milan (6 days of remote working per month) – FREQUENT VISITS TO CLIENTS REQUIRED
+
+
+
+
+This recruitment process complies with Legislative Decree 198/2006 and Legislative Decree 215/2003 and is open to candidates of any gender identity or expression, sexual orientation, age, ethnicity and religious belief. This advertisement has been drafted in accordance with the principles of diversity and inclusion.
+
+Remuneration and pay scale:
+
+The position is classified at Level 1 of the National Collective Labour Agreement for Commerce and the Tertiary Sector.
+
+In accordance with the Italian legislation transposing EU Directive 2023/970 on pay transparency, the total annual remuneration for the position is approximately between €50,000 and €65,000 gross, depending on the candidate’s experience and skills, in accordance with objective and neutral criteria for assessing the role.
+
+The total annual remuneration includes a fixed component and any variable components, welfare provisions and other benefits provided for under company policy.
+
+During the selection process, no information regarding the candidate’s current or previous remuneration will be requested.

@@ -1,0 +1,20 @@
+[
+  {"id": 1, "requirement": "Senior IT Business Analyst", "keywords": ["Senior IT Business Analyst", "IT Business Analyst", "Senior Business Analyst", "Business Analyst"], "importance": "must"},
+  {"id": 2, "requirement": "Business requirements gathering and functional specifications", "keywords": ["business requirements", "requirements gathering", "functional specifications", "requirements definition"], "importance": "must"},
+  {"id": 3, "requirement": "Business process analysis and optimization", "keywords": ["process analysis", "process mapping", "process optimization", "business processes"], "importance": "must"},
+  {"id": 4, "requirement": "Project delivery on Microsoft Power Platform", "keywords": ["Power Platform", "Microsoft Power Platform"], "importance": "must"},
+  {"id": 5, "requirement": "Microsoft Dynamics 365 experience", "keywords": ["Dynamics 365", "Microsoft Dynamics", "D365"], "importance": "nice"},
+  {"id": 6, "requirement": "AI and Generative AI knowledge", "keywords": ["Generative AI", "GenAI", "AI", "Artificial Intelligence"], "importance": "must"},
+  {"id": 7, "requirement": "Leading projects end to end with plans, timelines and workstreams", "keywords": ["project management", "project plans", "project delivery", "workstreams", "timelines"], "importance": "must"},
+  {"id": 8, "requirement": "Demand management and prioritization of incoming requests", "keywords": ["demand management", "prioritization", "intake process", "business value"], "importance": "must"},
+  {"id": 9, "requirement": "Solution design and functional design with technical teams", "keywords": ["solution design", "functional design", "roadmapping", "configuration"], "importance": "must"},
+  {"id": 10, "requirement": "Stakeholder management and Business-IT alignment", "keywords": ["stakeholder management", "stakeholders", "Business and IT", "progress reports"], "importance": "must"},
+  {"id": 11, "requirement": "Coordinating technical delivery and cross-functional teams", "keywords": ["delivery teams", "cross-functional teams", "developers", "testers"], "importance": "must"},
+  {"id": 12, "requirement": "Project risk, dependency and issue management", "keywords": ["risk management", "project risks", "dependencies", "issue management"], "importance": "must"},
+  {"id": 13, "requirement": "Business analysis techniques such as user stories and workshops", "keywords": ["user stories", "workshops", "business analysis techniques"], "importance": "must"},
+  {"id": 14, "requirement": "Agile methodologies", "keywords": ["Agile", "AGILE methodologies"], "importance": "must"},
+  {"id": 15, "requirement": "Documentation and reporting", "keywords": ["documentation", "reports", "reporting"], "importance": "must"},
+  {"id": 16, "requirement": "Troubleshooting internal platforms and maintaining a knowledge base", "keywords": ["troubleshooting", "knowledge base", "technical support"], "importance": "must"},
+  {"id": 17, "requirement": "Insurance projects domain", "keywords": ["insurance", "P&C", "insurance projects", "corporate insurance"], "importance": "nice"},
+  {"id": 18, "requirement": "English at C1 level", "keywords": ["English", "C1", "fluent English"], "importance": "must"}
+]

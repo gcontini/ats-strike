@@ -1,0 +1,66 @@
+AI Project Manager
+Fabrikam — Milan, Lombardy, Italy (Hybrid)
+JOB_POSTING: https://jobs.example.com/17
+
+Fabrikam
+AI Project Manager
+Milan, Lombardy, Italy
+
+Are you a Project Manager expert in getting specified use cases delivered — on scope, on date, with no late surprises?
+
+Join Fabrikam!
+
+
+
+
+WHO WE ARE
+
+Fabrikam is a network of highly specialized companies which support leading industrial groups in defining and developing business models using new technology and communication paradigms, such as Big Data, Cloud Computing, Digital Communication, Internet of Things, Mobile and Social Networking. Fabrikam focuses on Consultancy, System Integration and Application Management, covering three areas of competence: Processes, Applications and Technologies.
+
+
+
+
+WHAT YOU WILL FIND
+
+Core activities. Once a use case is specified, you make sure it gets delivered — on scope, on date, with the client knowing where it stands throughout. You will hold the client interface from the specification sprint to the final handover: domain-expert workshops, C-level steering meetings, status and bad news early. You will plan the delivery phases — data, adaptation, eval, deployment — and close each one on an explicit exit criterion. And you will keep allocation, effort and timeline against plan, putting every scope change through formal change control.
+Tech & tools stack.. Delivery may be a custom model built end to end, a distilled or optimised version of an existing one, an agentic system tuned for cost and latency, a platform rollout on the client's side, or a broader AI programme spanning several of these. You will work with project and portfolio tooling and read — not write — what the engineering team produces: eval reports, GPU-hour and token estimates, and the traceability of runs, datasets and models.
+Mentoring, collaboration, and continuous growth. You are the single counterpart for the client and the connective tissue inside: model design engineers upstream, research and platform engineers building, security and legal on the data dependencies (DPAs, licensing, anonymisation, client samples). Clients are large enterprises and public institutions, typically with a C-level sponsor and a technical team of their own.
+
+
+
+
+WHAT WE OFFER
+
+An offer tailored to your experience. This position is open to people with varying levels of expertise and seniority. The compensation package will be determined based on your professional background, technical skills, expertise, and the level of responsibility associated with the role. The collective labour agreement (CCNL) applied is the Italian Metalworking Industry Agreement. The job classification will be assessed starting from level B2, and the gross annual salary (RAL) will range from €37,000 to €65,000. Previous experience manageing the delivery of cutting-edge AI programmes such as Foundation Model and LLM training, distillation and optimisation, Agentic AI systems, and MLOps or data-platform rollouts planned against GPU-hour and token budgets will be considered a strong asset.
+A structured career path. Our Career Path offers opportunities to grow both as a technical specialist and as a future leader. Your ambitions, the skills you develop, and the results you achieve will shape your professional journey.
+Continuous learning. Technology evolves rapidly - and so do we. You will join an environment that encourages curiosity, continuous learning, and the exploration of new ideas and emerging technologies.
+The benefits of being a Fabrikamer. You will also have access to the benefits and initiatives dedicated to our community.
+
+
+
+
+WHAT WE NEED
+
+Academic background. Degree in Engineering Management Engineering, Economics or a related field. A technical or quantitative background will help you hold your own with the engineering team.
+Technical & strategic skills. 3-8 years of professional experience. A proven delivery track record in MLOps, AI products and/or Generative models, with clients as your direct counterpart rather than through an account layer, and real planning, budgeting and change-control discipline on projects with hard external dependencies. You don't need to train models or build agents, but you do need to read an eval report, sanity-check a GPU-hour or token estimate, and know why a failed run costs both budget and calendar. You can plan around a scarce shared resource — queued compute, a benchmark window, a client data handover — where the constraint sets the schedule, not headcount. The position is open to varying levels of expertise and seniority.
+Soft skills. Strong facilitation, synthesis and executive communication, ownership without needing formal authority, and fluent English.
+Nice to have. PMP, PRINCE2 or Agile certification; delivery experience on AI/ML, MLOps or data-platform programmes; regulated or public-sector programmes; pre-sales and proposal work; multi-vendor or EU-funded programme management.
+
+
+
+
+WHAT ARE THE NEXT STEPS
+
+The first step of our recruiting process will be the meetings with the technical referents and then a face to face interview with the HR team. We care about an equal recruiting process.
+
+
+
+
+Feel interested?
+
+
+
+
+Fabrikam is committed to embracing diversity and creating an inclusive work environment by valuing the uniqueness of people regardless of age, gender, sexual orientation, religion, nationality, or disabilities as protected by Italian Law (L.68/99).
+
+Furthermore, Fabrikam is committed to ensuring a fair and accessible selection process: to help you during the recruitment process, please let us know of any kind of support you may need.

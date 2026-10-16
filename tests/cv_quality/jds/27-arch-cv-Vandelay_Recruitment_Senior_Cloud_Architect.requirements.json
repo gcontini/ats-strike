@@ -1,0 +1,10 @@
+[
+  {"id": 1, "requirement": "Senior Cloud Architect", "keywords": ["Senior Cloud Architect", "Cloud Architect", "Cloud Solutions Architect", "Cloud Solution Architect"], "importance": "must"},
+  {"id": 2, "requirement": "Public cloud: AWS, Azure or GCP", "keywords": ["AWS", "Azure", "GCP", "Amazon Web Services", "Google Cloud"], "importance": "must"},
+  {"id": 3, "requirement": "Fluent spoken Italian", "keywords": ["Italian", "Italiano"], "importance": "must"},
+  {"id": 4, "requirement": "Fluent spoken English", "keywords": ["English", "Fluent English"], "importance": "must"},
+  {"id": 5, "requirement": "Multiple cloud implementations", "keywords": ["Cloud Implementation", "Implementation", "Cloud Deployment", "Cloud Adoption"], "importance": "must"},
+  {"id": 6, "requirement": "Greenfield cloud projects", "keywords": ["Greenfield", "Greenfield Projects", "Greenfield Implementation"], "importance": "must"},
+  {"id": 7, "requirement": "Cloud architecture design", "keywords": ["Cloud Architecture", "Solution Architecture", "Cloud Solution Design"], "importance": "must"},
+  {"id": 8, "requirement": "Project delivery in a delivery team", "keywords": ["Project Delivery", "Solution Delivery", "Cloud Delivery"], "importance": "must"}
+]

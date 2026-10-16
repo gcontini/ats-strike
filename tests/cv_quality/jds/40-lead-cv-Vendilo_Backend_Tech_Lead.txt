@@ -1,0 +1,73 @@
+Backend Tech Lead
+
+Milan, Lombardy, Italy
+
+Job Description
+
+Ciao, siamo Vendilo! 🚀
+Hai presente quell'app che quasi ogni italiano ha installata sul telefono? Ecco, quella è casa nostra. Vendilo è il marketplace leader in Italia: un posto dove milioni di persone comprano, vendono e danno una seconda vita agli oggetti ogni giorno. La nostra missione è rendere l'economia circolare semplice, veloce e seguiamo standard che garantiscano un'esperienza eccellente a tutti i nostri utenti.
+
+Il tuo posto nel team Tech
+Stiamo cercando un Backend Tech Lead (Architecture & Alignment Focus) che entri a far parte del team "Mobility and Dealers" che sviluppa e mantiene le nostre piattaforme Multigestionale Motori (Dealer Management System) e Middleware (Integration System).
+Queste piattaforme sono attualmente applicazioni PHP monolitiche ospitate su singole istanze AWS EC2, che utilizzano AWS RDS (MySQL) ed ElastiCache (Redis) per il livello dati e il caching.
+
+La tua missione? 
+Guidare la modernizzazione di questo ecosistema avvicinandolo alle best practice e agli standard di Vendilo (observability, alerting, resilienza e incident management), senza fermare lo sviluppo del prodotto. L'obiettivo non è riscrivere le applicazioni da zero, ma colmare in modo pragmatico il divario tra il loro stato attuale e gli standard di Vendilo, sia dal punto di vista backend che infrastrutturale.
+
+Come funziona la Co-Leadership in questo ruolo?
+Lavorerai al fianco dell'attuale Engineering Manager (EM) e del Product Tech Lead, con una separazione chiara delle responsabilità:
+
+    Product & Delivery: L'EM e il Product Tech Lead guidano la roadmap di prodotto e la delivery quotidiana delle feature.
+    Architettura & Infrastruttura: Il tuo focus sarà esclusivamente infrastrutturale e architetturale. Qualsiasi evoluzione o piano di modernizzazione dovrà essere concordato con l'EM per bilanciarsi con la capacity del team.
+    Il tuo approccio al codice: Ti immergerai nella codebase legacy principalmente per apprenderne le logiche e i vincoli. Il tuo contributo all'evoluzione del prodotto avverrà durante il feature planning, dove lavorerai insieme al team sul come le soluzioni dovranno essere progettate, piuttosto che concentrarti sul delivery di routine delle feature.
+    Collaborazione Cross-Team: Supporterai il team Cloud & Infrastructure per pianificare l'introduzione di Infrastructure as Code (Terraform) e guiderai le iniziative di disaster recovery. Farai da ponte tecnico collaborando strettamente con i Senior Staff Engineers, l'Head of Architecture, l'Head of Cloud & Infra e il VP of Engineering.
+
+Job Requirements
+
+Sei la persona giusta se...
+
+    Hai almeno 5 anni di esperienza in Software Engineering, con un solido background backend e di architettura cloud.
+    Conosci bene PHP e sai decifrare e governare codebase monolitiche complesse.
+    Hai esperienza pratica (o forte familiarità) con AWS, Terraform (IaC) e strategie di caching.
+    Sai muoverti a occhi chiusi nell'impostazione di metriche di osservabilità (SLI/SLO, Grafana Cloud, OpenTelemetry).
+    Hai una forte conoscenza delle pipeline CI/CD, specificamente con GitHub Actions, ed esperienza nella progettazione, costruzione o migrazione da sistemi legacy.
+    Dimostri una mentalità pragmatica: sai che il valore del prodotto viene prima della tentazione di "rifare tutto da capo".
+    Possiedi eccellenti doti comunicative per gestire gli stakeholder e lavorare in sinergia con la leadership (Heads, VP, Senior Staff).
+    Conosci le metodologie DDD (Domain-Driven Design), i sistemi di containerizzazione (Docker) e le strategie di Continuous Delivery.
+    Parli e scrivi fluentemente in inglese.
+
+Job Responsibilities
+
+Cosa andrai a fare?
+
+    Partecipare alle cerimonie con il team "Mobility and Dealers".
+    Collaborare strettamente con l'Engineering Manager per incastrare le roadmap di modernizzazione con la capacity del team e gli obiettivi di sprint.
+    Condividere aggiornamenti e allineare le strategie con la leadership tecnica (Heads, VP, Senior Staff).
+    Analizzare l'attuale architettura monolitica PHP per comprenderne il funzionamento interno e pianificare upgrade infrastrutturali incrementali.
+    Partecipare attivamente alle sessioni di feature planning, assicurando che i nuovi sviluppi siano progettati secondo le linee guida architetturali di Vendilo e scalino correttamente.
+    Progettare, con il supporto del team Cloud & Infra, la transizione del deployment applicativo verso un setup AWS moderno e riproducibile usando Terraform.
+    Evolvere il nostro stack di observability (esplorando lo stato attuale e impostando le metriche da zero) integrando OpenTelemetry e Grafana Cloud per monitorare le applicazioni in modo proattivo.
+    Assicurarti, in collaborazione con Cloud & Infra, che le applicazioni siano strutturalmente pronte a supportare le procedure di Disaster Recovery e porta il team nel ciclo standard di Incident Management di Vendilo.
+    Guidare il team attraverso sessioni di design collaborativo e code review, aiutando i colleghi a interiorizzare gli standard di modernizzazione.
+
+Responsabilità Chiave🎯
+
+    Esecuzione della Visione Tecnica: Guidare l'adozione delle best practice di Vendilo (resilienza, metriche, gestione incidenti) all'interno degli ecosistemi gestiti.
+    Co-Leadership e Consenso: Costruire una solida partnership con l'Engineering Manager, integrando i piani tecnici nel flusso di lavoro senza interrompere la delivery di prodotto.
+    Modernizzazione Pragmatica: Traghettare i sistemi verso architetture cloud-native in modo incrementale ed evolutivo, evitando la trappola del "riscrivere tutto da zero" e garantendo la continuità aziendale.
+    Allineamento Architetturale: Validare il design tecnico delle nuove funzionalità durante le sessioni di refinement per garantire scalabilità e integrazione con gli standard aziendali.
+    Gestione degli Stakeholder: Agire come tramite tecnico ufficiale tra il team di sviluppo e la più ampia leadership ingegneristica di Vendilo (Heads, VP, Senior Staff).
+    Reperibilità: Partecipazione alla rotazione di on-call (una volta che i sistemi saranno integrati nei flussi standard).
+
+Job Benefits
+
+Cosa ti offriamo?💰 
+In Vendilo crediamo che il benessere passi per un pacchetto completo che va oltre lo stipendio. Per questo ruolo prevediamo un range di RAL tra 50.000€ e 60.000€, a cui aggiungiamo bonus annuali, incentivi legati ai risultati e ticket restaurant da 10€ (elettronici). Il range retributivo è definito sulla base di criteri oggettivi e neutrali, tra cui responsabilità del ruolo, competenze richieste, livello organizzativo, benchmark di mercato e coerenza interna. Si applica il CCNL Grafici Industria.
+
+Lavoriamo in modalità ibrida, con due giorni a settimana in presenza e tre da remoto. Ci trovi in via Angelo Scarsellini 14 (fermata M3 Affori Centro): abbiamo creato un ufficio open space super luminoso e pieno di comfort, perfetto per collaborare dal vivo ma con tutta la flessibilità di cui hai bisogno. 
+La distanza è troppa? Valutiamo l'opzione del full-remote per casi specifici direttamente durante il processo di interview.
+ 
+Inclusività in Vendilo
+Siamo un datore di lavoro che offre pari opportunità. Accogliamo le persone per quello che sono, indipendentemente da origine, genere, età o orientamento. La diversità è la nostra benzina creativa.
+
+Pronto a guidare la modernizzazione tecnica del nostro team? Inviaci il tuo CV e iniziamo a parlarne insieme!

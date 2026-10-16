@@ -1,0 +1,87 @@
+Senior Site Reliability Engineer
+Adventure Works — Milan (Hybrid)
+JOB_POSTING: https://jobs.example.com/09
+
+Adventure Works
+
+Senior Site Reliability Engineer
+
+Milan, Lombardy, Italy
+
+52.4K EUR/yr - 80.5K EUR/yr
+
+Artificial Intelligence. Actual Impact.
+
+At Adventure Works, we’re using AI to change how people learn at work—and we mean actually change it. We’re an AI-powered learning platform that helps organizations create, deliver, and manage training all in one place. But our real mission goes deeper: we help teams move faster, work smarter, and focus on the work that truly matters. Our platform is built with intelligent, time-saving tools that personalize learning, eliminate busywork, and turn training from a checkbox into a superpower. The result? Better experiences for learners and real results for businesses.
+
+We’re shaping the future of learning with a team that isn’t afraid to challenge the status quo. If you're excited by the idea of using AI to make work-life better for real people–you’ll feel right at home here. And it’s not just what we build, it’s how we show up. At Adventure Works, our values aren’t just posters on the wall—they guide how we work every day. We call it the Adventure Works Heart: trust by default, assume positive intent, and create space for different perspectives to thrive.
+
+So… what are you waiting for? Join 900+ Docebians around the world and help us reinvent the way people learn, because learning never stops.
+
+🚀 The Adventure Ahead
+
+As our Senior Site Reliability Engineer II, you’ll step up as the ultimate guardian of reliability across our critical product domains and services. You will architect high-performing platforms, turn complex systems into resilient superpowers, and collaborate directly with engineering leaders to set bulletproof standards. By keeping our systems seamlessly scalable, you directly power the AI-driven learning experiences used by millions around the globe.
+
+⚡ The Day-to-Day
+
+
+Master the Domain: Partner with engineering teams to set crystal-clear reliability objectives (SLIs/SLOs) and build long-term reliability roadmaps for core services.
+Tackle High-Stakes Incidents: Lead cross-service incident responses during critical outages, guiding teams with confidence and translating chaos into clear, durable solutions.
+Architect Resilient Futures: Drive the company-wide adoption of cutting-edge reliability patterns, deployment safety capabilities, and infrastructure scalability.
+Elevate Observability: Build and refine advanced observability tools to catch issues before they reach production.
+Champion Engineering Balance: Influence product design and system architecture to maintain the ultimate equilibrium between feature velocity and rock-solid reliability.
+Empower the Team: Mentor senior engineers, elevate best practices, and play a pivotal role in recruiting top-tier talent to the SRE organization.
+
+
+🧠 Your Superpowers
+
+
+Battle-Tested Expertise: Bring 6–10 years of SRE, DevOps, or production engineering experience with hands-on mastery of complex distributed systems.
+Cloud Architecture Wizardry: Command cloud infrastructure (AWS preferred), container orchestration, and Infrastructure as Code to keep modern platforms humming.
+Engineering Precision: Craft clean, high-performing code in at least one major language alongside a knack for automating away repetitive tasks.
+Incident Command Ready: Show a proven track record of steering large-scale incident management and driving high-impact reliability programs.
+Cross-Functional Influence: Communicate effortlessly across engineering, product, and customer-facing teams to align tech goals with business impact.
+
+
+🎁 Bonus Points
+
+
+Next-Gen Automation: Advanced experience designing self-healing infrastructure patterns and zero-downtime deployment pipelines.
+Mass-Scale Experience: Prior history scaling multi-tenant SaaS environments in rapid-growth markets.
+
+
+Our Hybrid Work Philosophy 🤝
+
+Great work can happen anywhere but coming together helps us go further. Our team spends three days a week in the office (Tuesday-Thursday) to collaborate, solve problems, and learn from each other. With flexibility the rest of the week, it’s a balance designed to help everyone do their best work and keep growing.
+
+Our Total Rewards Philosophy 🎉
+
+Our Total Rewards Philosophy centers around three core areas to reward and care for our People:
+
+
+Rewarding Impact: We lead with competitive pay to reward the impact, skills and traits that fuel our success.
+Fostering Holistic Wellbeing: We care deeply about and invest in the whole person with programs that support our people’s physical, mental, and financial well-being.
+Empowering Our Talent Culture: We build a culture of trust and empowerment by designing our rewards and benefits with transparency, equity, and flexibility, enabling our people to do their best work and stay for the long haul.
+
+
+Our Promise to You 😍
+
+
+Financial Wellness: Own a piece of Adventure Works through our Employee Share Purchase Plan (ESPP) at a 15% discount, plus a competitive compensation package.
+Your Well-Being, Covered: You’ll get access to health benefits, so you can get the care you need when you need it.
+Rest, Relax, Repeat: Rest and recharge with paid vacation days, two company-wide Adventure Works Days, floating holidays for cultural celebrations, and your birthday off!
+Family First: We provide coverage offering you time with your little one(s) so you can soak up all those precious moments. Fun fact: we had 30 Docebian babies join the family in 2025!
+Connections That Count: Connect with global communities through our Employee Resource Groups (including PRIDE, DWA, BIAW, and Green Ambassadors) and company-wide events that keep the fun rolling all year long.
+
+
+About Adventure Works 💙
+
+At Adventure Works, we create seamless, AI-powered learning experiences for over 3,000 customers worldwide. We have successfully achieved two IPOs (TSX: AWKS & NASDAQ: AWKS), been recognized as a top SaaS e-learning solution, and are growing exponentially in the process. We're a global company, with office across North America, EMEA, APAC, and beyond. Our team is guided by five core values—Grow Together Win Together, Build with Our Customer, Clear is Kind, Own Outcomes, Progress Over Perfection—that shape everything we do. If this resonates with you, now is the perfect time to join one of the fastest-growing learning technology companies in the world.
+
+Adventure Works is an Equal Employment Opportunity employer. We are committed to diversity and inclusion in our workforce. All qualified applicants and employees will receive consideration for employment regardless of their race, colour, religion, sex (including pregnancy, gender identity, and sexual orientation), national origin, citizenship status, age, disability, genetic information, or any other category protected under applicable law.
+
+As a federal contractor, Adventure Works is committed to the principles of affirmative action and equal employment opportunity for protected veterans and individuals with disabilities. Adventure Works does not discriminate because of protected veteran status or on the basis of disability, and Adventure Works takes affirmative action to employ and advance in employment qualified protected veterans and individuals with disabilities.
+
+Any individuals requiring a reasonable accommodation or would like to voluntarily disclose a disability or protected veteran status to assist with their employment application should send an e-mail to their recruiter directly.
+
+Compensation Range: €52.4K - €80.5K

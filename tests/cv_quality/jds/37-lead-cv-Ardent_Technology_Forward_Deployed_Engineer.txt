@@ -1,0 +1,83 @@
+Forward Deployed Engineer_D-3219
+Ardent Technology — Milan (Hybrid)
+JOB_POSTING: https://jobs.example.com/37
+
+Ardent Technology
+
+Forward Deployed Engineer_D-3219
+
+Milan, Lombardy, Italy
+
+About The Job
+
+As a Forward Deployed Engineer (FDE), you are the technical core of a squad that brings AI into real business processes. You, partner directly with Ardent Operating Entities (OEs) and ecosystem, building production-ready solutions ideally by readapting existing Minimum Viable Solutions (MVS) and AI Building Blocks or by creating custom components and solutions for the OE’s. Together with the AI Engagement Manager you form a team with local IT team or global vertical team for their know-how of core systems and customer pain-points – to move from discovery to deployment at speed.
+
+What You Do
+
+
+Be integrated with local and global domain experts to understand problems and translate them into production AI solutions 
+Reuse and extend MVS/AI Building Blocks to design and implement custom services, integrations, and agents when necessary 
+Ship solutions across different stacks (backend, frontend, data/ML, ops), landscapes and setups, owning the path from development to production 
+Ensure security, compliance, and reliability; set up CI/CD, containerization, and IaaC as needed. 
+Document, operationalize, and scale by contributing new patterns back to the central building-block catalogue to one solution powers the next! 
+
+
+What You Bring
+
+
+Hands-on software engineer with a track record of shipping production code across a big stack- backend, frontend, data, and ops. 
+Comfortable operating in unfamiliar codebases, domains, and partner environments; identifying issues and delivering value. 
+Practical experience with cloud-native stacks and DevOps (CI/CD, containers, Kubernetes), testing/observability, and secure coding in regulated settings. 
+Working knowledge of the modern data/AI stack (e.g., Python, APIs, vector databases) and integrating LLM/agent frameworks; prompt-first mindset. 
+Strong collaboration and communication skills; pairs effectively with an AI Engagement Manager and executes with thorough documentation. 
+Bachelor’s degree in Computer Science/Engineering or equivalent professional experience 
+Fluency in English 
+
+
+What We Offer
+
+
+Starting annual compensation from 76,000 € 
+In addition, welfare and benefits are provided in line with the applicable CCNL level and company policies
+Permanent contract: Liv. Funzionario Business CCNL ANIA - Disciplina dei rapporti fra le imprese di assicurazione e il personale dipendente non dirigente
+We offer a hybrid work model which recognizes the value of striking a balance between in-person collaboration and remote working incl. up to 25 days per year working from abroad.
+We believe in rewarding performance and our compensation and benefits package includes a company bonus scheme, pension, employee shares program and multiple employee discounts (details vary by location).
+From career development and digital learning programs to international career mobility, we offer lifelong learning for our employees worldwide and an environment where innovation, delivery and empowerment are fostered.
+Flexible working, health and wellbeing offers (including healthcare and parental leave benefits) support to balance family and career and help our people return from career breaks with experience that nothing else can teach.
+
+
+We welcome applications from candidates belonging to protected categories in accordance with Italian Law 68/99.
+
+About Ardent Technology
+
+With its headquarters in Frankfurt, Germany, Ardent Technology is Ardent's global IT service provider and delivers IT solutions that drive the group's digitalization. With more than 11,000 employees in over 20 countries around the world, Ardent Technology is tasked to run, optimize, transform, and innovate the infrastructure, applications, and services together with Ardent companies to co-create the best customer experience.
+
+We service the entire spectrum of digitalization - from one of the industry's largest IT infrastructure projects that spans data centers, networks, and security, to application platforms ranging from workplace services to digital interaction. In short: We deliver comprehensive end-to-end IT solutions for Ardent in the digital age. We are the backbone of Ardent.
+
+Find us at: https://jobs.example.com/37.
+
+Commitment to Integrity, Fairness & Inclusion
+
+Ardent Group is one of the most trusted insurance and asset management companies in the world. Caring for our employees, their ambitions, dreams and challenges, is what makes us a unique employer. Together we can build an environment where everyone feels empowered and has the confidence to explore, to grow and to shape a better future for our customers and the world around us.
+
+We at Ardent believe in a strong inclusive culture that encourages people to speak their minds, get involved and question the status quo. We are proud to be an equal opportunity employer and encourage you to bring your whole self to work, no matter where you are from, what you look like, who you love, or what you believe in. We therefore welcome applications regardless of race, ethnicity or cultural background, age, gender, nationality, religion, social class, disability, sexual orientation, or any other characteristics protected under applicable local laws and regulations.
+
+To Recruitment Agencies
+
+Ardent Technology has an in-house recruitment team that sources great candidates directly. Therefore, Ardent Technology does not accept unsolicited resumes from agencies or search firm recruiters.
+
+When we do work with recruitment agencies, that engagement is formalized by a contract. Fees will only be paid
+
+when there is a contract in place. Without a contract in place, we will not accept invoices on unsolicited resumes,
+
+even if the candidate was ultimately employed by Ardent.
+
+100000 | IT & Tech Engineering | Professional | Non-Executive | Ardent Technology | Full-Time | Permanent
+
+Ardent Group is one of the most trusted insurance and asset management companies in the world. Caring for our employees, their ambitions, dreams and challenges, is what makes us a unique employer. Together we can build an environment where everyone feels empowered and has the confidence to explore, to grow and to shape a better future for our customers and the world around us.
+
+At Ardent, we stand for unity: we believe that a united world is a more prosperous world, and we are dedicated to consistently advocating for equal opportunities for all. And the foundation for this is our inclusive workplace, where people and performance both matter, and nurtures a culture grounded in integrity, fairness, inclusion and trust.
+
+We therefore welcome applications regardless of ethnicity or cultural background, age, gender, nationality, religion, social class, disability or sexual orientation, or any other characteristics protected under applicable local laws and regulations.
+
+Join us. Let's care for tomorrow.

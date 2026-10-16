@@ -1,0 +1,17 @@
+[
+  {"id": 1, "requirement": "C/C++ Embedded Software Engineer", "keywords": ["C/C++ Embedded Software Engineer", "Embedded Software Engineer", "Firmware Engineer", "Embedded Software Developer", "Embedded Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "C/C++ programming for embedded devices, 3+ years", "keywords": ["C/C++", "C++", "C", "Embedded C"], "importance": "must"},
+  {"id": 3, "requirement": "Embedded software and firmware development", "keywords": ["Firmware", "Embedded Software", "Embedded Systems", "sistemi embedded"], "importance": "must"},
+  {"id": 4, "requirement": "Microcontroller development", "keywords": ["Microcontrollers", "Microcontroller", "MCU", "microcontrollori"], "importance": "must"},
+  {"id": 5, "requirement": "Embedded Linux", "keywords": ["Embedded Linux", "Linux", "Linux embedded"], "importance": "must"},
+  {"id": 6, "requirement": "Ethernet and communication protocols", "keywords": ["Ethernet", "Industrial Ethernet", "Communication Protocols", "protocolli di comunicazione"], "importance": "must"},
+  {"id": 7, "requirement": "Firmware integration with hardware (cameras, dimensioners, controllers)", "keywords": ["Hardware Integration", "Hardware Interfaces", "HW/SW Integration", "Hardware-Software Integration"], "importance": "must"},
+  {"id": 8, "requirement": "Debugging embedded systems, fault analysis and fixes", "keywords": ["Debugging", "Troubleshooting", "Root Cause Analysis", "debug"], "importance": "must"},
+  {"id": 9, "requirement": "Functional and integration testing of embedded devices", "keywords": ["Integration Testing", "Functional Testing", "Embedded Testing", "test funzionali", "test di integrazione"], "importance": "must"},
+  {"id": 10, "requirement": "Italian, native or equivalent", "keywords": ["Italian", "Native Italian", "Italiano", "madrelingua"], "importance": "must"},
+  {"id": 11, "requirement": "English, B2 or higher", "keywords": ["English", "English B2", "Inglese"], "importance": "must"},
+  {"id": 12, "requirement": "Engineering degree (Computer, Electronic, Telecom, Automation) or equivalent", "keywords": ["Computer Engineering", "Electronic Engineering", "Telecommunications Engineering", "Automation Engineering", "Laurea in Ingegneria"], "importance": "must"},
+  {"id": 13, "requirement": "Technical documentation of software, firmware and tests", "keywords": ["Technical Documentation", "Software Documentation", "Firmware Documentation", "documentazione tecnica"], "importance": "must"},
+  {"id": 14, "requirement": "On-site test, integration and support at customer sites", "keywords": ["On-site Support", "Field Support", "Technical Support", "trasferte"], "importance": "must"},
+  {"id": 15, "requirement": "Industrial automation and logistics devices", "keywords": ["Industrial Automation", "Automazione Industriale", "Factory Automation", "Logistics Automation"], "importance": "nice"}
+]

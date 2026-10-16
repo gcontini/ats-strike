@@ -1,0 +1,115 @@
+POSTING_URL: https://jobs.example.com/18
+Bluebird Delivery Srl - Gruppo Bluebird Home
+
+Responsabile IT
+
+Milan, Lombardy, Italy
+
+40K EUR/yr - 50K EUR/yr + Bonus
+
+BLUEBIRD DELIVERY — OFFICIAL JOB DESCRIPTION
+
+RESPONSABILE IT
+
+
+
+
+Posizione:
+
+Responsabile IT (IT Manager)
+
+Dipartimento:
+
+Information & Communication Technology (ICT)
+
+Sede di Lavoro:
+
+Sede Centrale
+
+Riporto Gerarchico:
+
+Amministratore Delegato
+
+Riporto Funzionale:
+
+Direttore Amministrazione Finanza e Controllo
+
+
+
+
+OBIETTIVO DELLA POSIZIONE
+
+Il Responsabile IT ha la responsabilità primaria di definire, sviluppare e coordinare l'infrastruttura e l'architettura informatica aziendale a supporto della strategia di business, garantendo la continuità operativa, la sicurezza dei dati e l'evoluzione tecnologica del Gruppo. Allo stesso tempo, la risorsa assicura un presidio operativo costante e diretto nell'assistenza e nel supporto hardware e software a tutto lo staff aziendale. A diretto riporto della Direzione, collabora in modo trasversale con tutte le funzioni (AFC, Operations, HR, Logistica) per promuovere la digitalizzazione, ottimizzare i processi aziendali e garantire la massima efficienza dei sistemi.
+
+PRINCIPALI RESPONSABILITÀ
+
+Sviluppo Strategico dell'Infrastruttura e IT Vision
+
+Strategia IT e Business Alignment: Definisce la roadmap tecnologica aziendale in linea con gli obiettivi di crescita del business, proponendo soluzioni innovative per la digitalizzazione e l'automazione dei processi.
+Architettura e Sistemi: Progetta e gestisce l'infrastruttura di rete, i server, la connettività, i sistemi cloud e le piattaforme software/ERP, garantendone scalabilità, stabilità e prestazioni elevate.
+Cybersecurity & Business Continuity: Implementa le policy di sicurezza informatica, la gestione dei backup, il disaster recovery e garantisce la compliance alle normative vigenti in materia di protezione dei dati (GDPR).
+Gestione Vendor e Budget IT: Gestisce le relazioni con i fornitori esterni di tecnologia (hardware, software, licenze, TLC), coordinando i contratti di assistenza e partecipando alla definizione del budget IT aziendale.
+
+Supporto Operativo Hardware e Software allo Staff
+
+Helpdesk e Supporto Utenti: Fornisce assistenza tecnica di primo e secondo livello (in presenza e da remoto) a tutti i dipendenti per problematiche relative a PC, periferiche, dispositivi mobili, posta elettronica e applicativi aziendali.
+Gestione Parco Macchine: Cura la configurazione, l'installazione, la manutenzione e il refresh periodico delle postazioni di lavoro, dei server aziendali, dei dispositivi di rete e della strumentazione operativa.
+User Management e Permessi: Gestisce le credenziali, gli accessi alle reti e ai software (Active Directory, sistemi gestionali, drive condivisi), garantendo la corretta profilazione degli utenti in base ai ruoli.
+Risoluzione Guasti e Ripristini: Interviene tempestivamente in caso di malfunzionamenti o fermi macchina per ridurre al minimo l'impatto sull'operatività quotidiana delle diverse funzioni aziendali.
+
+Formazione, Compliance e Change Management
+
+Cultura Digitale e Sicurezza: Promuove presso tutto lo staff la consapevolezza e la formazione sulle buone prassi di sicurezza informatica (phishing, gestione password) e sull'uso corretto degli strumenti aziendali.
+Documentazione IT: Mantiene aggiornata la documentazione tecnica dell'infrastruttura, le procedure di supporto e il registro degli asset IT.
+
+COMPETENZE E REQUISITI
+
+Competenze Tecniche
+
+• Conoscenza approfondita di architetture di rete (LAN, WAN, VPN, Firewall, Switch, Wi-Fi).
+
+• Ottima padronanza dei sistemi operativi (Windows, Linux, macOS) e ambienti Server/Virtualizzazione (VMware, Hyper-V).
+
+• Competenze nella gestione di ambienti Cloud e suite di produttività (Microsoft 365, Google Workspace).
+
+• Conoscenza della struttura e gestione di ERP, database e sistemi di backup/disaster recovery.
+
+• Familiarità con le principali normative sulla sicurezza dei dati (GDPR) e cybersecurity.
+
+Competenze Gestionali
+
+• Capacità di pianificazione strategica, prioritizzazione dei progetti e gestione delle emergenze operatività quotidiane.
+
+• Forte orientamento al problem solving analitico e tempestivo.
+
+• Capacità di bilanciare la visione a lungo termine con la gestione delle attività di supporto operativo.
+
+Competenze Relazionali
+
+• Spiccata attitudine all'ascolto e all'empatia nell'assistenza agli utenti con competenze tecniche variegate.
+
+• Capacità di comunicazione efficace con la Direzione, i fornitori e gli stakeholder non tecnici.
+
+• Buona conoscenza della lingua inglese (scritta e parlata) per la gestione di software e fornitori internazionali.
+
+Esperienza e Istruzione
+
+• Laurea in Informatica, Ingegneria Informatica o diploma tecnico equivalente unito a solida esperienza sul campo.
+
+• Almeno 3-5 anni di esperienza in ruoli analoghi (IT Manager, SysAdmin, Coordinatore IT), preferibilmente in contesti aziendali strutturati.
+
+• Il possesso di certificazioni informatiche (es. Microsoft, Cisco, ITIL, Cybersecurity) costituisce un titolo preferenziale.
+
+
+
+
+MODALITÀ DI LAVORO E ORARIO
+
+Flessibilità: Lavoro su base giornaliera con flessibilità oraria e disponibilità all'intervento straordinario in caso di emergenze, fermi di rete o manutenzioni pianificate fuori dall'orario di lavoro.
+
+Presenza: È richiesta la presenza costante in sede per garantire il supporto operativo diretto e la gestione dell'hardware.
+
+
+
+
+Range retributivo tra i 40.000€ e i 50.000 € + benefit + bonus

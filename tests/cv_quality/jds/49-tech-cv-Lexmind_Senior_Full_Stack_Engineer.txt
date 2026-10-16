@@ -1,0 +1,99 @@
+Senior Full Stack Engineer
+Lexmind — Milan, Lombardy, Italy (Hybrid)
+JOB_POSTING: https://jobs.example.com/49
+
+Lexmind
+Senior Full Stack Engineer
+Milan, Lombardy, Italy
+
+50K EUR/yr - 80K EUR/yr
+
+At Lexmind, we’re not just building software; we’re revolutionizing the way legal professionals work.
+
+Our mission?
+
+To empower lawyers, law firms and companies with a world-class AI product that saves time, boosts productivity, and redefine what’s possible in the legal world.
+
+To become the most innovative AI company in Italy.
+
+To build the new sales standard, the sales school for B2B sales in Italy.
+
+We’re changing the game, and we’re doing it with a team of rockstars who are looking for their next big challenge and ambition.
+
+Why Lexmind?
+
+
+Shape the Future: Be part of the team that’s leading the AI revolution for legal professionals. 
+Grow with Rockstars: Collaborate with industry-leading talents in an environment that values creativity, ambition, and growth. 
+Make an Impact: Your work will directly influence how lawyers around the world practice law—more efficiently, effectively, and intelligently. 
+
+
+At Lexmind, we don’t just promise career growth; we promise a journey of learning, impact, and purpose. Ready to change the world of law?
+
+The role
+
+You will be one of the senior engineers in a squad of four to five, with a product manager and a designer. You will make the technical decisions for what the squad ships, own those decisions in production, and help the engineers around you get better. Impact is defined by vision and execution, not by age or title.
+
+You will work across the whole stack. We expect you to be deep on one side and fluent enough on the other to ship a feature alone when needed. If you are a strong backend engineer who has never touched React, or a strong frontend engineer who has never written Python, apply: we hire for judgment and curiosity, and we will tailor the interviews to where you are strongest.
+
+What You'll Bring
+
+
+5+ years of professional software engineering experience, with at least one system you owned end to end. Years alone are not the requirement; the evidence is. 
+You have shipped and operated systems that real users depended on, and you can tell us what broke, what it cost and what you changed. 
+You use AI coding tools every day (Claude Code, Cursor or similar) and you can say precisely where they were wrong and how you caught it. 
+You review other people’s code as a habit, and people get better from your reviews. 
+
+
+Our stack
+
+Next.js and TypeScript on the frontend, Python (Django and Django Ninja) on the backend, Postgres and vector stores, LLM pipelines built on our own AI platform, deployed on the cloud with GitHub Actions. You do not need to know all of it. You need to be able to learn the part you don’t know in weeks, not quarters.
+
+This role is probably not for you if
+
+
+You have never been responsible for something running in production. 
+You want a well-defined ticket to implement and someone else to decide. 
+You see full-stack work as a compromise rather than as the way to ship. 
+
+
+What Sets Us Apart
+
+An Exceptional Team
+
+At Lexmind, you’ll work alongside top talent in tech and legal AI.
+
+Our focused teams operate with purpose and autonomy, so every contribution delivers visible results.
+
+You’ll collaborate with people who pair innovation with rigor, curiosity with discipline, ambition with depth.
+
+Growth that Matters
+
+We hire exceptional people to make a difference—and we give them space to lead.
+
+Your work will shape the future of legal technology and set new standards for the field.
+
+Impact is defined by vision and execution, not by age or title. If you’re ready to take responsibility, you’ll find real opportunities to grow and lead high-stakes projects.
+
+Rewarding Your Contribution
+
+We value excellence and share success:
+
+
+Annual Salary Range: €50,000 – €80,000
+Equity Package: Align your growth with the company’s long-term success. 
+
+
+Benefits That Matter
+
+
+Hybrid Work: Flexibility to balance remote work with in-person collaboration at our Milan HQ. 
+Health Insurance: Comprehensive coverage to ensure peace of mind. 
+Meal Vouchers: Daily support to make your lunch breaks easier. 
+Performance Bonuses: Rewards tied directly to measurable results. 
+Team Retreats & Off-sites: Dedicated time to connect, collaborate, and spark bold ideas. 
+
+
+At Lexmind, ambition meets discipline and purpose. We’re not just building a product—we’re setting a new standard for the legal world. If you’re ready to contribute to something lasting and meaningful, we’d love to hear from you.
+
+Compensation Range: €50K - €80K

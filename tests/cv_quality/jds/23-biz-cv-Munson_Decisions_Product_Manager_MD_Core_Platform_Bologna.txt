@@ -1,0 +1,160 @@
+POSTING_URL: https://jobs.example.com/23
+Munson Decisions
+
+Product Manager - MD Core Platform - Bologna
+
+Bologna, Emilia-Romagna, Italy
+
+About Munson Decisions. We build decision-support software for the planning and scheduling problems that off-the-shelf systems can't solve — planning maintenance across hundreds of thousands of assets, replanning airport operations when a flight is delayed, balancing a bike-sharing scheme in real time, optimizing production lines. Our solutions combine agentic AI, mathematical optimisation, machine learning and our MDCore planning platform, and are built around each client's real constraints rather than forcing the operation to bend around the tool.
+
+Founded in 2012, we're 60+ people across France (Paris, Montpellier), Hong Kong, Italy (Bologna), US and Brazil. We've been self-funded and profitable from the start, and we work with market leaders worldwide such as Toyota, IBM, British Airways, Carhartt, and Transport for London.
+
+
+
+
+Role
+
+Product Management at Munson Decisions is about bridging deep technological expertise — our AI-enabled platform, solvers, models and optimisation engines — with operations executives who need plans their teams can actually put into practice.
+
+Your role will be to turn this technological expertise into a relevant, usable and value-creating product for our customers, finding the right balance between what our technology makes possible and the real-world needs of our users.
+
+That means serving three very different users at once. Developers build planning applications on MD Core. Business analysts model the planning problems themselves. Planners and managers use those applications to make the operational decisions their business runs on every day. Getting the product right for one of them isn't hard. Getting it right for all three is the job.
+
+
+
+
+As Product Manager, you will own the MD Core roadmap, along with its add-ons, demos and template applications. You will sit at the centre of the conversation between our R&D teams and the people who depend on them — Sales, Marketing and Delivery — and work directly with our partners and customers.
+
+You will own the core product management processes: feedback collection, backlog, release planning and release communication. And you will help shape where the product goes next, in a market moving at unprecedented speed, where agentic AI is reshaping how planning solutions are built, bought and used.
+
+You will own the platform roadmap end to end, reporting directly to the CEO, with the autonomy that implies in a company of our size.
+
+
+
+
+
+
+
+Key Responsibilities
+
+Reporting to the CEO, you will be responsible for:
+
+Roadmap and release planning: gathering priorities from internal stakeholders and partners, building and reviewing the quarterly roadmap, planning major and minor releases, and presenting progress, KPIs and risks at the quarterly steering committee.
+Requirements and backlog: turning feedback from demos, customer meetings and questionnaires into clear user stories with acceptance criteria, sizing and prioritising them, and keeping the backlog clean and relevant
+Voice of the user: defining and maintaining personas (developer, business analyst, planner, manager) with their needs and success metrics, and bringing that perspective into sprint planning, reviews and retrospectives with the development team
+Customer feedback loop: running regular feedback sessions with Sales, customer surveys and usage analysis to check that delivered features are known, used and bring real business value
+Go-to-market and enablement: coordinating release communications and demos for customers, partners and internal teams, training Sales, Delivery and Support on each release, and maintaining official demos, sales deck content and the value proposition together with Sales, Marketing and the CEO
+Market and strategy: monitoring trends and competitors in planning, scheduling and adjacent markets, and working with the Executive team on where we take the product and where we invest. 
+
+
+
+
+Your tasks will include:
+
+Reviewing new requests and turning them into prioritised, sized requirements
+Working alongside the development team and answering functional questions
+Meeting Sales, Delivery, Support and partners to collect and share product information
+Preparing demos and enablement material
+
+
+
+
+Required Skills & Qualifications
+
+Education & Experience
+
+Bachelor’s or Master’s degree in Computer Science, Engineering, Operations Research, Industrial Engineering or a related field. An MBA is very welcome.
+
+Expected work experience: 3–5 years of experience in Product Management or Product Ownership, ideally in a B2B software environment. Experience in adjacent roles such as Business Analysis, Solution Architecture or Tech Sales is a strong plus. B2B context matters to us: enterprise buying cycles, multiple stakeholders and long-lived deployments are the environment you'll be working in.
+
+
+
+
+What we're looking for 
+
+Proven roadmap and backlog ownership in an Agile environment, including writing user stories and acceptance criteria
+Good technical understanding of modern web applications (microservices, APIs, AI technology, cloud, Kubernetes), enough to discuss trade-offs with engineers
+Product discovery experience: customer interviews, surveys, personas and usage metrics
+Go-to-market experience: release communications, product demos and sales enablement material
+Experience using AI tools in your own product work (research, documentation, analysis) 
+
+
+
+
+What would make you stand out
+
+None of the following are required, and we don't expect anyone to arrive with all of them. Each one is a reason we'd want to talk to you.
+
+Pre-sales experience — time spent in front of customers understanding their pain points, expectations and how your offering brings value to them
+A working understanding of agentic AI and how it is changing the way software is built, bought and used
+Innovation management experience, or work on products that were genuinely new to their market
+Domain knowledge in optimisation, planning and scheduling, workforce, maintenance, manufacturing or supply chain
+Familiarity with Jira, Confluence or similar tools; a product management certification
+
+
+
+
+Personal Skills
+
+Stakeholder management: ability to align different teams and influence without direct authority
+Structured and pragmatic: able to prioritise clearly and explain the reasons behind decisions
+Clear communicator: comfortable presenting to customers, partners and senior management
+Customer-focused and curious: genuine interest in how users work and in where the market is going
+
+
+
+
+Language Requirements
+
+English — fluent, written and spoken 
+French is a plus
+Italian — a plus for the Bologna office
+
+
+
+
+Job Details
+
+Working Conditions
+
+Workplace location: Bologna, Italy 
+Contract type: Permanent
+Work schedule: Full-time (40h), up to 2 days / week working from home 
+Travel: occasional travel to customer, partner and Munson Decisions sites, mainly in Europe
+
+
+
+
+Compensation & Benefits
+
+€38,000–€47,000 gross annual compensation, including a fixed salary and a performance-based variable component. 
+Hybrid working model with up to 2 remote days per week
+€10 meal vouchers, 60% covered by Munson Decisions
+Company welfare bonus 200€ per year 
+IT equipment: company laptop and equipment needed for your role 
+International and collaborative work environment
+
+
+
+
+Recruitment Process
+Meet the team – Conversation with our CTO / Head of Product about Munson Decisions, MDCore and your Product Management experience.
+Meet HR – Discussion about our culture, motivation and expectations and the role.
+Product case study – A practical Product Management exercise focused on roadmap and prioritisation.
+Final discussion – Presentation of your case study and discussion with our CEO, Head of Product and Business Analyst.
+
+
+
+
+How to Apply
+Start date: Immediate 
+Apply via our website Careers page: https://jobs.example.com/23
+Send your application to: careers@example.com 
+
+
+
+
+
+
+
+Munson Decisions is an equal opportunity employer. We welcome applications from all qualified candidates regardless of gender, age, ethnicity, disability, religion, sexual orientation or background.

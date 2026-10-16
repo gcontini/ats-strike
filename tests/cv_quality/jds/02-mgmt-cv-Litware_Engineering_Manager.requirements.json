@@ -1,0 +1,19 @@
+[
+  {"id": 1, "requirement": "Engineering manager", "keywords": ["Engineering Manager", "Software Engineering Manager", "Software Development Manager", "Engineering Lead"], "importance": "must"},
+  {"id": 2, "requirement": "Lead, coach and grow a team of software engineers", "keywords": ["People Management", "People Leadership", "Coaching", "Mentoring", "Line Management"], "importance": "must"},
+  {"id": 3, "requirement": "10+ years in software engineering with a strong development background", "keywords": ["Software Engineering", "Software Development", "Software Engineer", "Software Developer"], "importance": "must"},
+  {"id": 4, "requirement": "Technical leadership on architecture and engineering best practices", "keywords": ["Technical Leadership", "Software Architecture", "Architectural Decisions", "Engineering Best Practices", "Tech Lead"], "importance": "must"},
+  {"id": 5, "requirement": "Delivering complex technology initiatives and managing risks", "keywords": ["Delivery Management", "Project Delivery", "Program Management", "Risk Management"], "importance": "must"},
+  {"id": 6, "requirement": "Cloud-native technologies", "keywords": ["Cloud-Native", "Cloud Native", "Kubernetes", "Containers", "Cloud"], "importance": "must"},
+  {"id": 7, "requirement": "Distributed systems", "keywords": ["Distributed Systems", "Microservices", "Scalability", "Event-Driven"], "importance": "must"},
+  {"id": 8, "requirement": "Modern software delivery practices", "keywords": ["CI/CD", "Continuous Delivery", "DevOps", "Agile", "Scrum"], "importance": "must"},
+  {"id": 9, "requirement": "Partner with product managers and stakeholders on priorities and delivery plans", "keywords": ["Stakeholder Management", "Product Managers", "Roadmap", "Delivery Planning", "Prioritization"], "importance": "must"},
+  {"id": 10, "requirement": "Align engineering with product strategy and business goals across functions", "keywords": ["Product Strategy", "Cross-functional", "Product Vision", "Business Alignment"], "importance": "must"},
+  {"id": 11, "requirement": "Hiring and talent development", "keywords": ["Hiring", "Recruiting", "Talent Development", "Career Development", "Performance Management"], "importance": "must"},
+  {"id": 12, "requirement": "Evaluating and adopting AI-powered engineering tools", "keywords": ["AI Tools", "AI-assisted Development", "GitHub Copilot", "Generative AI", "Developer Productivity"], "importance": "must"},
+  {"id": 13, "requirement": "Exposure to data and infrastructure technologies", "keywords": ["Data Engineering", "Data Platform", "Infrastructure", "Infrastructure as Code"], "importance": "must"},
+  {"id": 14, "requirement": "Resource planning", "keywords": ["Resource Planning", "Capacity Planning", "Headcount Planning"], "importance": "must"},
+  {"id": 15, "requirement": "Continuous improvement initiatives", "keywords": ["Continuous Improvement", "Process Improvement", "Engineering Excellence"], "importance": "must"},
+  {"id": 16, "requirement": "English at C1 level", "keywords": ["English", "C1", "Fluent English", "Professional English"], "importance": "must"},
+  {"id": 17, "requirement": "Building scalable digital products in a product-centric environment", "keywords": ["Product Development", "Digital Products", "Product-centric", "SaaS", "Scalable Products"], "importance": "nice"}
+]

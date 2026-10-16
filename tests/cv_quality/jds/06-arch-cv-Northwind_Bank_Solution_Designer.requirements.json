@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Solution Designer / IT Integrator", "keywords": ["Solution Designer", "IT Integrator", "Solution Architect", "Integration Architect"], "importance": "must"},
+  {"id": 2, "requirement": "End-to-end solution design and governance aligned with enterprise architecture", "keywords": ["Solution Design", "Solution Architecture", "Enterprise Architecture", "Design Reviews", "Technical Governance"], "importance": "must"},
+  {"id": 3, "requirement": "Requirements analysis, feasibility and impact assessment", "keywords": ["Requirements Analysis", "Business Requirements", "Non-functional Requirements", "Impact Assessment", "Feasibility"], "importance": "must"},
+  {"id": 4, "requirement": "Enterprise and systems integration", "keywords": ["Enterprise Integration", "Systems Integration", "System Integration", "Integration Patterns"], "importance": "must"},
+  {"id": 5, "requirement": "API design (REST, OpenAPI)", "keywords": ["API Design", "REST API", "RESTful", "OpenAPI", "Swagger"], "importance": "must"},
+  {"id": 6, "requirement": "Event-driven architecture", "keywords": ["Event-Driven Architecture", "Event-Driven", "EDA", "Asynchronous Messaging"], "importance": "must"},
+  {"id": 7, "requirement": "Microservices architecture", "keywords": ["Microservices", "Microservices Architecture", "Microservice"], "importance": "must"},
+  {"id": 8, "requirement": "Stakeholder management and workshop facilitation", "keywords": ["Stakeholder Management", "Stakeholder Engagement", "Workshop Facilitation", "Facilitation"], "importance": "must"},
+  {"id": 9, "requirement": "Data modelling and data flows", "keywords": ["Data Modelling", "Data Modeling", "Data Model", "Data Flows"], "importance": "must"},
+  {"id": 10, "requirement": "Cloud and platform architecture", "keywords": ["Cloud Architecture", "Platform Architecture", "Cloud Platforms", "Azure", "AWS"], "importance": "must"},
+  {"id": 11, "requirement": "Security by design and DevSecOps", "keywords": ["Security by Design", "Secure by Design", "DevSecOps", "Security Compliance"], "importance": "must"},
+  {"id": 12, "requirement": "Observability and monitoring", "keywords": ["Observability", "Monitoring", "Grafana", "Dynatrace", "Splunk"], "importance": "must"},
+  {"id": 13, "requirement": "Agile delivery with epics, user stories and backlog refinement", "keywords": ["Agile", "Agile Delivery", "Scrum", "User Stories", "Backlog Refinement"], "importance": "must"},
+  {"id": 14, "requirement": "Technical documentation and specifications", "keywords": ["Technical Documentation", "Technical Specifications", "Solution Documentation", "High-Level Design", "HLD"], "importance": "must"},
+  {"id": 15, "requirement": "Fluent English", "keywords": ["English", "Fluent English", "C1", "C2"], "importance": "must"},
+  {"id": 16, "requirement": "Java and Spring Boot", "keywords": ["Java", "Spring Boot", "Spring", "Spring Framework"], "importance": "nice"},
+  {"id": 17, "requirement": "Kafka or other event streaming platforms", "keywords": ["Kafka", "Apache Kafka", "Event Streaming", "Confluent"], "importance": "nice"},
+  {"id": 18, "requirement": "Kubernetes", "keywords": ["Kubernetes", "K8s", "OpenShift"], "importance": "nice"},
+  {"id": 19, "requirement": "CI/CD pipelines with Azure DevOps and Git", "keywords": ["CI/CD", "Azure DevOps", "Git", "Continuous Integration", "Continuous Delivery"], "importance": "nice"},
+  {"id": 20, "requirement": "Oracle and SQL databases", "keywords": ["Oracle", "SQL", "Oracle Database", "PL/SQL"], "importance": "nice"}
+]

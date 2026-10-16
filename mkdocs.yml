@@ -85,3 +85,4 @@ nav:
       - Model configurations: model-configurations.md
       - Building the client: build-client.md
       - Cutting a release: release.md
+      - Credits: credits.md

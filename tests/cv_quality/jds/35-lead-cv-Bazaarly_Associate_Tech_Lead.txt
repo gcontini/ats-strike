@@ -1,0 +1,60 @@
+JOB_POSTING: https://jobs.example.com/35
+
+Bazaarly
+
+Associate Tech Lead
+
+Milan, Lombardy, Italy
+
+At Bazaarly, we're more than a global ecommerce leader — we’re changing the way the world shops and sells. Our platform empowers millions of buyers and sellers in more than 190 markets around the world. We’re committed to pushing boundaries and leaving our mark as we reinvent the future of ecommerce for enthusiasts.
+
+Our customers are our compass, authenticity thrives, bold ideas are welcome, and everyone can bring their unique selves to work — every day. We're in this together, sustaining the future of our customers, our company, and our planet.
+
+Join a team of passionate thinkers, innovators, and dreamers — and help us connect people and build communities to create economic opportunity for all.
+
+About The Team And The Role
+
+Genuina, an Bazaarly company, empowers brands and consumers through trusted product authentication and brand engagement solutions. The Brand Success squad onboards new brands, integrates brand data, creates demo connectors for business development and marketing teams, and provides first-line support for brand and consumer issues.
+
+In this role, you will lead the squad’s technical direction and help scale these capabilities while improving reliability, standardization, and operational efficiency. You will work in a collaborative, client-facing environment where diverse perspectives are valued and technical challenges are approached as opportunities for shared learning and growth.
+
+This is a full-time position based in Milan, with a hybrid work model (3 days per week in the office) and flexibility to support work-life balance.
+
+What you will accomplish
+
+
+Lead the technical direction of the Brand Success squad, making architecture and delivery decisions that align with the broader platform strategy.
+Deliver high-quality solutions across design, implementation, testing, deployment, and observability, with a focus on customer and business outcomes.
+Balance short-term delivery priorities with longer-term scalability, automation, reliability, and operational improvements.
+Raise engineering quality through code reviews, development practices, testing, CI/CD, monitoring, and observability.
+Streamline and automate repeatable processes, including brand onboarding and connector creation, to help the squad scale effectively.
+Support operational readiness and incident response in a fast-paced, client-facing environment.
+Help engineers develop their skills through technical guidance, collaboration, and shared problem-solving.
+
+
+
+What you will bring
+
+
+6+ years of experience building large-scale distributed web platforms or APIs, including 1–2 years in a technical lead, mentoring, or delivery ownership role.
+Strong software architecture and engineering fundamentals, including design patterns and modern development practices.
+Hands-on experience with Java/Spring, JavaScript frameworks, and GraphQL or REST APIs.
+Broad system design knowledge across frontend and backend systems, including messaging, databases, and cloud infrastructure.
+Experience improving software quality through testing, CI/CD, containerization, observability, and operational practices.
+Strong communication and judgment, with the ability to make practical technical trade-offs and collaborate effectively across teams in a client-facing environment.
+Fluency in English. Italian language skills are a plus.
+Ability to work full-time in a hybrid model based in Milan (3 days in the office per week).
+
+
+
+Additional Details
+
+The base pay range for this position is expected in the range below:
+
+53,600 EUR - 73,900 EUR
+
+Base pay offered may vary depending on multiple individualized factors, including location, skills, and experience. The total compensation package for this position may also include other elements, including a target bonus and restricted stock units (as applicable) in addition to a range of insurance coverage (including medical) and/or other benefits (including retirement plan eligibility and various paid time off benefits, such as PTO, wellbeing and parental leave). Details of participation in these benefit plans will be provided upon an offer of employment.
+
+Bazaarly is an equal opportunity employer. All qualified applicants will receive consideration for employment without regard to race, color, religion, national origin, sex, sexual orientation, gender identity, veteran status, and disability, or other legally protected status. If you have a need that requires accommodation, please contact us at careers@example.com. We will make every effort to respond to your request for accommodation as soon as possible. View our accessibility statement to learn more about Bazaarly's commitment to ensuring digital accessibility for people with disabilities. It is unlawful in Massachusetts to require or administer a lie detector test as a condition of employment or continued employment. An employer who violates this law shall be subject to criminal penalties and civil liability.
+
+We use cookies to enhance your experience and may use AI tools for administrative tasks in the hiring process. To learn how we handle your personal data and use AI responsibly, please visit our Talent Privacy Notice, Privacy Center and AI Hiring Guideline.

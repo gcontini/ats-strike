@@ -1,0 +1,20 @@
+[
+  {"id": 1, "requirement": "Solution manager", "keywords": ["Solution Manager", "Solutions Manager", "Solution Engineer", "Solutions Engineer", "Solution Architect"], "importance": "must"},
+  {"id": 2, "requirement": "Energy storage and solar solution design", "keywords": ["Energy Storage", "ESS", "Solution Design", "Solar Solutions"], "importance": "must"},
+  {"id": 3, "requirement": "Pre-sales technical support", "keywords": ["Pre-sales", "Presales", "Technical Sales Support", "Sales Engineering"], "importance": "must"},
+  {"id": 4, "requirement": "Fluent Italian", "keywords": ["Italian", "Fluent Italian"], "importance": "must"},
+  {"id": 5, "requirement": "Fluent Mandarin Chinese", "keywords": ["Mandarin", "Mandarin Chinese", "Chinese"], "importance": "must"},
+  {"id": 6, "requirement": "Bachelor's degree in electrical, power electronics, energy engineering or automation", "keywords": ["Electrical Engineering", "Energy Engineering", "Power Electronics", "Automation", "Bachelor"], "importance": "must"},
+  {"id": 7, "requirement": "Proposal preparation and bidding", "keywords": ["Proposal", "Bidding", "Tender", "RFP"], "importance": "must"},
+  {"id": 8, "requirement": "Technical presentations to customers", "keywords": ["Technical Presentations", "Customer Presentations", "Product Demos"], "importance": "must"},
+  {"id": 9, "requirement": "Customer requirements analysis", "keywords": ["Customer Requirements", "Requirements Analysis", "Technical Requirements"], "importance": "must"},
+  {"id": 10, "requirement": "System architecture and product configuration", "keywords": ["System Architecture", "Product Configuration", "Product Selection"], "importance": "must"},
+  {"id": 11, "requirement": "Italian renewable energy standards, regulations and market", "keywords": ["Technical Standards", "Regulations", "Italian Energy Market", "Market Trends"], "importance": "must"},
+  {"id": 12, "requirement": "Customer feedback to product and R&D", "keywords": ["Customer Feedback", "R&D", "Product Improvement"], "importance": "must"},
+  {"id": 13, "requirement": "Project support through implementation", "keywords": ["Project Implementation", "Project Delivery", "Key Projects"], "importance": "must"},
+  {"id": 14, "requirement": "Solar PV experience", "keywords": ["Solar PV", "Photovoltaic", "PV"], "importance": "nice"},
+  {"id": 15, "requirement": "Inverters and power electronics experience", "keywords": ["Inverters", "Inverter", "Power Electronics"], "importance": "nice"},
+  {"id": 16, "requirement": "Renewable energy industry", "keywords": ["Renewable Energy", "Renewables"], "importance": "nice"},
+  {"id": 17, "requirement": "English", "keywords": ["English"], "importance": "nice"},
+  {"id": 18, "requirement": "Travel within Italy and internationally", "keywords": ["Travel", "International Travel"], "importance": "must"}
+]

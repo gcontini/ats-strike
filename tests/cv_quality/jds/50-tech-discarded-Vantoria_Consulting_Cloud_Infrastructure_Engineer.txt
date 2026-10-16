@@ -1,0 +1,82 @@
+POSTING_URL: https://jobs.example.com/50
+Vantoria Consulting Italia
+
+Cloud Infrastructure Engineer
+
+Milan, Lombardy, Italy
+
+40K EUR/yr - 43K EUR/yr
+
+Vantoria Consulting è una società leader in Europa nelle aree di consulenza direzionale e ICT, quotata al mercato NYSE Euronext di Parigi.
+
+
+
+
+La nostra proposta:
+
+siamo alla ricerca di un Cloud Infrastructure Engineer con consolidata esperienza nella gestione e nell'implementazione di infrastrutture cloud a supporto di reti core 5G.
+
+
+
+
+La persona contribuirà alle attività di implementazione dei nuovi nodi della rete Core Network 5G, occupandosi della predisposizione e configurazione del layer infrastrutturale necessario all'onboarding delle Network Functions.
+
+
+
+
+ Responsabilità:
+
+Implementare e configurare il layer infrastrutturale a supporto della Core Network 5G
+Gestire le attività propedeutiche all'onboarding delle Network Functions 5G
+Analizzare requisiti tecnici, documentazione di progetto e specifiche fornite dai vendor
+Redigere documentazione tecnica e Low Level Design (LLD)
+Effettuare attività di configurazione, setup e validazione dell'infrastruttura
+Collaborare con team di progetto e stakeholder tecnici per garantire la corretta implementazione delle soluzioni
+
+
+
+
+Requisiti mandatori:
+
+Almeno 5 anni di esperienza in ruoli di Cloud Infrastructure Engineer, Infrastructure Engineer o equivalenti
+Esperienza nell'implementazione e gestione di infrastrutture cloud enterprise
+Conoscenza delle architetture infrastrutturali a supporto di ambienti telco e/o reti di nuova generazione
+Esperienza nella stesura di Low Level Design (LLD)
+Capacità di analisi di documentazione tecnica, requisiti funzionali e specifiche di fornitore
+Competenze operative di configurazione, setup e deployment infrastrutturale
+Buona autonomia operativa e capacità di interfacciarsi con team multidisciplinari
+
+
+
+
+Requisiti preferenziali:
+
+Esperienza su tecnologia Dell Cloud Platform
+
+
+
+
+Modalità Operativa:
+
+Le attività saranno svolte prevalentemente da remoto, ma si richiede disponibilità a svolgere eventuali giornate presso la sede del cliente a Milano, in funzione delle esigenze progettuali.
+
+
+
+
+Compensation&Benefit:
+
+La proposta economica sarà valutata rispetto alla seniority e alle competenze del candidato.
+
+Range di RAL di riferimento 40.000-43.000 + buoni pasto 
+
+
+
+
+Iter di Selezione:
+
+Il percorso di selezione prevede un primo approfondimento conoscitivo/motivazionale con il referente HR dedicato e una successiva fase di valutazione e presentazione delle tematiche tecnico/progettuali.
+
+
+
+
+Il presente annuncio è rivolto ad entrambi i sessi, ai sensi delle leggi 903/77 e 125/91 e a persone di tutte le età e tutte le nazionalità, ai sensi dei decreti legislativi 215 e 216/03.

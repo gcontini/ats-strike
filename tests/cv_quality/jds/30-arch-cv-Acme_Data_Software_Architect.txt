@@ -1,0 +1,69 @@
+POSTING_URL: https://jobs.example.com/30
+ACME DATA
+
+Software Architect
+
+Bologna, Emilia-Romagna, Italy
+
+Acme Data  è una delle principali società italiane di consulenza in  Data & AI  , specializzata nel trasformare i dati in valore strategico. Con sedi a  Bologna  ,  Roma  ,  Napoli  e  Milano  , riunisce un team di oltre  500 professionisti  .
+
+Acme Data supporta organizzazioni di ogni settore nella progettazione, realizzazione e gestione di moderni  ecosistemi data-driven  , coprendo ambiti quali: Data Strategy, Data Platform, Business Analytics, AI & Machine Learning, Agentic AI, Data & AI Governance. Fortemente orientata all’innovazione e vendor-independent, collabora con i migliori partner tecnologici, scegliendo le soluzioni più adatte per ciascun cliente o valorizzando gli strumenti già presenti.
+
+Con  oltre 25 anni di esperienza  , Acme Data unisce solida expertise tecnica e una visione centrata sulle persone, accompagnando i decisori nelle scelte strategiche e promuovendo una vera cultura del dato in tutta l’organizzazione.
+
+Posizione:
+
+Software Architect
+
+In Acme Data progettiamo ecosistemi Data, Analytics e AI che aiutano le aziende a trasformare i dati in valore. Per rafforzare il nostro team cerchiamo un/a Software Architect capace di definire l'architettura delle soluzioni, stimare e pianificare le attività e guidare il team di sviluppo attraverso supervisione tecnica e code review, intervenendo in prima persona sugli aspetti più critici.
+
+Il profilo si occuperà di:
+
+
+ Disegnere architetture software per applicazioni web enterprise, definendo standard, pattern e linee guida. 
+ Guidere le scelte tecnologiche e supportere i team di sviluppo nelle attività di delivery. 
+ Collaborare con Data Engineer, AI Engineer e Cloud Architect per realizzare soluzioni integrate. 
+ Definire API, modelli dati e strategie di integrazione tra sistemi. 
+ Progettazione funzionale delle interfacce: capacità di disegnare UI chiare e usabili con attenzione a UX e responsive design. 
+ Affiancare clienti e stakeholder nella definizione delle soluzioni più adatte alle esigenze di business. 
+ Promuovere qualità del software, best practice e crescita tecnica del team. 
+
+
+Requisiti:
+
+Chi cerchiamo
+
+
+ Esperienza nel ruolo di almeno due anni nella progettazione di architetture software enterprise e nella gestione team/progetto 
+ Competenze in Java e Spring Boot, Angular e TypeScript 
+ Progettazione funzionale delle interfacce: capacità di disegnare UI chiare e usabili con attenzione a UX e responsive design. 
+ Conoscenza di API REST, sistemi distribuiti e architetture a servizi. 
+ Familiarità con pratiche DevOps, CI/CD, containerizzazione e cloud (Azure, AWS o GCP). 
+ Ottima conoscenza di database relazionali e SQL. 
+ Capacità di tradurre requisiti complessi in soluzioni concrete e sostenibili. 
+ Attitudine al confronto con team multidisciplinari e stakeholder business. 
+
+
+Saranno considerati plus
+
+Microservizi, integrazione di servizi AI e Generative AI, esperienza in progetti Data & Analytics
+
+Altre informazioni:
+
+Perché Acme Data
+
+Entrerai a far parte di un contesto in cui Data, AI, Cloud e Digital Applications convergono per creare soluzioni innovative per aziende leader di mercato. Lavorerai con professionisti altamente specializzati, contribuendo all'evoluzione delle nostre competenze tecnologiche e alla crescita dei nostri clienti.
+
+Se ti appassiona progettare architetture moderne e costruire soluzioni che generano impatto reale, potresti essere la persona che stiamo cercando.
+
+Cosa offriamo:
+
+
+Welfare aziendale
+Formazione continua con il supporto di tutor esperti
+Modalità di lavoro ibrida e flessibile
+Dotazioni integrative per lo smart working
+Assicurazione medica integrativa prevista dal CCNL
+Convenzioni dedicate ai dipendenti utilizzabili su tutto il territorio nazionale
+Supporto psicologico online gratuito tramite Unobravo
+RAL: da 37.000€ a 47.000€

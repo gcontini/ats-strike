@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Tech Lead - AI", "keywords": ["Tech Lead", "Technical Lead", "AI Tech Lead", "AI Technical Lead", "AI Lead"], "importance": "must"},
+  {"id": 2, "requirement": "Generative AI and LLM platforms", "keywords": ["Generative AI", "GenAI", "LLM", "Large Language Models"], "importance": "must"},
+  {"id": 3, "requirement": "Conversational AI and multi-channel virtual assistant platforms", "keywords": ["Conversational AI", "Virtual Assistant", "Chatbot", "Virtual Agent"], "importance": "must"},
+  {"id": 4, "requirement": "Solution architecture, integration design and architecture governance", "keywords": ["Solution Architecture", "Solution Architect", "Architecture Governance", "Integration Design"], "importance": "must"},
+  {"id": 5, "requirement": "LLM orchestration frameworks (LangChain, LangGraph, LangSmith)", "keywords": ["LangChain", "LangGraph", "LangSmith", "LLM Orchestration"], "importance": "must"},
+  {"id": 6, "requirement": "Retrieval-augmented generation (RAG) patterns", "keywords": ["RAG", "Retrieval-Augmented Generation", "Retrieval Augmented Generation"], "importance": "must"},
+  {"id": 7, "requirement": "Multi-cloud architecture across AWS, Azure and GCP", "keywords": ["Multi-cloud", "AWS", "Azure", "GCP", "Google Cloud Platform"], "importance": "must"},
+  {"id": 8, "requirement": "AWS AI services: Bedrock and Kiro", "keywords": ["Amazon Bedrock", "AWS Bedrock", "Bedrock", "Kiro", "AWS Kiro"], "importance": "must"},
+  {"id": 9, "requirement": "OpenAI services and Prompt Flow", "keywords": ["OpenAI", "Azure OpenAI", "Prompt Flow", "PromptFlow"], "importance": "must"},
+  {"id": 10, "requirement": "Cognitive Services (CLU, Speech, Q&A)", "keywords": ["Cognitive Services", "Azure AI Services", "CLU", "Azure Speech", "QnA Maker"], "importance": "must"},
+  {"id": 11, "requirement": "AI/ML and cloud-native platforms", "keywords": ["AI/ML", "Machine Learning", "Cloud-native", "Cloud Native"], "importance": "must"},
+  {"id": 12, "requirement": "Python ETL pipelines for high-volume event data", "keywords": ["Python", "ETL", "Data Pipelines", "Data Engineering"], "importance": "must"},
+  {"id": 13, "requirement": "Event-driven architecture with Kafka", "keywords": ["Kafka", "Apache Kafka", "Event-driven Architecture", "Event-driven"], "importance": "must"},
+  {"id": 14, "requirement": "Graph and NoSQL databases (Neo4j, Cosmos DB, MongoDB)", "keywords": ["Neo4j", "Graph Database", "NoSQL", "Cosmos DB", "MongoDB"], "importance": "must"},
+  {"id": 15, "requirement": "DevSecOps toolchain and shift-left security", "keywords": ["DevSecOps", "GitHub Actions", "SonarQube", "JFrog", "Shift-left"], "importance": "must"},
+  {"id": 16, "requirement": "P1/P2 incident escalation and war-room resolution", "keywords": ["Incident Management", "Incident Escalation", "Major Incident", "P1/P2", "War Room"], "importance": "must"},
+  {"id": 17, "requirement": "Stakeholder management and presenting architecture to C-level", "keywords": ["Stakeholder Management", "Stakeholder Engagement", "C-level", "CXO"], "importance": "must"},
+  {"id": 18, "requirement": "English", "keywords": ["English", "Fluent English"], "importance": "must"},
+  {"id": 19, "requirement": "Italian", "keywords": ["Italian", "Italiano"], "importance": "nice"},
+  {"id": 20, "requirement": "Telecom domain", "keywords": ["Telecom", "Telecommunications", "Telco"], "importance": "nice"}
+]

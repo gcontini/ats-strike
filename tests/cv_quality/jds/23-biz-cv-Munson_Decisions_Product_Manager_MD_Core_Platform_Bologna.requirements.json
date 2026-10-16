@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Product manager", "keywords": ["Product Manager", "Product Owner", "Technical Product Manager", "Platform Product Manager", "Product Management"], "importance": "must"},
+  {"id": 2, "requirement": "Product roadmap ownership and release planning", "keywords": ["Product Roadmap", "Roadmap", "Release Planning", "Steering Committee", "KPIs"], "importance": "must"},
+  {"id": 3, "requirement": "Backlog management with user stories and acceptance criteria", "keywords": ["Product Backlog", "Backlog", "User Stories", "Acceptance Criteria", "Prioritization"], "importance": "must"},
+  {"id": 4, "requirement": "Agile delivery with the development team", "keywords": ["Agile", "Sprint Planning", "Retrospectives", "Sprint Reviews"], "importance": "must"},
+  {"id": 5, "requirement": "Technical understanding of modern web applications", "keywords": ["Microservices", "APIs", "Cloud", "Kubernetes", "K8s"], "importance": "must"},
+  {"id": 6, "requirement": "Product discovery: customer interviews, surveys, personas, usage metrics", "keywords": ["Product Discovery", "Customer Interviews", "Personas", "Usage Metrics", "Customer Surveys"], "importance": "must"},
+  {"id": 7, "requirement": "Go-to-market: release communications, demos and sales enablement", "keywords": ["Go-to-Market", "GTM", "Sales Enablement", "Product Demos", "Release Communications"], "importance": "must"},
+  {"id": 8, "requirement": "Using AI tools in product work", "keywords": ["AI Tools", "AI-assisted", "AI"], "importance": "must"},
+  {"id": 9, "requirement": "Stakeholder management across R&D, Sales, Marketing and Delivery", "keywords": ["Stakeholder Management", "Cross-functional", "Stakeholders"], "importance": "must"},
+  {"id": 10, "requirement": "Market and competitor analysis for product strategy", "keywords": ["Competitive Analysis", "Market Analysis", "Product Strategy", "Competitors"], "importance": "must"},
+  {"id": 11, "requirement": "Degree in Computer Science, Engineering or Operations Research", "keywords": ["Computer Science", "Engineering", "Operations Research", "Industrial Engineering"], "importance": "must"},
+  {"id": 12, "requirement": "Fluent English", "keywords": ["English"], "importance": "must"},
+  {"id": 13, "requirement": "B2B enterprise software", "keywords": ["B2B", "B2B Software", "Enterprise Software", "Enterprise"], "importance": "nice"},
+  {"id": 14, "requirement": "Business analysis, solution architecture or tech sales background", "keywords": ["Business Analyst", "Business Analysis", "Solution Architect", "Solution Architecture", "Technical Sales"], "importance": "nice"},
+  {"id": 15, "requirement": "Pre-sales experience", "keywords": ["Pre-sales", "Presales", "Pre-Sales"], "importance": "nice"},
+  {"id": 16, "requirement": "Agentic AI", "keywords": ["Agentic AI", "AI Agents"], "importance": "nice"},
+  {"id": 17, "requirement": "Optimisation, planning and scheduling domain", "keywords": ["Optimization", "Optimisation", "Planning and Scheduling", "Supply Chain", "Manufacturing"], "importance": "nice"},
+  {"id": 18, "requirement": "Jira and Confluence", "keywords": ["Jira", "Confluence"], "importance": "nice"},
+  {"id": 19, "requirement": "MBA", "keywords": ["MBA", "Master of Business Administration"], "importance": "nice"},
+  {"id": 20, "requirement": "French or Italian language", "keywords": ["French", "Italian"], "importance": "nice"}
+]

@@ -1,0 +1,79 @@
+JOB_POSTING: https://jobs.example.com/31
+
+Hooli Pay
+
+Lead Architect (Payments)
+
+Milan, Lombardy, Italy
+
+Do you like to look to the future? Expand new Open Finance horizons with us: this will be the best opportunity for you!
+
+
+
+
+Hooli Pay is looking for an outstanding Lead Architect to drive our next-generation payment ecosystem and spearhead pioneering infrastructure connecting banks with the Digital Euro framework.
+
+
+
+
+As Lead Architect, you will serve as the technical authority and architectural compass for a mission-critical, highly challenging project in the payments domain. You will design and champion an innovative platform enabling seamless interconnection between financial institutions and the new Digital Euro infrastructure. This role demands deep expertise in complex enterprise architectures, high-security transaction engineering, advanced cryptography, container orchestration (Kubernetes), and core banking integration. You will collaborate closely with cross-functional teams to define technical strategy, ensure flawless execution, and maintain zero-compromise security standards.
+
+
+
+
+Key Responsibilities
+
+Architectural Vision & Design: Define and drive the enterprise architecture for innovative payment solutions, specifically interlinking core bank infrastructure with the upcoming Digital Euro ecosystem.
+High-Security Infrastructure & Networking: Design mission-critical systems ensuring robust session security, mTLS, payload signing/verification, advanced network topologies, and cryptographic key lifecycle management utilizing Hardware Security Modules (HSM) and HashiCorp Vault.
+Cloud-Native & Container Orchestration: Architect resilient deployments using Kubernetes (K8s) across both on-premise environments and Managed Kubernetes as-a-Service (e.g., EKS, GKE, AKS).
+Core Banking Integration: Architect end-to-end integration patterns interfacing with core banking systems covering ledger management, peer-to-peer (P2P) payments, POS acceptance, treasury services, issuance, acquiring, and automated KYC/AML workflows.
+Governance & Code Excellence: Establish software development standards, enforce reactive programming and virtual thread design patterns, conduct mandatory code reviews, and aggressively minimize technical debt.
+Security & Compliance Standard Bearer: Ensure all technical architectures adhere to highest-level banking security compliance, proactively addressing vulnerability reports and maintaining top-tier security audit metrics.
+
+
+
+
+Required Qualifications
+
+Proven Track Record: Extensive experience (7+ years) as an Enterprise / Solution / Software Architect in complex, high-availability fintech or banking payment environments.
+Academic Background: Degree in Computer Engineering, Computer Science, or equivalent STEM disciplines.
+Languages & Mobility: Professional fluency in English and Italian (written and spoken). Availability for occasional travel between company offices and client sites.
+Backend Frameworks: Java (latest LTS), Spring Boot 3.x, Reactive Programming (Project Reactor/WebFlux), Java Virtual Threads (Project Loom).
+Infrastructure & Container Orchestration: Kubernetes (K8s) — both Bare-Metal / On-Premise installations and Cloud-Managed Kubernetes as-a-Service (EKS, GKE, AKS), Docker, Cloud-Native Tooling.
+Security & Cryptography: mTLS, Payload Digital Signatures, Hardware Security Modules (HSM), Vaults, Application Security, Session Security.
+Data & Messaging: Distributed Transactional DBs, NoSQL databases, High-throughput Queue/Event-driven Architectures (Kafka, RabbitMQ).
+Banking & Domain Knowledge: P2P Payments, POS Acquiring, Ledgers/Balances, Treasury, Issuance, KYC.
+
+
+
+
+Nice to have
+
+Mobile Development Experience: Prior hands-on experience or solid architectural understanding of mobile application development (iOS/Android native or cross-platform frameworks like Flutter/React Native), particularly applied to mobile banking, digital wallets, or secure payment SDK integrations.
+
+
+
+
+Personal Skills & Leadership Competencies
+
+Strong architectural leadership and authority, with the ability to mentor developers and foster technical excellence.
+Consultative mindset with structured problem-solving skills in high-stakes environments.
+High level of technical ownership, accuracy, and continuous commitment to minimizing risk and tech debt.
+Exceptional stakeholder management capabilities across technical and C-level audiences.
+
+
+
+
+What we offer
+
+An easy and outgoing environment, where every opinion matters and everyone has the chance to speak up
+Flexible work policy with plenty of remote working
+Learning & Development via an engaging platform (Udemy) and with training in person as well
+Wellness with the opportunity to join Wellhub and have access to gyms and online training
+Mental health care thanks to our partnership with Serenis, a listening window to take care of your mental wellbeing
+Contract & Compensation: CCNL Credito - ABI. Competitive salary aligned with senior architectural expertise (€50.000 - €75.000). The salary offered may vary based on the work location and the selected candidate’s skills and professional experience.
+
+
+
+
+Workplace: Milan or Turin plus remote working. Availability for national and international travel is required

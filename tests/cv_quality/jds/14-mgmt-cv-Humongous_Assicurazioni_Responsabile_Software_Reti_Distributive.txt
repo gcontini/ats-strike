@@ -1,0 +1,66 @@
+POSTING_URL: https://jobs.example.com/14
+Humongous Assicurazioni
+
+Responsabile Software Reti Distributive
+
+Bologna, Emilia-Romagna, Italy
+
+Humongous Assicurazioni S.p.A., compagnia multi-ramo del Gruppo Humongous, leader in Italia nei rami Danni, per l’area Software Anagrafiche e Reti è alla ricerca di un esperto solution architect/software tech lead da inserire nel ruolo di:
+
+
+
+
+Responsabile Software Reti Distributive
+
+
+
+
+Sede di lavoro: Bologna
+
+Modalità di lavoro: in sede 
+
+
+
+
+Il profilo ricercato, inserito nel contesto organizzativo dell’area “Software Reti”, sarà responsabile del coordinamento delle attività di sviluppo e manutenzione applicativa delle soluzioni software a supporto della rete distributiva della Compagnia. Il ruolo agirà come punto di riferimento per gli stakeholder IT e di business, garantendo qualità delle soluzioni, rispetto delle architetture aziendali e rapidità di rilascio delle evoluzioni applicative.
+
+
+
+
+In particolare, il ruolo prevede le seguenti attività:
+
+Supervisionare le attività di analisi tecnica, progettazione e manutenzione applicativa backend e frontend delle soluzioni software dedicate alle reti agenziali;
+Collaborare con le altre funzioni IT nelle attività di integrazione, configurazione e definizione delle soluzioni applicative, partecipando alle analisi di fattibilità e alle stime progettuali;
+Valutare e validare le soluzioni tecniche proposte dai partner esterni, contribuendo alla definizione delle architetture applicative e delle strategie evolutive;
+Definire e governare i piani di lavoro delle risorse interne e di terze parti, definendo le attività evolutive con tutti gli stakeholder di business interessati e monitorando l’avanzamento delle attività;
+Promuovere, in coerenza con le linee guida aziendali, l'adozione di strumenti e tecniche basati su Intelligenza Artificiale e Generative AI a supporto del ciclo di sviluppo software;
+Garantire il corretto governo del ciclo di vita del software, assicurando standard qualitativi elevati e coerenza con le architetture IT aziendali.
+
+
+
+
+Requisiti richiesti:
+
+Laurea Magistrale in Informatica, Ingegneria Informatica o discipline tecnico-scientifiche equivalenti;
+Esperienza professionale pluriennale nel ruolo di solution architect, software tech lead (o analoghi ruoli di gestione team di sviluppo software) preferibilmente maturata in ambito financial services;
+Consolidata esperienza nella gestione di applicazioni complesse basate su architetture a microservizi e tecnologie Java/Spring Boot;
+Ottima conoscenza dei principali database relazionali, in particolare Oracle e IBM DB2;
+Capacità di coordinamento di fornitori e partner esterni impegnati nello sviluppo applicativo;
+Conoscenza di strumenti e soluzioni basati su Intelligenza Artificiale e Generative AI applicati al software engineering;
+Rappresenta requisito preferenziale aver maturato esperienze progettuali in ambito assicurativo, ed in iniziative di modernizzazione applicativa su tecnologia COBOL/CICS;
+Completano il profilo: ottime capacità decisionali, di problem solving, orientamento al risultato e capacità di coordinamento risorse.
+
+
+
+
+Il/la candidato/a in possesso delle competenze ed esperienze richieste sarà inserito/a con rapporto di lavoro a tempo indeterminato ai sensi del CCNL delle Imprese di Assicurazione alle seguenti condizioni retributive e benefit:
+
+Retribuzione Annua Lorda: da €. 58.000 a €. 68.000;
+Premio Aziendale;
+Polizza Sanitaria Integrativa;
+Buoni Pasto.
+
+
+
+
+La ricerca è rivolta a candidati ambosessi ai sensi della L. 903/77 e D.lgs. 198/2006.

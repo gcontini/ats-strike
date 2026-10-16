@@ -1,0 +1,85 @@
+GCP Cloud Data Engineer
+Contoso Consulting — Milan, Lombardy, Italy (Hybrid)
+JOB_POSTING: https://jobs.example.com/45
+
+Contoso Consulting
+GCP Cloud Data Engineer
+Milan, Lombardy, Italy
+
+Il tuo Ruolo
+
+Scegliere Contoso Consulting significa scegliere un’azienda in cui sarà possibile plasmare la propria carriera nel modo desiderato, dove si sarà supportati e ispirati da una comunità collaborativa di colleghi in tutto il mondo e dove si potrà reinventare ciò che è possibile. Unisciti a noi e contribuisci ad aiutare le principali organizzazioni globali a sbloccare il valore della tecnologia e a costruire un mondo più sostenibile e più inclusivo.
+
+Per l’accrescimento della practice Insights & Data, parte integrante della unit Digital Service che unisce Eccellenza Tecnologica, Data Science e Competenze di Business cross mercato per aiutare le organizzazioni a ottenere insights di valore attraverso le potenzialità della Data Driven View, siamo alla ricerca di GCP Cloud Data Engineers e GCP Cloud Data Architects.
+
+La risorsa si occuperà di supporterare i clienti nella progettazione e realizzazione di Modern Data Platforms e architetture Big Data su Google Cloud Platform, contribuendo alla definizione dell'architettura dati, allo sviluppo di pipeline di ingestion e trasformazione tramite Python e PySpark, all'implementazione di modelli dati secondo i principi della Medallion Architecture, e all'adozione di pratiche di Data Governance, Data Quality e Cloud Automation attraverso strumenti di Infrastructure as Code quali Terraform.
+
+Le tue Caratteristiche
+
+
+Laurea in discipline tecnico-scientifiche.
+Esperienza comprovata nella progettazione e implementazione di soluzioni di Data Engineering e Data Analytics su Google Cloud Platform.
+Competenze avanzate nei principali servizi GCP quali Google Cloud Storage, Dataflow, BigQuery, Dataproc, Composer, Pub/Sub, Airflow, Cloud Functions, Deployment Manager.
+Solida esperienza nello sviluppo di pipeline dati tramite Python e PySpark.
+Conoscenza approfondita dei principi di progettazione delle moderne Data Platform e delle architetture Big Data in cloud.
+Esperienza nella progettazione e implementazione di architetture dati basate sul paradigma Medallion Architecture (Bronze, Silver, Gold).
+Ottima conoscenza del linguaggio SQL e capacità di scrivere query avanzate e ottimizzate.
+Capacità di modellazione dati su database relazionali, NoSQL e Data Warehouse.
+Conoscenza dei principali framework Big Data (Spark, Hadoop, Hive).
+Conoscenza dei principi di Data Governance, Data Quality e Metadata Management.
+Conoscenza delle best practice di sicurezza, protezione e gestione dei dati.
+Gradita conoscenza di linguaggi di programmazione aggiuntivi quali Scala e Java.
+Gradita conoscenza dei principi e delle metodologie DevOps.
+Buona conoscenza della lingua inglese.
+
+
+Titoli preferenziali
+
+
+Conoscenza di framework e metodologie di Infrastructure as Code (IaC).
+Conoscenza di Terraform per l'automazione e il provisioning di infrastrutture cloud.
+Possesso di certificazioni Google Cloud, Databricks o ambito Data Engineering.
+
+
+Soft Skills
+
+
+Mentalità analitica, strutturata e orientata al problem solving.
+Attitudine alla comunicazione e al lavoro in team multidisciplinari.
+Proattività e orientamento alla gestione della relazione con il cliente.
+Leadership e capacità di guidare discussioni architetturali e decisioni tecniche.
+Passione per l'innovazione, il Cloud e le moderne Data Platform.
+Orientamento al risultato e capacità di operare in contesti dinamici e complessi.
+
+
+Perchè ti piacerà lavorare con noi
+
+
+Riconosciamo l’importanza di soluzioni di lavoro flessibili per offrirti supporto. Che si tratti di lavoro da remoto, orari flessibili o entrambi, troverai un ambiente che favorisce l’equilibrio tra vita privata e vita lavorativa
+Al centro della nostra missione c'è la tua carriera, attraverso percorsi di crescita professionale pensati per supportarti nell'esplorare un mondo di opportunità
+Ci impegniamo a promuovere la responsabilità sociale creando un ambiente di lavoro inclusivo, dove talenti diversi sono valorizzati. La diversità è un pilastro della nostra cultura aziendale, arricchendo il nostro lavoro attraverso esperienze, culture, etnie, stili di comunicazione e comportamenti.
+
+
+Location: Milano, Torino, Bologna, Marcon, Roma – modalità di lavoro ibrida
+
+Tipo di contratto: contratto a tempo indeterminato
+
+Inquadramento: CCNL Metalmeccanico Industria – Livello Quadro
+
+Mansione: Impiegato
+
+Retribuzione annua lorda (RAL): da € 49.000 a € 75.000
+
+La fascia retributiva indicata è definita in conformità alla normativa europea e nazionale in materia di trasparenza retributiva.
+
+Il valore minimo della fascia corrisponde al trattamento economico minimo previsto dal CCNL applicabile per il livello e mansione sopra indicati e non rappresenta necessariamente la retribuzione di ingresso. La retribuzione che sarà proposta all’esito del processo di selezione sarà determinata sulla base delle competenze, dell’esperienza professionale, del livello di seniority e delle caratteristiche specifiche del profilo selezionato ed in coerenza con il sistema retributivo e di classificazione aziendale, nel rispetto di criteri oggettivi e neutri sotto il profilo del genere.
+
+Sul gruppo Contoso Consulting
+
+Contoso Consulting è un partner globale per la trasformazione tecnologica e di business delle aziende, che sfrutta la potenza dell’AI per offrire valore ai propri clienti. Immaginiamo il futuro delle organizzazioni e lo trasformiamo in realtà grazie all’AI, alla tecnologia e alle persone. Forti di quasi 60 anni di esperienza, siamo un gruppo responsabile e diversificato di oltre 420.000 persone presente in più di 50 paesi nel mondo. Forniamo servizi e soluzioni end-to-end grazie alla nostra profonda esperienza settoriale e a un solido ecosistema di partner, facendo leva sulle nostre competenze in ambito di strategia, tecnologia, progettazione, ingegneria e gestione operativa. Nel 2025 il Gruppo ha registrato ricavi complessivi pari a 22,5 miliardi di euro.
+
+Build it better. | https://jobs.example.com/45
+
+Candidati ora!
+
+L'offerta di lavoro si intende rivolta all'uno e all'altro sesso in ottemperanza al D.Lgs. 198/2006. Inoltre, prestiamo attenzione e sensibilità alle future risorse appartenenti alle categorie protette, ai sensi degli articoli 1 e 18 della legge 68 del ‘99. I dati personali saranno trattati in conformità alle disposizioni contenute nel regolamento UE 2016/679.

@@ -1,0 +1,71 @@
+IT Manager
+
+Turin, Piedmont, Italy
+
+Siamo alla ricerca di un/una IT Manager che, a diretto contatto con il Management e con le diverse funzioni aziendali, avrà la responsabilità di garantire l’efficienza, la sicurezza e l’evoluzione dell’ecosistema IT aziendale.
+
+La figura avrà un ruolo trasversale, combinando il presidio operativo dell’infrastruttura e dei sistemi con la gestione dei principali progetti IT e di digitalizzazione, contribuendo a definire le priorità tecnologiche in coerenza con le esigenze e gli obiettivi del business.
+
+Cerchiamo una persona con un approccio pragmatico e hands-on, capace di comprendere le esigenze delle diverse funzioni, trasformarle in soluzioni tecnologiche efficaci e accompagnare l’azienda e il team nel percorso di evoluzione futura.
+
+ 
+
+Principali responsabilità
+
+Strategia IT, progetti e digitalizzazione
+
+    Contribuire alla definizione e all’esecuzione del piano tecnologico aziendale, assicurandone l’allineamento con gli obiettivi e le priorità del business.
+    Coordinare i principali progetti IT e di digitalizzazione, dalla raccolta delle esigenze fino all’implementazione e al monitoraggio delle soluzioni.
+    Identificare opportunità tecnologiche, di automazione e di miglioramento dei processi finalizzate ad aumentare l’efficienza, ridurre i costi e supportare l’evoluzione dell’organizzazione.
+    Collaborare con il Management e con le diverse funzioni aziendali nell’individuazione delle soluzioni IT più adeguate alle esigenze del business.
+
+Infrastruttura, sistemi e dati
+
+    Presidiare la progettazione, l’implementazione e la gestione dell’infrastruttura tecnologica aziendale, inclusi reti, server, hardware, servizi cloud e sistemi software/gestionali.
+    Garantire la continuità operativa dei sistemi, la gestione degli accessi, dei backup e la risoluzione delle principali problematiche IT.
+    Supportare l’evoluzione e l’integrazione dei sistemi informativi in funzione delle esigenze aziendali.
+    Presidiare la gestione dei dati, garantendone integrità, sicurezza e disponibilità e favorendone l’accessibilità a Management, funzioni aziendali e sistemi di Business Intelligence.
+
+Cybersecurity, governance e compliance
+
+    Definire e mantenere un adeguato sistema di governance IT, attraverso policy, procedure e standard coerenti con le esigenze aziendali e con i requisiti normativi.
+    Presidiare la cybersecurity, la sicurezza dei dati e la gestione dei principali rischi IT.
+    Garantire la conformità delle pratiche e dei sistemi IT alle normative e agli standard applicabili.
+    Sviluppare, mantenere e aggiornare i piani di Disaster Recovery e Business Continuity, garantendo la capacità dell’organizzazione di rispondere efficacemente a eventuali interruzioni o situazioni di crisi.
+
+Fornitori, budget e gestione IT
+
+    Gestire i rapporti con fornitori e partner tecnologici, monitorando qualità dei servizi, contratti, licenze e livelli di servizio.
+    Gestire e negoziare le principali forniture e soluzioni tecnologiche, assicurandone la coerenza con gli standard e le esigenze aziendali.
+    Contribuire alla definizione e alla gestione del budget IT, monitorando investimenti e costi e identificando opportunità di efficientamento.
+    Valutare nuove tecnologie e soluzioni, garantendo un approccio orientato all’innovazione e al miglioramento continuo.
+
+
+Competenze e requisiti
+
+Esperienza
+
+    Laurea in Informatica, Ingegneria Informatica o discipline affini.
+    Almeno 5 anni di esperienza in ambito IT, preferibilmente maturata in contesti aziendali strutturati e/o produttivi.
+    Esperienza pregressa in ruoli di IT Manager o similari, con responsabilità nella gestione di sistemi, infrastrutture, fornitori e progetti IT.
+
+Hard skills
+
+    Solida conoscenza di infrastrutture IT, reti, server, sistemi operativi, servizi cloud e sistemi gestionali/ERP.
+    Conoscenza dei principi e delle principali soluzioni di cybersecurity, gestione degli accessi, backup, Disaster Recovery e Business Continuity.
+    Conoscenza di sistemi CRM e strumenti di Business Intelligence
+    Esperienza nella gestione e nel coordinamento di progetti IT e di digitalizzazione.
+    Esperienza nella gestione di fornitori, partner tecnologici, contratti e licenze.
+    Conoscenza dei principi di data management, database e integrazione dei sistemi.
+    Conoscenza di base dei processi e delle metodologie di sviluppo software.
+    Buona conoscenza della lingua inglese.
+    Costituisce un plus la conoscenza dei processi di Produzione e Supply Chain.
+
+Soft skills
+
+    Approccio pragmatico, operativo e hands-on.
+    Ottime capacità di problem solving, analisi e gestione delle priorità.
+    Capacità di tradurre le esigenze del business in soluzioni tecnologiche concrete ed efficaci.
+    Ottime capacità comunicative e relazionali e predisposizione alla collaborazione con interlocutori e funzioni differenti.
+    Forte senso di responsabilità e ownership.
+    Orientamento all’innovazione, al miglioramento continuo e alla ricerca proattiva di nuove soluzioni.

@@ -1,0 +1,113 @@
+Velocom + Voxtel
+
+TELCO CLOUD ENGINEER
+
+Milan, Lombardy, Italy
+
+CHI SIAMO
+
+A partire dal 1° gennaio 2026 Velocom S.p.A. e Voxtel Italia S.p.A., a seguito della fusione per incorporazione deliberata dalle rispettive assemblee degli azionisti, diventano un’unica realtà societaria sotto la denominazione di Velocom S.p.A.
+
+Il progressivo processo di integrazione tra le due società, avviato sin da gennaio 2025, rappresenta un’opportunità straordinaria per continuare a offrire a famiglie, imprese e pubbliche amministrazioni servizi sempre più avanzati e soluzioni tecnologiche all’avanguardia facendo leva sulle connessioni fisse e mobili in 5G più performanti del Paese, l’IoT, il Cloud e l’Intelligenza Artificiale e mantenendo al centro la qualità e l’affidabilità che da sempre contraddistinguono Velocom e Voxtel Italia.
+
+Cosa troverai in Velocom + Voxtel?
+
+I nostri valori: Spark Passion, Aim High, Stand True orientano il nostro lavoro quotidiano. Insieme creiamo un ambiente dove ogni persona può fare la differenza.
+
+We feel close #BELONGING
+
+Creiamo insieme un ambiente di lavoro informale e accogliente, in un clima orientato alla collaborazione e al rispetto.
+
+Mostriamo apertura e curiosità per incoraggiare idee innovative e generare un impatto tangibile per noi e per i nostri clienti.
+
+We are smart #FLEXIBILITY
+
+Il lavoro per obiettivi, lo smartworking, l’autonomia e la fiducia sono principi chiave della nostra cultura organizzativa.
+
+Ci poniamo sfide ambiziose e le affrontiamo insieme con coraggio e responsabilità.
+
+We learn #IMPACT
+
+Coltiviamo il nostro talento, favorendo la crescita e il cambiamento.
+
+Ispiriamo le persone a essere protagoniste del proprio sviluppo, grazie a programmi innovativi e a percorsi professionalizzanti.
+
+We feel good #WELLBEING
+
+Le persone sono la nostra priorità.
+
+C’è grande attenzione al benessere fisico e psicologico, garantendo un ambiente sicuro e positivo e un sano work life balance.
+
+We are unique #INCLUSION
+
+L’inclusione è una scelta che rende l’ambiente creativo, dinamico e ricco di stimoli.
+
+Facciamo tesoro delle differenze che caratterizzano noi, la nostra clientela e il mondo che ci circonda: dall’incontro delle nostre unicità nasce nuovo valore.
+
+We are sustainable #SUSTAINABILITY
+
+Agiamo ogni giorno per un futuro più sostenibile.
+
+Contribuiamo in modo attivo e misurabile al raggiungimento degli obiettivi globali, generando un impatto concreto sul pianeta e sulla società.
+
+We care #CUSTOMER
+
+Conquistare ogni giorno la fiducia dei clienti è la nostra ambizione.
+
+Puntiamo a offrire esperienze di valore e servizi innovativi, grazie a soluzioni di qualità che rispondano alle esigenze e costruiscano un futuro migliore.
+
+CHI STIAMO CERCANDO
+
+In Velocom stiamo cercando un Telco Cloud Engineer per il Team di Telco Cloud – Technology & Security
+
+Il tuo obiettivo è il coordinamento tecnico delle attività di ingegneria e design delle piattaforme Telco Cloud, assicurando la corretta definizione architetturale, l’integrazione con le infrastrutture di rete e IT esistenti e l’aderenza ai requisiti di performance, sicurezza e affidabilità tipici dei contesti Telco.
+
+Il ruolo prevede un forte coinvolgimento nelle scelte tecnologiche e architetturali, fungendo da riferimento tecnico per i team di ingegneria.
+
+DESCRIZIONE DEL RUOLO
+
+In qualità di Telco Cloud Engineer le tue attività e responsabilità saranno le seguenti:
+
+    Coordinare il design tecnico e l’ingegnerizzazione di architetture Telco Cloud (public, private, hybrid, distributed/edge)
+    Definire e validare architetture Cloud per servizi Telco (Core Network, OSS/BSS, piattaforme di servizio, 5G VNF/CNF)
+    Supervisionare l’integrazione tra piattaforme Cloud e infrastrutture di rete (IP, SDN/NFV)
+    Garantire il rispetto dei requisiti di scalabilità, alta affidabilità, bassa latenza e resilienza
+    Collaborare alla definizione di modelli di deployment (HA, geo-redundancy, multi-region)
+    Coordinare attività di build, capacity planning, performance tuning e fault tolerance
+    Governare l’adozione di pratiche DevOps e CI/CD per ambienti Cloud Telco
+    Supportare l’introduzione di tecnologie di containerizzazione e orchestrazione
+    Coordinare attività atte ad assicurare la compliance alle policy di sicurezza, networking e identity management
+    Guidare l’adozione dell’intelligenza artificiale nei processi tipici di ingegneria (dimensioning, capacity planning)
+
+I Principali Interlocutori Saranno
+
+    Cloud Engineer e Cloud Architect
+    Network Engineer e Network Architect Telco
+    Team DevOps, SRE e Platform Engineering
+    Cyber Security e Infrastructure Operations
+    Product Owner e Technical Product Manager
+    Vendor tecnologici e fornitori di soluzioni Cloud/NFV
+    System Integrator e partner tecnologici
+
+REQUISITI ESSENZIALI
+
+    Laurea in Informatica, Ingegneria Informatica, Telecomunicazioni o discipline affini.
+    Esperienza di almeno 3–5 anni in ambito Cloud Engineering / Cloud Architecture
+    Solida conoscenza di NFV, SDN, virtualizzazione e containerizzazione
+    Esperienza con i principali modelli IaaS/CaaS e piattaforme Cloud (AWS, Openstack, Openshift, VMware).
+    Esperienza con Kubernetes e orchestrazione di microservizi
+    Familiarità con ambienti Linux e automazione (Infrastructure as Code – es. Terraform, Ansible)
+    Buona conoscenza dei contesti telco e delle relative architetture di rete e servizi
+    Solida conoscenza delle tematiche di sicurezza, resilienza e continuità operativa in ambienti Cloud
+    Solida conoscenza della lingua inglese
+    Capacità di interazione con stakeholder tecnici e non tecnici
+
+ALTRE INFORMAZIONI
+
+SEDE DI LAVORO: Milano + modalità ibrida
+
+Orario: Full Time - Tipologia: Tempo Indeterminato - CCNL: Telecomunicazioni 
+
+Retribuzione: da €. 39.000 euro lordi/anno - La proposta economica finale potrà essere superiore al valore indicato e sarà definita valutando le competenze dimostrate, il livello di autonomia e l’effettivo perimetro di responsabilità assunto nel ruolo.
+
+Siamo un luogo di lavoro inclusivo ed attento a garantire pari opportunità senza distinzione di genere, identità di genere, orientamento sessuale, etnia, età, religione e disabilità.

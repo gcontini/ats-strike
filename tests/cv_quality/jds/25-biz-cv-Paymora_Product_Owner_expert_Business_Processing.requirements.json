@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Product Owner for payments business processing", "keywords": ["Product Owner", "Payments Product Owner", "Product Owner Payments", "PO"], "importance": "must"},
+  {"id": 2, "requirement": "SEPA payments (SCT, SDD, SCT Inst)", "keywords": ["SEPA", "SEPA SCT", "SEPA SDD", "SCT Inst", "SEPA Instant"], "importance": "must"},
+  {"id": 3, "requirement": "Java / J2EE development", "keywords": ["Java", "J2EE", "Java EE"], "importance": "must"},
+  {"id": 4, "requirement": "English at B2 level or above", "keywords": ["English", "B2", "Inglese"], "importance": "must"},
+  {"id": 5, "requirement": "Payment Hub solutions for SEPA and international payments", "keywords": ["Payment Hub", "Payments Hub", "International Payments", "Cross-border Payments", "Estero"], "importance": "must"},
+  {"id": 6, "requirement": "Corporate banking (CBI, SCORE) and CIT", "keywords": ["Corporate Banking", "CBI", "SCORE", "CIT"], "importance": "must"},
+  {"id": 7, "requirement": "Banking network protocols", "keywords": ["EBICS", "SwiftNet", "SWIFT", "SiaNet"], "importance": "must"},
+  {"id": 8, "requirement": "Banking message formats", "keywords": ["ISO 20022", "ISO20022", "EDIFACT", "RNI", "FIN"], "importance": "must"},
+  {"id": 9, "requirement": "PSD2 and GDPR regulation", "keywords": ["PSD2", "GDPR"], "importance": "must"},
+  {"id": 10, "requirement": "Core banking procedures: customer master data, pricing conditions, current accounts", "keywords": ["Anagrafiche Clienti", "Condizioniere", "Conti Correnti", "Current Accounts", "Customer Master Data"], "importance": "must"},
+  {"id": 11, "requirement": "Banking regulatory reporting (Centrale Rischi, AnaCredit)", "keywords": ["Centrale Rischi", "AnaCredit", "Regulatory Reporting", "Segnalazioni Bancarie"], "importance": "must"},
+  {"id": 12, "requirement": "Mobile and e-payment / e-commerce solutions", "keywords": ["Mobile Payments", "Mobile Commerce", "e-Payment", "e-Commerce"], "importance": "must"},
+  {"id": 13, "requirement": "Microservices", "keywords": ["Microservices", "Micro Service", "Microservice Architecture"], "importance": "must"},
+  {"id": 14, "requirement": "API management", "keywords": ["API Management", "API Gateway"], "importance": "must"},
+  {"id": 15, "requirement": "Blockchain", "keywords": ["Blockchain", "BlockChain", "DLT"], "importance": "must"},
+  {"id": 16, "requirement": "Big Data", "keywords": ["Big Data"], "importance": "must"},
+  {"id": 17, "requirement": "Cybersecurity", "keywords": ["Cybersecurity", "Cyber Security"], "importance": "must"},
+  {"id": 18, "requirement": "Defining new digital payment products and their architecture with architecture and functional teams", "keywords": ["Digital Payments", "Product Definition", "Solution Architecture", "Product Evolution"], "importance": "must"},
+  {"id": 19, "requirement": "Leading distributed multi-site teams", "keywords": ["Team Leadership", "Distributed Teams", "Multi-site Teams", "team multilocati"], "importance": "must"},
+  {"id": 20, "requirement": "Degree in Computer Engineering or Computer Science", "keywords": ["Computer Engineering", "Computer Science", "Ingegneria Informatica", "Scienze Informatiche"], "importance": "must"}
+]

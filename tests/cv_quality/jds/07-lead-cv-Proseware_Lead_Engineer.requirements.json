@@ -1,0 +1,17 @@
+[
+  {"id": 1, "requirement": "Lead engineer", "keywords": ["Lead Engineer", "Lead Software Engineer", "Tech Lead", "Technical Lead", "Staff Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "Hands-on coding and software architecture", "keywords": ["Software Architecture", "System Design", "Solution Architecture", "Hands-on coding"], "importance": "must"},
+  {"id": 3, "requirement": "Building and operating systems at scale with reliability and performance demands", "keywords": ["Scalability", "High Availability", "Reliability", "Performance", "Distributed Systems"], "importance": "must"},
+  {"id": 4, "requirement": "Technical decision making and trade-off analysis", "keywords": ["Technical Decisions", "Trade-offs", "Architecture Decision Records", "ADR", "Technical Strategy"], "importance": "must"},
+  {"id": 5, "requirement": "Regulated banking and fintech systems that move money", "keywords": ["Banking", "Fintech", "Financial Services", "Payments", "Regulated"], "importance": "must"},
+  {"id": 6, "requirement": "Designing for auditability, controls and compliance", "keywords": ["Auditability", "Audit", "Compliance", "Controls", "Regulatory"], "importance": "must"},
+  {"id": 7, "requirement": "Mentoring engineers and raising the technical bar across teams", "keywords": ["Mentoring", "Mentorship", "Coaching", "Technical Leadership"], "importance": "must"},
+  {"id": 8, "requirement": "Using AI as an everyday engineering practice", "keywords": ["AI", "AI-assisted development", "LLM", "GenAI", "GitHub Copilot"], "importance": "must"},
+  {"id": 9, "requirement": "Tying technical choices to business outcomes and right-sizing solutions", "keywords": ["Business Impact", "Business Outcomes", "ROI", "Cost Optimization"], "importance": "must"},
+  {"id": 10, "requirement": "Driving initiatives across several teams without formal authority", "keywords": ["Cross-team", "Cross-functional", "Stakeholder Management", "Influence without authority"], "importance": "must"},
+  {"id": 11, "requirement": "Explaining complex systems to technical and non-technical audiences", "keywords": ["Technical Communication", "Stakeholder Communication", "Presentations", "Documentation"], "importance": "must"},
+  {"id": 12, "requirement": "Production incident handling and post-incident learning", "keywords": ["Incident Management", "Postmortem", "Root Cause Analysis", "On-call", "Production Support"], "importance": "must"},
+  {"id": 13, "requirement": "Resilience and failure-mode analysis under load", "keywords": ["Resilience", "Fault Tolerance", "Load Testing", "Capacity Planning"], "importance": "must"},
+  {"id": 14, "requirement": "English", "keywords": ["English", "Fluent English", "Professional English"], "importance": "must"},
+  {"id": 15, "requirement": "Java, JavaScript or Python", "keywords": ["Java", "JavaScript", "Python", "TypeScript", "Node.js"], "importance": "nice"}
+]

@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "IT Manager", "keywords": ["IT Manager", "Information Technology Manager", "Head of IT", "IT Lead"], "importance": "must"},
+  {"id": 2, "requirement": "IT infrastructure: networks, servers, hardware and operating systems", "keywords": ["IT Infrastructure", "Networking", "Servers", "Operating Systems", "infrastrutture IT"], "importance": "must"},
+  {"id": 3, "requirement": "IT and digitalisation project management", "keywords": ["IT Project Management", "Project Management", "Digital Transformation", "Digitalization", "progetti IT"], "importance": "must"},
+  {"id": 4, "requirement": "Vendor, contract and licence management", "keywords": ["Vendor Management", "Supplier Management", "Contract Management", "License Management", "gestione fornitori"], "importance": "must"},
+  {"id": 5, "requirement": "Cybersecurity, data security and IT risk management", "keywords": ["Cybersecurity", "Cyber Security", "Information Security", "Data Security", "IT Risk Management"], "importance": "must"},
+  {"id": 6, "requirement": "IT strategy and technology roadmap aligned with business goals", "keywords": ["IT Strategy", "Technology Roadmap", "IT Roadmap", "Business-IT Alignment", "piano tecnologico"], "importance": "must"},
+  {"id": 7, "requirement": "Backup, disaster recovery and business continuity", "keywords": ["Disaster Recovery", "Business Continuity", "Backup", "BCP", "DRP"], "importance": "must"},
+  {"id": 8, "requirement": "Access management", "keywords": ["Access Management", "Identity and Access Management", "IAM", "gestione degli accessi"], "importance": "must"},
+  {"id": 9, "requirement": "Cloud services", "keywords": ["Cloud Services", "Cloud Computing", "Cloud Infrastructure", "servizi cloud"], "importance": "must"},
+  {"id": 10, "requirement": "ERP and business management systems", "keywords": ["ERP", "Enterprise Resource Planning", "sistemi gestionali"], "importance": "must"},
+  {"id": 11, "requirement": "IT governance, policies and regulatory compliance", "keywords": ["IT Governance", "IT Policies", "IT Compliance", "Regulatory Compliance", "governance IT"], "importance": "must"},
+  {"id": 12, "requirement": "IT budget and cost management", "keywords": ["IT Budget", "Budget Management", "Cost Management", "Cost Optimization", "budget IT"], "importance": "must"},
+  {"id": 13, "requirement": "Data management and databases", "keywords": ["Data Management", "Database", "Database Management", "Data Governance", "gestione dei dati"], "importance": "must"},
+  {"id": 14, "requirement": "Systems integration", "keywords": ["Systems Integration", "System Integration", "Application Integration", "integrazione dei sistemi"], "importance": "must"},
+  {"id": 15, "requirement": "CRM systems", "keywords": ["CRM", "Customer Relationship Management"], "importance": "must"},
+  {"id": 16, "requirement": "Business intelligence tools", "keywords": ["Business Intelligence", "BI", "BI Tools"], "importance": "must"},
+  {"id": 17, "requirement": "Software development processes and methodologies", "keywords": ["Software Development Lifecycle", "SDLC", "Software Development Methodologies", "Agile"], "importance": "must"},
+  {"id": 18, "requirement": "Degree in Computer Science or Computer Engineering", "keywords": ["Computer Science", "Computer Engineering", "Laurea in Informatica", "Ingegneria Informatica"], "importance": "must"},
+  {"id": 19, "requirement": "English", "keywords": ["English", "inglese"], "importance": "must"},
+  {"id": 20, "requirement": "Manufacturing and supply chain processes", "keywords": ["Supply Chain", "Supply Chain Management", "Manufacturing", "Production Processes", "produzione"], "importance": "nice"}
+]

@@ -1,0 +1,21 @@
+[
+  {"id": 1, "requirement": "IT manager", "keywords": ["IT Manager", "Information Technology Manager", "Head of IT", "IT Lead"], "importance": "must"},
+  {"id": 2, "requirement": "Sole IT manager in a structured SME, 5+ years in IT", "keywords": ["sole IT manager", "SME", "IT Manager unico", "PMI"], "importance": "must"},
+  {"id": 3, "requirement": "Microsoft 365", "keywords": ["Microsoft 365", "M365", "Office 365", "O365"], "importance": "must"},
+  {"id": 4, "requirement": "Windows environments", "keywords": ["Windows", "Windows Server", "ambienti Windows"], "importance": "must"},
+  {"id": 5, "requirement": "Networking, connectivity and telephony", "keywords": ["networking", "network administration", "LAN", "WAN", "telephony"], "importance": "must"},
+  {"id": 6, "requirement": "IT security", "keywords": ["IT security", "cybersecurity", "information security", "network security", "firewall"], "importance": "must"},
+  {"id": 7, "requirement": "ERP, ideally Microsoft Dynamics 365 Business Central", "keywords": ["ERP", "Business Central", "Dynamics 365", "Dynamics NAV"], "importance": "must"},
+  {"id": 8, "requirement": "B2B and B2C e-commerce platforms, ideally Shopify or Magento", "keywords": ["e-commerce", "ecommerce", "Shopify", "Magento", "Adobe Commerce"], "importance": "must"},
+  {"id": 9, "requirement": "Business intelligence systems such as Board", "keywords": ["Business Intelligence", "BI", "Board", "Board International"], "importance": "must"},
+  {"id": 10, "requirement": "PIM and DAM systems such as Pimcore", "keywords": ["PIM", "Product Information Management", "DAM", "Digital Asset Management", "Pimcore"], "importance": "must"},
+  {"id": 11, "requirement": "Vendor and software house management", "keywords": ["vendor management", "supplier management", "vendor coordination", "gestione fornitori"], "importance": "must"},
+  {"id": 12, "requirement": "IT infrastructure: servers, virtual machines, storage and backup", "keywords": ["IT infrastructure", "server administration", "virtualization", "storage", "backup"], "importance": "must"},
+  {"id": 13, "requirement": "End-user support, workstations and accounts for about 40 users", "keywords": ["IT support", "helpdesk", "end-user support", "desktop support", "workstation management"], "importance": "must"},
+  {"id": 14, "requirement": "IT budget and cost control", "keywords": ["IT budget", "budget management", "cost control", "cost monitoring"], "importance": "must"},
+  {"id": 15, "requirement": "Contract negotiation and SLA monitoring", "keywords": ["contract negotiation", "contract management", "SLA", "service level agreement"], "importance": "must"},
+  {"id": 16, "requirement": "Integration of e-commerce, ERP, PIM, logistics and accounting", "keywords": ["systems integration", "integrations", "ERP integration", "data flows"], "importance": "must"},
+  {"id": 17, "requirement": "Digital transformation projects through to go-live", "keywords": ["digital transformation", "IT project management", "project management", "go-live", "process automation"], "importance": "must"},
+  {"id": 18, "requirement": "Business requirements gathering", "keywords": ["requirements gathering", "business requirements", "requirements analysis", "raccolta dei requisiti"], "importance": "must"},
+  {"id": 19, "requirement": "Business application, licence and update management", "keywords": ["application management", "license management", "software licensing", "patch management"], "importance": "must"}
+]

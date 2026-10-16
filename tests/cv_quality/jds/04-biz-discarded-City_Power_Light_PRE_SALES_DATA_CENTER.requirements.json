@@ -1,0 +1,186 @@
+[
+  {
+    "id": 1,
+    "requirement": "Pre-sales data center",
+    "keywords": [
+      "Pre-Sales",
+      "Presales",
+      "Pre-Sales Engineer",
+      "Sales Engineer",
+      "Solutions Engineer"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 2,
+    "requirement": "Data center colocation solutions",
+    "keywords": [
+      "colocation",
+      "data center",
+      "datacenter",
+      "colo"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 3,
+    "requirement": "Pre-sales track record with enterprise and hyperscaler clients",
+    "keywords": [
+      "hyperscaler",
+      "enterprise clients",
+      "enterprise customers"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 4,
+    "requirement": "3-5 years in data center, IT infrastructure, cloud or telecom",
+    "keywords": [
+      "IT infrastructure",
+      "cloud",
+      "telecommunications",
+      "telco"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 5,
+    "requirement": "AutoCAD technical drawings and layouts",
+    "keywords": [
+      "AutoCAD",
+      "CAD",
+      "technical drawings",
+      "disegni tecnici"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 6,
+    "requirement": "Interpreting electrical, mechanical and infrastructure requirements",
+    "keywords": [
+      "electrical",
+      "mechanical",
+      "MEP",
+      "M&E"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 7,
+    "requirement": "Data center solution design: rack layouts, power, cooling, space",
+    "keywords": [
+      "rack layout",
+      "power distribution",
+      "cooling",
+      "space planning",
+      "white space"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 8,
+    "requirement": "Translating customer requirements into solution architecture",
+    "keywords": [
+      "solution architecture",
+      "solution design",
+      "customer requirements",
+      "requirements analysis"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 9,
+    "requirement": "Technical content for proposals, tenders and RFPs",
+    "keywords": [
+      "RFP",
+      "tender",
+      "bid",
+      "technical proposal",
+      "gare d'appalto"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 10,
+    "requirement": "Capacity planning for power, cooling and connectivity",
+    "keywords": [
+      "capacity planning",
+      "power capacity",
+      "connectivity"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 11,
+    "requirement": "Technical input to pricing and investment estimates",
+    "keywords": [
+      "pricing",
+      "cost estimation",
+      "CAPEX",
+      "investment estimates"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 12,
+    "requirement": "Technical risk identification and mitigation",
+    "keywords": [
+      "risk assessment",
+      "risk mitigation",
+      "technical risk"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 13,
+    "requirement": "Alignment with data center frameworks and certifications",
+    "keywords": [
+      "industry frameworks",
+      "industry certifications",
+      "framework di settore",
+      "certificazioni di settore"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 14,
+    "requirement": "Project and technical documentation",
+    "keywords": [
+      "technical documentation",
+      "project documentation",
+      "documentazione di progetto"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 15,
+    "requirement": "Sustainable, energy-efficient solutions",
+    "keywords": [
+      "sustainability",
+      "energy efficiency",
+      "PUE"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 16,
+    "requirement": "Fluent English",
+    "keywords": [
+      "English",
+      "fluent English",
+      "Inglese"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 17,
+    "requirement": "Degree in IT or a technical field",
+    "keywords": [
+      "Bachelor's degree",
+      "Engineering degree",
+      "Computer Science",
+      "Laurea"
+    ],
+    "importance": "must"
+  }
+]

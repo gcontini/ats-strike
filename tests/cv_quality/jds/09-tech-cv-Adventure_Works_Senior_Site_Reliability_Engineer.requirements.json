@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Senior Site Reliability Engineer", "keywords": ["Senior Site Reliability Engineer", "Site Reliability Engineer", "SRE", "Senior SRE", "Reliability Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "6-10 years in SRE, DevOps or production engineering", "keywords": ["Site Reliability Engineering", "DevOps", "Production Engineering", "SRE"], "importance": "must"},
+  {"id": 3, "requirement": "Complex distributed systems", "keywords": ["Distributed Systems", "Microservices", "Distributed Architecture"], "importance": "must"},
+  {"id": 4, "requirement": "Leading large-scale incident management and response", "keywords": ["Incident Management", "Incident Response", "Incident Commander", "On-call", "Postmortem"], "importance": "must"},
+  {"id": 5, "requirement": "Defining SLIs and SLOs with engineering teams", "keywords": ["SLO", "SLI", "Service Level Objectives", "Service Level Indicators", "Error Budget"], "importance": "must"},
+  {"id": 6, "requirement": "Cloud infrastructure", "keywords": ["Cloud Infrastructure", "AWS", "GCP", "Azure"], "importance": "must"},
+  {"id": 7, "requirement": "AWS", "keywords": ["AWS", "Amazon Web Services", "EKS", "EC2"], "importance": "nice"},
+  {"id": 8, "requirement": "Container orchestration", "keywords": ["Kubernetes", "K8s", "Container Orchestration", "Docker", "EKS"], "importance": "must"},
+  {"id": 9, "requirement": "Infrastructure as Code", "keywords": ["Infrastructure as Code", "IaC", "Terraform", "CloudFormation", "Pulumi"], "importance": "must"},
+  {"id": 10, "requirement": "Coding in a major language and automating repetitive tasks", "keywords": ["Python", "Go", "Golang", "Automation", "Scripting"], "importance": "must"},
+  {"id": 11, "requirement": "Building observability tooling", "keywords": ["Observability", "Monitoring", "Prometheus", "Grafana", "Datadog"], "importance": "must"},
+  {"id": 12, "requirement": "Reliability roadmaps and reliability programs", "keywords": ["Reliability Roadmap", "Reliability Program", "Reliability Engineering"], "importance": "must"},
+  {"id": 13, "requirement": "Deployment safety capabilities", "keywords": ["Deployment Safety", "CI/CD", "Canary Deployment", "Progressive Delivery", "Rollback"], "importance": "must"},
+  {"id": 14, "requirement": "Infrastructure scalability and resilience patterns", "keywords": ["Scalability", "High Availability", "Resilience", "Fault Tolerance", "Capacity Planning"], "importance": "must"},
+  {"id": 15, "requirement": "Influencing system architecture and product design", "keywords": ["System Architecture", "System Design", "Architecture Review"], "importance": "must"},
+  {"id": 16, "requirement": "Mentoring senior engineers", "keywords": ["Mentoring", "Mentorship", "Coaching", "Technical Leadership"], "importance": "must"},
+  {"id": 17, "requirement": "Recruiting for the SRE organization", "keywords": ["Recruiting", "Hiring", "Technical Interviews", "Interviewing"], "importance": "must"},
+  {"id": 18, "requirement": "Cross-functional communication with engineering, product and customer-facing teams", "keywords": ["Cross-functional", "Stakeholder Management", "Stakeholder Communication"], "importance": "must"},
+  {"id": 19, "requirement": "Self-healing infrastructure and zero-downtime deployment pipelines", "keywords": ["Self-healing", "Auto-remediation", "Zero-downtime Deployment", "Blue-Green Deployment"], "importance": "nice"},
+  {"id": 20, "requirement": "Scaling multi-tenant SaaS environments", "keywords": ["Multi-tenant", "Multi-tenancy", "SaaS"], "importance": "nice"}
+]
