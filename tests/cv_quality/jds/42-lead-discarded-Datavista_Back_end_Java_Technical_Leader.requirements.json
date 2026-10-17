@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Back-end Java technical leader", "keywords": ["Technical Leader", "Tech Lead", "Java Tech Lead", "Back-end Developer", "Tech Leader Back-end Developer"], "importance": "must"},
+  {"id": 2, "requirement": "Java SE, Java EE and Jakarta EE (JSF, JAX-WS, JAX-RS)", "keywords": ["Java", "Java EE", "Jakarta EE", "JAX-RS", "JSF"], "importance": "must"},
+  {"id": 3, "requirement": "Spring and Spring Boot", "keywords": ["Spring Boot", "Spring", "Spring Framework"], "importance": "must"},
+  {"id": 4, "requirement": "Quarkus framework", "keywords": ["Quarkus"], "importance": "must"},
+  {"id": 5, "requirement": "Microservices and distributed architectures, design and architectural patterns", "keywords": ["microservices", "microservizi", "distributed systems", "design patterns", "architectural patterns"], "importance": "must"},
+  {"id": 6, "requirement": "Technical supervision and coordination of a small-to-medium team", "keywords": ["team coordination", "technical leadership", "team lead", "coordinamento team"], "importance": "must"},
+  {"id": 7, "requirement": "ORM with Hibernate and JPA", "keywords": ["Hibernate", "JPA", "ORM"], "importance": "must"},
+  {"id": 8, "requirement": "Application server and web server configuration", "keywords": ["JBoss", "WildFly", "WebLogic", "Tomcat", "Application Server"], "importance": "must"},
+  {"id": 9, "requirement": "Event-driven and serverless architectures with messaging", "keywords": ["Kafka", "RabbitMQ", "event-driven", "serverless"], "importance": "must"},
+  {"id": 10, "requirement": "REST API design and implementation", "keywords": ["REST", "RESTful", "REST API", "API design"], "importance": "must"},
+  {"id": 11, "requirement": "System design, planning and monitoring of activities", "keywords": ["system design", "project planning", "progettazione dei sistemi", "pianificazione"], "importance": "must"},
+  {"id": 12, "requirement": "Client focal point for project activities", "keywords": ["client-facing", "client focal point", "focal point verso il cliente"], "importance": "must"},
+  {"id": 13, "requirement": "Git version control", "keywords": ["Git"], "importance": "must"},
+  {"id": 14, "requirement": "Build automation with Maven and Gradle", "keywords": ["Maven", "Gradle", "build automation"], "importance": "must"},
+  {"id": 15, "requirement": "SQL and NoSQL databases", "keywords": ["SQL", "NoSQL", "No-SQL"], "importance": "must"},
+  {"id": 16, "requirement": "Agile methodology", "keywords": ["Agile", "Agile methodology"], "importance": "must"},
+  {"id": 17, "requirement": "English language", "keywords": ["English"], "importance": "must"},
+  {"id": 18, "requirement": "Containerization and DevOps", "keywords": ["Docker", "Kubernetes", "OpenShift", "DevOps"], "importance": "nice"},
+  {"id": 19, "requirement": "Cloud platforms", "keywords": ["AWS", "Google Cloud Platform", "GCP", "Azure"], "importance": "nice"},
+  {"id": 20, "requirement": "STEM bachelor's or master's degree", "keywords": ["STEM", "Bachelor's degree", "Master's degree", "Laurea"], "importance": "nice"}
+]

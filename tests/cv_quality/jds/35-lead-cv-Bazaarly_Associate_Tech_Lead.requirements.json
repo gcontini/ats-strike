@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Associate Tech Lead", "keywords": ["Associate Tech Lead", "Tech Lead", "Technical Lead", "Lead Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "Technical leadership and mentoring of engineers", "keywords": ["technical leadership", "mentoring", "delivery ownership", "technical guidance", "technical direction"], "importance": "must"},
+  {"id": 3, "requirement": "Building large-scale distributed web platforms or APIs", "keywords": ["distributed systems", "large-scale", "web platforms", "APIs"], "importance": "must"},
+  {"id": 4, "requirement": "Java and Spring", "keywords": ["Java", "Spring"], "importance": "must"},
+  {"id": 5, "requirement": "JavaScript frameworks", "keywords": ["JavaScript", "JavaScript frameworks", "JS"], "importance": "must"},
+  {"id": 6, "requirement": "GraphQL or REST APIs", "keywords": ["GraphQL", "REST", "REST APIs", "RESTful"], "importance": "must"},
+  {"id": 7, "requirement": "Software architecture and design patterns", "keywords": ["software architecture", "design patterns", "architecture decisions"], "importance": "must"},
+  {"id": 8, "requirement": "System design across frontend and backend", "keywords": ["system design", "frontend", "backend", "front-end", "back-end"], "importance": "must"},
+  {"id": 9, "requirement": "Messaging systems", "keywords": ["messaging", "message queues", "message broker"], "importance": "must"},
+  {"id": 10, "requirement": "Databases", "keywords": ["databases", "database"], "importance": "must"},
+  {"id": 11, "requirement": "Cloud infrastructure", "keywords": ["cloud infrastructure", "cloud"], "importance": "must"},
+  {"id": 12, "requirement": "CI/CD pipelines", "keywords": ["CI/CD", "continuous integration", "continuous delivery", "continuous deployment"], "importance": "must"},
+  {"id": 13, "requirement": "Code reviews and testing practices", "keywords": ["code review", "code reviews", "testing", "test automation"], "importance": "must"},
+  {"id": 14, "requirement": "Containerization", "keywords": ["containerization", "containers"], "importance": "must"},
+  {"id": 15, "requirement": "Observability and monitoring", "keywords": ["observability", "monitoring"], "importance": "must"},
+  {"id": 16, "requirement": "Automating onboarding and connector creation processes", "keywords": ["automation", "process automation", "brand onboarding", "connectors"], "importance": "must"},
+  {"id": 17, "requirement": "Incident response and operational readiness", "keywords": ["incident response", "operational readiness", "incident management"], "importance": "must"},
+  {"id": 18, "requirement": "Client-facing environment", "keywords": ["client-facing", "customer-facing"], "importance": "must"},
+  {"id": 19, "requirement": "English fluency", "keywords": ["English", "fluent English"], "importance": "must"},
+  {"id": 20, "requirement": "Italian language", "keywords": ["Italian"], "importance": "nice"}
+]

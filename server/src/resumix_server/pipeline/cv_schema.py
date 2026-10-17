@@ -47,12 +47,12 @@ class WorkExperienceItem(BaseModel):
     )
     role_summary: str = Field(
         min_length= 20,
-        max_length= 190,
+        max_length= 300,
         description="Overview of the role (scope, mission, team or context), "
         "tailored from the matching MASTER PROFILE experience's role_summary. ")
     duties: List[str] = Field(
         min_length=1,
-        max_length=9,
+        max_length=15,
         description="Tailored achievements/responsibilities/duties matching the master profile."
     )
 
@@ -79,11 +79,11 @@ class TailoredCVData(BaseModel):
         description="Professional summary tailored specifically to the job role"
     )
     skills: List[str] = Field(
-        min_length = 6, max_length=8,
+        min_length = 6, max_length=20,
         description="Key technical and soft skills prioritized for this job, keep them grounded in candidate's profile."
     )
     experiences: List[WorkExperienceItem] = Field(
-        min_length=3, max_length=5,
+        min_length=3, max_length=6,
         description="Tailored work experience list"
     )
     certifications: List[CertificationItem] = Field(

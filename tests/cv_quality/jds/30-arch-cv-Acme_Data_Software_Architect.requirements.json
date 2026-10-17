@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Software architect", "keywords": ["Software Architect", "Solution Architect", "Application Architect"], "importance": "must"},
+  {"id": 2, "requirement": "Enterprise software architecture design for web applications (2+ years)", "keywords": ["Software Architecture", "Enterprise Architecture", "Enterprise Web Applications", "architetture software enterprise"], "importance": "must"},
+  {"id": 3, "requirement": "Java", "keywords": ["Java"], "importance": "must"},
+  {"id": 4, "requirement": "Spring Boot", "keywords": ["Spring Boot", "Spring"], "importance": "must"},
+  {"id": 5, "requirement": "Angular", "keywords": ["Angular"], "importance": "must"},
+  {"id": 6, "requirement": "TypeScript", "keywords": ["TypeScript", "TS"], "importance": "must"},
+  {"id": 7, "requirement": "Technical leadership of the development team with code review", "keywords": ["Technical Leadership", "Tech Lead", "Code Review", "Technical Supervision", "gestione team"], "importance": "must"},
+  {"id": 8, "requirement": "Project management, estimation and planning", "keywords": ["Project Management", "Estimation", "Planning", "gestione progetto"], "importance": "must"},
+  {"id": 9, "requirement": "REST API design", "keywords": ["REST API", "RESTful", "API Design", "API REST"], "importance": "must"},
+  {"id": 10, "requirement": "Distributed systems and service-oriented architectures", "keywords": ["Distributed Systems", "Service-Oriented Architecture", "SOA", "architetture a servizi"], "importance": "must"},
+  {"id": 11, "requirement": "Data modelling and system integration strategies", "keywords": ["Data Modeling", "Data Models", "System Integration", "Integration Strategy"], "importance": "must"},
+  {"id": 12, "requirement": "Functional UI design with UX and responsive design", "keywords": ["UI Design", "UX", "Responsive Design", "User Interface"], "importance": "must"},
+  {"id": 13, "requirement": "DevOps and CI/CD", "keywords": ["DevOps", "CI/CD", "Continuous Integration", "Continuous Delivery"], "importance": "must"},
+  {"id": 14, "requirement": "Containerization", "keywords": ["Containerization", "Containers", "containerizzazione"], "importance": "must"},
+  {"id": 15, "requirement": "Cloud platforms (Azure, AWS or GCP)", "keywords": ["Azure", "AWS", "GCP", "Google Cloud", "Cloud"], "importance": "must"},
+  {"id": 16, "requirement": "Relational databases and SQL", "keywords": ["SQL", "Relational Databases", "RDBMS", "database relazionali"], "importance": "must"},
+  {"id": 17, "requirement": "Translating business requirements into solutions with clients and stakeholders", "keywords": ["Stakeholder Management", "Requirements Analysis", "Client-facing", "Business Requirements"], "importance": "must"},
+  {"id": 18, "requirement": "Microservices", "keywords": ["Microservices", "Microservice Architecture", "Microservizi"], "importance": "nice"},
+  {"id": 19, "requirement": "Integration of AI and Generative AI services", "keywords": ["Generative AI", "GenAI", "AI Integration", "AI Services"], "importance": "nice"},
+  {"id": 20, "requirement": "Data & Analytics projects", "keywords": ["Data & Analytics", "Data Analytics", "Analytics", "Data Platform"], "importance": "nice"}
+]

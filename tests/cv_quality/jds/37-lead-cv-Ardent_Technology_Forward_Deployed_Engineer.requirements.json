@@ -1,0 +1,21 @@
+[
+  {"id": 1, "requirement": "Forward deployed engineer", "keywords": ["Forward Deployed Engineer", "FDE", "Forward Deployed Software Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "Hands-on full-stack software engineering shipping production code", "keywords": ["Full Stack", "Backend", "Frontend", "Software Engineer", "production code"], "importance": "must"},
+  {"id": 3, "requirement": "Building and deploying production AI solutions for business processes", "keywords": ["AI solutions", "production AI", "AI Building Blocks", "AI"], "importance": "must"},
+  {"id": 4, "requirement": "Integrating LLM and agent frameworks", "keywords": ["LLM", "AI agents", "agent frameworks", "prompt engineering", "prompt-first"], "importance": "must"},
+  {"id": 5, "requirement": "Python", "keywords": ["Python"], "importance": "must"},
+  {"id": 6, "requirement": "APIs, services and system integrations", "keywords": ["API", "APIs", "integrations", "services"], "importance": "must"},
+  {"id": 7, "requirement": "Vector databases", "keywords": ["vector database", "vector databases", "vector DB"], "importance": "must"},
+  {"id": 8, "requirement": "Data and ML engineering", "keywords": ["data engineering", "machine learning", "ML", "data/ML"], "importance": "must"},
+  {"id": 9, "requirement": "CI/CD and DevOps", "keywords": ["CI/CD", "DevOps", "continuous integration", "continuous delivery"], "importance": "must"},
+  {"id": 10, "requirement": "Containers and Kubernetes", "keywords": ["Kubernetes", "K8s", "containers", "containerization"], "importance": "must"},
+  {"id": 11, "requirement": "Infrastructure as Code", "keywords": ["Infrastructure as Code", "IaC", "IaaC"], "importance": "must"},
+  {"id": 12, "requirement": "Cloud-native stacks", "keywords": ["cloud-native", "cloud native", "cloud"], "importance": "must"},
+  {"id": 13, "requirement": "Testing and observability", "keywords": ["testing", "observability", "monitoring", "automated testing"], "importance": "must"},
+  {"id": 14, "requirement": "Security, compliance and secure coding in regulated settings", "keywords": ["secure coding", "security", "compliance", "regulated", "reliability"], "importance": "must"},
+  {"id": 15, "requirement": "Working with domain experts and business stakeholders from discovery to deployment", "keywords": ["domain experts", "stakeholders", "customer-facing", "discovery", "pain points"], "importance": "must"},
+  {"id": 16, "requirement": "Working in unfamiliar codebases and partner environments", "keywords": ["unfamiliar codebases", "partner environments", "client environments", "onsite"], "importance": "must"},
+  {"id": 17, "requirement": "Technical documentation and reusable building-block patterns", "keywords": ["technical documentation", "documentation", "reusable components", "building blocks", "patterns"], "importance": "must"},
+  {"id": 18, "requirement": "Bachelor's degree in Computer Science or Engineering", "keywords": ["Bachelor", "Computer Science", "Computer Engineering", "BSc"], "importance": "must"},
+  {"id": 19, "requirement": "Fluent English", "keywords": ["English", "fluent English"], "importance": "must"}
+]

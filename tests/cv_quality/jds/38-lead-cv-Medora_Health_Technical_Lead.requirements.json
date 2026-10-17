@@ -1,0 +1,21 @@
+[
+  {"id": 1, "requirement": "Technical lead", "keywords": ["Technical Lead", "Tech Lead", "Lead Developer", "Senior Developer"], "importance": "must"},
+  {"id": 2, "requirement": "Healthcare / healthtech domain", "keywords": ["Healthcare", "Healthtech", "Digital Health", "sanitario", "sanità"], "importance": "must"},
+  {"id": 3, "requirement": "Healthcare interoperability standards HL7 and FHIR", "keywords": ["HL7", "FHIR", "healthcare interoperability", "interoperabilità sanitaria"], "importance": "must"},
+  {"id": 4, "requirement": "Lead platform architecture and technology choices", "keywords": ["Software Architecture", "Platform Architecture", "Technical Architecture", "scelte architetturali"], "importance": "must"},
+  {"id": 5, "requirement": "Hands-on cloud experience", "keywords": ["Cloud", "cloud services", "Cloud Architecture"], "importance": "must"},
+  {"id": 6, "requirement": "System integration with hospital and third-party systems", "keywords": ["System Integration", "Systems Integration", "hospital systems", "integrazione tra sistemi", "third-party integration"], "importance": "must"},
+  {"id": 7, "requirement": "CI/CD and software lifecycle management", "keywords": ["CI/CD", "Continuous Integration", "SDLC", "Software Development Lifecycle", "ciclo di vita del software"], "importance": "must"},
+  {"id": 8, "requirement": "Applied AI and evaluation of LLMs and AI services", "keywords": ["Applied AI", "LLM", "Large Language Models", "AI", "Intelligenza Artificiale"], "importance": "must"},
+  {"id": 9, "requirement": "Health data security and privacy, GDPR", "keywords": ["GDPR", "Data Privacy", "Data Protection", "health data", "dati sanitari"], "importance": "must"},
+  {"id": 10, "requirement": "ISO 27001 information security", "keywords": ["ISO 27001", "ISO/IEC 27001", "ISMS"], "importance": "must"},
+  {"id": 11, "requirement": "ACN (Italian National Cybersecurity Agency) requirements", "keywords": ["ACN", "Agenzia per la Cybersicurezza Nazionale", "requisiti ACN"], "importance": "must"},
+  {"id": 12, "requirement": "MDR for software as a medical device", "keywords": ["MDR", "Medical Device Regulation", "Software as a Medical Device", "SaMD", "dispositivo medico"], "importance": "nice"},
+  {"id": 13, "requirement": "Coding standards, code review and release criteria", "keywords": ["Code Review", "Coding Standards", "Release Management", "standard di codice", "code quality"], "importance": "must"},
+  {"id": 14, "requirement": "Mentor developers and run knowledge-sharing sessions", "keywords": ["Mentoring", "Coaching", "Knowledge Sharing", "Technical Mentoring"], "importance": "must"},
+  {"id": 15, "requirement": "Pre-sales support and technical reference for strategic clients", "keywords": ["Pre-sales", "Presales", "prevendita", "client-facing", "technical consulting"], "importance": "must"},
+  {"id": 16, "requirement": "Own shared engineering tooling (CI/CD, monitoring, ticketing, repositories)", "keywords": ["Monitoring", "Ticketing", "Developer Tooling", "repository", "license management"], "importance": "must"},
+  {"id": 17, "requirement": "Work with the Project Manager and communicate with non-technical clients", "keywords": ["Project Manager", "Cross-functional", "Stakeholder Communication", "non-technical stakeholders"], "importance": "must"},
+  {"id": 18, "requirement": "Italian, excellent", "keywords": ["Italian", "Italiano", "native Italian"], "importance": "must"},
+  {"id": 19, "requirement": "English, good", "keywords": ["English", "Inglese"], "importance": "must"}
+]

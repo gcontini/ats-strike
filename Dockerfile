@@ -51,11 +51,14 @@ FROM python:3.12-slim-bookworm
 # (cm-super — without them T1 encoding falls back to bitmap fonts and the PDF
 # looks scanned; cm-super-minimal is not enough, it leaves the design sizes
 # the CV uses for headings and small print as Type 3 bitmaps).
+# texlive-fonts-recommended adds the font files behind psnfss (Charter, Times,
+# Palatino, ...), so a template of your own can load \usepackage{charter}.
 #
 # No clipboard helpers here: reading the clipboard is the client's job, and
 # the client runs on your machine.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         texlive-latex-base \
+        texlive-fonts-recommended \
         cm-super \
     && rm -rf /var/lib/apt/lists/*
 

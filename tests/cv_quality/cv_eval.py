@@ -41,6 +41,10 @@ RUNS = HERE / "runs"
 RESULTS = HERE / "results.csv"
 REPO = HERE.parents[1]
 DATA_DIR = REPO / "resumix-data" / "gab"
+#: Where candidate_profile.json and candidate_data.json come from: the
+#: fictional candidate in the repository, so every run writes for the same person.
+CANDIDATE = REPO / "examples" / "candidate"
+CANDIDATE_FILES = ("candidate_profile.json", "candidate_data.json")
 
 #: Files 01-10 in jds/ are the quick set.
 QUICK = 10
@@ -171,10 +175,12 @@ def local_server(log: Path):
             server.wait()
 
 
-def generate(set_name: str, temperature: float | None) -> Path:
+def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
     """One CV per job description of the set, written into a new run folder."""
     config = load_config(config_file=DATA_DIR / "resumix.toml", data_dir=DATA_DIR,
                          overrides={"temperature": temperature})
+    config = replace(config, files={**config.files,
+                                    **{name: candidate / name for name in CANDIDATE_FILES}})
     jds = sorted(JDS.glob("*.txt"))[: QUICK if set_name == "quick" else None]
     now = datetime.now()
     run = RUNS / f"{now:%Y-%m-%d_%H%M}-{set_name}"
@@ -185,6 +191,7 @@ def generate(set_name: str, temperature: float | None) -> Path:
         (run / "run.json").write_text(json.dumps({
             "version": health["version"], "models": health["models"], "server": url,
             "date": f"{now:%Y-%m-%d}", "set": set_name, "temperature": config.temperature,
+            "candidate": str(candidate),
             "jds": [jd.stem for jd in jds],
         }, indent=2), encoding="utf-8")
         print(f"resumix {health['version']} at {url}, {len(jds)} CVs into {run}", flush=True)
@@ -249,11 +256,14 @@ def main() -> None:
     gen.add_argument("set", choices=("quick", "thorough"))
     gen.add_argument("--temperature", type=float,
                      help="CV model temperature. Default: resumix.toml, else the server's.")
+    gen.add_argument("--candidate", type=Path, default=CANDIDATE,
+                     help="Folder with candidate_profile.json and candidate_data.json. "
+                          "Default: examples/candidate.")
     sc = steps.add_parser("score", help="Score a judged run and append its averages.")
     sc.add_argument("run", type=Path)
     args = parser.parse_args()
     if args.step == "generate":
-        generate(args.set, args.temperature)
+        generate(args.set, args.temperature, args.candidate.resolve())
     else:
         score(args.run)
 

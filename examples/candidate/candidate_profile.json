@@ -1,85 +1,147 @@
 {
-  "writing_style": "C1 English, polished, direct and highly structured. Plain vocabulary over ornate phrasing.",
+  "linkedin": "https://www.linkedin.com/in/example-jordan-rivera",
+  "job_title": [ "Service digitalization specialist", "IT Technical Manager", "Solution Architect", "Infrastructure Solution Architect", "Cloud Engineer", "Cloud Architect", "Lead Engineer", "Distributed Systems & Cloud Architect" ],
+  "writing_style": "C1 English: very direct, highly structured. Slight italian inflections. Keep the structure of the sentences simple and clear. Keep the tone extremely concrete. Avoid: abstract role descriptions, long sentences, complex structures, buzzwords and excessive use of adjectives.",
   "summaries": [
-    "Results-oriented <<job_title>> with 12+ years building and operating distributed systems for regulated industries. Comfortable owning a design end to end: gathering requirements, weighing vendor proposals, and staying accountable for the system once it is in production. Known for diagnosing problems other people have already given up on, and for explaining the fix to both engineers and the people paying for it.",
-    "Hands-on <<job_title>> working across platform engineering and system integration. Broad rather than narrow: strong enough in infrastructure, data and application code to find the real bottleneck instead of the convenient one. Used to multi-vendor environments where the hard part is the boundary between teams, not the technology."
+    "Results-driven <<job_title>> with 10+ years of experience designing and delivering complex IT infrastructure solutions for large international events and institutional projects. Proven expertise in requirements gathering, vendor management, cloud and on-premise solution design, and in acting as the technical bridge between business stakeholders and development teams. Strong architectural skills to deliver compliant, scalable and high-value solutions. Recognized for problem solving under pressure and for delivering critical systems in multi-stakeholder, multicultural environments.",
+    "Experienced <<job_title>> with broad competences in cloud and system integration. Strong problem solving skills make the profile very versatile. Works with project management to shape the right solution: advises on options, risks, costs and impact on other business processes. Used to multicultural environments under high pressure."
   ],
   "skills": [
-    "Distributed systems design", "Kubernetes", "Terraform", "AWS", "Google Cloud",
-    "PostgreSQL", "Python", "Go", "Java",
-    "CI/CD (GitHub Actions, Jenkins)", "Observability (Prometheus, Grafana)",
-    "Requirements gathering", "Vendor management", "Stakeholder communication",
-    "Incident response", "Performance profiling", "Technical writing",
-    "Mentoring", "Spanish (professional)"
+    "Chinese speaker",
+    "Alibaba Cloud",
+    "Working with Chinese teams and technologies",
+    "Requirements Gathering",
+    "Vendor Management",
+    "Stakeholder Management",
+    "Solution Architecture",
+    "Problem Solving under Pressure",
+    "Microservices architectures",
+    "Performance measurement and optimization",
+    "Cloud Ops (Terraform)",
+    "Kubernetes",
+    "Helm",
+    "Jenkins",
+    "Technical presentation",
+    "Python",
+    "Java",
+    "C++",
+    "AI solutions",
+    "LLM design (personal interest)",
+    "Team leader",
+    "Problem solving"
   ],
   "certifications": [
-    {"date": "March 2025", "name": "Certified Kubernetes Administrator (CKA)"},
-    {"date": "September 2023", "name": "AWS Solutions Architect -- Associate"},
-    {"date": "January 2022", "name": "Google Cloud Professional Cloud Architect"},
-    {"date": "June 2019", "name": "DELE B2 (Spanish language proficiency)"}
+    {
+      "date": "June 2026",
+      "name": "Alibaba Cloud Certified LLM Engineer (Professional)"
+    },
+    {
+      "date": "September 2023",
+      "name": "Alibaba Cloud Certified Professional ACP"
+    },
+    {
+      "date": "January 2023",
+      "name": "AWS Cloud Practitioner"
+    },
+    {
+      "date": "October 2021",
+      "name": "Google Cloud Associate Engineer"
+    },
+    {
+      "date": "June 2019",
+      "name": "HSK 4 (Chinese language proficiency exam)"
+    },
+    {
+      "date": "April 2017 - March 2018",
+      "name": "Machine Learning specializations and courses on Coursera"
+    }
   ],
-  "education": "MSc in Computer Science, Example State University (June 2009).",
+  "education": "Master's Degree in Computer Engineering, Example Polytechnic University, Italy (July 2004).",
   "experiences": [
     {
       "id": 0,
-      "title": "Principal Platform Engineer",
-      "company": "Northwind Logistics",
-      "location": "Lisbon, Portugal",
-      "dates": "March 2022 -- Present",
-      "context": "Freight tracking platform -- 40M events/day",
-      "role_summary": "Technical owner of a freight tracking platform ingesting about 40 million events a day from 14 carrier integrations.",
+      "title": "Infrastructure Solution Architect",
+      "company": "Alpine Winter Games 2026 Organizing Committee",
+      "location": "Turin, Italy",
+      "dates": "January 2024 -- April 2026",
+      "context": "International Winter Games -- Organizing Committee",
+      "role_summary": "In the Organizing Committee I was part of the Infrastructure team (5 people). We provided the hardware for the Games (PCs, printers, phones, servers) and the services built on it (Office, MDM, mail, printing), and we oversaw the cloud infrastructure on GCP and Alibaba Cloud for the applications delivered in IaaS mode.",
       "duties": [
-        "Owned the architecture of the event ingestion platform handling roughly 40 million tracking events per day across 14 carrier integrations.",
-        "Cut median ingestion latency from 900ms to 120ms by replacing a synchronous validation chain with a partitioned Kafka topology and back-pressure-aware consumers.",
-        "When a carrier changed its API without notice and broke ingestion for six hours, I led the incident, shipped a compatibility shim the same day, and wrote the contract-testing suite that has caught four similar changes since.",
-        "As the platform's technical owner, my responsibility covered the on-call rotation design, the error budget policy, and the quarterly capacity plan.",
-        "Migrated 60+ services from hand-rolled Helm charts to a shared Terraform module set, removing about 11,000 lines of duplicated configuration.",
-        "Mentored four engineers through their first production designs; two now own services outright."
+        "Solution Architect and Product Owner for two Games projects delivered in IaaS mode: 'File Transfer', a web application to move files in and out of a protected network, and 'File Sharing', a high performance SMB file repository built for a specific need of the Venue Design team.",
+        "Owned the printing solution for the Games, as both Product Owner and Solution Architect: collected the requirements, got approvals from the Cybersecurity team, designed the solution and kept the documentation up to date. Followed up with the hardware vendor until the solution was installed.",
+        "Gathered requirements, wrote RFQs and validated vendor proposals for the cloud projects above, balancing mandatory delivery time, required SLAs, costs and effort, with the 'Business Impact Assessment' as reference.",
+        "Ensured technical compliance with company policies and guided solution providers through the internal approval process.",
+        "Defined, documented and tested operational procedures (installation, configuration) for about 1,100 printers across 9 main use cases, some of them critical for the Games.",
+        "Worked shifts in the Technical Operations Center, troubleshooting issues from device logistics to compliance; solved critical problems on my own, also at night.",
+        "Worked with the Applications Team on the technical side of contracts for cloud resources of applications delivered in IaaS mode: wrote the infrastructure part of the RFQs, defined RACI matrices, validated proposals, architecture and costs.",
+        "Supported the Applications Team in managing the Chinese cloud vendor (Alibaba).",
+        "Validated the design of the common Google Cloud infrastructure shared by all projects in IaaS mode, checking log routing and the site-to-site VPN with the cloud provider."
       ]
     },
     {
       "id": 1,
-      "title": "Senior Site Reliability Engineer",
-      "company": "Meridian Health Systems",
-      "location": "Barcelona, Spain",
-      "dates": "August 2018 -- February 2022",
-      "context": "Clinical records platform (HIPAA/GDPR)",
-      "role_summary": "Senior SRE for a clinical records platform under HIPAA and GDPR, responsible for failover, access control and deployment safety.",
+      "title": "Technical Solution Architect",
+      "company": "Lumen Digital Services",
+      "location": "Shenzhen, China",
+      "dates": "June 2021 -- October 2023",
+      "context": "Continental Multi-Sport Games 2022 -- Results Distribution System",
+      "role_summary": "My team supported the delivery of the 'Games Results' system, a mission critical software for the Games: it keeps the scores and generates the official web site. The software was developed in Europe; my team adapted it to the client's environment and to the requests of the system integrator.",
       "duties": [
-        "Designed the multi-region failover for a clinical records system with a contractual RTO of 30 minutes, then proved it twice a year in full-scale disaster recovery exercises.",
-        "Facing an audit finding on privileged access, I rebuilt the IAM model around least privilege, separating production from staging across 9 teams without stopping delivery.",
-        "Zero unplanned downtime was recorded in the 18 months after I rewrote the deployment pipeline to do progressive rollouts with automatic rollback on SLO breach.",
-        "Reduced cloud spend by 34% in one quarter by right-sizing stateful workloads and moving cold clinical archives to object storage with lifecycle policies.",
-        "Acted as the engineering point of contact during two external security audits, producing the evidence pack and the remediation plan."
+        "Technical bridge between the European development team and the Chinese system integrator (Alibaba). Mapped the system integrator's requirements onto the software architecture provided by the European team and adapted it to the client's needs.",
+        "Presented and discussed the system architecture with the client, in Chinese, in a difficult environment, while gathering non-functional requirements (high availability, performance, scalability).",
+        "Designed and implemented solutions to the customer's requests locally where possible; coordinated code changes with the European team.",
+        "Prepared environments for application deployment: configured DNS and Kubernetes, optimized Helm packages, solved deployment specific issues (e.g. Redis instability when master nodes restarted).",
+        "Solved synchronization issues between two isolated platforms owned by two different companies with rsync and inotify: designed the fix, presented it, got it approved and implemented it.",
+        "Team leader and mentor of a small team of 3 people.",
+        "Defined and documented backup/restore procedures able to meet the strict SLA of the Games.",
+        "The Results Distribution System was a core system with a strict SLA: recovery (RTO) within 2 hours in case of disaster. I guided my team through the Technical Rehearsals (full scale test events before the Games), where the Disaster Recovery (DR) procedures of the Results system were tested successfully against the SLA. (Note: the rehearsals were a very large event covering all Games systems: software, hardware, venue security, not only Results. I guided my team, NOT the rehearsals).",
+        "My team received the company's yearly excellence award, a monetary prize for outstanding performance, and informal compliments from the client's managers at the end of the Games."
       ]
     },
     {
       "id": 2,
-      "title": "Backend Engineer",
-      "company": "Cobalt Analytics",
-      "location": "Berlin, Germany",
-      "dates": "May 2014 -- July 2018",
-      "context": "",
-      "role_summary": "Backend engineer on the query engine and ingestion library of a customer-facing analytics product.",
+      "title": "Software Engineer -- IT Consultant",
+      "company": "Lumen Consulting",
+      "location": "Shanghai, China",
+      "dates": "March 2016 -- May 2021",
+      "context": "Tax & Customs programme",
+      "role_summary": "IT consultant on a 'Tax & Customs' programme: ML services, cloud IAM, microservice modernization of a Java monolith, and production troubleshooting abroad.",
       "duties": [
-        "Built the query engine behind the customer-facing analytics product, in Go, serving ad-hoc aggregations over roughly 2TB of columnar data.",
-        "To eliminate a recurring class of nightly batch failures, I introduced idempotent job semantics and a replay tool, which took the weekly on-call page count from eleven to under two.",
-        "The ingestion library I maintained was adopted by three other teams; I kept its API stable across two major internal migrations.",
-        "Profiling work I led on the hot path removed a 40% CPU overhead caused by redundant deserialization."
+        "Turned a Machine Learning model from a Python notebook into a full microservice, improving the model's performance on the way. The service detected anomalies in customs declarations (imported goods) from X-Ray scans of cargo containers (VGG16 - Model Fine Tuning - Python - Image Processing - Softmax).",
+        "On a separate project, designed the IAM solution for least access privilege in a large system on Alibaba Cloud: separated the privileges for production and testing environments across several user groups (developers, database specialists) and isolated the production environment (Alibaba Cloud, IAM, Terraform).",
+        "R&D: worked with Business Analysts to define the new technology stack of the customs application. Documented and presented the solutions to the stakeholders and led a small team to implement them. The design followed reactive principles and patterns such as CQRS and saga, on Kubernetes on GCP. Designed and implemented the CI/CD pipelines on 'Jenkins X' and the observability layer on the LGTM stack (Grafana).",
+        "Following the point above, ported the 'Tax & Customs' application (a large Java/J2EE monolith) to microservices on Kubernetes together with a junior developer, up to a live demo with potential customers. The team worked with Agile methodologies and ceremonies.",
+        "Legacy application troubleshooting: often called in for critical production issues or performance bottlenecks. Once, on site at a customer in East Africa, I found serious stability and performance issues: the web server process died without leaving traces. In 10 days I found and fixed a memory leak (from post-mortem Java logs) and three critical infrastructure problems (unpatched WebLogic application server causing thread issues, database drivers, a failing database network card).",
+        "Impact in international contexts: in the case above the customer's team knew about problems that had been open for months but were not solving them. By talking to the right stakeholders I got them fixed. I also had the local team install monitoring (Zabbix), adding a layer of observability. By the end of my stay the customer's attitude toward the project had clearly improved, and they explicitly asked for me to come back."
       ]
     },
     {
       "id": 3,
-      "title": "Software Engineer",
-      "company": "Harbourline Systems",
-      "location": "Dublin, Ireland",
-      "dates": "September 2009 -- April 2014",
-      "context": "Payments integration",
-      "role_summary": "Software engineer on the Java library connecting the company's payment product to six national banking networks.",
+      "title": "Software Engineer & Network Administrator",
+      "company": "Vectris Engineering SAS",
+      "location": "Lyon, France",
+      "dates": "October 2011 -- June 2015",
+      "context": "",
+      "role_summary": "Software engineer and network administrator for a small technical consultancy serving large institutional companies (e.g. a national energy utility) with numerical simulation and HPC: C++ and Python simulation software plus Linux network administration.",
       "duties": [
-        "Developed and maintained the Java library that integrated the company's payment product with six national banking networks.",
-        "Introduced automated integration testing against bank sandboxes, replacing a manual pre-release checklist that had taken two days per release.",
-        "Championed the move from nightly builds to continuous integration, which I piloted on my own team before it was adopted company-wide."
+        "Developed C++ and Python software for numerical simulations and finite element analysis.",
+        "Mixed OS (Linux/Windows) network administration: implemented LDAP authentication and shared disk access for the consultancy.",
+        "The company open-sourced a C++ project I was responsible for. I still maintain it and it has an active user community on GitHub."
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Software Developer",
+      "company": "Signa Systems S.p.A.",
+      "location": "Modena, Italy",
+      "dates": "November 2004 -- September 2011",
+      "context": "Digital signature",
+      "role_summary": "Signa Systems S.p.A. specializes in digital signature, document preservation and services for banks and Public Administration. I was software developer and architect of a core component: the digital signature library.",
+      "duties": [
+        "Designed, developed and maintained the Java digital signature library, a foundation component of the company's document management and preservation solution. It integrated with the browser through an applet and read smart cards through JNI.",
+        "Contributed to a software (named PayDesk) that let Public Administration send digitally signed payment orders to banks.",
+        "Promoted emerging technologies, including presenting AWS Cloud Computing to company management as early as 2009.",
+        "Introduced a code generation framework that generates code from annotated UML diagrams (AndroMDA). It sped up development by generating the structure of the code (about 60% of it)."
       ]
     }
   ]

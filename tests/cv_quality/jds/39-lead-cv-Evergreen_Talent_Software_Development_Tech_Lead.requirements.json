@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "requirement": "Software development tech lead",
+    "keywords": [
+      "Software Development Tech Lead",
+      "Tech Lead",
+      "Technical Lead",
+      "Development Lead",
+      "Software Team Lead"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 2,
+    "requirement": "Java 8+",
+    "keywords": [
+      "Java",
+      "Java 8"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 3,
+    "requirement": "Spring framework",
+    "keywords": [
+      "Spring",
+      "Spring Framework"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 4,
+    "requirement": "Leading a development team of about 10 people",
+    "keywords": [
+      "Team Leadership",
+      "Team Management",
+      "People Management",
+      "gestione di team"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 5,
+    "requirement": "Git",
+    "keywords": [
+      "Git"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 6,
+    "requirement": "Jira",
+    "keywords": [
+      "Jira"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 7,
+    "requirement": "PostgreSQL",
+    "keywords": [
+      "PostgreSQL",
+      "Postgres"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 8,
+    "requirement": "DevOps and CI/CD practices",
+    "keywords": [
+      "DevOps",
+      "CI/CD",
+      "Continuous Integration",
+      "Continuous Delivery"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 9,
+    "requirement": "Application security and data protection",
+    "keywords": [
+      "Application Security",
+      "AppSec",
+      "Data Protection",
+      "sicurezza applicativa"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 10,
+    "requirement": "Degree in a technical or scientific discipline",
+    "keywords": [
+      "Computer Science",
+      "STEM",
+      "Laurea"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 11,
+    "requirement": "Good English",
+    "keywords": [
+      "English"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 12,
+    "requirement": "Supervising the full software development lifecycle for quality, reliability and performance",
+    "keywords": [
+      "Software Development Lifecycle",
+      "SDLC",
+      "Software Quality",
+      "ciclo di sviluppo"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 13,
+    "requirement": "Technical analysis, development and evolutive/corrective maintenance of business management systems",
+    "keywords": [
+      "Technical Analysis",
+      "Software Maintenance",
+      "Management Systems",
+      "sistemi gestionali",
+      "manutenzione evolutiva"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 14,
+    "requirement": "Keeping software products compliant with regulations",
+    "keywords": [
+      "Regulatory Compliance",
+      "Compliance",
+      "adeguamento normativo"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 15,
+    "requirement": "Defining project priorities and roadmaps with business stakeholders",
+    "keywords": [
+      "Roadmap",
+      "Stakeholder Management",
+      "Prioritization",
+      "Business Stakeholders"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 16,
+    "requirement": "Mentoring and coaching team members",
+    "keywords": [
+      "Mentoring",
+      "Coaching"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 17,
+    "requirement": "Managing technical relationships with vendors and external partners",
+    "keywords": [
+      "Vendor Management",
+      "Supplier Management",
+      "External Partners",
+      "fornitori"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 18,
+    "requirement": "Monitoring progress and resource allocation",
+    "keywords": [
+      "Resource Allocation",
+      "Progress Monitoring",
+      "Resource Planning"
+    ],
+    "importance": "must"
+  }
+]

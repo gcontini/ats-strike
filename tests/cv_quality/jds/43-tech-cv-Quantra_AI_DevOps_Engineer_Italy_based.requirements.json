@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "DevOps engineer", "keywords": ["DevOps Engineer", "DevOps", "Site Reliability Engineer", "SRE", "Platform Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "CI/CD pipelines with GitLab CI/CD", "keywords": ["CI/CD", "GitLab CI/CD", "GitLab CI", "continuous integration", "continuous delivery"], "importance": "must"},
+  {"id": 3, "requirement": "Docker and containerized applications", "keywords": ["Docker", "Dockerfile", "containers", "containerization"], "importance": "must"},
+  {"id": 4, "requirement": "Kubernetes", "keywords": ["Kubernetes", "K8s"], "importance": "must"},
+  {"id": 5, "requirement": "Infrastructure as Code with Terraform or Ansible", "keywords": ["Infrastructure as Code", "IaC", "Terraform", "Ansible"], "importance": "must"},
+  {"id": 6, "requirement": "Monitoring, logging and tracing", "keywords": ["Prometheus", "Grafana", "ELK", "Zabbix", "monitoring"], "importance": "must"},
+  {"id": 7, "requirement": "Scripting for automation (Python, Bash)", "keywords": ["Python", "Bash", "scripting", "shell scripting"], "importance": "must"},
+  {"id": 8, "requirement": "Security best practices in the SDLC and pipelines", "keywords": ["OWASP Top 10", "OWASP", "least privilege", "shift-left", "SDLC security"], "importance": "must"},
+  {"id": 9, "requirement": "Troubleshooting system and infrastructure issues", "keywords": ["troubleshooting", "debugging"], "importance": "must"},
+  {"id": 10, "requirement": "On-call rotation and high availability", "keywords": ["on-call", "MTTR", "Mean Time To Recovery", "high availability"], "importance": "must"},
+  {"id": 11, "requirement": "GitOps and declarative configuration", "keywords": ["GitOps", "declarative configuration"], "importance": "must"},
+  {"id": 12, "requirement": "Database infrastructure automation (MySQL, MongoDB)", "keywords": ["MySQL", "MongoDB", "database backups", "schema migrations"], "importance": "must"},
+  {"id": 13, "requirement": "Provisioning on-premise and cloud resources", "keywords": ["on-premise", "provisioning", "hybrid infrastructure"], "importance": "must"},
+  {"id": 14, "requirement": "Deploying and scaling platform services for internal teams", "keywords": ["developer platform", "platform services", "platform engineering", "deployment automation"], "importance": "must"},
+  {"id": 15, "requirement": "Runbooks and technical documentation", "keywords": ["runbooks", "documentation", "technical design"], "importance": "must"},
+  {"id": 16, "requirement": "English communication", "keywords": ["English"], "importance": "must"},
+  {"id": 17, "requirement": "AWS fundamentals", "keywords": ["AWS", "EC2", "S3", "IAM"], "importance": "nice"},
+  {"id": 18, "requirement": "Event-driven systems and messaging", "keywords": ["event-driven", "ActiveMQ", "messaging"], "importance": "nice"},
+  {"id": 19, "requirement": "Backend development with Java/Spring Boot", "keywords": ["Java", "Spring Boot", "backend development"], "importance": "nice"},
+  {"id": 20, "requirement": "Financial services or high-throughput data processing", "keywords": ["financial services", "investment", "high-throughput", "data processing"], "importance": "nice"}
+]

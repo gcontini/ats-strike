@@ -1,0 +1,14 @@
+[
+  {"id": 1, "requirement": "Cloud infrastructure engineer, 5+ years", "keywords": ["Cloud Infrastructure Engineer", "Infrastructure Engineer", "Cloud Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "5G Core Network infrastructure", "keywords": ["5G Core", "5GC", "Core Network 5G", "5G"], "importance": "must"},
+  {"id": 3, "requirement": "Enterprise cloud infrastructure implementation and management", "keywords": ["Cloud Infrastructure", "Enterprise Cloud", "infrastrutture cloud"], "importance": "must"},
+  {"id": 4, "requirement": "Onboarding of 5G Network Functions", "keywords": ["Network Functions", "Network Function onboarding", "NF onboarding", "onboarding delle Network Functions"], "importance": "must"},
+  {"id": 5, "requirement": "Telco and next-generation network infrastructure architecture", "keywords": ["Telco", "Telecommunications", "Telecom", "reti di nuova generazione"], "importance": "must"},
+  {"id": 6, "requirement": "Low Level Design writing", "keywords": ["Low Level Design", "Low-Level Design", "LLD"], "importance": "must"},
+  {"id": 7, "requirement": "Infrastructure configuration, setup and deployment", "keywords": ["Infrastructure Deployment", "Infrastructure Configuration", "Infrastructure Setup", "deployment infrastrutturale"], "importance": "must"},
+  {"id": 8, "requirement": "Analysis of vendor specifications and technical requirements", "keywords": ["Vendor Specifications", "Technical Requirements", "Functional Requirements", "specifiche di fornitore"], "importance": "must"},
+  {"id": 9, "requirement": "Technical documentation", "keywords": ["Technical Documentation", "documentazione tecnica"], "importance": "must"},
+  {"id": 10, "requirement": "Infrastructure validation", "keywords": ["Infrastructure Validation", "Validation", "validazione dell'infrastruttura"], "importance": "must"},
+  {"id": 11, "requirement": "Collaboration with technical stakeholders and multidisciplinary teams", "keywords": ["Stakeholder", "Cross-functional", "Multidisciplinary", "team multidisciplinari"], "importance": "must"},
+  {"id": 12, "requirement": "Dell Cloud Platform", "keywords": ["Dell Cloud Platform", "Dell"], "importance": "nice"}
+]

@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "GCP Cloud Data Engineer", "keywords": ["GCP Cloud Data Engineer", "GCP Data Engineer", "Cloud Data Engineer", "Google Cloud Data Engineer", "Data Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "Data engineering and analytics solutions on Google Cloud Platform", "keywords": ["Google Cloud Platform", "GCP", "Google Cloud", "Data Engineering", "Data Analytics"], "importance": "must"},
+  {"id": 3, "requirement": "BigQuery", "keywords": ["BigQuery"], "importance": "must"},
+  {"id": 4, "requirement": "Dataflow and Dataproc processing", "keywords": ["Dataflow", "Dataproc"], "importance": "must"},
+  {"id": 5, "requirement": "Orchestration with Cloud Composer / Airflow", "keywords": ["Cloud Composer", "Composer", "Airflow", "Apache Airflow"], "importance": "must"},
+  {"id": 6, "requirement": "GCP storage, messaging and serverless services", "keywords": ["Google Cloud Storage", "GCS", "Pub/Sub", "Cloud Functions", "Deployment Manager"], "importance": "must"},
+  {"id": 7, "requirement": "Ingestion and transformation pipelines in Python and PySpark", "keywords": ["Python", "PySpark", "data pipelines", "data ingestion", "pipeline di ingestion"], "importance": "must"},
+  {"id": 8, "requirement": "Modern Data Platform and cloud Big Data architecture design", "keywords": ["Modern Data Platform", "Big Data architecture", "data architecture", "architettura dati"], "importance": "must"},
+  {"id": 9, "requirement": "Medallion Architecture data models", "keywords": ["Medallion Architecture", "Medallion", "Bronze Silver Gold"], "importance": "must"},
+  {"id": 10, "requirement": "Advanced, optimized SQL", "keywords": ["SQL", "query optimization", "advanced SQL"], "importance": "must"},
+  {"id": 11, "requirement": "Data modeling on relational, NoSQL and data warehouse systems", "keywords": ["data modeling", "Data Warehouse", "NoSQL", "relational databases", "modellazione dati"], "importance": "must"},
+  {"id": 12, "requirement": "Big Data frameworks Spark, Hadoop, Hive", "keywords": ["Spark", "Apache Spark", "Hadoop", "Hive"], "importance": "must"},
+  {"id": 13, "requirement": "Data governance, data quality and metadata management", "keywords": ["Data Governance", "Data Quality", "Metadata Management"], "importance": "must"},
+  {"id": 14, "requirement": "Data security and protection best practices", "keywords": ["data security", "data protection", "data management", "sicurezza dei dati"], "importance": "must"},
+  {"id": 15, "requirement": "Technical-scientific degree", "keywords": ["Bachelor's degree", "Master's degree", "STEM", "Laurea"], "importance": "must"},
+  {"id": 16, "requirement": "English language", "keywords": ["English", "inglese"], "importance": "must"},
+  {"id": 17, "requirement": "Infrastructure as Code with Terraform", "keywords": ["Terraform", "Infrastructure as Code", "IaC", "Cloud Automation"], "importance": "nice"},
+  {"id": 18, "requirement": "Google Cloud, Databricks or data engineering certification", "keywords": ["Google Cloud Certified", "Google Cloud certification", "Databricks certification", "Databricks", "Data Engineering certification"], "importance": "nice"},
+  {"id": 19, "requirement": "Additional languages Scala and Java", "keywords": ["Scala", "Java"], "importance": "nice"},
+  {"id": 20, "requirement": "DevOps principles and methodologies", "keywords": ["DevOps"], "importance": "nice"}
+]

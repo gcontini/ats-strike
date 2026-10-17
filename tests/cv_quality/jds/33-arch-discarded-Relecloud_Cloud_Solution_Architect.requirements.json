@@ -1,0 +1,211 @@
+[
+  {
+    "id": 1,
+    "requirement": "Cloud solution architect",
+    "keywords": [
+      "Cloud Solution Architect",
+      "Solution Architect",
+      "Solutions Architect",
+      "Cloud Architect"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 2,
+    "requirement": "Pre-sales experience (2+ years)",
+    "keywords": [
+      "Pre-sales",
+      "Presales",
+      "Pre-sales Engineer",
+      "Pre-sales Architect"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 3,
+    "requirement": "Responding to RFPs, RFQs and tenders with technical offers",
+    "keywords": [
+      "RFP",
+      "RFQ",
+      "tender",
+      "technical offer",
+      "proposal"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 4,
+    "requirement": "Solution design from customer requirements",
+    "keywords": [
+      "solution design",
+      "requirements analysis",
+      "technical requirements",
+      "solution architecture"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 5,
+    "requirement": "VMware and KVM virtualization",
+    "keywords": [
+      "VMware",
+      "KVM",
+      "virtualization"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 6,
+    "requirement": "IBM Power ecosystem (IBM i, AIX)",
+    "keywords": [
+      "IBM Power",
+      "IBM i",
+      "AIX"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 7,
+    "requirement": "Windows and Linux server operating systems",
+    "keywords": [
+      "Windows Server",
+      "Linux",
+      "Windows"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 8,
+    "requirement": "Public cloud IaaS and PaaS services",
+    "keywords": [
+      "Azure",
+      "AWS",
+      "Google Cloud",
+      "GCP",
+      "IaaS"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 9,
+    "requirement": "Disaster recovery and business continuity",
+    "keywords": [
+      "Disaster Recovery",
+      "Business Continuity",
+      "RPO",
+      "RTO",
+      "SLA"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 10,
+    "requirement": "Server and system migrations",
+    "keywords": [
+      "server migration",
+      "system migration",
+      "migration"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 11,
+    "requirement": "Economic P&L and costing of offers",
+    "keywords": [
+      "P&L",
+      "economic P&L",
+      "cost estimation"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 12,
+    "requirement": "Supporting sales and channel partners through the sales process",
+    "keywords": [
+      "sales support",
+      "Channel Partner",
+      "sales process",
+      "upselling"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 13,
+    "requirement": "Technical presentations to customers and business buyers",
+    "keywords": [
+      "technical presentation",
+      "presentations",
+      "customer presentation"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 14,
+    "requirement": "Professional English, written and spoken",
+    "keywords": [
+      "English"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 15,
+    "requirement": "Microsoft Office (Excel, Word, PowerPoint)",
+    "keywords": [
+      "Microsoft Office",
+      "Excel",
+      "Word",
+      "PowerPoint"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 16,
+    "requirement": "High school diploma or scientific degree",
+    "keywords": [
+      "High School Diploma",
+      "Scientific Degree"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 17,
+    "requirement": "Hosted private and hybrid cloud services",
+    "keywords": [
+      "Hybrid Cloud",
+      "Private Cloud",
+      "Hosted Private Cloud"
+    ],
+    "importance": "nice"
+  },
+  {
+    "id": 18,
+    "requirement": "Cybersecurity managed services",
+    "keywords": [
+      "Cybersecurity",
+      "Cybersecurity Managed Services",
+      "Managed Services"
+    ],
+    "importance": "nice"
+  },
+  {
+    "id": 19,
+    "requirement": "AI platforms",
+    "keywords": [
+      "AI platforms",
+      "AI",
+      "artificial intelligence"
+    ],
+    "importance": "nice"
+  },
+  {
+    "id": 20,
+    "requirement": "Industry certification in cloud architecture, enterprise solutions or security management",
+    "keywords": [
+      "Cloud Architecture certification",
+      "Enterprise Solutions certification",
+      "Security Management certification",
+      "certification"
+    ],
+    "importance": "nice"
+  }
+]

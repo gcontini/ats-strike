@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "AI Engineer", "keywords": ["AI Engineer", "Applied AI Engineer", "LLM Engineer", "AI Platform Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "Building with LLMs, AI agents and agentic workflows", "keywords": ["LLM", "AI agents", "agentic workflows", "Large Language Models"], "importance": "must"},
+  {"id": 3, "requirement": "Prompt engineering and multi-step prompt design", "keywords": ["prompt engineering", "prompts", "prompt design"], "importance": "must"},
+  {"id": 4, "requirement": "Evaluation pipelines for prompts and agents with regression checks", "keywords": ["evaluation pipelines", "LLM evaluation", "LLM-based evaluators", "regression testing", "quality gates"], "importance": "must"},
+  {"id": 5, "requirement": "Python for scripting, automation and tooling", "keywords": ["Python", "scripting", "automation"], "importance": "must"},
+  {"id": 6, "requirement": "Daily use of AI coding assistants", "keywords": ["GitHub Copilot", "Cursor", "Claude Code", "Windsurf", "Kiro"], "importance": "must"},
+  {"id": 7, "requirement": "GitHub Actions and CI/CD with reusable workflows and pipeline-as-code", "keywords": ["GitHub Actions", "CI/CD", "pipeline-as-code", "reusable workflows"], "importance": "must"},
+  {"id": 8, "requirement": "Platform engineering experience (3-6+ years)", "keywords": ["Platform Engineer", "Platform Engineering"], "importance": "must"},
+  {"id": 9, "requirement": "Authentication, authorisation, secrets handling and least privilege", "keywords": ["least privilege", "secrets management", "OIDC", "authentication", "authorization"], "importance": "must"},
+  {"id": 10, "requirement": "CLI tools, scripts and reusable templates for adoption", "keywords": ["CLI", "templates", "onboarding tools", "self-service"], "importance": "must"},
+  {"id": 11, "requirement": "YAML, Markdown, JSON and configuration-driven systems", "keywords": ["YAML", "Markdown", "JSON", "configuration-driven"], "importance": "must"},
+  {"id": 12, "requirement": "Technical documentation for developers", "keywords": ["technical documentation", "developer guides", "docs"], "importance": "must"},
+  {"id": 13, "requirement": "BSc/MSc in Computer Science or related field", "keywords": ["Computer Science", "BSc", "MSc"], "importance": "must"},
+  {"id": 14, "requirement": "AI safety: prompt injection, adversarial testing, OWASP Top 10 for LLM", "keywords": ["prompt injection", "adversarial testing", "OWASP Top 10 for LLM", "AI safety", "data leaks"], "importance": "nice"},
+  {"id": 15, "requirement": "AI evaluation frameworks", "keywords": ["promptfoo", "DeepEval", "RAGAS", "Azure AI Evaluation SDK"], "importance": "nice"},
+  {"id": 16, "requirement": "Agentic frameworks", "keywords": ["LangChain", "AutoGen", "CrewAI", "OpenAI Assistants API"], "importance": "nice"},
+  {"id": 17, "requirement": "Internal developer platforms and developer experience", "keywords": ["internal developer platform", "developer tooling", "developer experience", "DevEx"], "importance": "nice"},
+  {"id": 18, "requirement": "Infrastructure as code", "keywords": ["Terraform", "Bicep", "Pulumi", "CDK", "infrastructure-as-code"], "importance": "nice"},
+  {"id": 19, "requirement": "Software supply chain security", "keywords": ["supply chain security", "dependency scanning", "action pinning", "SBOM"], "importance": "nice"},
+  {"id": 20, "requirement": "Docs-as-code and static documentation sites", "keywords": ["docs-as-code", "static site", "documentation site"], "importance": "nice"}
+]

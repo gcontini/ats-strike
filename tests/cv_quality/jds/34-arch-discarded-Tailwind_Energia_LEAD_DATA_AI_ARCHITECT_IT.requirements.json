@@ -1,0 +1,222 @@
+[
+  {
+    "id": 1,
+    "requirement": "Lead Data & AI Architect",
+    "keywords": [
+      "Lead Data & AI Architect",
+      "Data & AI Architect",
+      "Data Architect",
+      "AI Architect",
+      "Lead Architect"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 2,
+    "requirement": "Data and AI architecture, 8+ years in Data & AI with 5+ as senior or lead architect",
+    "keywords": [
+      "Data Architecture",
+      "AI Architecture",
+      "Senior Architect",
+      "Lead Architect"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 3,
+    "requirement": "Enterprise Data & AI strategy and multi-year roadmaps",
+    "keywords": [
+      "Data Strategy",
+      "AI Strategy",
+      "Roadmap",
+      "Enterprise"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 4,
+    "requirement": "Technical leadership of complex multi-stream programs",
+    "keywords": [
+      "Technical Leadership",
+      "Program Delivery",
+      "Multi-stream",
+      "Architectural Trade-offs"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 5,
+    "requirement": "Design and delivery of enterprise data platforms and Generative AI applications",
+    "keywords": [
+      "Data Platform",
+      "Generative AI",
+      "GenAI",
+      "Solution Design"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 6,
+    "requirement": "Production RAG and agentic AI with multi-agent orchestration",
+    "keywords": [
+      "RAG",
+      "Retrieval-Augmented Generation",
+      "Agentic AI",
+      "Multi-Agent",
+      "Orchestration"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 7,
+    "requirement": "GenAI cost and performance optimization and output quality evaluation",
+    "keywords": [
+      "Cost Optimization",
+      "Performance Optimization",
+      "LLM Evaluation",
+      "Output Evaluation"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 8,
+    "requirement": "FinOps for Data and AI workloads",
+    "keywords": [
+      "FinOps",
+      "Cloud Cost Optimization",
+      "Compute Cost"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 9,
+    "requirement": "Deep knowledge of at least two cloud providers and their Data & AI services",
+    "keywords": [
+      "Azure",
+      "AWS",
+      "GCP",
+      "Google Cloud"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 10,
+    "requirement": "Modern data architecture paradigms",
+    "keywords": [
+      "Data Lakehouse",
+      "Data Mesh",
+      "Event-Driven Architecture",
+      "Real-time Analytics"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 11,
+    "requirement": "Microservices, distributed systems and asynchronous programming for AI",
+    "keywords": [
+      "Microservices",
+      "Distributed Systems",
+      "Asynchronous Programming",
+      "Event-Driven"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 12,
+    "requirement": "DevSecOps, DataOps, MLOps and AIOps processes",
+    "keywords": [
+      "DevSecOps",
+      "DataOps",
+      "MLOps",
+      "AIOps"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 13,
+    "requirement": "Reference architectures, reusable patterns and best practices",
+    "keywords": [
+      "Reference Architecture",
+      "Architectural Patterns",
+      "Best Practices",
+      "Reusable Patterns"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 14,
+    "requirement": "Data governance and AI governance (EU AI Act, responsible AI)",
+    "keywords": [
+      "Data Governance",
+      "AI Governance",
+      "EU AI Act",
+      "Responsible AI"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 15,
+    "requirement": "Data privacy (GDPR) and data security",
+    "keywords": [
+      "GDPR",
+      "Data Privacy",
+      "Data Security",
+      "Compliance"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 16,
+    "requirement": "Mentoring Data & AI architects",
+    "keywords": [
+      "Mentoring",
+      "Coaching",
+      "Tutoring",
+      "tutoraggio"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 17,
+    "requirement": "Representing the company at conferences, advisory boards and vendor partnerships",
+    "keywords": [
+      "Conferences",
+      "Advisory Board",
+      "Vendor Partnerships",
+      "Technology Partners"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 18,
+    "requirement": "Master's degree in Computer Science or Engineering",
+    "keywords": [
+      "Master's Degree",
+      "MSc",
+      "Computer Science",
+      "Laurea Magistrale"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 19,
+    "requirement": "Strategic workshops and advisory sessions with C-level and non-technical stakeholders",
+    "keywords": [
+      "Workshops",
+      "Advisory",
+      "C-Level",
+      "Stakeholders"
+    ],
+    "importance": "nice"
+  },
+  {
+    "id": 20,
+    "requirement": "MBA or specialization in AI/Data strategy",
+    "keywords": [
+      "MBA",
+      "AI Strategy",
+      "Data Strategy"
+    ],
+    "importance": "nice"
+  }
+]

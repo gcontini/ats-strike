@@ -1,0 +1,20 @@
+[
+  {"id": 1, "requirement": "Backend tech lead", "keywords": ["Backend Tech Lead", "Tech Lead", "Technical Lead", "Backend Lead"], "importance": "must"},
+  {"id": 2, "requirement": "Backend software engineering, 5+ years", "keywords": ["Backend", "Software Engineering", "Backend Development", "Backend Engineer"], "importance": "must"},
+  {"id": 3, "requirement": "PHP and complex monolithic codebases", "keywords": ["PHP", "monolith", "monolithic", "legacy codebase"], "importance": "must"},
+  {"id": 4, "requirement": "Cloud architecture on AWS", "keywords": ["AWS", "EC2", "RDS", "cloud architecture", "cloud-native"], "importance": "must"},
+  {"id": 5, "requirement": "Terraform infrastructure as code", "keywords": ["Terraform", "Infrastructure as Code", "IaC"], "importance": "must"},
+  {"id": 6, "requirement": "Observability with SLI/SLO, Grafana Cloud and OpenTelemetry", "keywords": ["Observability", "OpenTelemetry", "Grafana Cloud", "SLI/SLO", "alerting"], "importance": "must"},
+  {"id": 7, "requirement": "CI/CD pipelines with GitHub Actions and continuous delivery", "keywords": ["CI/CD", "GitHub Actions", "Continuous Delivery"], "importance": "must"},
+  {"id": 8, "requirement": "Incremental modernization and migration of legacy systems", "keywords": ["legacy modernization", "legacy migration", "modernization", "modernizzazione"], "importance": "must"},
+  {"id": 9, "requirement": "Caching strategies with Redis", "keywords": ["caching", "Redis", "ElastiCache"], "importance": "must"},
+  {"id": 10, "requirement": "Stakeholder management with engineering leadership", "keywords": ["stakeholder management", "gestione degli stakeholder", "technical leadership"], "importance": "must"},
+  {"id": 11, "requirement": "Domain-Driven Design", "keywords": ["Domain-Driven Design", "DDD"], "importance": "must"},
+  {"id": 12, "requirement": "Containerization with Docker", "keywords": ["Docker", "containerization", "containers"], "importance": "must"},
+  {"id": 13, "requirement": "Disaster recovery", "keywords": ["Disaster Recovery", "DR"], "importance": "must"},
+  {"id": 14, "requirement": "Incident management and on-call rotation", "keywords": ["Incident Management", "on-call", "reperibilità", "resilience"], "importance": "must"},
+  {"id": 15, "requirement": "Architecture design validation in feature planning and refinement", "keywords": ["technical design", "architecture design", "feature planning", "refinement", "scalability"], "importance": "must"},
+  {"id": 16, "requirement": "Code review and collaborative design sessions for the team", "keywords": ["code review", "design review", "mentoring"], "importance": "must"},
+  {"id": 17, "requirement": "Agile ceremonies and sprint planning", "keywords": ["Agile", "Scrum", "sprint", "ceremonies"], "importance": "must"},
+  {"id": 18, "requirement": "Fluent English", "keywords": ["English", "fluent English"], "importance": "must"}
+]

@@ -26,7 +26,7 @@ flowchart TB
         L3 --> L4["uv sync --frozen --no-dev --no-editable<br/>→ /app/.venv"]
     end
     subgraph s2["stage 2 — runtime (python:3.12-slim-bookworm)"]
-        R1["texlive-latex-base + cm-super"] --> R2["vendored fontawesome5<br/>→ TEXMFLOCAL"]
+        R1["texlive-latex-base + texlive-fonts-recommended + cm-super"] --> R2["vendored fontawesome5<br/>→ TEXMFLOCAL"]
         R2 --> R3["COPY --from=build /app/.venv"]
         R3 --> R4["entrypoint.sh → resumix-api"]
     end
@@ -43,6 +43,7 @@ to `/app/src`, so the runtime stage needs nothing but the venv.
 | Package | Why |
 |---|---|
 | `texlive-latex-base` | `hyperref`, `graphicx`, `array`, `hhline`, `amsmath`, `babel-english` — everything `resume.tex.jinja` uses |
+| `texlive-fonts-recommended` | The font files behind psnfss (Charter, Times, Palatino, ...). The stock template does not need them; a template of your own that loads `\usepackage{charter}` does |
 | `cm-super` | Type 1 CM fonts. Without them, T1 encoding falls back to bitmap fonts and the PDF looks scanned. `cm-super-minimal` is not enough: it leaves the design sizes the CV uses for headings and small print as Type 3 bitmaps |
 | `fontawesome5` (vendored) | The contact icons in the CV header. Debian ships it only inside the 1.7 GB `texlive-fonts-extra`, so it is vendored as a TeX Live archive in `server/docker/vendor/` and unpacked into `TEXMFLOCAL`. No network access during the build |
 

@@ -1,0 +1,21 @@
+[
+  {"id": 1, "requirement": "Telco cloud engineer", "keywords": ["Telco Cloud Engineer", "Cloud Engineer", "Cloud Architect", "Cloud Engineering"], "importance": "must"},
+  {"id": 2, "requirement": "NFV and SDN", "keywords": ["NFV", "SDN", "Network Functions Virtualization", "Software-Defined Networking"], "importance": "must"},
+  {"id": 3, "requirement": "Kubernetes and microservices orchestration", "keywords": ["Kubernetes", "K8s", "microservices", "container orchestration", "orchestrazione"], "importance": "must"},
+  {"id": 4, "requirement": "IaaS/CaaS cloud platforms: AWS, OpenStack, OpenShift, VMware", "keywords": ["AWS", "OpenStack", "OpenShift", "VMware", "IaaS"], "importance": "must"},
+  {"id": 5, "requirement": "Telco cloud architecture design (public, private, hybrid, edge)", "keywords": ["Telco Cloud", "cloud architecture", "hybrid cloud", "edge computing", "private cloud"], "importance": "must"},
+  {"id": 6, "requirement": "Cloud architectures for telco services: 5G core, OSS/BSS, VNF/CNF", "keywords": ["5G", "Core Network", "OSS/BSS", "VNF", "CNF"], "importance": "must"},
+  {"id": 7, "requirement": "Virtualization and containerization", "keywords": ["virtualization", "containerization", "containers", "virtualizzazione", "containerizzazione"], "importance": "must"},
+  {"id": 8, "requirement": "Infrastructure as Code with Terraform or Ansible", "keywords": ["Infrastructure as Code", "IaC", "Terraform", "Ansible"], "importance": "must"},
+  {"id": 9, "requirement": "Linux environments", "keywords": ["Linux"], "importance": "must"},
+  {"id": 10, "requirement": "Telco network architectures and integration with IP networks", "keywords": ["telecommunications", "telco", "network architecture", "IP networking", "network integration"], "importance": "must"},
+  {"id": 11, "requirement": "High availability and resilient deployment models", "keywords": ["high availability", "geo-redundancy", "multi-region", "fault tolerance", "resilience"], "importance": "must"},
+  {"id": 12, "requirement": "Capacity planning, dimensioning and performance tuning", "keywords": ["capacity planning", "performance tuning", "dimensioning", "low latency", "scalability"], "importance": "must"},
+  {"id": 13, "requirement": "DevOps and CI/CD for cloud environments", "keywords": ["DevOps", "CI/CD", "continuous integration", "continuous delivery"], "importance": "must"},
+  {"id": 14, "requirement": "Cloud security, identity management and business continuity", "keywords": ["cloud security", "identity management", "IAM", "business continuity", "continuità operativa"], "importance": "must"},
+  {"id": 15, "requirement": "Technical coordination of engineering teams as technical reference", "keywords": ["technical coordination", "technical lead", "technical reference", "coordinamento tecnico"], "importance": "must"},
+  {"id": 16, "requirement": "Driving AI adoption in engineering processes", "keywords": ["artificial intelligence", "AI", "intelligenza artificiale", "AI adoption"], "importance": "must"},
+  {"id": 17, "requirement": "Stakeholder, vendor and system integrator interaction", "keywords": ["stakeholder management", "vendor management", "system integrator", "technology partners"], "importance": "must"},
+  {"id": 18, "requirement": "Degree in computer science, computer engineering or telecommunications", "keywords": ["Computer Science", "Computer Engineering", "Telecommunications Engineering", "Laurea"], "importance": "must"},
+  {"id": 19, "requirement": "Fluent English", "keywords": ["English", "inglese"], "importance": "must"}
+]

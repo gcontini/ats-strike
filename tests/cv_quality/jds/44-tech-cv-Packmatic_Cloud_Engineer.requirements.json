@@ -1,0 +1,22 @@
+[
+  {"id": 1, "requirement": "Cloud engineer", "keywords": ["Cloud Engineer", "Cloud Infrastructure Engineer", "Cloud Platform Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "AWS architecture", "keywords": ["AWS", "Amazon Web Services"], "importance": "must"},
+  {"id": 3, "requirement": "Azure architecture", "keywords": ["Azure", "Microsoft Azure"], "importance": "must"},
+  {"id": 4, "requirement": "Infrastructure as Code with Terraform", "keywords": ["Terraform", "Infrastructure as Code", "IaC"], "importance": "must"},
+  {"id": 5, "requirement": "Kubernetes and containers", "keywords": ["Kubernetes", "K8s", "Containers"], "importance": "must"},
+  {"id": 6, "requirement": "DevOps and CI/CD pipelines", "keywords": ["CI/CD", "DevOps", "Continuous Integration", "Continuous Delivery"], "importance": "must"},
+  {"id": 7, "requirement": "Cloud infrastructure for AI/ML platforms and MLOps", "keywords": ["MLOps", "AI/ML Platform", "Machine Learning", "AI workloads"], "importance": "must"},
+  {"id": 8, "requirement": "Managing GPU, training, inference and vector store resources", "keywords": ["GPU", "Inference", "Model Training", "Vector Store", "Vector Database"], "importance": "must"},
+  {"id": 9, "requirement": "Cloud security and identity management", "keywords": ["IAM", "Identity and Access Management", "Cloud Security"], "importance": "must"},
+  {"id": 10, "requirement": "Cloud networking", "keywords": ["Cloud Networking", "Networking"], "importance": "must"},
+  {"id": 11, "requirement": "Observability, monitoring and high availability", "keywords": ["Observability", "Monitoring", "High Availability"], "importance": "must"},
+  {"id": 12, "requirement": "FinOps and cloud cost optimization", "keywords": ["FinOps", "Cost Optimization", "Cost Control"], "importance": "must"},
+  {"id": 13, "requirement": "Python automation", "keywords": ["Python", "Automation"], "importance": "must"},
+  {"id": 14, "requirement": "Managing cloud architecture projects (2+ years)", "keywords": ["Cloud Architecture", "Cloud Projects", "Project Management"], "importance": "must"},
+  {"id": 15, "requirement": "Agile and Scrum methodologies", "keywords": ["Agile", "Scrum"], "importance": "must"},
+  {"id": 16, "requirement": "Bachelor's degree in Computer Science or Computer Engineering", "keywords": ["Bachelor", "BSc", "Computer Science", "Computer Engineering"], "importance": "must"},
+  {"id": 17, "requirement": "Security compliance and data protection", "keywords": ["Compliance", "Data Protection", "Security Standards"], "importance": "must"},
+  {"id": 18, "requirement": "Supervising a Digital/ICT team and delivering a digital roadmap", "keywords": ["Team Management", "Digital Roadmap", "Roll-out Plan", "Digital Services"], "importance": "must"},
+  {"id": 19, "requirement": "Stakeholder engagement and cross-functional collaboration", "keywords": ["Stakeholder Management", "Cross-Functional Collaboration", "Stakeholders"], "importance": "must"},
+  {"id": 20, "requirement": "Google Cloud Platform", "keywords": ["GCP", "Google Cloud Platform", "Google Cloud"], "importance": "nice"}
+]

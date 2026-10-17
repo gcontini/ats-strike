@@ -109,7 +109,7 @@ model             = "qwen3.8-max-0902"
 structured_output = "json_schema"
 max_output_tokens = 24500
 thinking          = "on"
-extra_body        = { thinking_budget = 7500 }
+extra_body        = { thinking_budget = 9000 }
 
 # The judge: reads the CV against the master profile and answers in plain
 # text, one violation per line — "OK" when there is nothing to fix. A large

@@ -1,0 +1,217 @@
+[
+  {
+    "id": 1,
+    "requirement": "Lead AI tech architect",
+    "keywords": [
+      "Lead AI Tech Architect",
+      "Lead IT Architect",
+      "AI Architect",
+      "Technical Architect",
+      "IT Architect"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 2,
+    "requirement": "Technology consulting experience",
+    "keywords": [
+      "Technology Consulting",
+      "IT Consulting",
+      "Consulting",
+      "Consultant"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 3,
+    "requirement": "10-15 years in software development, technical project management or digital delivery",
+    "keywords": [
+      "Software Development",
+      "Technical Project Management",
+      "Digital Delivery"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 4,
+    "requirement": "Define IT strategy and architecture solutions for clients",
+    "keywords": [
+      "IT Strategy",
+      "IT Architecture",
+      "Solution Architecture",
+      "Architecture Solutions"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 5,
+    "requirement": "Lead legacy integration and remediation (facades, strangler approaches)",
+    "keywords": [
+      "Legacy Integration",
+      "Legacy Remediation",
+      "Strangler",
+      "Facade"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 6,
+    "requirement": "Integration patterns: event-driven, synchronous vs asynchronous",
+    "keywords": [
+      "Integration Patterns",
+      "Event-Driven",
+      "Events",
+      "Asynchronous",
+      "Synchronous"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 7,
+    "requirement": "Technology decisions on IaaS/PaaS providers and commercial vs open source software",
+    "keywords": [
+      "IaaS",
+      "PaaS",
+      "Open Source"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 8,
+    "requirement": "Container orchestration, service mesh and API gateways",
+    "keywords": [
+      "Container Orchestration",
+      "Service Mesh",
+      "API Gateway",
+      "API Gateways"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 9,
+    "requirement": "DevOps practices and continuous improvement",
+    "keywords": [
+      "DevOps",
+      "Continuous Improvement"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 10,
+    "requirement": "Fluent English and Italian",
+    "keywords": [
+      "English",
+      "Italian"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 11,
+    "requirement": "University degree in a mathematical-scientific field, IT or business administration",
+    "keywords": [
+      "University Degree",
+      "Information Technology",
+      "Business Administration",
+      "Mathematics"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 12,
+    "requirement": "Analyse complex IT application landscapes and optimize IT architectures",
+    "keywords": [
+      "Application Landscape",
+      "IT Application Landscapes",
+      "Architecture Optimization",
+      "Status Quo Analysis"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 13,
+    "requirement": "Technology roadmapping and business case development",
+    "keywords": [
+      "Roadmap",
+      "Roadmapping",
+      "Business Case"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 14,
+    "requirement": "Review vendor proposals and in-flight technical work",
+    "keywords": [
+      "Vendor Proposals",
+      "Vendor Evaluation",
+      "Technical Review"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 15,
+    "requirement": "IT project management, quality assurance and application development process optimization",
+    "keywords": [
+      "IT Project Management",
+      "Quality Assurance",
+      "QA",
+      "Application Development Processes"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 16,
+    "requirement": "Team lead responsibilities and technical thought leadership",
+    "keywords": [
+      "Team Lead",
+      "Technical Leadership",
+      "Thought Leadership",
+      "Intellectual Leadership"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 17,
+    "requirement": "Advise colleagues and architects on technical concepts and frameworks",
+    "keywords": [
+      "Technical Advisory",
+      "Advising",
+      "Mentoring",
+      "Technical Community"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 18,
+    "requirement": "Client stakeholder buy-in and architectural storytelling",
+    "keywords": [
+      "Storytelling",
+      "Stakeholder Management",
+      "C-suite",
+      "Client Buy-in"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 19,
+    "requirement": "Work with designers, engineers and product owners",
+    "keywords": [
+      "Product Owner",
+      "PO",
+      "Designers",
+      "Cross-functional"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 20,
+    "requirement": "AI tech strategy and AI solutions",
+    "keywords": [
+      "AI Strategy",
+      "AI Solutions",
+      "Artificial Intelligence",
+      "AI",
+      "Deep Tech"
+    ],
+    "importance": "nice"
+  }
+]

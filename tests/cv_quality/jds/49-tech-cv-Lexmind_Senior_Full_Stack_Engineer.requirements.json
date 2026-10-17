@@ -1,0 +1,21 @@
+[
+  {"id": 1, "requirement": "Senior full stack engineer", "keywords": ["Senior Full Stack Engineer", "Full Stack Engineer", "Full-Stack Developer", "Fullstack Engineer"], "importance": "must"},
+  {"id": 2, "requirement": "5+ years of professional software engineering", "keywords": ["Software Engineer", "Software Engineering", "Software Developer"], "importance": "must"},
+  {"id": 3, "requirement": "Frontend and backend development across the whole stack", "keywords": ["Frontend", "Backend", "Front-end", "Back-end", "Full Stack"], "importance": "must"},
+  {"id": 4, "requirement": "End-to-end ownership of a system", "keywords": ["End-to-End", "End to End", "Ownership", "Owned"], "importance": "must"},
+  {"id": 5, "requirement": "Shipping and operating production systems, handling failures", "keywords": ["Production", "Production Systems", "Incident", "Post-mortem"], "importance": "must"},
+  {"id": 6, "requirement": "Making and owning technical decisions for the squad", "keywords": ["Technical Decisions", "Technical Leadership", "Architecture Decisions", "Tech Lead"], "importance": "must"},
+  {"id": 7, "requirement": "Daily use of AI coding tools", "keywords": ["Claude Code", "Cursor", "AI Coding Tools", "AI-assisted Development"], "importance": "must"},
+  {"id": 8, "requirement": "Code review", "keywords": ["Code Review", "Code Reviews", "Pull Request Review", "PR Review"], "importance": "must"},
+  {"id": 9, "requirement": "Mentoring engineers", "keywords": ["Mentoring", "Mentorship", "Coaching", "Mentor"], "importance": "must"},
+  {"id": 10, "requirement": "Working in a cross-functional squad with product manager and designer", "keywords": ["Cross-functional", "Product Manager", "Designer", "Squad"], "importance": "must"},
+  {"id": 11, "requirement": "Python backend with Django and Django Ninja", "keywords": ["Python", "Django", "Django Ninja"], "importance": "nice"},
+  {"id": 12, "requirement": "Next.js and React frontend", "keywords": ["Next.js", "NextJS", "React"], "importance": "nice"},
+  {"id": 13, "requirement": "TypeScript", "keywords": ["TypeScript", "TS"], "importance": "nice"},
+  {"id": 14, "requirement": "PostgreSQL", "keywords": ["PostgreSQL", "Postgres"], "importance": "nice"},
+  {"id": 15, "requirement": "Vector stores", "keywords": ["Vector Store", "Vector Database", "Vector DB", "vector stores"], "importance": "nice"},
+  {"id": 16, "requirement": "LLM pipelines", "keywords": ["LLM", "LLM Pipelines", "Large Language Models", "AI Platform"], "importance": "nice"},
+  {"id": 17, "requirement": "CI/CD with GitHub Actions", "keywords": ["GitHub Actions", "CI/CD"], "importance": "nice"},
+  {"id": 18, "requirement": "Cloud deployment", "keywords": ["Cloud", "Cloud Deployment"], "importance": "nice"},
+  {"id": 19, "requirement": "Legal tech domain", "keywords": ["Legal Tech", "LegalTech", "Legal AI", "Legal"], "importance": "nice"}
+]

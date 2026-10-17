@@ -15,6 +15,7 @@ temperature for the CV model. Run everything from the repository root.
    ```
 
    - **Server:** it starts this checkout's own `resumix-api` on a free local port, uncommitted changes included, and stops it at the end. It needs `.env` with the model keys and `pdflatex` on the host. Its log is `<run>/server.log`.
+   - **Candidate:** `candidate_profile.json` and `candidate_data.json` come from `examples/candidate/`, the fictional candidate in the repository, so runs stay comparable. `--candidate <folder>` writes for someone else; the folder is recorded in `run.json`.
    - **Prompts:** the client still uploads the prompts and template it finds in `resumix-data/gab`, as in real use, and those win over `server/resources`. A prompt edited only in `server/resources` is not tested while a copy sits in `resumix-data/gab`.
    - **Run folder:** the last line printed is the run folder. A failed CV leaves a `<stem>.error.txt` there instead of a CV.
 

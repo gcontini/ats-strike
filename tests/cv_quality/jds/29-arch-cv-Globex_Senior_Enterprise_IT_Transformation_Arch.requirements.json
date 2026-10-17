@@ -1,0 +1,214 @@
+[
+  {
+    "id": 1,
+    "requirement": "Senior Enterprise IT Transformation Architect",
+    "keywords": [
+      "Enterprise IT Transformation Architect",
+      "Enterprise Architect",
+      "Transformation Architect",
+      "IT Architect"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 2,
+    "requirement": "Developing and maintaining enterprise architectures",
+    "keywords": [
+      "Enterprise Architecture",
+      "Enterprise Architectures",
+      "EA"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 3,
+    "requirement": "Complex cloud migration and adoption projects",
+    "keywords": [
+      "Cloud Migration",
+      "Cloud Adoption",
+      "Cloud Optimization"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 4,
+    "requirement": "Integrated hybrid architectures",
+    "keywords": [
+      "Hybrid Architecture",
+      "Hybrid Cloud",
+      "Hybrid IT"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 5,
+    "requirement": "Cloud-native architecture design and deployment",
+    "keywords": [
+      "Cloud-Native",
+      "Cloud Native",
+      "Cloud Engineering"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 6,
+    "requirement": "Leading transition and transformation projects for infrastructure services",
+    "keywords": [
+      "Transition and Transformation",
+      "T&T",
+      "Infrastructure Transformation",
+      "Infrastructure Services"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 7,
+    "requirement": "Application modernization and transformation",
+    "keywords": [
+      "Application Modernization",
+      "Application Transformation",
+      "Digital Transformation"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 8,
+    "requirement": "Transforming outsourced infrastructure services on distributed, mainframe and hybrid cloud",
+    "keywords": [
+      "Outsourcing",
+      "Mainframe",
+      "Distributed Systems",
+      "Infrastructure Outsourcing"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 9,
+    "requirement": "Cloud platforms AWS, Azure, Google Cloud",
+    "keywords": [
+      "AWS",
+      "Azure",
+      "Google Cloud",
+      "GCP",
+      "Hyperscaler"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 10,
+    "requirement": "Enterprise architecture frameworks TOGAF and Zachman",
+    "keywords": [
+      "TOGAF",
+      "Zachman"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 11,
+    "requirement": "Enterprise architect experience in banking, financial services, industrial, retail, government or travel sectors",
+    "keywords": [
+      "Banking",
+      "Financial Services",
+      "Retail",
+      "Government",
+      "Travel & Transportation"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 12,
+    "requirement": "Technology and infrastructure governance, risk assessment and compliance",
+    "keywords": [
+      "IT Governance",
+      "Infrastructure Governance",
+      "Technology Governance",
+      "Risk Assessment",
+      "Compliance"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 13,
+    "requirement": "Stakeholder management and communication with business leaders",
+    "keywords": [
+      "Stakeholder Management",
+      "Stakeholder Engagement",
+      "Presentation"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 14,
+    "requirement": "Strategic planning and business analysis for modernization initiatives",
+    "keywords": [
+      "Strategic Planning",
+      "Business Analysis",
+      "IT Strategy"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 15,
+    "requirement": "Delivering large-scale technology projects with cross-functional architecture teams",
+    "keywords": [
+      "Large-Scale Projects",
+      "Cross-Functional",
+      "Systems Integration",
+      "Solution Design"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 16,
+    "requirement": "Influencing customers and selling services (consulting, pre-sales)",
+    "keywords": [
+      "Pre-Sales",
+      "Presales",
+      "Consulting",
+      "Solution Selling"
+    ],
+    "importance": "must"
+  },
+  {
+    "id": 17,
+    "requirement": "Master's degree in Computer Science, IT or related field",
+    "keywords": [
+      "Master's Degree",
+      "MSc",
+      "Computer Science",
+      "Information Technology"
+    ],
+    "importance": "nice"
+  },
+  {
+    "id": 18,
+    "requirement": "Architecture or hyperscaler certifications",
+    "keywords": [
+      "TOGAF Certified",
+      "Open Group Certified Architect",
+      "Hyperscaler Certification"
+    ],
+    "importance": "nice"
+  },
+  {
+    "id": 19,
+    "requirement": "Enterprise architecture tooling",
+    "keywords": [
+      "LeanIX",
+      "Alfabet",
+      "EA Tooling"
+    ],
+    "importance": "nice"
+  },
+  {
+    "id": 20,
+    "requirement": "Automation, DevOps and agile methodologies",
+    "keywords": [
+      "DevOps",
+      "Automation",
+      "Agile",
+      "Platform Engineering"
+    ],
+    "importance": "nice"
+  }
+]
