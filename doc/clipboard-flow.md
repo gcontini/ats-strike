@@ -49,20 +49,19 @@ sequenceDiagram
     In-->>Lis: back to the clipboard at once
 
     Gen->>Api: create_cv(jd, profile, candidate_data, template, images, pages)
-    Api->>Srv: POST /v1/cv
-    Srv-->>Api: 202 {request_id}
+    Api->>Srv: POST /v1/cv, X-Request-Id: sha256(jd)
+    Srv-->>Api: 202 {reattached}
 
-    loop every 4 s until END
-        Gen->>Api: cv_status(request_id)
-        Api->>Srv: GET /v1/cv/{id}/status
-        Srv-->>Api: 200 {status, detail}
-        Gen-->>You: [Acme_Corp_Head_of_IT] the step (and detail with -v)
+    Gen->>Api: events(id)
+    Api->>Srv: GET /v1/cv/{id}/events
+    loop until the last event
+        Srv-->>Api: status · log · usage
+        Gen-->>You: [Acme_Corp_Head_of_IT] the step, each model call's cost (and detail with -v)
     end
-
-    Gen->>Api: cv_result(request_id)
-    Api->>Srv: GET /v1/cv/{id}
-    Srv-->>Api: 200 {document, tex, pdf_base64}
+    Srv-->>Api: result {cv, detail, total}
     Gen->>Gen: cv_you_head_of_it.json · cv_you_head_of_it.tex · cv_you_head_of_it.pdf
+    Gen->>Api: acknowledge(id)
+    Api->>Srv: DELETE /v1/cv/{id}
 
     opt --cover-letter yes
         Gen->>Api: letter(jd, profile, candidate_data, analysis)
@@ -137,16 +136,21 @@ one's CV is written. Its lines are tagged with the folder's name, and held
 back while a question is on screen. `q` between postings lets the CV being
 written finish; the approved ones still queued stay in `working/`.
 
-**7 — The CV job is polled, not waited on.** `POST /v1/cv` returns `202` and a
-request id at once. The client polls `/status` every four seconds, printing
-each new step; with `-v` it also prints `detail` — the token spend of the step
-that just finished, and the reviewer's or the page check's own words. When the
-status reads `END` it collects the document, the LaTeX and the PDF in one
-call.
+**7 — The CV job is a session the client follows.** `POST /v1/cv` returns
+`202` at once, under a session id that is the SHA-256 of the posting's text.
+The client then reads the session's events as the server writes them: each
+new step, printed; what each model call cost, printed; with `-v`, each step's
+`detail` too — the token spend of the step that just finished, and the
+reviewer's or the page check's own words. Every line the server logs for the
+job goes into `log.log`. The last event holds the document, the LaTeX and the
+PDF, and what the whole run cost; once those are written, the client
+acknowledges the session and the server deletes it.
 
-If the client dies mid-job, the job does not: the server keeps writing. Pick
-it back up with `resumix submit posting.txt --resume <request_id>`, which
-skips submitting and starts from `/status`.
+If the connection drops, the client opens the stream again from the last
+event it got. If the client dies mid-job, the job does not: the server keeps
+writing the session. Run the same posting again and the server answers with
+the session it already has — replayed from the start, nothing paid twice.
+`--new` drops it and writes the CV again.
 
 **8 — The next start picks up where this one stopped.** Anything left in
 `working/` is offered back at startup: *resume*, *clean* or *quit*. Resume
@@ -155,13 +159,12 @@ sends each folder where its own files say: `APPROVED` to the CV thread,
 its document (`cv_you_head_of_it.json`) is posted to `/v1/cv/render` instead
 of starting a job — one LaTeX compile, no model call.
 
-**9 — Failure is filed, not printed and lost.** Every failure carries a
-`request_id`. Once the job has a folder, the client fetches
-`GET /logs/{request_id}` for it, folds the server's account into the job's
-`log.log`, then moves the job to `error/`. A detection or analysis that fails
-has no folder yet: its request id is printed, and `resumix logs <request_id>`
-shows what the server did. With `--debug` the client fetches that log after
-every call, successful or not.
+**9 — Failure is filed, not printed and lost.** A CV job that fails ends its
+session with an `error` event — the cause, and what the attempts cost — and
+everything the server logged for it is already in `log.log`; the client
+acknowledges the session and moves the job to `error/`. Any other call that
+fails carries a `request_id`, written into the log and printed: the server's
+own log has that request's lines under it.
 
 **10 — The spreadsheet is bookkeeping, never a reason to fail.** A locked or
 broken `applications.xlsx` becomes a warning line in `log.log`; the CV was

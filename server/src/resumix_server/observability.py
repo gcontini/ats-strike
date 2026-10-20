@@ -1,17 +1,19 @@
 """What the server reports about a run: its log lines and its token spend.
 
-Responses say what happened, not how. The commentary — including the line
-each model call writes with its duration and token counts — is collected here
-per request and written to the request's directory by
-:mod:`resumix_server.jobstore`, for ``GET /logs/{request_id}`` to serve.
+Responses say what happened, not how. A CV job streams the commentary as
+events in its session — every log line, and every model call with its
+duration and token counts — and ends with the run's total. Every other
+request has no session: its lines go to stdout, under its request id, and
+nowhere else.
 
 One piece does the collecting: a :class:`logging.Handler` that copies every
-record emitted during a request into that request's :class:`Run`. Pipeline
-code keeps calling ``logger.info(...)`` and never imports this module.
+record emitted during a request into that request's :class:`Run`, which hands
+it on if the run has a session to write to. Pipeline code keeps calling
+``logger.info(...)`` and never imports this module.
 
 The active run is found through a :class:`~contextvars.ContextVar`. A CV job
 runs in a thread of its own and re-establishes it with :func:`use_run`, so a
-line emitted deep inside the CV loop still lands in the right job's log.
+line emitted deep inside the CV loop still lands in the right job's session.
 Outside a request — a test, a REPL — the default is :data:`NULL_RUN`, which
 discards.
 """
@@ -24,59 +26,66 @@ import sys
 from contextlib import contextmanager
 from contextvars import ContextVar
 from datetime import datetime, timezone
-from typing import Iterator, List, Optional
+from typing import Any, Callable, Iterator, Optional
 
-from resumix_contracts import LogEntry
+from pydantic import BaseModel
+from resumix_contracts import LogEntry, ModelCall, TokenUsage
 
 #: Root logger name; everything in the server logs under it.
 LOGGER_ROOT = "resumix_server"
 
-#: Bounds, so one pathological run cannot produce an unbounded response body.
+#: Bounds, so one pathological run cannot produce an unbounded session.
 MAX_LOG_ENTRIES = 2000
 MAX_MESSAGE_CHARS = 4000
 
 
 class Run:
-    """The log lines and LLM calls of one request.
+    """The log lines and model calls of one request.
 
-    ``collect=False`` discards everything, which is what :data:`NULL_RUN` — the
-    default outside a request — does.
+    ``sink`` is where they go as events: set for a CV job, to its session's
+    append; unset for any other request. ``total`` adds up every model call
+    either way. ``collect=False`` discards everything, which is what
+    :data:`NULL_RUN` — the default outside a request — does.
     """
 
     def __init__(self, request_id: str, *, collect: bool = True) -> None:
         self.request_id = request_id
+        self.sink: Optional[Callable[[str, Any], None]] = None
+        self.total = TokenUsage()
         self._collect = collect
-        self._logs: List[LogEntry] = []
-        self._dropped = 0
+        self._lines = 0
 
     # --- collection (called by the handler and by ModelSelector) -----------
     def add_log(self, level: str, stage: str, message: str) -> None:
+        if not self._collect or self.sink is None:
+            return
+        self._lines += 1
+        if self._lines > MAX_LOG_ENTRIES:
+            if self._lines == MAX_LOG_ENTRIES + 1:
+                self._emit("log", self._entry(
+                    "WARNING", "run", f"further log lines dropped (cap {MAX_LOG_ENTRIES})"
+                ))
+            return
+        self._emit("log", self._entry(level, stage, message[:MAX_MESSAGE_CHARS]))
+
+    def add_call(self, call: ModelCall) -> None:
+        """Count one model call into the total, and report it."""
         if not self._collect:
             return
-        if len(self._logs) >= MAX_LOG_ENTRIES:
-            self._dropped += 1
-            return
-        self._logs.append(
-            LogEntry(
-                ts=datetime.now(timezone.utc),
-                level=level,
-                stage=stage,
-                message=message[:MAX_MESSAGE_CHARS],
-            )
-        )
+        self.total.calls += 1
+        self.total.seconds += call.seconds
+        self.total.input_tokens += call.input_tokens
+        self.total.thinking_tokens += call.thinking_tokens
+        self.total.output_tokens += call.output_tokens
+        self._emit("usage", call)
 
-    # --- readout (called when the request ends) ----------------------------
-    def logs(self) -> List[LogEntry]:
-        if self._dropped:
-            return self._logs + [
-                LogEntry(
-                    ts=datetime.now(timezone.utc),
-                    level="WARNING",
-                    stage="run",
-                    message=f"{self._dropped} further log lines dropped (cap {MAX_LOG_ENTRIES})",
-                )
-            ]
-        return list(self._logs)
+    def _emit(self, kind: str, payload: BaseModel) -> None:
+        if self.sink is not None:
+            self.sink(kind, payload.model_dump(mode="json"))
+
+    @staticmethod
+    def _entry(level: str, stage: str, message: str) -> LogEntry:
+        return LogEntry(ts=datetime.now(timezone.utc), level=level, stage=stage, message=message)
 
 
 NULL_RUN = Run("-", collect=False)

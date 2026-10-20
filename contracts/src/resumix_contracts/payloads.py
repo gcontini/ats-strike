@@ -1,8 +1,8 @@
 """Payloads that are neither a job description analysis nor a log.
 
-The rendered CV comes back as JSON rather than as a PDF body so that every
-endpoint can carry the same envelope — the logs and the token spend are worth
-more than saving a base64 pass over 300 KB.
+The rendered CV comes back as JSON rather than as a PDF body so that it rides
+in an envelope or an event like everything else — one shape is worth more
+than saving a base64 pass over 300 KB.
 """
 
 from __future__ import annotations
@@ -14,16 +14,17 @@ from pydantic import BaseModel, Field
 
 
 class CVStatus(BaseModel):
-    """Where a CV job is, and what the step before it cost.
+    """A step a CV job has reached, and what the step before it cost: the
+    ``status`` event.
 
-    No history: a poll answers with the current status only. ``detail`` is
-    written by the server and printed as-is, and may span several lines — the
-    reviewer's complaints and the condense instruction are both quoted in it
-    verbatim, because they are what was sent to the model.
+    ``detail`` is written by the server and printed as-is, and may span
+    several lines — the reviewer's complaints and the condense instruction are
+    both quoted in it verbatim, because they are what was sent to the model.
+    How the job ended is not a status: it is the session's last event.
     """
 
     status: Literal[
-        "generate", "review", "re-generate", "page_check", "highlight", "END"
+        "generate", "review", "re-generate", "page_check", "highlight"
     ] = Field(description="The step running now")
     detail: str = Field("", description="One line about the step that just finished")
 
@@ -37,8 +38,8 @@ class RenderedCV(BaseModel):
         None,
         description=(
             "The tailored content merged with your candidate data, exactly as "
-            "it was rendered. Set by GET /v1/cv/{id}; a re-render leaves it out "
-            "because the caller already has it."
+            "it was rendered. Set in a CV job's result; a re-render leaves it "
+            "out because the caller already has it."
         ),
     )
 

@@ -33,11 +33,10 @@ def run(config: Config, jd_file: Path, out: Path, *, output_format: str = "json"
     prompt = read_text(config.path("sys_prompt_analysis.txt"))
 
     text = jd_file.read_bytes().decode("utf-8", errors="replace")
-    calls = Calls(HttpApi(config.server_url, token=config.token, verbose=config.verbose),
-                  debug=config.debug)
+    calls = Calls(HttpApi(config.server_url, token=config.token, verbose=config.verbose))
     log = JobLog()
     try:
-        analysis = calls.make(log, lambda: calls.api.analyze(
+        analysis = calls.make(lambda: calls.api.analyze(
             text, profile=profile, preferences=preferences, prompt=prompt))
     except ResumixError as exc:
         calls.failed(log, exc)
@@ -56,6 +55,6 @@ def run(config: Config, jd_file: Path, out: Path, *, output_format: str = "json"
 
 
 def _report(log: JobLog) -> None:
-    """What went wrong, or the server's log with ``--debug``: on stderr."""
+    """What went wrong, on stderr."""
     if log.lines:
         print("\n".join(log.lines), file=sys.stderr, flush=True)

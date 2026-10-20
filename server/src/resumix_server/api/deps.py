@@ -11,7 +11,9 @@ from __future__ import annotations
 import hmac
 import logging
 import shutil
+import tempfile
 from dataclasses import dataclass
+from pathlib import Path
 from threading import BoundedSemaphore
 from typing import Any, Callable, Dict, Optional
 
@@ -19,9 +21,9 @@ from fastapi import Header, Request
 from starlette.concurrency import run_in_threadpool
 
 from ..bundle import ResourceBundle, default_bundle
-from ..jobstore import LOG, JobDir, JobStore
+from ..jobstore import JobStore
 from ..models import ModelSelector, build_selector
-from ..observability import LOGGER_ROOT, Run, current_run
+from ..observability import LOGGER_ROOT, current_run
 from .errors import TooManyJobs, Unauthorized
 from .settings import Settings
 
@@ -40,7 +42,7 @@ class AppState:
 
     @property
     def jobs(self) -> JobStore:
-        """The request directories. A value over a path, not shared state."""
+        """The CV sessions. A value over a path, not shared state."""
         return JobStore(self.settings.work_root)
 
     @classmethod
@@ -89,11 +91,6 @@ def claim_slot(state: AppState) -> None:
         )
 
 
-def save_log(job: JobDir, run: Run) -> None:
-    """Persist what a request said about itself, for ``GET /logs/{id}``."""
-    job.write(LOG, [entry.model_dump(mode="json") for entry in run.logs()])
-
-
 async def execute(
     state: AppState, fn: Callable[..., Any], *, work_dir: bool = False
 ) -> Any:
@@ -101,18 +98,16 @@ async def execute(
 
     The CV endpoint does not come through here — it answers before its job is
     done (see :mod:`resumix_server.api.jobs`). What is left are the short
-    ones, which still want the concurrency limit, the scratch directory and
-    their log on disk afterwards.
+    ones, which still want the concurrency limit and, for a render, a scratch
+    directory on local disk. They keep no session: their log is stdout.
     """
     claim_slot(state)
-    run = current_run()
-    jobs = state.jobs
-    job = jobs.open(run.request_id) or jobs.create(run.request_id)
     try:
-        return await (run_in_threadpool(fn, job.work) if work_dir else run_in_threadpool(fn))
+        if not work_dir:
+            return await run_in_threadpool(fn)
+        with tempfile.TemporaryDirectory(prefix="resumix-") as work:
+            return await run_in_threadpool(fn, Path(work))
     finally:
-        job.drop_work()
-        save_log(job, run)
         state.job_slots.release()
 
 
@@ -131,7 +126,6 @@ __all__ = [
     "get_state",
     "require_token",
     "claim_slot",
-    "save_log",
     "execute",
     "envelope_for",
     "envelope_of",

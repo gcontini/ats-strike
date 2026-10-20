@@ -13,9 +13,9 @@ from resumix_client.workspace import day
 from conftest import JD_TEXT, ScriptedConfirmer, analysis, make_job
 
 
-def build(api, config, processor, *decisions, debug=False):
+def build(api, config, processor, *decisions):
     confirmer = ScriptedConfirmer(*decisions)
-    intake = Intake(Calls(api, debug=debug), config, processor, confirmer, processor.console)
+    intake = Intake(Calls(api), config, processor, confirmer, processor.console)
     return intake, confirmer
 
 
@@ -46,14 +46,14 @@ def test_a_posting_the_server_says_no_to_is_not_asked_about(api, config, process
     assert "[clipboard] ✗ not a job description" in capsys.readouterr().out
 
 
-def test_a_failed_analysis_counts_and_fetches_the_server_log(api, config, processor, workspace,
-                                                             capsys):
+def test_a_failed_analysis_counts_and_says_which_request(api, config, processor, workspace,
+                                                         capsys):
     api.fail_on = "analyze"
     intake, confirmer = build(api, config, processor)
 
     assert intake.take(JD_TEXT, "clipboard") is True
     assert processor.failures == 1, "the exit code says so"
-    assert api.calls == ["detect", "analyze", "logs"]
+    assert api.calls == ["detect", "analyze"]
     assert confirmer.seen == []
     assert not any(workspace.working.iterdir())
     out = capsys.readouterr().out
@@ -146,15 +146,6 @@ def test_the_question_holds_back_the_background_lines(api, config, processor, co
 
     out = capsys.readouterr().out
     assert out.index("the question") < out.index("a line from the CV thread")
-
-
-def test_debug_folds_each_call_s_server_log_into_the_folder(api, config, processor, workspace):
-    intake, _ = build(api, config, processor, Decision(submit=True), debug=True)
-    intake.take(JD_TEXT, "clipboard")
-
-    [folder] = workspace.working_jobs()
-    log = (folder / "log.log").read_text()
-    assert log.count("--- server request test-request") == 2, "detect and analyze"
 
 
 # --- an analysis you already have ------------------------------------------------------

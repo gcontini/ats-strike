@@ -75,13 +75,20 @@ for the platform probe without a token. Three things to get right:
 
 - **Set `RESUMIX_API_TOKEN` and put TLS in front.** The client sends your
   profile and your contact details in the request body.
-- **One instance per `RESUMIX_WORK_DIR`, and `WEB_CONCURRENCY=1`.** A job id
-  only means something to the process holding its directory. If you must run
-  several, give them a shared work root and route by request id.
+- **One instance per `RESUMIX_WORK_DIR`, and `WEB_CONCURRENCY=1`.** A running
+  CV job lives in the process that started it, and a starting process closes
+  every session it finds unfinished.
 - **Scale-to-zero is fine, autoscaling is not.** The client knocks on
   `/healthz` three times before its first real call, so a cold start is
-  handled — but a request that starts a CV job on one instance and polls
-  another gets `404`.
+  handled — but a stream that lands on another instance than the job's only
+  sees the job if the work root is shared, and never sees it finish if that
+  instance is new.
+- **Give the work root a home that outlives the instance** — a volume, or a
+  bucket mounted as a folder — and a session survives the instance being
+  recycled: the client gets its CV back by running the posting again.
+  `server/terraform` mounts an OSS bucket on Alibaba Cloud. A platform that
+  only gives CPU during requests (Cloud Run's default) stalls a job whenever no
+  stream is open: give it CPU for the whole instance instead.
 
 ## What the client needs to know
 
@@ -90,7 +97,7 @@ Exactly three things, and only the first is required:
 ```toml
 server_url = "https://resumix.example.run.app"
 token      = "the-bearer-token"
-timeout    = 1800          # how long to keep polling one CV job
+timeout    = 1800          # how long to follow one CV job
 ```
 
 or `--server`/`--token`, or `RESUMIX_API_URL`/`RESUMIX_API_TOKEN`. That is

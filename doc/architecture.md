@@ -13,14 +13,14 @@ flowchart TB
     end
 
     subgraph wire["contracts"]
-        CT["resumix_contracts<br/>Envelope · CVStatus · RenderedCV<br/>JDAnalysis · JDDetection · RequestLog<br/>static_jd_guess"]
+        CT["resumix_contracts<br/>Envelope · CVStatus · RenderedCV<br/>JDAnalysis · JDDetection · LogEntry<br/>CV session events · static_jd_guess"]
     end
 
     subgraph host["wherever you run it"]
         API["<b>resumix-server</b><br/>FastAPI + uvicorn"]
         PIPE["pipeline<br/>jd_validator · cv_generator · cv_validator<br/>cv_renderer · letter_generator"]
         RES["resources<br/>5 prompts · resume.tex.jinja<br/>models.toml"]
-        STORE["RESUMIX_WORK_DIR<br/>one directory per request"]
+        STORE["RESUMIX_WORK_DIR<br/>one session per CV job"]
         API --> PIPE
         RES --> PIPE
         PIPE --> STORE
@@ -30,7 +30,7 @@ flowchart TB
     TEX["pdflatex"]
 
     CLI -->|"multipart/form-data"| API
-    API -->|"JSON envelope"| CLI
+    API -->|"JSON envelope<br/>CV: server-sent events"| CLI
     CLI -.imports.-> CT
     API -.imports.-> CT
     PIPE --> PROV
@@ -50,21 +50,29 @@ server and by a frozen executable, and has to stay cheap in both.
 
 ## What crosses the wire
 
-Everything personal arrives with the request and dies with it. The server has
-no database, no accounts and no seeded state; the only thing it keeps is one
-directory per request:
+Everything personal arrives with the request. The server has no database, no
+accounts and no seeded state; the only thing it keeps is a CV job's session,
+one directory of events:
 
 ```text
-$RESUMIX_WORK_DIR/<request_id>/
-    status.json   a CV job's state — only CV jobs have one
-    result.json   the finished RenderedCV — only once the job is done
-    log.json      every line the request produced, model calls included
-    work/         the scratch directory, deleted when the work ends
+$RESUMIX_WORK_DIR/<session id>/events/
+    000001.json   {"type": "status", "data": {...}}
+    000002.json   {"type": "log", "data": {...}}
+    000003.json   {"type": "usage", "data": {...}}
+    ...
+    000042.json   {"type": "result", "data": {...}}   the CV: the last event
 ```
 
-Writes are atomic (temp file + `os.replace`), because a poll may read a file
-while the worker is rewriting it. The newest 200 directories are kept; the
-rest are dropped, except one still marked `running`.
+Each event is its own file, written once and never changed — which is what a
+bucket mounted as a folder (OSS, Cloud Storage) can do: an object there cannot
+be appended to, and a rename is a copy. A reader lists the directory and reads
+what is new; the one file that may not read whole yet is the newest, so a
+reader stops there and finds it complete on its next look. The session id is
+the client's: the SHA-256 of the posting's text, so the same posting finds its
+session again. A session is deleted when the client acknowledges it, or once
+its last event is older than `RESUMIX_SESSION_TTL_DAYS`; a running one, never.
+The scratch directory a job compiles in is on local disk, and is gone with the
+job.
 
 ## Inside the server
 
@@ -79,12 +87,14 @@ flowchart TB
     SLOT -->|"yes"| KIND{"which endpoint?"}
     KIND -->|"/v1/jd/*, /v1/letter, /v1/cv/render"| POOL["threadpool<br/>answer when done"]
     KIND -->|"/v1/cv"| THREAD["worker thread<br/>answer 202 now"]
-    POOL --> ENV["Envelope"]
-    THREAD --> STATUS["status.json rewritten<br/>at every step"]
-    STATUS --> POLL["GET /v1/cv/{id}/status"]
-    ENV --> LOG["log.json saved"]
-    STATUS --> LOG
+    POOL --> ENV["Envelope<br/>its log: stdout"]
+    THREAD --> EVENTS["an event per step,<br/>log line and model call"]
+    EVENTS --> STREAM["GET /v1/cv/{id}/events"]
 ```
+
+`POST /v1/cv` for a session id that already has one skips the slot and the
+thread: it answers `202` with `reattached: true`, and the caller follows the
+events that are there.
 
 - **One exception handler.** `describe_failure()` is the single place that
   decides what an exception produces on the wire, so a failure body has the
@@ -139,31 +149,34 @@ once: in the request with `json_schema`, in the system prompt with
 
 ## Asynchrony, and why
 
-Writing a CV takes minutes. `POST /v1/cv` answers `202` with a job id and
-hands the work to a plain thread that outlives the response; the thread
-reports itself by rewriting `status.json`, and a poll reads a file. Nothing
-is held open for minutes, and a client that walks away costs nothing but its
-slot.
+Writing a CV takes minutes. `POST /v1/cv` answers `202` and hands the work to
+a plain thread that outlives the response; the thread reports itself by
+appending events to the session, and `GET /v1/cv/{id}/events` streams them —
+everything so far, then each new one, until the last. A stream is a reader of
+files, so it can be opened again at any time: after a dropped connection, with
+`Last-Event-ID`, to get what it missed; after a client crash, from the start.
+The client acknowledges the session (`DELETE`) only once the CV is stored.
 
 The consequences are worth knowing before you deploy:
 
-- **A job id only means something to the instance holding its directory.** Run
-  one instance per `RESUMIX_WORK_DIR`, or give several a shared root and
-  route by request id.
+- **A running job lives in one instance.** Its events are files, so any
+  instance sharing the work root can replay them, but only the instance that
+  started it is writing them. Run one instance.
 - **`WEB_CONCURRENCY=1`.** The slots and the workers are per-process, and a
-  starting process marks every job still marked `running` as failed — correct
-  for its own orphans, wrong for a sibling's live jobs.
+  starting process ends every session that has not ended with a `503` error —
+  correct for its own orphans, wrong for a sibling's live jobs.
 - **A job cannot be cancelled yet.** An abandoned one holds a slot until its
-  own budget runs out (`RESUMIX_REQUEST_BUDGET_SECONDS`, 20 minutes).
-  `PLANNED-FEATURES.md` describes the `DELETE /v1/cv/{id}` that fixes it.
+  own budget runs out (`RESUMIX_REQUEST_BUDGET_SECONDS`, 20 minutes), and its
+  session cannot be acknowledged until then.
 
 ## Observability
 
 Every response carries a `request_id`, and so does the `X-Request-Id` header.
-That id is the handle for `GET /logs/{request_id}`, which returns what the
-server did — one line per model call with its duration and token counts.
+Every line the server logs to stdout carries it too.
 
-Nothing else rides on a reply: the commentary is fetched separately, so the
-common case pays nothing for it and the debugging case gets all of it. The
-client folds it into `log.log` next to each CV — always on failure, and for
-every call with `--debug`.
+A CV job streams its own account: every line it logged as a `log` event, every
+model call as a `usage` event with its duration and token counts, and the
+run's total in its last event — failed attempts included, because they were
+paid for. The client writes all of it into `log.log` next to the CV. Nothing
+else rides on a reply: for a detection, an analysis, a letter or a render, the
+server's own log is where the commentary is.

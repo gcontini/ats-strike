@@ -24,8 +24,9 @@ from dotenv import load_dotenv
 from langchain_core.output_parsers import PydanticOutputParser
 from openai import LengthFinishReasonError
 from pydantic import BaseModel, ValidationError
+from resumix_contracts import ModelCall
 
-from ..observability import LOGGER_ROOT, current_stage
+from ..observability import LOGGER_ROOT, current_run, current_stage
 from ..pipeline.errors import ModelOutputError
 from ..pipeline.parsing import raw_excerpt
 from .base import Provider
@@ -245,6 +246,10 @@ class ModelSelector:
             "  ⏱ [%s] %s %.1fs | input=%d, thinking=%d, output=%d, finish=%s, content=%d chars",
             role, chat.model_name, seconds, *tokens, finish, len(reply),
         )
+        current_run().add_call(ModelCall(
+            role=role, model=chat.model_name, seconds=seconds,
+            input_tokens=tokens[0], thinking_tokens=tokens[1], output_tokens=tokens[2],
+        ))
         logger.debug("  ↩ [%s] content: %s", role, reply)
 
         if isinstance(error, ValidationError):

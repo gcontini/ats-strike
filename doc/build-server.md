@@ -65,8 +65,8 @@ docker run --read-only --tmpfs /tmp:exec -p 8080:8080 --env-file .env resumix-se
 ```
 
 `exec` on that tmpfs is required: `pdflatex` writes and then reads back its
-font cache there. A tmpfs also means finished CVs do not survive a restart —
-mount a volume at `RESUMIX_WORK_DIR` if you want them to.
+font cache there. A tmpfs also means a CV session does not survive a restart —
+mount a volume, or a bucket, at `RESUMIX_WORK_DIR` if you want it to.
 
 `server/compose.yaml` does all of the above with the settings already wired:
 
@@ -138,7 +138,8 @@ declares is what is sent. The comments in `models.toml` list the known traps.
 | `RESUMIX_KEEPALIVE` | `75` | uvicorn keep-alive timeout, seconds |
 | `RESUMIX_API_TOKEN` | unset | Bearer token clients must send. **Unset means no auth** |
 | `RESUMIX_RESOURCES` | baked in | Directory of replacement prompts / template / `models.toml` |
-| `RESUMIX_WORK_DIR` | system temp | One directory per request: scratch, log, and a CV job's state and result |
+| `RESUMIX_WORK_DIR` | system temp | Where CV sessions are kept, one directory of events each. Scratch space is always local temp |
+| `RESUMIX_SESSION_TTL_DAYS` | `1` | Days a session nobody acknowledged is kept after its last event |
 | `RESUMIX_MAX_CONCURRENT_JOBS` | `10` | Requests in flight; the rest get `429` |
 | `RESUMIX_LATEX_TIMEOUT` | `120` | Seconds before a compile is killed |
 | `RESUMIX_REQUEST_BUDGET_SECONDS` | `1200` | Wall clock for one CV run before `504` |
@@ -182,24 +183,26 @@ regression is otherwise invisible until someone reads a bad PDF.
 A CV job runs for minutes after the request that started it has been answered.
 That is the one thing to plan around.
 
-- **`RESUMIX_WORK_DIR` is state.** A job's status, its result and every
-  request's log live there. The default is the system temp directory, which on
-  most container platforms is RAM-backed and empty again after a redeploy —
-  fine, because a client collects its CV within the minute. Mount a volume
-  only if you want results to outlive a restart.
+- **`RESUMIX_WORK_DIR` is state.** Every CV session lives there until the
+  client acknowledges it, or until its last event is older than
+  `RESUMIX_SESSION_TTL_DAYS`. The default is the system temp directory, which
+  on most container platforms is RAM-backed and empty again after a redeploy.
+  Mount a volume — or a bucket, as `server/terraform` does on Alibaba Cloud —
+  to have sessions outlive the instance. Each event is a file written once,
+  which a bucket mounted as a folder can do.
 - **One process per work root.** The job slots and the worker threads are
-  per-process, and a starting process marks every job still marked `running`
-  as failed — right for its own orphans, wrong for a sibling's live jobs.
-- **Request timeouts barely matter now.** Every call returns in seconds; only
-  `/v1/cv/render` waits on a compile. What must outlast
-  `RESUMIX_REQUEST_BUDGET_SECONDS` is the client's willingness to keep
-  polling.
+  per-process, and a starting process ends every session that has not ended
+  with a `503` — right for its own orphans, wrong for a sibling's live jobs.
+- **A CV's stream lasts as long as its job.** Every other call returns in
+  seconds; only `/v1/cv/render` waits on a compile. A platform request timeout
+  has to outlast `RESUMIX_REQUEST_BUDGET_SECONDS` plus the round in flight;
+  the client reconnects after a cut, but some platforms restart the instance
+  on a timeout.
 - **Size for the compiles, not the waiting.** Ten jobs in flight is the
   default; each is mostly idle on the provider, but each also compiles LaTeX
   several times.
-- **Scaling.** A job id only means something to the instance that has its
-  directory: run one instance, or give several a shared work root and route by
-  request id.
+- **Scaling.** A running job lives in the instance that started it: run one
+  instance.
 - **Cold starts** build three HTTP clients and read six files. Fast — but the
   first request also warms the LaTeX font cache in `/tmp`.
 

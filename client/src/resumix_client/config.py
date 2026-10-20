@@ -64,10 +64,8 @@ class Config:
     #: Page limit the CV must fit. None means the server's default.
     pages: Optional[int] = None
     cover_letter: str = "no"
-    #: How long to wait for a CV job before giving up on it.
+    #: How long to follow a CV job before giving up on it.
     timeout: float = 1800.0
-    #: --debug: fetch the server's log for every call, not just failures.
-    debug: bool = False
     #: --verbose: print what the server reports about each finished step.
     verbose: bool = False
     #: Known file name -> where it was found. Missing means "server default".
@@ -144,7 +142,6 @@ def load_config(
         pages=raw.get("pages"),
         cover_letter=raw.get("cover_letter", Config.cover_letter),
         timeout=float(raw.get("timeout", Config.timeout)),
-        debug=bool(raw.get("debug", Config.debug)),
         verbose=bool(raw.get("verbose", Config.verbose)),
         files=files,
         images=discover_images(data_dir),

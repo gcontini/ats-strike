@@ -1,9 +1,10 @@
 """Running a CV job after its request has already been answered.
 
 ``POST /v1/cv`` accepts and returns; the writing happens in a thread of its
-own, which reports where it is by rewriting ``status.json``. That is the whole
-mechanism: a poll reads a file, so nothing has to be held open for the minutes
-a CV takes, and a client that stops polling costs nothing.
+own, which reports what it does by appending events to the job's session:
+each step as it starts, every line it logs, every model call. That is the
+whole mechanism: a client follows the session, so nothing has to be held
+open for the minutes a CV takes, and a client that goes away misses nothing.
 
 A plain thread, not the request's: the job has to outlive the response, and
 the shared threadpool is where uploads are read, so a job parked there would
@@ -13,15 +14,16 @@ event loop before the thread starts, released by the thread when it ends.
 
 from __future__ import annotations
 
+import tempfile
 from pathlib import Path
 from threading import Thread
 from typing import Any, Callable, Dict, Tuple
 
-from resumix_contracts import RenderedCV
+from resumix_contracts import CVFailure, CVResult, CVStatus, RenderedCV
 
-from ..jobstore import RESULT, STATUS, JobDir
+from ..jobstore import JobDir
 from ..observability import Run, use_run
-from .deps import AppState, save_log
+from .deps import AppState
 from .errors import describe_failure, log_failure
 
 
@@ -33,36 +35,42 @@ def start(
 ) -> None:
     """Hand one accepted job to a thread. Returns as soon as it is running.
 
-    ``build`` is what produces the CV: it is given the scratch directory and a
-    progress sink, and returns the merged document, the LaTeX and the PDF it
-    was rendered into, and one line saying what the run cost.
+    ``build`` is what produces the CV: it is given a scratch directory on
+    local disk and a progress sink, and returns the merged document, the
+    LaTeX and the PDF it was rendered into, and one line about the run.
     """
+    # The first step is announced before the thread starts, so a client that
+    # follows the session at once finds it. The generator's own first report
+    # repeats it, and a status identical to the one before says nothing.
+    last = CVStatus(status="generate").model_dump(mode="json")
+    job.append("status", last)
 
     def progress(status: str, detail: str) -> None:
-        job.write(STATUS, {"state": "running", "status": status, "detail": detail})
-        save_log(job, run)
+        nonlocal last
+        current = CVStatus(status=status, detail=detail).model_dump(mode="json")
+        if current != last:
+            job.append("status", current)
+            last = current
 
     def work() -> None:
         # A fresh thread starts with an empty context, so the run it logs into
         # has to be re-established here or every pipeline line is discarded.
         with use_run(run):
             try:
-                document, tex, pdf, summary = build(job.work, progress)
-                job.write(RESULT, RenderedCV.from_bytes(
-                    tex=tex, pdf=pdf, document=document
-                ).model_dump(mode="json"))
-                ending = {"state": "done", "status": "END", "detail": summary}
+                with tempfile.TemporaryDirectory(prefix="resumix-") as scratch:
+                    document, tex, pdf, summary = build(Path(scratch), progress)
+                ending = "result", CVResult(
+                    cv=RenderedCV.from_bytes(tex=tex, pdf=pdf, document=document),
+                    detail=summary, total=run.total,
+                )
             except Exception as exc:  # noqa: BLE001 — stored, not swallowed
                 log_failure(exc, "POST /v1/cv")
                 status, message = describe_failure(exc)
-                ending = {"state": "failed", "status": "END", "detail": "",
-                          "http_status": status, "error": message}
+                ending = "error", CVFailure(http_status=status, error=message, total=run.total)
             state.job_slots.release()
-            job.drop_work()
-            save_log(job, run)
-            # Last of all, so that END means the result is on disk, the scratch
-            # is not, and a client can act on it without racing the worker.
-            job.write(STATUS, ending)
+            # Last of all: once a session has ended, a client may acknowledge
+            # it and have it deleted, so nothing may still be on its way in.
+            job.append(ending[0], ending[1].model_dump(mode="json"))
 
     Thread(target=work, name=f"resumix-{job.request_id}", daemon=True).start()
 

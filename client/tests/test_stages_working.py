@@ -254,7 +254,7 @@ def test_a_leftover_with_only_its_tex_is_compiled_as_it_stands(processor, worksp
     assert api.seen_document is None, "the .tex was sent, not a document"
 
 
-def test_a_failed_render_goes_to_error_with_the_server_log(processor, workspace, api):
+def test_a_failed_render_goes_to_error_with_its_cause(processor, workspace, api):
     api.fail_on = "render"
     make_job(workspace.working, **{"cv_jordan_rivera_head_of_it.json": json.dumps(document())})
 
@@ -263,7 +263,7 @@ def test_a_failed_render_goes_to_error_with_the_server_log(processor, workspace,
     [failed] = workspace.error.glob("*/*_Acme_Corp_Head_of_IT")
     log = (failed / "log.log").read_text()
     assert "model_output" in log
-    assert "--- server request failed-request" in log
+    assert "request id: failed-request" in log
     assert processor.failures == 1
 
 

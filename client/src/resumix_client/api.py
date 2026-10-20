@@ -5,8 +5,9 @@ below, which is why the modes can be tested without a server and why swapping
 transport would touch one file.
 
 Every call returns the server's :class:`Envelope` rather than just its
-payload, because the ``request_id`` in it is what the caller needs next — to
-poll a CV job, and to fetch what the server actually did from ``/logs``.
+payload, because the ``request_id`` in it is what a failure is reported
+under. A CV job is the exception: it is a session the client follows, as a
+stream of events, until its last.
 """
 
 from __future__ import annotations
@@ -17,17 +18,19 @@ import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional, Protocol, Tuple
+from typing import Any, Dict, Iterable, Iterator, List, Mapping, Optional, Protocol, Tuple
 
 import httpx
+from pydantic import BaseModel
 from resumix_contracts import (
+    EVENT_PAYLOADS,
+    Cleanup,
     CoverLetter,
-    CVStatus,
+    CVSession,
     Envelope,
     JDAnalysis,
     JDDetection,
     RenderedCV,
-    RequestLog,
     ServerStatus,
 )
 
@@ -36,8 +39,12 @@ from . import __version__
 #: One multipart part: the field name, then the file name, bytes and type.
 Part = Tuple[str, Tuple[str, Any, str]]
 
-#: A CV job is polled, but analysis, letters and renders are waited on, and a
-#: model call with retries can take minutes.
+#: One event of a CV session: its number, its type, and its payload — the
+#: model :data:`resumix_contracts.EVENT_PAYLOADS` names for that type.
+Event = Tuple[int, str, BaseModel]
+
+#: Analysis, letters and renders are waited on, and a model call with retries
+#: can take minutes. A CV's stream is never this quiet: the server pings it.
 REQUEST_TIMEOUT = 500.0
 CONNECT_TIMEOUT = 10.0
 
@@ -57,15 +64,14 @@ class ResumixError(RuntimeError):
         request_id: Optional[str] = None,
     ) -> None:
         super().__init__(message)
+        #: The HTTP status the server answered with; 0 when no answer came.
         self.status = status
-        #: The handle for ``/logs/{id}`` — what the server did before failing.
+        #: The request the failure belongs to — what the server logged it under.
         self.request_id = request_id
 
 
 class ResumixApi(Protocol):
     """What the client needs a resumix server to do."""
-
-    def logs(self, request_id: str) -> Envelope[RequestLog]: ...
 
     def detect(self, text: str) -> Envelope[JDDetection]: ...
 
@@ -74,15 +80,17 @@ class ResumixApi(Protocol):
     ) -> Envelope[JDAnalysis]: ...
 
     def create_cv(
-        self, text: str, *, profile: bytes, candidate_data: bytes,
+        self, text: str, *, request_id: str, profile: bytes, candidate_data: bytes,
         prompts: Optional[Mapping[str, str]] = None, template: Optional[str] = None,
         images: Optional[Mapping[str, bytes]] = None, temperature: Optional[float] = None,
         presence_penalty: Optional[float] = None, pages: Optional[int] = None,
-    ) -> Envelope[None]: ...
+    ) -> Envelope[CVSession]: ...
 
-    def cv_status(self, request_id: str) -> Envelope[CVStatus]: ...
+    def events(self, request_id: str, *, after: int = 0) -> Iterator[Event]: ...
 
-    def cv_result(self, request_id: str) -> Envelope[RenderedCV]: ...
+    def acknowledge(self, request_id: str) -> Envelope[None]: ...
+
+    def reset(self) -> Envelope[Cleanup]: ...
 
     def render(
         self, *, document: Optional[Mapping[str, Any]] = None, tex: Optional[str] = None,
@@ -124,10 +132,6 @@ class HttpApi:
         )
 
     # --- the calls ----------------------------------------------------------
-    def logs(self, request_id: str) -> Envelope[RequestLog]:
-        """What the server did during one request. 404s once it is too old."""
-        return self._get(f"/logs/{request_id}", RequestLog, request_id=request_id)
-
     def detect(self, text: str) -> Envelope[JDDetection]:
         self._ensure_healthy()
         return self._post("/v1/jd/detect", JDDetection, data={"jd_text": text})
@@ -145,9 +149,10 @@ class HttpApi:
             files=files,
         )
 
-    def create_cv(self, text, *, profile, candidate_data, prompts=None, template=None,
-                  images=None, temperature=None, presence_penalty=None, pages=None):
-        """Start a CV job. The envelope's ``request_id`` is the job's handle.
+    def create_cv(self, text, *, request_id, profile, candidate_data, prompts=None,
+                  template=None, images=None, temperature=None, presence_penalty=None,
+                  pages=None):
+        """Start a CV job as session ``request_id``, or find the one it already is.
 
         ``candidate_data`` goes with it because the server renders the CV to
         count its pages, and an empty contact block is not the page count of
@@ -163,17 +168,39 @@ class HttpApi:
             files.append(("template", ("resume.tex.jinja", template, "text/plain")))
         files.extend(_image_parts(images))
         self._ensure_healthy()
-        return self._post("/v1/cv", type(None),
+        return self._post("/v1/cv", CVSession,
                           data=_clean({"jd_text": text, "temperature": temperature,
                                        "presence_penalty": presence_penalty,
                                        "pages": pages}),
-                          files=files)
+                          files=files, headers={"X-Request-Id": request_id},
+                          request_id=request_id)
 
-    def cv_status(self, request_id: str) -> Envelope[CVStatus]:
-        return self._get(f"/v1/cv/{request_id}/status", CVStatus, request_id=request_id)
+    def events(self, request_id: str, *, after: int = 0) -> Iterator[Event]:
+        """The session's events after number ``after``, as they come, until
+        its last. A stream that breaks raises :class:`ResumixError` with
+        ``status`` 0; one the server refuses, with its status."""
+        headers = {"Last-Event-ID": str(after)} if after else {}
+        try:
+            with self._client.stream("GET", f"/v1/cv/{request_id}/events",
+                                     headers=headers) as response:
+                if not response.is_success:
+                    response.read()
+                    self._envelope(response, f"/v1/cv/{request_id}/events", type(None))
+                yield from _parse_events(response.iter_lines())
+        except httpx.HTTPError as exc:
+            raise ResumixError(
+                f"lost the stream from the resumix server at {self.base_url}: {exc}",
+                request_id=request_id,
+            ) from exc
 
-    def cv_result(self, request_id: str) -> Envelope[RenderedCV]:
-        return self._get(f"/v1/cv/{request_id}", RenderedCV, request_id=request_id)
+    def acknowledge(self, request_id: str) -> Envelope[None]:
+        """Everything is in: the server may delete the session."""
+        return self._send("DELETE", f"/v1/cv/{request_id}", type(None), request_id=request_id)
+
+    def reset(self) -> Envelope[Cleanup]:
+        """Delete every session on the server whose job is not running."""
+        self._ensure_healthy()
+        return self._send("DELETE", "/v1/cv", Cleanup, params={"all": ""})
 
     def render(self, *, document=None, tex=None, template=None, images=None):
         files: List[Part] = []
@@ -250,8 +277,8 @@ class HttpApi:
                 file=sys.stderr, flush=True,
             )
 
-    def _get(self, path: str, payload: type, *, request_id: Optional[str] = None) -> Envelope:
-        return self._send("GET", path, payload, request_id=request_id)
+    def _get(self, path: str, payload: type) -> Envelope:
+        return self._send("GET", path, payload)
 
     def _post(self, path: str, payload: type, **kwargs) -> Envelope:
         return self._send("POST", path, payload, **kwargs)
@@ -265,12 +292,15 @@ class HttpApi:
         except httpx.HTTPError as exc:
             # A network error (e.g. a timeout) means no response came back to
             # read a request_id from, so the id already known to the caller
-            # (a job being polled) is the only one there is to report.
+            # (a CV session) is the only one there is to report.
             raise ResumixError(
                 f"cannot reach the resumix server at {self.base_url}: {exc}",
                 request_id=request_id,
             ) from exc
+        return self._envelope(response, path, payload)
 
+    def _envelope(self, response: httpx.Response, path: str, payload: type) -> Envelope:
+        """The envelope a response carries, or the failure it reports."""
         try:
             body = response.json()
         except ValueError as exc:
@@ -308,6 +338,27 @@ def _image_parts(images: Optional[Mapping[str, bytes]]) -> List[Part]:
 def _clean(values: Dict[str, Any]) -> Dict[str, Any]:
     """Drop unset form fields so the server sees its own defaults."""
     return {k: v for k, v in values.items() if v is not None}
+
+
+def _parse_events(lines: Iterable[str]) -> Iterator[Event]:
+    """Server-sent events, one per blank-line-terminated block of fields.
+
+    A line starting with ``:`` is a keep-alive. A type this client does not
+    know — a newer server's — is skipped, as the format intends.
+    """
+    fields: Dict[str, str] = {}
+    for line in lines:
+        if line.startswith(":"):
+            continue
+        if line:
+            name, _, value = line.partition(":")
+            fields[name] = value.removeprefix(" ")
+            continue
+        kind = fields.get("event")
+        if kind in EVENT_PAYLOADS:
+            payload = EVENT_PAYLOADS[kind].model_validate_json(fields["data"])
+            yield int(fields["id"]), kind, payload
+        fields = {}
 
 
 def version_compat(client_version: str, server_version: str) -> str:

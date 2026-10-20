@@ -51,9 +51,10 @@ because breaking it has a cost we have already paid once.
   the JSON schema shown to the model. Editing one changes what the model
   produces — treat those classes as prompts, not just as types.
 - **Failures carry a cause and a stage.** Every response, successful or not,
-  carries a `request_id`; `GET /logs/{id}` turns it into what ran and what
-  each model call cost. A user who paid for four attempts is entitled to see
-  all four — but a reply nobody reads should not carry them.
+  carries a `request_id`, and so does every line the server logs. A CV job
+  streams what ran and what each model call cost as events, and its last
+  event carries the total. A user who paid for four attempts is entitled to
+  see all four — but a reply nobody reads should not carry them.
 - **The LaTeX subprocess is always sandboxed.** Shell escape off, reads and
   writes confined to the scratch directory, no stdin, a timeout. The template
   and the `.tex` can both come from a client: treat them as hostile input.

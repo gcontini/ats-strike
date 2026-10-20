@@ -1,13 +1,14 @@
 # Alibaba Cloud deployment
 
-The server as a Function Compute 3.0 function, and the Container Registry
-Personal Edition repository its image is pushed to.
+The server as a Function Compute 3.0 function, the Container Registry
+Personal Edition repository its image is pushed to, and the OSS bucket that
+holds its CV sessions.
 
 | Managed here | Console only — no API reaches it |
 |---|---|
 | namespace and repository | the Personal Edition instance (`crpi-…`) |
 | function, alias, HTTP trigger, reserved concurrency | the registry login password |
-| | rotating the trigger token |
+| sessions bucket, the function's role and its policy | rotating the trigger token |
 
 ## Run it
 
@@ -52,6 +53,30 @@ Why not `latest`: Function Compute resolves the tag to a digest when the
 function is updated, and on Personal Edition every invocation fails once the
 tag points somewhere else. A tag that moves on every build takes the function
 down on every build. A digest (`@sha256:…`) in place of the tag is rejected.
+
+## Sessions
+
+Every CV the server writes is a session: a folder of event files in the
+bucket `terraform output -raw sessions_bucket` names, which the function
+mounts at `/mnt/resumix`. The session outlives the instance that wrote it, so
+a client that lost its connection, or comes back later, replays it from the
+start. The client deletes a session once it has saved the CV. Sessions nobody
+deleted are pruned after `RESUMIX_SESSION_TTL_DAYS` days (1 unless set in
+`environment`).
+
+`RESUMIX_WORK_DIR = "/mnt/resumix"` in `environment` is what points the
+server at the mount. Without it, sessions stay on the instance's own disk and
+are gone with the instance.
+
+To look at what is there:
+
+```bash
+aliyun ossutil ls oss://$(terraform output -raw sessions_bucket)/
+```
+
+The function's role, `resumix-fc`, can do nothing but read and write that
+bucket. FC delivers the logs and pulls the image with its own service-linked
+role, so they do not depend on it.
 
 ## What to know
 

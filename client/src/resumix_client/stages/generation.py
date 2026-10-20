@@ -36,29 +36,28 @@ if TYPE_CHECKING:
 class CvWriter:
     """Writes a folder's CV — or re-renders the one already in it — beside it."""
 
-    def __init__(self, calls: Calls, config: Config, *, resume: Optional[str] = None) -> None:
+    def __init__(self, calls: Calls, config: Config, *, new: bool = False) -> None:
         self.calls = calls
         self.config = config
-        #: submit --resume: pick an already-started CV job back up instead of
-        #: submitting a new one. Only meaningful for the one job submit writes.
-        self.resume = resume
+        #: --new: write each CV again rather than replay the run the server
+        #: already has for that posting.
+        self.new = new
 
     def generate(self, folder: Path, log: JobLog) -> None:
         """The CV (and the letter, if asked for): minutes of the large model.
 
-        A failed call is recorded in ``log``, with the server's own log, and
-        raised again for the caller to file the folder.
+        A failed call is recorded in ``log`` — with every line the server
+        logged for the CV — and raised again for the caller to file the folder.
         """
         jd_text = read_jd(folder)
         try:
             if self.config.cover_letter != "letter_only":
                 log.step("✍ writing the CV (this takes minutes)...")
-                request_id, rendered = write_cv(
-                    self.calls.api, self.config, jd_text, say=log.step, resume=self.resume
+                write_cv(
+                    self.calls.api, self.config, jd_text, say=log.step,
+                    keep=lambda rendered: self._save(folder, rendered, log, document=True),
+                    log_line=log.server_line, new=self.new,
                 )
-                if self.calls.debug:
-                    self.calls.fetch_log(log, request_id)
-                self._save(folder, rendered, log, document=True)
             if self.config.cover_letter in ("yes", "letter_only"):
                 self._letter(folder, jd_text, log)
         except ResumixError as exc:
@@ -86,14 +85,14 @@ class CvWriter:
                 kind = "JSON" if is_document else "UTF-8 text"
                 raise ResumixError(f"{source.name} is not valid {kind}: {exc}") from exc
             if is_document:
-                rendered = self.calls.make(log, lambda: self.calls.api.render(
+                rendered = self.calls.make(lambda: self.calls.api.render(
                     document=document,
                     template=read_text(self.config.path("resume.tex.jinja")),
                     images=self.config.image_parts(),
                 ))
                 self._save(folder, rendered, log, document=False)
             else:
-                rendered = self.calls.make(log, lambda: self.calls.api.render(
+                rendered = self.calls.make(lambda: self.calls.api.render(
                     tex=text, images=self.config.image_parts(),
                 ))
                 self._save(folder, rendered, log, document=False, tex=False)
@@ -126,7 +125,7 @@ class CvWriter:
 
     def _letter(self, folder: Path, jd_text: str, log: JobLog) -> None:
         log.step("✉ writing the cover letter...")
-        letter = self.calls.make(log, lambda: self.calls.api.letter(
+        letter = self.calls.make(lambda: self.calls.api.letter(
             jd_text,
             profile=self.config.require("candidate_profile.json").read_bytes(),
             candidate_data=self.config.require("candidate_data.json").read_bytes(),

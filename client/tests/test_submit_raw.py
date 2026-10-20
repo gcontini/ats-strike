@@ -67,8 +67,13 @@ def test_it_only_writes_the_cv(here, config, api, tmp_path):
     """No detection, no analysis, no letter, no spreadsheet, no folders."""
     submit_raw.run(config, here, [])
 
-    assert api.calls == ["create_cv", "cv_status", "cv_result"]
+    assert api.calls == ["create_cv", "events", "acknowledge"]
     assert sorted(p.name for p in tmp_path.iterdir()) == ["posting.pdf", "posting.txt"]
+
+
+def test_new_writes_the_cv_again(here, config, api):
+    assert submit_raw.run(config, here, [], new=True) == 0
+    assert api.calls == ["acknowledge", "create_cv", "events", "acknowledge"]
 
 
 def test_a_missing_posting_stops_before_the_server(config, api, tmp_path):

@@ -21,7 +21,7 @@ flowchart TD
     Q1 -->|"postings arriving as files"| WATCH["<b>watch</b><br/>watch a folder"]
     Q1 -->|"one file, right now"| Q2{"do you want the<br/>folders, analysis<br/>and spreadsheet?"}
     Q1 -->|"a CV I have edited"| REND["<b>render</b><br/>.json or .tex → PDF"]
-    Q1 -->|"a request id from a failure"| LOGS["<b>logs</b><br/>print the server's log"]
+    Q1 -->|"runs the server still keeps"| RESET["<b>reset</b><br/>drop them all"]
     Q1 -->|"a posting, and only its analysis"| ANA["<b>analysis</b><br/>JSON or a job folder"]
     Q2 -->|"yes"| SUB["<b>submit</b>"]
     Q2 -->|"no, just the CV"| RAW["<b>submit-raw</b>"]
@@ -35,7 +35,7 @@ flowchart TD
 | `submit-raw` | **no** | no | no | no | no |
 | `analysis` | **no** | analyses only | no | no | no |
 | `render` | no — costs no model call | no | no | no | no |
-| `logs` | no | no | no | no | no |
+| `reset` | no — costs no model call | no | no | no | no |
 
 ## The modes
 
@@ -233,8 +233,7 @@ which defaults to `incoming/` under `--data-dir` (or the current folder): the
 shape `watch` takes from its input folder, and the folder it watches by
 default. A folder of the same name is replaced. It is written as
 `.<Company>_<Title>/` and renamed once both files are in, so a `watch` running
-on it never picks up half a job. Failures, and the server's log with `-d`, go
-to stderr.
+on it never picks up half a job. Failures go to stderr.
 
 ### `render` — compile an edited CV
 
@@ -246,19 +245,20 @@ resumix render cv_jordan_rivera_head_of_it.tex --output /tmp/preview.pdf
 Give it the `.json` document to re-render from the content, or the `.tex` to
 compile a hand-edit. The PDF lands next to the input unless `--output` says
 otherwise. Needs no profile and no posting — just the server — and costs one
-LaTeX compile and no model call. A failed render prints the server's log for
-that request, which is where the LaTeX error is.
+LaTeX compile and no model call. A failed render prints the end of the TeX
+log, which says where the LaTeX breaks.
 
-### `logs` — what the server did
+### `reset` — drop what the server keeps
 
 ```bash
-resumix logs b510f8dff047
+resumix reset
 ```
 
-Every failure names a request id; this is the other half of that. It prints
-that request's server-side log — each model call with its duration and token
-counts, and the error that ended it. The server keeps the last couple of
-hundred requests, so ask reasonably soon; a pruned id gives `404`.
+Every CV is a session on the server, kept until the client has saved its
+files (see [A CV that was interrupted](#a-cv-that-was-interrupted)). `reset`
+deletes every session the server still has — except one whose CV is still
+being written — and says how many it deleted. After it, every posting is
+written from scratch.
 
 ### `version` — which build is this
 
@@ -297,6 +297,27 @@ holds it. So to redo one, *move* the earlier folder out of `cv/` or
 `discarded/` first — before you copy the posting again, and instead of
 copying a folder you drop back into `watch`.
 
+## A CV that was interrupted
+
+A CV is a session on the server, named after the posting's text. While the CV
+is written the client follows it, printing each step, what each model call
+cost and the total at the end; once the files are saved, the client tells the
+server, which deletes the session. Anything in between costs nothing:
+
+- **A dropped connection** is picked up again on its own, from the last thing
+  received.
+- **A client that died** — a closed laptop, Ctrl-C, a crash: run the same
+  posting again, with `submit`, `submit-raw`, `clipboard` or `watch`, and the
+  server replays the run from the start, still going or already finished,
+  instead of writing a new CV. `↺ this posting already has a run on the
+  server` says so.
+- **`--new`** drops that run and writes the CV again: for when you changed your
+  profile, your template or `--temperature`, none of which change the
+  posting's text. It is refused while the old run is still being written.
+
+A session nobody came back for is kept for a day (the server's
+`RESUMIX_SESSION_TTL_DAYS`), and `resumix reset` drops them all.
+
 ## Options
 
 ### Global
@@ -310,8 +331,7 @@ copying a folder you drop back into `watch`.
 | `--pages N` | Page limit the CV must fit. Default: the server's, which is 2. |
 | `--config FILE` | Use this `resumix.toml` instead of searching for one. |
 | `--data-dir DIR` | Look for your files here before the current folder. |
-| `-d`, `--debug` | Fetch the server's log after **every** call and fold it into `log.log`. Without it, only failures are fetched. |
-| `-v`, `--verbose` | Print `version x.y.z` at startup, then what the server reports about each finished step — tokens, thinking tokens, elapsed, and the reviewer's or the page check's own words — plus the request id and the `/healthz` attempts. |
+| `-v`, `--verbose` | Print `version x.y.z` at startup, then what the server reports about each finished step — tokens, thinking tokens, elapsed, and the reviewer's or the page check's own words — plus the CV's session id and the `/healthz` attempts. |
 
 ### Per mode
 
@@ -325,7 +345,7 @@ copying a folder you drop back into `watch`.
 | `--cover-letter no\|yes\|letter_only` | clipboard, watch, submit | Also write a cover letter, or write *only* one. Default `no`. |
 | `--yes` | clipboard, watch, submit | Submit every valid posting without asking. Unattended runs spend tokens on their own. A posting already applied to, discarded or in flight is skipped, still without asking. In `watch` it only stops the questions: YES postings get their CV, NO postings are discarded, CHECK postings wait in `working/` for a run without `--yes`. |
 | `--no-xlsx` | clipboard, watch, submit | Do not record delivered CVs in the spreadsheet. |
-| `--resume REQUEST_ID` | submit, submit-raw | Pick up a CV job already running on the server instead of submitting a new one: start from its `/status`. For a job whose answer never came back. |
+| `--new` | clipboard, watch, submit, submit-raw | Write each CV again even when the server still has a run for the same posting, which is otherwise replayed. Refused while that run is still being written. |
 | `-o FILE` | submit-raw | Write one output here: `.pdf`, `.json` or `.tex`. Repeatable. |
 | `--output FILE` | render | Where to write the PDF. Default: beside the input. |
 
@@ -353,8 +373,7 @@ cover_letter = "no"                 # no | yes | letter_only
 # temperature = 0.4                 # CV and cover letter, passed to the server
 # presence_penalty = 0.5            # CV and cover letter, passed to the server
 # pages       = 2                   # page limit the CV must fit
-# timeout     = 1800                # seconds to keep polling one CV job
-# debug       = true                # same as -d on every run
+# timeout     = 1800                # seconds to follow one CV job
 # verbose     = true                # same as -v on every run
 
 [files]                             # explicit paths win over discovery
@@ -419,7 +438,7 @@ Start from the fictional set in the repository's `examples/candidate/`.
 │           ├── analysis.json            match score, salary, skills, gaps
 │           ├── jd.txt                   the posting, whatever the file was called
 │           ├── cover_letter.txt         with --cover-letter
-│           └── log.log                  every step, plus the server's on failure
+│           └── log.log                  every step, and the server's own lines for the CV
 ├── discarded/26-01-15/…                 postings you said no to, analysis kept
 ├── error/26-01-15/…                     rejected or failed, with a .log beside it
 ├── working/                             in flight, or waiting for you
@@ -433,17 +452,21 @@ one LaTeX compile, no model calls. Editing the `.tex` and rendering that works
 too. The spreadsheet's own header row is the schema: rename, reorder or add
 columns in your copy and the rows follow.
 
-`log.log` holds the client's steps, and the server's account of each request
-on failure (or on every call with `--debug`):
+`log.log` holds the client's steps, and every line the server logged while it
+wrote the CV, indented under them, as they streamed in:
 
 ```text
 2026-01-15T09:30:12 ✍ writing the CV (this takes minutes)...
---- server request b510f8dff047 ---
-  2026-01-15T09:30:53 INFO    [cv.generate]   [cv] qwen-max 41.2s | prompt=7104, completion=1832, thinking=903
-  2026-01-15T09:31:03 INFO    [cv.review]     [cv] qwen-max 9.8s | prompt=5210, completion=96
+2026-01-15T09:30:12    generate
+  2026-01-15T09:30:53+00:00 INFO    [cv.generate]   ⏱ [cv] qwen3.8-max 41.2s | input=7104, thinking=903, output=1832, …
+2026-01-15T09:30:53    ⏱ cv qwen3.8-max 41.2s | input=7104, thinking=903, output=1832
+2026-01-15T09:30:54    review
+…
+2026-01-15T09:36:24    Σ 6 model call(s), 312.4s | input=41210, thinking=27100, output=9380
 ```
 
-One line per model call is what it cost.
+One line per model call is what it cost, and the `Σ` line is the whole run —
+failed attempts included.
 
 ## What leaves your machine
 
@@ -460,8 +483,8 @@ to the LaTeX template and nowhere else.
 
 Nothing at all is sent for text that fails the local length and binary checks,
 so a copied password or a screenful of code never leaves the machine. The
-server holds a finished CV in a directory of its own until a couple of hundred
-newer requests have pushed it out, and keeps nothing else.
+server keeps a CV's session — what the job logged and the finished CV — until
+the client has saved the files, or for a day at most, and keeps nothing else.
 
 ## Troubleshooting
 
@@ -476,6 +499,7 @@ newer requests have pushed it out, and keeps nothing else.
 | `[clipboard] ✗ not a job description (412 chars, nothing sent)` | What you copied is a fragment. Nothing was sent anywhere. |
 | A posting you wanted lands in `error/` | Read the `.log` beside it. A wrong "not a job description" verdict usually means the copy grabbed only part of the page. |
 | A folder you dropped lands in `error/` | It needs `jd.txt` and a valid `analysis.json`. The `log.log` inside it says which was missing. |
-| You need more than the error line | Re-run with `-d`, or `resumix logs <request id>` while the server still has it. |
+| You need more than the error line | For a CV, its `log.log` has every line the server logged. For anything else, the server's own log has it under the request id the error names. |
 | `working/` is not empty | A previous run stopped mid-job, a CV was still queued when you pressed `q`, or a posting waits for your answer (CHECK, or `PENDING`). `watch` picks everything up by itself at startup (see its *Startup* table); `clipboard` offers to resume or clean. |
-| The client died but the job was running | `resumix submit posting.txt --resume <request_id>` picks it back up. |
+| The client died but the job was running | Run the same posting again: the server replays the run instead of writing a new CV. `--new` writes it again. |
+| `this posting's CV is still being written on the server` | `--new` cannot drop a run that is still going. Run without it to follow that run, or wait until it has finished. |

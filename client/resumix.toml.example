@@ -19,7 +19,7 @@ cover_letter = "no"
 # pages = 2
 
 # How long to wait for a CV, in seconds. Writing one takes minutes.
-# timeout = 1800    # seconds to keep polling a CV job before giving up
+# timeout = 1800    # seconds to follow a CV job before giving up
 
 # Where your files are. Omit any entry and resumix looks for the file by its
 # usual name in the folder you run it in; omit it there too and the server's

@@ -26,13 +26,13 @@ def analyse(calls: Calls, config: Config, text: str, log: JobLog) -> Optional[JD
     if not static_jd_guess(text):
         log.step(f"✗ not a job description ({len(text)} chars, nothing sent)")
         return None
-    detection = calls.make(log, lambda: calls.api.detect(text))
+    detection = calls.make(lambda: calls.api.detect(text))
     if not detection.is_job_description:
         log.step("✗ not a job description")
         return None
     log.step(f"✓ job description ({len(text)} chars)")
     log.step("📊 analyzing the posting...")
-    return calls.make(log, lambda: calls.api.analyze(
+    return calls.make(lambda: calls.api.analyze(
         text,
         profile=config.require("candidate_profile.json").read_bytes(),
         preferences=config.require("candidate_preferences.md").read_text(encoding="utf-8"),

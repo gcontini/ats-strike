@@ -24,9 +24,17 @@ class PipelineError(RuntimeError):
 
 
 class LatexCompileError(PipelineError):
-    """pdflatex refused the document (usually a bad template or bad escaping)."""
+    """pdflatex refused the document (usually a bad template or bad escaping).
+
+    ``log_tail`` is the end of pdflatex's own output, when it ran: the only
+    thing that says where the document breaks.
+    """
 
     kind = "latex_compile"
+
+    def __init__(self, message: str, *, log_tail: str = "", **kwargs: Any) -> None:
+        super().__init__(message, **kwargs)
+        self.log_tail = log_tail
 
 
 class LatexTimeoutError(PipelineError):

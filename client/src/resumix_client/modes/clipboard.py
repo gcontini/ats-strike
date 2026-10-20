@@ -27,7 +27,8 @@ from ..ui import AutoConfirmer, Confirmer, PromptConfirmer, ask_recovery, fail
 from ..workspace import Workspace
 
 
-def run(config: Config, out: Path, *, assume_yes: bool = False, track: bool = True) -> int:
+def run(config: Config, out: Path, *, assume_yes: bool = False, track: bool = True,
+        new: bool = False) -> int:
     problem = clipboard_error()
     if problem:
         fail(f"{problem}\n{NO_CLIPBOARD_HINT}")
@@ -47,9 +48,8 @@ def run(config: Config, out: Path, *, assume_yes: bool = False, track: bool = Tr
 
     console = Console()
     keyboard = Keyboard(sys.stdin)
-    calls = Calls(HttpApi(config.server_url, token=config.token, verbose=config.verbose),
-                  debug=config.debug)
-    writer = CvWriter(calls, config)
+    calls = Calls(HttpApi(config.server_url, token=config.token, verbose=config.verbose))
+    writer = CvWriter(calls, config, new=new)
     # ask stays True with --yes: here every posting goes to the confirmer, and
     # --yes is the confirmer that says yes.
     working = WorkingProcessor(workspace, writer, build_tracker(workspace.root, track), console)

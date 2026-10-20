@@ -1,5 +1,9 @@
 # --- Secrets ----------------------------------------------------------------
 .env
+.env.*
+!.env.example
+*.pem
+*.key
 # The client's own configuration: it holds a bearer token.
 resumix.toml
 
@@ -26,8 +30,8 @@ resumix.toml
 # --- Terraform --------------------------------------------------------------
 # The state and the variables hold the provider keys and the trigger token in
 # clear text. The lock file is committed; the provider cache is not.
-/server/terraform/.terraform/
-/server/terraform/terraform.tfvars
+.terraform/
+*.tfvars
 *.tfstate
 *.tfstate.*
 *.tfplan

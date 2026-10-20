@@ -16,14 +16,18 @@ from pathlib import Path
 
 import pytest
 from resumix_contracts import (
+    Cleanup,
     CoverLetter,
+    CVResult,
+    CVSession,
     CVStatus,
     Envelope,
     JDAnalysis,
     JDDetection,
     LogEntry,
+    ModelCall,
     RenderedCV,
-    RequestLog,
+    TokenUsage,
 )
 
 from resumix_client.api import ResumixError
@@ -72,6 +76,22 @@ def envelope(data, *, request_id: str = "test-request") -> Envelope:
     return Envelope(request_id=request_id, ok=True, data=data)
 
 
+def cv_session(rendered: RenderedCV) -> list:
+    """What a CV job streams, as ``(type, payload)``: a step, a log line, a
+    model call, another step, then the CV with the run's total."""
+    return [
+        ("status", CVStatus(status="generate")),
+        ("log", LogEntry(ts=datetime(2026, 1, 15, 9, 0), level="INFO", stage="cv.generate",
+                         message="⏱ [cv] gpt-fake 1.2s | input=10, thinking=0, output=20")),
+        ("usage", ModelCall(role="cv", model="gpt-fake", seconds=1.2, input_tokens=10,
+                            thinking_tokens=0, output_tokens=20)),
+        ("status", CVStatus(status="review", detail="generation finished, tokens used=30")),
+        ("result", CVResult(cv=rendered, detail="done, 1 model call, 1 page(s)",
+                            total=TokenUsage(calls=1, seconds=1.2, input_tokens=10,
+                                             output_tokens=20))),
+    ]
+
+
 class FakeApi:
     """Records what it was asked and replies with whatever it was given."""
 
@@ -83,27 +103,28 @@ class FakeApi:
             RenderedCV.from_bytes(tex=r"\documentclass{article}", pdf=b"%PDF-fake",
                                   document=document()),
         )
-        #: What each poll answers, in order; the last one repeats.
-        self.statuses = replies.get("statuses", [CVStatus(status="END", detail="done")])
+        #: What a CV job streams, as ``(type, payload)``, in order.
+        self.session = replies.get("session") or cv_session(self.rendered)
+        #: Whether the posting already had a session on the server.
+        self.reattached = replies.get("reattached", False)
+        #: The stream breaks once after this many events: a dropped connection.
+        self.break_after = replies.get("break_after")
+        #: The status each acknowledge fails with, in order; None succeeds.
+        self.acknowledge_errors = list(replies.get("acknowledge_errors", []))
+        self.cleanup = replies.get("cleanup", Cleanup(deleted=2, running=0))
         self.cover_letter = replies.get(
             "cover_letter", CoverLetter(text="Dear hiring manager.", words=3)
         )
         self.fail_on = replies.get("fail_on")
-        self.log_entries = replies.get("log_entries", [
-            LogEntry(ts=datetime(2026, 1, 15, 9, 0), level="INFO", stage="cv.generate",
-                     message="[cv] gpt-fake 1.2s | prompt=10, completion=20"),
-        ])
         self.calls: list[str] = []
+        #: Where each stream was opened from: the Last-Event-ID it sent.
+        self.seen_after: list[int] = []
 
     def _record(self, name):
         self.calls.append(name)
         if self.fail_on == name:
             raise ResumixError(f"model_output [{name}]: {name} failed", status=502,
                                  request_id="failed-request")
-
-    def logs(self, request_id):
-        self._record("logs")
-        return envelope(RequestLog(request_id=request_id, entries=self.log_entries))
 
     def detect(self, text):
         self._record("detect")
@@ -116,9 +137,11 @@ class FakeApi:
         self.seen_analysis_prompt = prompt
         return envelope(self.analysis)
 
-    def create_cv(self, text, *, profile, candidate_data, prompts=None, template=None,
-                  images=None, temperature=None, presence_penalty=None, pages=None):
+    def create_cv(self, text, *, request_id, profile, candidate_data, prompts=None,
+                  template=None, images=None, temperature=None, presence_penalty=None,
+                  pages=None):
         self._record("create_cv")
+        self.seen_request_id = request_id
         self.seen_prompts = dict(prompts or {})
         self.seen_template = template
         self.seen_images = dict(images or {})
@@ -126,15 +149,30 @@ class FakeApi:
         self.seen_presence_penalty = presence_penalty
         self.seen_candidate_data = candidate_data
         self.seen_pages = pages
-        return Envelope(request_id="test-request", ok=True)
+        return envelope(CVSession(reattached=self.reattached), request_id=request_id)
 
-    def cv_status(self, request_id):
-        self._record("cv_status")
-        return envelope(self.statuses.pop(0) if len(self.statuses) > 1 else self.statuses[0])
+    def events(self, request_id, *, after=0):
+        self._record("events")
+        self.seen_after.append(after)
+        for number, (kind, payload) in enumerate(self.session, start=1):
+            if number <= after:
+                continue
+            if self.break_after is not None and number > self.break_after:
+                self.break_after = None
+                raise ResumixError("lost the stream: connection reset", request_id=request_id)
+            yield number, kind, payload
 
-    def cv_result(self, request_id):
-        self._record("cv_result")
-        return envelope(self.rendered)
+    def acknowledge(self, request_id):
+        self._record("acknowledge")
+        status = self.acknowledge_errors.pop(0) if self.acknowledge_errors else None
+        if status is not None:
+            raise ResumixError(f"acknowledge failed with {status}", status=status,
+                               request_id=request_id)
+        return Envelope(request_id=request_id, ok=True)
+
+    def reset(self):
+        self._record("reset")
+        return envelope(self.cleanup)
 
     def render(self, *, document=None, tex=None, template=None, images=None):
         self._record("render")
@@ -202,9 +240,9 @@ def api() -> FakeApi:
 
 
 @pytest.fixture(autouse=True)
-def no_polling_delay(monkeypatch):
-    """The fake answers instantly; waiting 4s between polls proves nothing."""
-    monkeypatch.setattr("resumix_client.cvjob.POLL_SECONDS", 0)
+def no_reconnect_delay(monkeypatch):
+    """The fake answers instantly; waiting 4s before reconnecting proves nothing."""
+    monkeypatch.setattr("resumix_client.cvjob.RECONNECT_SECONDS", 0)
 
 
 @pytest.fixture

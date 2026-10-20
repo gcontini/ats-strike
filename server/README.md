@@ -8,11 +8,11 @@ else — your profile, your contact details, your preferences, your images —
 arrives with each request and is thrown away when it ends. There is no
 database and no user accounts.
 
-It does keep one thing, on the filesystem: a directory per request under
-`RESUMIX_WORK_DIR`, holding that request's log and, for a CV job, its state
-and its finished PDF. Writing a CV takes minutes, so `POST /v1/cv` answers
-immediately and the client polls for the rest; that directory is where the
-answer waits. The newest 200 are kept and the rest are dropped.
+It does keep one thing, on the filesystem: a session per CV job under
+`RESUMIX_WORK_DIR` — every event the job wrote, its finished PDF included.
+Writing a CV takes minutes, so `POST /v1/cv` answers immediately and the client
+follows the session as it grows. It waits there until the client says it has
+everything, or until it is older than `RESUMIX_SESSION_TTL_DAYS`.
 
 ---
 
@@ -35,8 +35,8 @@ The image is ~780 MB, almost all of it the LaTeX toolchain. It runs as any
 uid, needs no volume, and works with a read-only root filesystem as long as
 `/tmp` is writable (`docker run --read-only --tmpfs /tmp:exec`). `exec` on
 that tmpfs is required: `pdflatex` writes and then reads back its font cache
-there. A tmpfs also means finished CVs do not survive a restart — mount a
-volume at `RESUMIX_WORK_DIR` if you want them to.
+there. A tmpfs also means a session does not survive a restart — mount a
+volume, or a bucket, at `RESUMIX_WORK_DIR` if you want it to.
 
 `docker compose up --build` from this directory does the same with the
 settings below already wired.
@@ -113,7 +113,8 @@ to.
 | `WEB_CONCURRENCY` | `1` | uvicorn worker processes |
 | `RESUMIX_API_TOKEN` | unset | Bearer token clients must send. **Unset means no auth.** |
 | `RESUMIX_RESOURCES` | baked in | Directory of replacement prompts/template/`models.toml` |
-| `RESUMIX_WORK_DIR` | system temp | One directory per request: its scratch space, its log, and a CV job's state and result |
+| `RESUMIX_WORK_DIR` | system temp | Where CV sessions are kept, one directory of events each |
+| `RESUMIX_SESSION_TTL_DAYS` | `1` | Days a session nobody acknowledged is kept after its last event |
 | `RESUMIX_MAX_CONCURRENT_JOBS` | `10` | Requests in flight; the rest get `429` |
 | `RESUMIX_LATEX_TIMEOUT` | `120` | Seconds before a compile is killed |
 | `RESUMIX_REQUEST_BUDGET_SECONDS` | `1200` | Wall clock for one CV run before `504` |
@@ -164,35 +165,14 @@ one line saying what went wrong, its kind and its stage:
  "error": "model_output [cv.generate]: Could not obtain valid TailoredCVData after 3 validation attempts."}
 ```
 
-Nothing else rides on a reply: what the server did is behind
-`GET /logs/{request_id}`, so the common case pays nothing for it.
+Nothing else rides on a reply. A CV job streams what the server did — every
+line it logged, every model call and its cost — as events; every other
+request's lines are in the server's own log (stdout), under its request id.
 
 ### `GET /healthz`
 
 No auth. Reports the version, whether `pdflatex` is present, the model name
 per role and whether a token is required.
-
-### `GET /logs/{request_id}`
-
-What the server did during one request, including a line per model call with
-its duration and token counts:
-
-```bash
-curl localhost:8080/logs/b510f8dff047
-```
-
-```jsonc
-{"request_id": "b510f8dff047", "ok": true, "data": {"request_id": "b510f8dff047",
- "entries": [{"ts": "…", "level": "INFO", "stage": "cv.generate",
-              "message": "  [cv] qwen-max 12.4s | prompt=7100, completion=1850"}]}}
-```
-
-The log lives in the request's own directory under `RESUMIX_WORK_DIR`, so a
-CV job still running answers with what it has said so far, and a restart does
-not lose it. The newest 200 directories are kept. An id that has been pruned,
-that never did any work (a `400`, `401`, `413` or `429` fails before the
-pipeline starts — its `error` already carries the whole cause), or that was
-served by a different instance, returns `404` `unknown_request`.
 
 ### `POST /v1/jd/detect`
 
@@ -222,7 +202,7 @@ location, work mode, salary, hard and soft skills, company, the gaps against
 your profile, a score against your stated preferences and a `should_apply`
 verdict (`NO`, `CHECK` or `YES`) with a one-line reason.
 
-### `POST /v1/cv` → `GET /v1/cv/{id}/status` → `GET /v1/cv/{id}`
+### `POST /v1/cv` → `GET /v1/cv/{id}/events` → `DELETE /v1/cv/{id}`
 
 The expensive one: minutes of model calls. It writes the CV, and each round
 checks it — reviewed against your profile, rendered, and measured against the
@@ -230,18 +210,22 @@ page limit (2 by default, or `pages` in the request) — feeding everything
 wrong with it back into the next round, until it passes or the rounds run
 out. Then it highlights the keywords and renders it for good.
 
-It does not wait. The `POST` answers **`202`** with the job's id, you poll for
-the status, and you collect everything at the end:
+It does not wait. The `POST` answers **`202`** and starts the job as a
+session; you follow its events to the last, which holds the CV, and then
+acknowledge it:
 
 ```bash
-ID=$(curl -s -F jd=@JD.txt \
-          -F candidate_profile=@candidate_profile.json \
-          -F candidate_data=@candidate_data.json \
-          localhost:8080/v1/cv | jq -r .request_id)
-
-curl -s localhost:8080/v1/cv/$ID/status    # every few seconds
-curl -s localhost:8080/v1/cv/$ID > cv.json # once it says END
+ID=$(sha256sum JD.txt | cut -c1-64)
+curl -s -H "X-Request-Id: $ID" -F jd=@JD.txt \
+     -F candidate_profile=@candidate_profile.json \
+     -F candidate_data=@candidate_data.json localhost:8080/v1/cv
+curl -sN localhost:8080/v1/cv/$ID/events      # the job, to its last event
+curl -s -X DELETE localhost:8080/v1/cv/$ID    # once the CV is saved
 ```
+
+The session id is yours to choose, as `X-Request-Id`. The client derives it
+from the posting, so posting the same job description again finds the session
+already there — `"reattached": true`, and nothing new is started or paid for.
 
 | Part | | |
 |---|---|---|
@@ -261,38 +245,38 @@ real overflow. A page count taken with a different template, or with the
 contact block missing, is not the page count of the CV you will send. No model
 is shown `candidate_data`: it goes to the renderer and nowhere else.
 
-#### `GET /v1/cv/{id}/status`
+#### `GET /v1/cv/{id}/events`
 
-Where the job is now, and one line about the step that just finished. There is
-no history — poll it, print the status when it changes, and print `detail`
-when you want to know what it cost.
+Server-sent events: everything the session has, from the first event or from
+the one after `Last-Event-ID`, then each new one as the job writes it, until
+the last. A dropped stream loses nothing — open it again with the last `id:`
+you got.
 
-```json
-{"request_id": "b510f8dff047", "ok": true,
- "data": {"status": "review",
-          "detail": "generation finished, tokens used=5341, thinking=610, elapsed=26.6s"}}
-```
+| Event | What it carries |
+|---|---|
+| `status` | The step starting now — `generate`, `review`, `re-generate`, `page_check`, `highlight` — and a `detail` about the one before |
+| `log` | One line the server logged for the job |
+| `usage` | One model call: role, model, seconds, input / thinking / output tokens |
+| `result` | The last event: the CV (`document`, `tex`, `pdf_base64`), a summary line, and the run's `total` |
+| `error` | The last event: the status and cause the work produced — `502`, `504`, `422` — and the run's `total` |
 
-`status` is one of `generate`, `review`, `re-generate`, `page_check`,
-`highlight`, `END`. `detail` is written for a person to read and may span
-several lines: a rejected CV is followed by everything wrong with it, one per
-line — the reviewer's complaints and, when the PDF ran over, the condense
-instruction — because those are the words the model is about to be given.
-
-A job that failed answers here with the status and cause the work produced —
-`502`, `504`, `422` — so a poll is the only call a client has to handle
-failure on.
-
-#### `GET /v1/cv/{id}`
-
-The finished CV: `{document, tex, pdf_base64}`. `409` while the job is still
-running; `404` once its directory has been pruned.
+`detail` is written for a person to read and may span several lines: a
+rejected CV is followed by everything wrong with it, one per line — the
+reviewer's complaints and, when the PDF ran over, the condense instruction —
+because those are the words the model is about to be given.
 
 `document` is one flat object — what the model wrote with your
 `candidate_data` merged over the top, so a field the model invents can never
 replace a real contact detail. It has no schema: what the template reads from
 it is between you and the template. Store it, edit it, and post it back to
 `/v1/cv/render`.
+
+#### `DELETE /v1/cv/{id}` and `DELETE /v1/cv?all`
+
+The first acknowledges one session: you have stored the CV, and the server
+deletes it. `409` while its job is still running. The second deletes every
+session whose job is not running, and answers how many it deleted and how many
+it kept.
 
 ### `POST /v1/cv/render`
 
@@ -301,11 +285,13 @@ curl -F document=@cv.json     localhost:8080/v1/cv/render
 curl -F tex=@cv_edited.tex    localhost:8080/v1/cv/render
 ```
 
-Send a `document` — the flat object `GET /v1/cv/{id}` returned, or anything
-else your template can read — **or** a hand-edited `.tex`, not both. Optional
+Send a `document` — the flat object a CV job's result held, or anything else
+your template can read — **or** a hand-edited `.tex`, not both. Optional
 `template` and `images`. Returns `{tex, pdf_base64}`; `document` is not
 echoed back, because whoever asked for the render already has it. Cheap and
 deterministic: editing the content and re-rendering never costs a model call.
+A `.tex` that does not compile answers `422` with the end of the TeX log after
+the error line, which says where.
 
 ### `POST /v1/letter`
 
@@ -330,28 +316,31 @@ when it can search the web; whether it can is the `letter` role's
 A CV job runs for minutes after the request that started it has been
 answered. That is the one thing to plan around.
 
-- **`RESUMIX_WORK_DIR` is state now.** A job's status, its result and every
-  request's log live there. The default is the system temp directory, which on
-  most container platforms is RAM-backed and empty again after a redeploy —
-  fine, because the client collects its CV within the minute. Mount a volume
-  only if you want results to outlive a restart.
+- **`RESUMIX_WORK_DIR` is state.** Every CV session lives there until the
+  client acknowledges it or it outlives `RESUMIX_SESSION_TTL_DAYS`. The default
+  is the system temp directory, which on most container platforms is RAM-backed
+  and empty again after a redeploy. Mount a volume — or a bucket, as the
+  Alibaba deployment in `server/terraform` does — to have sessions outlive the
+  instance. Each event is a file written once, which is what a bucket mounted
+  as a folder can do; LaTeX's scratch space stays on local disk.
 - **One process per work root.** `WEB_CONCURRENCY=1`. The job slots and the
-  worker threads are per-process, and a starting process marks every job still
-  marked `running` as failed — which is right for its own orphans and wrong for
-  a sibling's live jobs.
-- **Request timeouts no longer matter much.** Every call now returns in
-  seconds; only `/v1/cv/render` waits on a compile. What must still outlast
-  `RESUMIX_REQUEST_BUDGET_SECONDS` is the client's willingness to keep
-  polling.
+  worker threads are per-process, and a starting process ends every session
+  that has not ended with a `503` — which is right for its own orphans and
+  wrong for a sibling's live jobs.
+- **A stream lasts as long as its job.** Every other call returns in seconds;
+  only `/v1/cv/render` waits on a compile. A CV's event stream stays open for
+  the minutes the job takes, pinging every 15 s, so a platform request timeout
+  has to outlast `RESUMIX_REQUEST_BUDGET_SECONDS` plus the round in flight —
+  the client reconnects after a cut, but some platforms restart the instance
+  on a timeout.
 - **Concurrency.** Ten jobs in flight is the default; each is mostly idle
   waiting on the provider, but each also compiles LaTeX several times. Size
   memory and CPU for the compiles, not the waiting. Beyond the limit the
   server answers `429` with `Retry-After` immediately rather than queueing a
   caller for minutes.
-- **Scaling.** A job id only means something to the instance that has its
-  directory, so either run one instance, or give them a shared work root and
-  route by request id. This is the one thing the old stateless server did not
-  ask of you.
+- **Scaling.** A running job lives in the instance that started it. Run one
+  instance; with a shared work root, any instance can replay a finished
+  session, but only one may start up and close orphans at a time.
 - **Cold starts** build three HTTP clients and read six files. It is fast, but
   the first request also has to warm the LaTeX font cache in `/tmp`.
 
@@ -373,11 +362,11 @@ the LaTeX log before it goes back.
 |---|---|
 | `401` with `WWW-Authenticate: Bearer` | `RESUMIX_API_TOKEN` is set on the server and the request had no matching token |
 | `413` | A part exceeded `RESUMIX_MAX_PART_BYTES` |
-| `422` `latex_compile [compile]` | The template or the `.tex` does not compile. `GET /logs/{request_id}` has the TeX log tail, which says where |
+| `422` `latex_compile [compile]` | The template or the `.tex` does not compile. The end of the TeX log follows the error line and says where |
 | `429` with `Retry-After` | All job slots are busy — retry, or raise `RESUMIX_MAX_CONCURRENT_JOBS` |
-| `502` `model_output [cv.generate]` from a status poll | The job failed: the model never produced valid output. `GET /logs/{request_id}` shows each failed attempt |
-| `404` `unknown_request` | The id was pruned, never did any work, or another instance served it |
-| `409` `job_not_ready` from `GET /v1/cv/{id}` | The job is still running — poll `/status` until it says `END` |
+| `502` `model_output [cv.generate]` in an `error` event | The job failed: the model never produced valid output. The session's `log` and `usage` events show each failed attempt |
+| `404` `unknown_request` | No CV session by that id: acknowledged, expired, or never started |
+| `409` `job_not_ready` from `DELETE /v1/cv/{id}` | The job is still running; acknowledge it once its last event is in |
 | `504` | The compile, or the whole run, hit its timeout |
 | `"status": "degraded"` on `/healthz` | No `pdflatex` on PATH — CV and render calls will fail |
 

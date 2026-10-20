@@ -97,22 +97,21 @@ class Submit:
     """``resumix submit`` against the in-process server: one posting, analysed,
     approved, and its CV written on this thread."""
 
-    def __init__(self, api, root: Path, *, debug: bool = False) -> None:
+    def __init__(self, api, root: Path) -> None:
         self.workspace = Workspace(root).ensure()
-        config = Config(
+        self.config = Config(
             server_url="http://server.invalid",
-            debug=debug,
             files={name: EXAMPLE / name for name in (
                 "candidate_profile.json", "candidate_data.json",
                 "candidate_preferences.md")},
             images={"candidate_signature.png": EXAMPLE / "candidate_signature.png"},
         )
         console = Console()
-        calls = Calls(api, debug=debug)
-        writer = CvWriter(calls, config)
+        calls = Calls(api)
+        writer = CvWriter(calls, self.config)
         self.working = WorkingProcessor(self.workspace, writer,
                                         build_tracker(self.workspace.root, True), console)
-        self.intake = Intake(calls, config, self.working, Scripted(), console)
+        self.intake = Intake(calls, self.config, self.working, Scripted(), console)
         self.generation = GenerationWorker(self.working, writer, console)
 
     def __call__(self, text: str) -> Path:
@@ -124,26 +123,19 @@ class Submit:
 
 
 @pytest.fixture
-def make_submit(api, tmp_path):
-    """``debug`` picks the log policy."""
-    def build(*, debug: bool = False) -> Submit:
-        return Submit(api, tmp_path / "out", debug=debug)
-    return build
-
-
-@pytest.fixture
-def run(make_submit):
-    return make_submit()
+def run(api, tmp_path):
+    return Submit(api, tmp_path / "out")
 
 
 @pytest.fixture(autouse=True)
-def no_polling_delay(monkeypatch):
-    """The fakes answer instantly; waiting 4s between polls proves nothing."""
-    monkeypatch.setattr("resumix_client.cvjob.POLL_SECONDS", 0)
+def no_waiting(monkeypatch):
+    """The fakes answer instantly: neither side needs to wait between looks."""
+    monkeypatch.setattr("resumix_client.cvjob.RECONNECT_SECONDS", 0)
+    monkeypatch.setattr("resumix_server.api.routers.cv.FOLLOW_SECONDS", 0.01)
 
 
 @needs_latex
-def test_a_posting_becomes_a_real_pdf(run, models):
+def test_a_posting_becomes_a_real_pdf(run, models, tmp_path):
     folder = run(JD_TEXT)
 
     assert folder.parent.parent == run.workspace.cv, (folder / "log.log").read_text()
@@ -154,22 +146,43 @@ def test_a_posting_becomes_a_real_pdf(run, models):
 
     log = (folder / "log.log").read_text()
     assert "writing the CV" in log
-    # The statuses the job went through, reported as they happened. Not
-    # "generate": with instant fakes it lasts microseconds, and whether a poll
-    # lands inside it is a race. "review" spans a real compile, so a poll
-    # always sees it.
-    assert "review" in log and "END" in log
-    assert "server request" not in log, "a quiet run does not pull the server's log"
+    # Every step the job went through: the session keeps them all.
+    assert "   generate" in log and "   review" in log and "   highlight" in log
+    # Filed, so acknowledged: the server keeps nothing of it.
+    assert not any((tmp_path / "work").iterdir())
 
 
 @needs_latex
-def test_debug_pulls_every_request_s_log_off_the_server(make_submit):
-    """The other half of the envelope: /logs/{id} over the same HTTP client."""
-    folder = make_submit(debug=True)(JD_TEXT)
+def test_the_cv_s_own_server_log_and_its_cost_come_with_it(run):
+    """What the server did for the CV streams in with it; the analysis' lines
+    stay in the server's own log."""
+    log = (run(JD_TEXT) / "log.log").read_text()
 
-    log = (folder / "log.log").read_text()
-    assert "jd.analysis" in log and "cv.generate" in log
-    assert "input=" in log, "each model call logs what it spent"
+    assert "[cv.generate]" in log and "[render]" in log
+    assert "jd.analysis" not in log
+    assert "⏱ cv fake-cv" in log, "each model call, as it is made"
+    assert "Σ " in log and "model call(s)" in log, "and the total"
+
+
+@needs_latex
+def test_a_posting_the_server_already_wrote_is_replayed_not_paid_for_twice(run, api, models):
+    """The client died after the server had finished: the next run of the same
+    posting gets the CV that is already there."""
+    from resumix_client.cvjob import session_id
+
+    request_id = session_id(JD_TEXT)
+    api.create_cv(JD_TEXT, request_id=request_id,
+                  profile=(EXAMPLE / "candidate_profile.json").read_bytes(),
+                  candidate_data=(EXAMPLE / "candidate_data.json").read_bytes())
+    *_, (_, last, _) = api.events(request_id)       # followed to the end, never acknowledged
+    assert last == "result"
+    written = len(models["cv"].calls)
+
+    folder = run(JD_TEXT)
+
+    assert folder.parent.parent == run.workspace.cv
+    assert "replaying it" in (folder / "log.log").read_text()
+    assert len(models["cv"].calls) == written
 
 
 @needs_latex
@@ -192,10 +205,8 @@ def test_a_server_error_reaches_the_client_as_a_typed_failure(run, api, models, 
     assert run.working.failures == 1
     assert not any(run.workspace.working.iterdir()), "nothing is filed before the analysis"
     out = capsys.readouterr().out
-    assert "model_output" in out
-    request_id = out.split("request id: ", 1)[1].split()[0]
-    stages = {entry.stage for entry in api.logs(request_id).data.entries}
-    assert "jd.analysis" in stages, "the request id leads to the server's own account"
+    assert "model_output [jd.analysis]" in out
+    assert "request id: " in out, "what the server's own log has it under"
 
 
 def test_the_client_reports_an_unreachable_server_clearly():

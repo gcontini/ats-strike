@@ -84,14 +84,14 @@ def test_any_other_file_goes_to_error_without_a_call(reader, inbox, workspace, a
     assert "not a .txt file" in filed(workspace, "posting.pdf.log").read_text()
 
 
-def test_a_failed_analysis_is_filed_with_the_server_log(reader, inbox, workspace, api, processor):
+def test_a_failed_analysis_is_filed_with_its_cause(reader, inbox, workspace, api, processor):
     api.fail_on = "analyze"
     (inbox / "posting.txt").write_text(JD_TEXT)
     scan(reader)
 
     log = filed(workspace, "posting.txt.log").read_text()
     assert "analyze failed" in log
-    assert "--- server request failed-request" in log
+    assert "request id: failed-request" in log
     assert processor.failures == 1
     assert not any(workspace.working.iterdir())
 

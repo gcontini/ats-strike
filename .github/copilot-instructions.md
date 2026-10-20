@@ -30,28 +30,34 @@ global state); this file is the file map and the day-to-day commands.
   (`is_job_description: bool`, nothing else — the reason lives in the log,
   not the reply).
 - `envelope.py` — `Envelope[T]` (`request_id`, `ok`, `data`, `error` — every
-  endpoint returns this shape, success or failure), `LogEntry`, `RequestLog`.
-  No usage/token fields here: each model call logs its own spend as one line.
+  endpoint returns this shape, success or failure), `LogEntry`. No
+  usage/token fields here.
+- `events.py` — the session a CV job streams: `EVENT_PAYLOADS` (type →
+  payload: `status` `CVStatus`, `log` `LogEntry`, `usage` `ModelCall`,
+  `result` `CVResult`, `error` `CVFailure`), `TERMINAL_EVENTS`, `TokenUsage`
+  (the run's total), `CVSession` (what `POST /v1/cv` answers), `Cleanup`.
 - `guess.py` — `static_jd_guess(text) -> bool`, the free structural check
   (length band, no binary) both sides can run before paying for anything.
 
-**`server/src/resumix_server/`** — personal data arrives per request and is
-dropped when it ends; a request's own directory is the only thing kept
+**`server/src/resumix_server/`** — personal data arrives per request; a CV
+job's session is the only thing kept
 - `api/app.py` — `create_app()`, the ASGI middleware that mints the request id
-  (filtered: it names a directory) and sets the log collector contextvar, and
-  the startup sweep that fails jobs a dead process left running.
+  (filtered: for a CV it names the session's directory) and sets the run
+  contextvar, and the startup sweep that ends with an `error` event every
+  session a dead process left running.
 - `api/deps.py` — `AppState`, `envelope_for()`/`envelope_of()`, `claim_slot()`,
-  `execute()` (the blocking endpoints: semaphore + threadpool hop + scratch
-  dir + the log on disk afterwards).
-- `api/jobs.py` — the CV worker thread: re-establishes the `Run`, reports each
-  step by rewriting `status.json`, stores the result or the failure.
-- `jobstore.py` — one directory per request under `RESUMIX_WORK_DIR`
-  (`status.json`, `result.json`, `log.json`, `work/`), atomic writes, pruned
-  to the newest 200.
-- `api/routers/{health,jd,cv,letter,logs}.py` — one router per resource.
-  `logs.py` is `GET /logs/{request_id}` against `jobstore.py`'s directory
-  per request under `RESUMIX_WORK_DIR` (newest 200 kept) — the one piece of
-  state the server holds, and it is disposable.
+  `execute()` (the blocking endpoints: semaphore + threadpool hop + a local
+  scratch dir; they keep nothing).
+- `api/jobs.py` — the CV worker thread: re-establishes the `Run`, appends a
+  `status` event per step, ends with `result` or `error` (each with the run's
+  total), on a local scratch dir.
+- `jobstore.py` — a session per CV job under `RESUMIX_WORK_DIR`:
+  `events/<n>.json`, each written once and never changed (so the root can be a
+  bucket mounted as a folder); pruned by age, never while running.
+- `api/routers/{health,jd,cv,letter}.py` — one router per resource. `cv.py`:
+  `POST /v1/cv` (start, or reattach to the session the id already has),
+  `GET /v1/cv/{id}/events` (SSE, `Last-Event-ID`), `DELETE /v1/cv/{id}`
+  (acknowledge), `DELETE /v1/cv?all` (reset), `POST /v1/cv/render`.
 - `api/errors.py` — maps `PipelineError`/`ValidationError`/`openai.APIError`
   to a status and an `ok:false` envelope; never echoes the provider body.
 - `pipeline/cv_generator.py` — `CVGenerator`: write → validate → regenerate
@@ -85,15 +91,17 @@ dropped when it ends; a request's own directory is the only thing kept
   method, `call_llm(role, type, system_prompt, messages)`, which returns a
   pydantic model, `bool` or `str` and retries empty, cut-off or invalid
   replies (3 calls). Every call logs one line with model, duration and
-  input/thinking/output tokens, and adds them to the `Usage` it is handed.
+  input/thinking/output tokens, adds them to the `Usage` it is handed, and
+  reports them to the current `Run` (a CV job's `usage` event and total).
 - `bundle.py` — `ResourceBundle` (impersonal: prompts, template, image assets
   keyed by file name — built once at startup, `with_overrides()` per request) vs.
   `CandidateInputs` (personal: profile and preferences — always per-request,
   never cached, never written to disk). No candidate data: no endpoint takes
   it, because no model reads it.
-- `observability.py` — `Run`/`NullRun`, `current_run` contextvar, `stage()`
+- `observability.py` — `Run`/`NULL_RUN`, `current_run` contextvar, `stage()`
   context manager, the logging handler that turns log records into
-  `LogEntry`s for the run.
+  `LogEntry`s for the run. A CV job's `Run` has a `sink` — its session's
+  append — and a running `total`; other requests' lines go to stdout only.
 
 **`server/resources/`** — the impersonal defaults baked into the image: four
 prompts, `resume.tex.jinja`, `models.toml`, a blank `candidate_signature.png`
@@ -105,14 +113,18 @@ Packaged as `resumix_server.resources` (see `server/pyproject.toml`) so
 **`client/src/resumix_client/`** — your data, a bearer token, no Python
 required to run it (PyInstaller `--onefile`)
 - `api.py` — `ResumixApi` (Protocol) / `HttpApi` (httpx) — the only module
-  that knows the server exists. `ResumixError` carries `request_id` so a
-  caller can fetch what the server did.
+  that knows the server exists. `events()` reads a CV session's SSE stream.
+  `ResumixError` carries `status` (0: no answer came, so a stream can be
+  reopened) and `request_id`.
+- `cvjob.py` — `write_cv()`: the session id (SHA-256 of the posting), start
+  or reattach, follow the events (reconnecting with `Last-Event-ID`), hand the
+  CV to `keep`, *then* acknowledge. `--new` acknowledges first.
 - `config.py` / `discovery.py` — settings resolution, highest precedence
   first: CLI flag → env var → `resumix.toml` → file found next to the
   executable → server default. `CONFIG_KEYS` maps short TOML keys to the
   filenames `discovery.py` looks for.
-- `joblog.py` — `JobLog` (per-job `log.log`, client steps + folded-in server
-  log), `format_entries()` (same rendering, for `resumix logs <id>`).
+- `joblog.py` — `JobLog` (per-job `log.log`: client steps, and a CV's server
+  lines as they stream in).
 - `workspace.py` — `Workspace`: owns the `working/error/discarded/cv` folder
   tree, atomic moves, the daily subfolders. `new_job()` never replaces a
   folder of the same name (a CV may still be written in it). `pending()` and
@@ -133,10 +145,10 @@ required to run it (PyInstaller `--onefile`)
   table for new postings, dropped folders and leftovers in `working/`.
   `watcher.py` runs a foreground loop and the background stages: `q`
   finishes what is running, Ctrl-C stops at once.
-- `modes/{clipboard,watch,submit,submit_raw,analysis,render,logs}.py` — thin:
+- `modes/{clipboard,watch,submit,submit_raw,analysis,render,reset}.py` — thin:
   build the stages and run them (`clipboard` asks r/c/q about leftovers first;
   `submit` writes its CV on the main thread and returns when it is filed), or
-  (for `submit-raw`/`analysis`/`render`/`logs`) call the API directly.
+  (for `submit-raw`/`analysis`/`render`/`reset`) call the API directly.
 - `tracking.py` — `XlsxTracker` (openpyxl, `applications.xlsx`) / `NullTracker`.
 - `ui.py` — `Confirmer` protocol (`PromptConfirmer`, which reads the
   `Keyboard`, / `AutoConfirmer` for `--yes`), the analysis table, the
@@ -154,36 +166,35 @@ required to run it (PyInstaller `--onefile`)
 ## Key contracts & invariants
 
 - **Every response is the same envelope**, success or failure:
-  `{request_id, ok, data, error}`, where `error` is one string. Nothing else
-  rides on it — no logs, no usage — so the common case pays nothing for what
-  it does not ask for.
-- **`GET /logs/{request_id}`** is the only way to see what a request did.
-  Backed by that request's directory under `RESUMIX_WORK_DIR`
-  (`jobstore.py`, newest 200 kept); an id that was pruned, that failed before
-  any work started, or that landed on a different instance, is a `404`. The
-  client fetches it after every call with `--debug`, and always on failure.
-- **Token spend is per model call, not per request.** `models/selector.py`
-  logs one line per call (model, duration, input/thinking/output tokens);
-  there is no aggregate anywhere in the envelope or the contracts.
+  `{request_id, ok, data, error}`, where `error` is one string (a failed
+  compile adds the TeX log tail on the lines after it). Nothing else rides on
+  it — no logs, no usage. The one exception is a CV's event stream.
+- **What a CV job did streams with it**: every log line (`log`), every model
+  call with its tokens (`usage`), and the run's `total` in the last event.
+  Other requests' lines go to stdout (the platform's log) under the request
+  id; there is no endpoint that returns them.
+- **Token spend is counted per model call.** `models/selector.py` logs one
+  line per call and reports it to the `Run`; a CV job's `result`/`error`
+  carries the sum. The envelope never does.
 - **The CV document is one flat dict with no schema** — whatever your LaTeX
   template reads, put it in `candidate_data.json` and it flows through
   untouched. It is `{**what the model wrote, **your candidate_data}`, so your
   own data wins a collision and the model can never replace a real contact
   detail. The client stores it and posts it back to `/v1/cv/render` without
   parsing a field of it.
-- **`POST /v1/cv` is accept-then-poll and takes `candidate_data`.** It answers
-  `202` with a job id; `GET /v1/cv/{id}/status` gives `{status, detail}` (the
-  current step only, no history) and `GET /v1/cv/{id}` gives
-  `{document, tex, pdf_base64}` once it says `END`. The job runs in a detached
-  thread that reports by rewriting `status.json`. `candidate_data` is there
-  because the loop compiles the CV to count its pages — no model is shown it.
+- **`POST /v1/cv` starts a session and takes `candidate_data`.** It answers
+  `202` with `{reattached}`; the session id is the client's `X-Request-Id`
+  (SHA-256 of the posting), so the same posting finds its session again
+  instead of paying twice. `GET /v1/cv/{id}/events` streams it; the client
+  stores the CV and only then `DELETE`s it (409 while running). The job runs
+  in a detached thread that appends events. `candidate_data` is there because
+  the loop compiles the CV to count its pages — no model is shown it.
 - **The LaTeX subprocess is always sandboxed**: shell escape off
   (`-no-shell-escape`, `shell_escape=f`), reads/writes confined to the
   per-request scratch dir (`openin_any=p`/`openout_any=p`), no stdin, a
   timeout. A client can supply the template *and* a whole `.tex` — treat both
-  as hostile input. On a compile failure the TeX log tail goes to the
-  server's own log, not into the error body (it is kilobytes; ask for it via
-  `/logs` if you need it).
+  as hostile input. On a compile failure the TeX log tail, scrubbed of the
+  scratch path, goes to the server's log and after the error line.
 - **`submit` copies its input; `watch` deletes it once handed over.** An inbox
   gets emptied; an argument you named does not disappear.
 - **Concurrency**: one `BoundedSemaphore(RESUMIX_MAX_CONCURRENT_JOBS)`

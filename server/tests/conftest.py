@@ -77,6 +77,12 @@ def app_state(fake_llm, tmp_path, bundle):
     )
 
 
+@pytest.fixture(autouse=True)
+def fast_streams(monkeypatch):
+    """A stream looks for new events every second; the fakes answer at once."""
+    monkeypatch.setattr("resumix_server.api.routers.cv.FOLLOW_SECONDS", 0.01)
+
+
 @pytest.fixture
 def client(app_state):
     """A TestClient over the real app, wired to fake models."""

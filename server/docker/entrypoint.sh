@@ -1,9 +1,10 @@
 #!/bin/sh
 # Container entrypoint for the resumix API server.
 #
-# The server is stateless: it mounts nothing, seeds nothing and writes nothing
-# outside its scratch directory. This script only makes sure that directory
-# exists and is writable before handing over to the command.
+# The server seeds nothing and keeps nothing but its CV sessions, under
+# RESUMIX_WORK_DIR — local, or a volume or bucket mounted there; LaTeX's
+# scratch space is the system temp dir. This script only makes sure the
+# sessions directory exists and is writable before handing over to the command.
 #
 # To run with edited prompts or a different template, mount them and set
 # RESUMIX_RESOURCES; anything missing there falls back to the copy baked
@@ -13,7 +14,7 @@ set -eu
 WORK="${RESUMIX_WORK_DIR:-/tmp/resumix}"
 
 if ! mkdir -p "$WORK" 2>/dev/null; then
-    echo "✗ cannot create the scratch directory $WORK as uid $(id -u):$(id -g)." >&2
+    echo "✗ cannot create the sessions directory $WORK as uid $(id -u):$(id -g)." >&2
     echo "  Set RESUMIX_WORK_DIR to a writable path." >&2
     exit 1
 fi
@@ -24,6 +25,6 @@ if [ -n "${RESUMIX_RESOURCES:-}" ] && [ ! -d "${RESUMIX_RESOURCES}" ]; then
 fi
 
 echo "📦 resources: ${RESUMIX_RESOURCES:-baked into the image}"
-echo "📂 scratch  : $WORK"
+echo "📂 sessions : $WORK"
 
 exec "$@"

@@ -13,9 +13,9 @@ Layers, outermost first:
   ``resources/models.toml``, and ``call_llm`` to ask it.
 - ``bundle`` / ``defaults`` — where the impersonal defaults come from, and the
   per-request split between them and the personal inputs.
-- ``observability`` / ``jobstore`` — the per-request log, including the token
-  spend of every model call, and the state of a running CV job. Both live in
-  one directory per request under ``RESUMIX_WORK_DIR``.
+- ``observability`` / ``jobstore`` — what a CV job says about itself (every
+  log line, every model call and its cost) and where it goes: the job's
+  session, a directory of events under ``RESUMIX_WORK_DIR``.
 
 The wire format lives in :mod:`resumix_contracts`, which both this and the
 client depend on; neither imports the other.

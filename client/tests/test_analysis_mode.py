@@ -93,28 +93,16 @@ def test_a_missing_posting_stops_before_the_server(config, api, tmp_path):
     assert api.calls == []
 
 
-def test_a_failure_is_reported_on_stderr_with_the_server_log(posting, config, api, tmp_path,
-                                                             capsys):
+def test_a_failure_is_reported_on_stderr_with_its_request(posting, config, api, tmp_path,
+                                                          capsys):
     api.fail_on = "analyze"
     assert analysis_mode.run(config, posting, tmp_path / "out", output_format="folder") == 1
 
     captured = capsys.readouterr()
     assert captured.out == ""
-    assert "failed-request" in captured.err
-    assert "--- server request failed-request" in captured.err
+    assert "analyze failed" in captured.err
+    assert "request id: failed-request" in captured.err
     assert not (tmp_path / "out").exists()
-
-
-def test_debug_puts_the_server_log_on_stderr_and_keeps_stdout_json(posting, config, api,
-                                                                   tmp_path, capsys):
-    from dataclasses import replace
-
-    analysis_mode.run(replace(config, debug=True), posting, tmp_path / "out")
-
-    captured = capsys.readouterr()
-    assert JDAnalysis.model_validate_json(captured.out) == analysis()
-    assert "--- server request test-request" in captured.err
-    assert api.calls == ["analyze", "logs"]
 
 
 def test_out_defaults_to_incoming_under_the_data_dir(posting, tmp_path, monkeypatch, capsys):

@@ -6,7 +6,11 @@ log_project   = "serverless-eu-central-1-<uuid>"
 environment = {
   MODEL_BASE_URL = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
   TZ             = "Europe/Rome"
+  # The sessions bucket, where main.tf mounts it.
+  RESUMIX_WORK_DIR = "/mnt/resumix"
   # RESUMIX_CV_MODEL = "qwen-max"
+  # Days a CV session nobody acknowledged stays in the bucket.
+  # RESUMIX_SESSION_TTL_DAYS = "1"
 }
 
 secrets = {

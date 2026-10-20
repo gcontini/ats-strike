@@ -33,7 +33,7 @@ flowchart TD
     VERDICT -->|"no"| HL
     LAST --> HL["<b>highlight</b><br/>highlight model, **bold** markers"]
 
-    HL --> FINAL["final render, kept"] --> FIN(["<b>END</b><br/>document · tex · pdf"])
+    HL --> FINAL["final render, kept"] --> FIN(["<b>result</b><br/>document · tex · pdf"])
 ```
 
 Four things about that picture are deliberate:
@@ -82,9 +82,10 @@ produce schema-valid content at all.
 
 ## What the client sees while it runs
 
-`GET /v1/cv/{id}/status` answers with the step running now and one line about
-the step that just finished. There is no history — poll it, print the status
-when it changes, print `detail` when you want to know what it cost.
+The job's session streams a `status` event as each step starts, with one line
+about the step that just finished, between the `log` and `usage` events that
+say what each model call did and cost. Print the status as it comes; print
+`detail` when you want to know what the step before cost.
 
 ```mermaid
 stateDiagram-v2
@@ -97,13 +98,13 @@ stateDiagram-v2
     page_check --> highlight: nothing wrong,<br/>or out of attempts
     re_generate --> generate
     highlight --> FIN
-    state "END" as FIN
+    state "result" as FIN
     FIN --> [*]
 ```
 
 The render is part of whichever step is running — `review` in the first round,
 `page_check` after it has passed — because it takes about a second, and a
-status nobody can poll in time is not worth reporting.
+step that short is not worth a status of its own.
 
 `re_generate` is spelled `re-generate` on the wire. `detail` is written for a
 person and may span several lines: a rejected CV is followed by everything
@@ -116,9 +117,10 @@ about to be given.
  "detail": "generation finished, tokens used=5341, thinking=610, elapsed=26.6s"}
 ```
 
-A job that failed answers *here* with the status and cause the work produced —
-`502`, `504`, `422` — so a poll is the only call a client has to handle
-failure on.
+The session ends with a `result` event — the document, its LaTeX and its PDF,
+and what the whole run cost — or, for a job that failed, an `error` event with
+the status and cause the work produced (`502`, `504`, `422`) and what it cost
+anyway. Either way it is the last thing the stream carries.
 
 ## The condense instruction
 

@@ -8,18 +8,23 @@ from datetime import datetime
 import pytest
 
 from resumix_contracts import (
+    EVENT_PAYLOADS,
+    TERMINAL_EVENTS,
+    CVFailure,
+    CVResult,
     CVStatus,
     Envelope,
     JDAnalysis,
     LogEntry,
+    ModelCall,
     RenderedCV,
-    RequestLog,
+    TokenUsage,
     static_jd_guess,
 )
 
 # --- what a CV job reports and returns --------------------------------------
-def test_a_status_carries_the_current_step_and_nothing_else():
-    """No history: a poll answers where the job is, not where it has been."""
+def test_a_status_carries_one_step_and_nothing_else():
+    """Each step is its own event: the history is the session, not the status."""
     assert set(CVStatus.model_fields) == {"status", "detail"}
 
 
@@ -38,6 +43,13 @@ def test_a_detail_may_span_lines():
 def test_an_unknown_status_is_refused():
     with pytest.raises(ValueError):
         CVStatus(status="thinking-about-it")
+
+
+def test_the_end_is_an_event_not_a_status():
+    """A job ends with its result or its error, which carry what a status
+    could not: the CV, the cause, the bill."""
+    with pytest.raises(ValueError):
+        CVStatus(status="END")
 
 
 def test_a_rendered_cv_carries_the_pdf_back_as_bytes():
@@ -65,7 +77,8 @@ def test_an_envelope_round_trips_with_its_payload():
 
 
 def test_an_envelope_carries_only_the_payload():
-    """Logs travel on /logs/{id}, so nothing large rides on every reply."""
+    """Logs travel as a CV job's events or stay in the server's log, so
+    nothing large rides on every reply."""
     assert set(Envelope[JDAnalysis].model_fields) == {"request_id", "ok", "data", "error"}
 
 
@@ -78,12 +91,40 @@ def test_a_failure_says_why_in_one_line():
     assert "cv.generate" in envelope.error
 
 
-def test_a_request_log_round_trips():
-    log = RequestLog(request_id="abc", entries=[
-        LogEntry(ts=datetime(2026, 1, 15, 9, 0), level="INFO", stage="cv.generate",
-                 message="gpt-fake 1.2s | prompt=10, completion=20"),
-    ])
-    assert RequestLog.model_validate_json(log.model_dump_json()) == log
+# --- the events a CV job streams --------------------------------------------
+def test_every_event_type_names_its_payload():
+    assert set(EVENT_PAYLOADS) == {"status", "log", "usage", "result", "error"}
+    assert set(TERMINAL_EVENTS) == {"result", "error"}
+
+
+@pytest.mark.parametrize("payload", [
+    CVStatus(status="review", detail="generation finished"),
+    LogEntry(ts=datetime(2026, 1, 15, 9, 0), level="INFO", stage="cv.generate",
+             message="gpt-fake 1.2s | input=10, output=20"),
+    ModelCall(role="cv", model="gpt-fake", seconds=1.2, input_tokens=10,
+              thinking_tokens=0, output_tokens=20),
+])
+def test_an_event_round_trips_as_json(payload):
+    kind = next(k for k, model in EVENT_PAYLOADS.items() if isinstance(payload, model))
+    assert EVENT_PAYLOADS[kind].model_validate_json(payload.model_dump_json()) == payload
+
+
+def test_a_result_carries_the_cv_and_the_bill():
+    result = CVResult(
+        cv=RenderedCV.from_bytes(tex="x", pdf=b"%PDF-1.7", document={"name": "Jordan"}),
+        detail="done, 2 model calls",
+        total=TokenUsage(calls=2, seconds=3.5, input_tokens=100, output_tokens=40),
+    )
+    back = CVResult.model_validate_json(result.model_dump_json())
+    assert back.cv.pdf_bytes() == b"%PDF-1.7"
+    assert back.total.calls == 2
+
+
+def test_a_failure_still_carries_the_bill():
+    """A user who paid for four attempts is entitled to see all four."""
+    failure = CVFailure(http_status=502, error="model_output [cv.generate]: no valid CV",
+                        total=TokenUsage(calls=4))
+    assert CVFailure.model_validate_json(failure.model_dump_json()).total.calls == 4
 
 
 # --- the free JD check ------------------------------------------------------

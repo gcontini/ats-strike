@@ -57,10 +57,10 @@ class Slow(ByFirstLine):
         self.writing = threading.Event()
         self.release = threading.Event()
 
-    def cv_status(self, request_id):
+    def events(self, request_id, *, after=0):
         self.writing.set()
         assert self.release.wait(DEADLINE), "never released"
-        return super().cv_status(request_id)
+        yield from super().events(request_id, after=after)
 
 
 def posting(company):
@@ -194,9 +194,9 @@ def test_a_failed_analysis_makes_the_exit_code_1(config, workspace, typist):
     api = ByFirstLine(fail_on="analyze")
     clipboard = Clipboard()
     clipboard.copy(posting("Alpha"))
-    thread, result = in_background(build(api, config, workspace, Keyboard(typist),
-                                         ScriptedConfirmer(), clipboard))
-    wait_until(lambda: "logs" in api.calls)
+    watcher = build(api, config, workspace, Keyboard(typist), ScriptedConfirmer(), clipboard)
+    thread, result = in_background(watcher)
+    wait_until(lambda: watcher.working.failures == 1)
     typist.type("q")
     thread.join(DEADLINE)
     assert result["code"] == 1

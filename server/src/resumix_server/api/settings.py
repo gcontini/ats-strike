@@ -31,8 +31,10 @@ class Settings:
 
     #: Bearer token clients must present. Unset means auth is off.
     api_token: Optional[str] = None
-    #: Parent of the per-request scratch directories.
+    #: Where the CV sessions are kept: one directory each.
     work_root: Path = Path(tempfile.gettempdir())
+    #: Days a session nobody acknowledged is kept after its last event.
+    session_ttl_days: float = 1.0
     #: Cap on any single multipart part (a profile is a few KB; a signature tens).
     max_part_bytes: int = 2_000_000
     #: Whole requests allowed to run at once; the rest get 429.
@@ -54,6 +56,7 @@ class Settings:
         return cls(
             api_token=os.getenv("RESUMIX_API_TOKEN") or None,
             work_root=work_root,
+            session_ttl_days=_float("RESUMIX_SESSION_TTL_DAYS", 1.0),
             max_part_bytes=_int("RESUMIX_MAX_PART_BYTES", 2_000_000),
             max_concurrent_jobs=_int("RESUMIX_MAX_CONCURRENT_JOBS", 10),
             latex_timeout=_float("RESUMIX_LATEX_TIMEOUT", 120.0),

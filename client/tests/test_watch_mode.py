@@ -124,10 +124,10 @@ def test_q_lets_the_generation_in_hand_finish(config, workspace, inbox, typist):
             self.writing = threading.Event()
             self.release = threading.Event()
 
-        def cv_status(self, request_id):
+        def events(self, request_id, *, after=0):
             self.writing.set()
             assert self.release.wait(DEADLINE), "never released"
-            return super().cv_status(request_id)
+            yield from super().events(request_id, after=after)
 
     api = Slow()
     (inbox / "a.txt").write_text(posting("Yes Corp", "YES"))

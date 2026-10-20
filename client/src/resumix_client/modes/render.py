@@ -4,8 +4,11 @@ The only mode that needs neither your profile nor a job description: it is
 the one to reach for after hand-editing a ``cv_*.json`` or a ``cv_*.tex``.
 
 The ``.json`` is one flat object — whatever the model wrote with your own
-candidate data over the top — which is exactly what ``GET /v1/cv/{id}`` sent
+candidate data over the top — which is exactly what a CV job's result held
 and what the job folder holds.
+
+A failed render is nearly always a LaTeX error, and the server's answer
+carries the end of the TeX log, which says where.
 """
 
 from __future__ import annotations
@@ -15,7 +18,6 @@ from pathlib import Path
 
 from ..api import HttpApi, ResumixError, read_text
 from ..config import Config
-from ..joblog import format_entries
 from ..ui import fail
 
 
@@ -39,7 +41,7 @@ def run(config: Config, source: Path, *, output: Path | None = None) -> int:
         else:
             fail(f"render takes a .tex or a .json file, not {source.suffix or 'a directory'}")
     except ResumixError as exc:
-        fail(f"{exc}{_server_log(api, exc.request_id)}")
+        fail(f"{exc}")
     except ValueError as exc:
         fail(f"{source.name} is not valid JSON: {exc}")
 
@@ -48,13 +50,3 @@ def run(config: Config, source: Path, *, output: Path | None = None) -> int:
     target.write_bytes(rendered.pdf_bytes())
     print(f"✅ {target}", flush=True)
     return 0
-
-
-def _server_log(api: HttpApi, request_id: str | None) -> str:
-    """A failed render is nearly always a LaTeX error; the log holds it."""
-    if not request_id:
-        return ""
-    try:
-        return "\n" + format_entries(request_id, api.logs(request_id).data.entries)
-    except ResumixError:
-        return f"\n(the server log for {request_id} could not be fetched)"

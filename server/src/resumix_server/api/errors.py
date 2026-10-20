@@ -3,8 +3,8 @@
 One table, one handler, one walk: :func:`describe_failure` is the single place
 that answers "what does this exception produce on the wire", so a new failure
 type is added once rather than once per question asked about it. A request
-that fails gets the same body shape as one that succeeds: a cause and the
-request id that unlocks the full log of the attempts that led there.
+that fails gets the same body shape as one that succeeds: a cause, and the
+request id its lines carry in the server's log.
 """
 
 from __future__ import annotations
@@ -85,10 +85,14 @@ _PIPELINE_STATUS = {
 
 def _pipeline_message(exc: PipelineError) -> str:
     """``kind [stage]: message (detail)`` — the stage and the detail are what
-    tell a reader which of several attempts failed, and on which file."""
+    tell a reader which of several attempts failed, and on which file. A
+    failed compile adds the end of the TeX log on the lines after it."""
     where = f" [{exc.stage}]" if exc.stage else ""
     detail = "".join(f" {key}={value}" for key, value in exc.detail.items())
-    return f"{exc.kind}{where}: {exc}{f' ({detail.strip()})' if detail else ''}"
+    message = f"{exc.kind}{where}: {exc}{f' ({detail.strip()})' if detail else ''}"
+    if isinstance(exc, LatexCompileError) and exc.log_tail:
+        return f"{message}\n{exc.log_tail}"
+    return message
 
 
 def _provider_message(exc: APIError) -> str:
@@ -129,11 +133,7 @@ def describe_failure(exc: Exception) -> Tuple[int, str]:
 
 
 def failure_response(request_id: str, status: int, message: str) -> JSONResponse:
-    """The failure envelope for one request id.
-
-    Takes the id rather than reading the current one, because a poll reporting
-    a job's failure must carry the *job's* id, not the poll's.
-    """
+    """The failure envelope for one request id."""
     envelope = Envelope[str](request_id=request_id, ok=False, error=message)
     headers = {"X-Request-Id": request_id}
     if status == 429:

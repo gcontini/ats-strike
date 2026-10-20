@@ -16,8 +16,8 @@ from . import __version__
 from .config import COVER_LETTER_MODES, ConfigError, load_config
 from .modes import analysis as analysis_mode
 from .modes import clipboard as clipboard_mode
-from .modes import logs as logs_mode
 from .modes import render as render_mode
+from .modes import reset as reset_mode
 from .modes import submit as submit_mode
 from .modes import submit_raw as submit_raw_mode
 from .modes import watch as watch_mode
@@ -43,7 +43,11 @@ examples:
   resumix submit-raw posting.txt -o cv.pdf -o cv.json
   resumix analysis --in posting.txt --output-format folder
   resumix render ~/applications/cv/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
-  resumix logs 0f9c1a7b-2f4e-4f2a-9a31-5c0d2f1e8b44
+  resumix reset
+
+a CV is a session on the server, kept until its files are saved: running the
+same posting again replays it instead of paying for a new one. --new writes
+it again; reset drops every session the server keeps.
 """
 
 
@@ -68,8 +72,6 @@ def global_options() -> argparse.ArgumentParser:
                         help="Presence penalty override for the CV and the cover letter.")
     common.add_argument("--pages", type=int, default=argparse.SUPPRESS,
                         help="Page limit the CV must fit (default: 2).")
-    common.add_argument("-d", "--debug", action="store_true", default=argparse.SUPPRESS,
-                        help="Fetch the server's log for every call, not only failures.")
     common.add_argument("-v", "--verbose", action="store_true", default=argparse.SUPPRESS,
                         help="Print what the server reports about each step it finishes.")
     return common
@@ -87,6 +89,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     modes = parser.add_subparsers(dest="mode", required=True, metavar="MODE")
 
+    def add_new_flag(sub: argparse.ArgumentParser) -> None:
+        sub.add_argument("--new", action="store_true",
+                         help="Write the CV again even if the server still has a run "
+                              "for the same posting (by default it is replayed).")
+
     def add_job_flags(sub: argparse.ArgumentParser, *,
                       yes_help: str = "Submit every valid posting without asking.") -> None:
         sub.add_argument("--out", type=Path,
@@ -97,6 +104,7 @@ def build_parser() -> argparse.ArgumentParser:
         sub.add_argument("--yes", action="store_true", help=yes_help)
         sub.add_argument("--no-xlsx", action="store_true",
                          help="Do not record delivered CVs in applications.xlsx.")
+        add_new_flag(sub)
 
     clip = modes.add_parser("clipboard", help="Watch the clipboard for postings.",
                               parents=[common])
@@ -117,9 +125,6 @@ def build_parser() -> argparse.ArgumentParser:
     submit.add_argument("analysis", nargs="?", type=Path,
                         help="Its analysis.json, if you have one: skip detection "
                              "and analysis and go straight to the CV.")
-    submit.add_argument("--resume", metavar="REQUEST_ID",
-                        help="Pick up a CV job already in progress instead of "
-                             "submitting a new one (starts from its /status).")
     add_job_flags(submit)
 
     raw = modes.add_parser(
@@ -132,9 +137,7 @@ def build_parser() -> argparse.ArgumentParser:
                      metavar="FILE",
                      help="Write one output here: .pdf, .json or .tex. Repeatable. "
                           "Without it, a PDF named after the job description.")
-    raw.add_argument("--resume", metavar="REQUEST_ID",
-                     help="Pick up a CV job already in progress instead of "
-                          "submitting a new one (starts from its /status).")
+    add_new_flag(raw)
 
     analysis = modes.add_parser("analysis", help="Analyse one job description. Nothing else.",
                                 parents=[common])
@@ -155,9 +158,8 @@ def build_parser() -> argparse.ArgumentParser:
     render.add_argument("--output", type=Path,
                         help="Where to write the PDF (default: beside the input).")
 
-    logs = modes.add_parser("logs", help="Print a past request's server log.",
-                            parents=[common])
-    logs.add_argument("request_id", help="The request id an envelope or an error reported.")
+    modes.add_parser("reset", help="Delete every CV session the server still keeps.",
+                     parents=[common])
 
     # No parents=[common]: it reads no configuration and takes no options.
     modes.add_parser("version", help="Print the version and exit.")
@@ -184,7 +186,6 @@ def main(argv: Optional[List[str]] = None) -> int:
                 "presence_penalty": flag("presence_penalty"),
                 "pages": flag("pages"),
                 "cover_letter": getattr(args, "cover_letter", None),
-                "debug": flag("debug"),
                 "verbose": flag("verbose"),
             },
         )
@@ -196,25 +197,24 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(f"version {__version__}", file=sys.stderr)
 
     try:
-        if args.mode == "logs":
-            return logs_mode.run(config, args.request_id)
+        if args.mode == "reset":
+            return reset_mode.run(config)
         if args.mode == "render":
             return render_mode.run(config, args.source, output=args.output)
         if args.mode == "submit-raw":
-            return submit_raw_mode.run(config, args.jd_file, args.output, resume=args.resume)
+            return submit_raw_mode.run(config, args.jd_file, args.output, new=args.new)
         if args.mode == "analysis":
             out = args.out or (flag("data_dir") or Path.cwd()) / "incoming"
             return analysis_mode.run(config, args.jd_file, out,
                                      output_format=args.output_format)
 
-        common = {"assume_yes": args.yes, "track": not args.no_xlsx}
+        common = {"assume_yes": args.yes, "track": not args.no_xlsx, "new": args.new}
         out = args.out or Path.cwd()
         if args.mode == "clipboard":
             return clipboard_mode.run(config, out, **common)
         if args.mode == "watch":
             return watch_mode.run(config, args.inbox, out, **common)
-        return submit_mode.run(config, args.jd_file, out, analysis=args.analysis,
-                               resume=args.resume, **common)
+        return submit_mode.run(config, args.jd_file, out, analysis=args.analysis, **common)
     except ConfigError as exc:
         fail(str(exc))
     except KeyboardInterrupt:

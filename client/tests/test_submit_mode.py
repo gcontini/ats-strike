@@ -39,7 +39,7 @@ def test_the_cv_is_filed_before_it_returns(served, config, jd, workspace):
     assert code == 0
     assert entries(workspace.cv) == ["Acme_Corp_Head_of_IT"]
     assert not any(workspace.working.iterdir())
-    assert served.calls == ["detect", "analyze", "create_cv", "cv_status", "cv_result"]
+    assert served.calls == ["detect", "analyze", "create_cv", "events", "acknowledge"]
     assert jd.read_text() == JD_TEXT, "a file named on the command line is not an inbox"
 
 
@@ -49,7 +49,7 @@ def test_an_analysis_file_skips_detection_and_analysis(served, config, jd, works
 
     assert submit.run(config, jd, workspace.root, analysis=given, assume_yes=True) == 0
 
-    assert served.calls == ["create_cv", "cv_status", "cv_result"]
+    assert served.calls == ["create_cv", "events", "acknowledge"]
     [delivered] = workspace.cv.glob("*/Acme_Corp_Head_of_IT")
     kept = JDAnalysis.model_validate_json((delivered / "analysis.json").read_text())
     assert kept.match_percentage == 64, "the analysis given, not a new one"
@@ -69,9 +69,10 @@ def test_an_invalid_analysis_file_stops_before_anything(served, config, jd, work
     assert "not a valid analysis" in capsys.readouterr().err
 
 
-def test_resume_picks_up_the_job_instead_of_starting_one(served, config, jd, workspace):
-    assert submit.run(config, jd, workspace.root, assume_yes=True, resume="earlier") == 0
-    assert "create_cv" not in served.calls
+def test_new_drops_the_run_the_server_has_first(served, config, jd, workspace):
+    assert submit.run(config, jd, workspace.root, assume_yes=True, new=True) == 0
+    assert served.calls == ["detect", "analyze", "acknowledge", "create_cv", "events",
+                            "acknowledge"]
     assert entries(workspace.cv) == ["Acme_Corp_Head_of_IT"]
 
 

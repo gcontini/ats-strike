@@ -161,6 +161,6 @@ the rows below are its JD-analysis runs. Settings named in the old keys:
 Add a row under the role, with the provider, the exact model id, the settings
 that differ from `models.toml` (including any `RESUMIX_<ROLE>_*` override), the
 date and the outcome. For a failure, the error name from the job log
-(`provider_error: … PermissionDeniedError`) or the server log
-(`resumix logs <request id>`) belongs in the notes; the cause belongs there
+(`provider_error: … PermissionDeniedError`) or the server's own line for it
+(a CV's `log.log` carries every one) belongs in the notes; the cause belongs there
 once it is known. Never record keys, workspace URLs or request payloads.

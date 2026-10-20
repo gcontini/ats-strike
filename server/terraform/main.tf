@@ -32,6 +32,66 @@ resource "alicloud_cr_repo" "main" {
 
 
 # ---------------------------------------------------------------------------
+# Sessions — an OSS bucket the function mounts as a folder.
+#
+# A CV session is a directory of event files there, so it outlives the
+# instance that wrote it. The server sees a plain directory and does not know
+# it is OSS; each event is its own file, written once, because an object
+# cannot be appended to.
+# ---------------------------------------------------------------------------
+
+resource "alicloud_oss_bucket" "sessions" {
+  # Names are global across every account. New buckets are private.
+  bucket = "resumix-${data.alicloud_account.current.id}-${var.region}"
+}
+
+# The function's own role. The mount is all it is used for: FC delivers the
+# logs and pulls the image with its service-linked role, AliyunServiceRoleForFC.
+resource "alicloud_ram_role" "function" {
+  role_name   = "resumix-fc"
+  description = "resumix function: its sessions bucket"
+  assume_role_policy_document = jsonencode({
+    Version = "1"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = { Service = ["fc.aliyuncs.com"] }
+    }]
+  })
+}
+
+# What an OSS mount needs to read and write, and nothing else.
+resource "alicloud_ram_policy" "sessions" {
+  policy_name = "resumix-fc-sessions"
+  description = "Read and write the resumix sessions bucket"
+  policy_document = jsonencode({
+    Version = "1"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["oss:ListObjects"]
+        Resource = ["acs:oss:*:*:${alicloud_oss_bucket.sessions.bucket}"]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "oss:GetObject", "oss:PutObject", "oss:DeleteObject",
+          "oss:ListParts", "oss:AbortMultipartUpload",
+        ]
+        Resource = ["acs:oss:*:*:${alicloud_oss_bucket.sessions.bucket}/*"]
+      },
+    ]
+  })
+}
+
+resource "alicloud_ram_role_policy_attachment" "sessions" {
+  role_name   = alicloud_ram_role.function.role_name
+  policy_name = alicloud_ram_policy.sessions.policy_name
+  policy_type = "Custom"
+}
+
+
+# ---------------------------------------------------------------------------
 # Function — Function Compute 3.0, custom container.
 # ---------------------------------------------------------------------------
 
@@ -88,13 +148,23 @@ resource "alicloud_fcv3_function" "main" {
   runtime       = "custom-container"
   # Required by the API, never called by a custom container.
   handler = "index.handler"
-  role    = "acs:ram::${data.alicloud_account.current.id}:role/aliyunfcdefaultrole"
+  role    = alicloud_ram_role.function.arn
 
-  cpu                  = 0.35
-  memory_size          = 512
-  disk_size            = 512
-  timeout              = 1200
-  idle_timeout         = 900
+  cpu = 0.35
+  # The OSS mount runs inside the instance; below about 512 MB it can fail
+  # with "Transport endpoint is not connected".
+  memory_size = 1024
+  disk_size   = 512
+  # Also how long one event stream can stay open. A CV job checks its 1200 s
+  # budget only between attempts, so it can run past it, and the stream that
+  # follows it should not be cut first.
+  timeout = 1800
+  # Delayed release: the instance stays up this long after its last request,
+  # which is what keeps a CV job running while no client is following it.
+  idle_timeout = 900
+  # Above 1, and with the health check below: otherwise FC restarts the
+  # instance whenever a client disconnects mid-request (a 499), which would
+  # kill the CV job that client is about to reconnect to.
   instance_concurrency = 200
   # The model providers are on the public internet.
   internet_access = true
@@ -133,6 +203,24 @@ resource "alicloud_fcv3_function" "main" {
     enable_instance_metrics = true
     log_begin_rule          = "DefaultRegex"
   }
+
+  # The internal endpoint: bucket and function are in the same region, and
+  # the traffic never leaves Alibaba's network. A URL, scheme included (FC
+  # rejects a bare host), and HTTPS: a session holds your CV and contact details.
+  # The server writes here only when RESUMIX_WORK_DIR in terraform.tfvars
+  # names mount_dir.
+  oss_mount_config {
+    mount_points {
+      bucket_name = alicloud_oss_bucket.sessions.bucket
+      bucket_path = "/"
+      endpoint    = "https://oss-${var.region}-internal.aliyuncs.com"
+      mount_dir   = "/mnt/resumix"
+      read_only   = false
+    }
+  }
+
+  # The role must be able to reach the bucket before FC mounts it.
+  depends_on = [alicloud_ram_role_policy_attachment.sessions]
 }
 
 # The trigger is bound to the alias rather than the function, so the alias can

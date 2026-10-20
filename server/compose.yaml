@@ -23,17 +23,17 @@ services:
       # can spend your tokens, which is only safe on a private network.
       RESUMIX_API_TOKEN: "${RESUMIX_API_TOKEN:-}"
       RESUMIX_MAX_CONCURRENT_JOBS: "${RESUMIX_MAX_CONCURRENT_JOBS:-10}"
-      # Scratch space, request logs and finished CV jobs. This is the
+      # CV sessions, kept until the client has saved its CV. This is the
       # tmpfs below, so a restart loses them; mount a volume here instead
-      # if you want a CV to outlive the container that wrote it.
+      # if you want a session to outlive the container that wrote it.
       RESUMIX_WORK_DIR: /tmp/resumix
 
     ports:
       - "${RESUMIX_PORT:-8080}:8080"
 
-    # Nothing is written outside the scratch directory, so the filesystem can
-    # be read-only. exec on the tmpfs: pdflatex writes and then reads back its
-    # font cache there.
+    # Nothing is written outside /tmp, so the filesystem can be read-only.
+    # exec on the tmpfs: pdflatex writes and then reads back its font cache
+    # there.
     read_only: true
     tmpfs:
       - /tmp:size=512m,exec

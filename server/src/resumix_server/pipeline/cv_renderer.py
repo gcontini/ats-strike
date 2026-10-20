@@ -261,15 +261,15 @@ class CVRenderer:
             ) from exc
 
         if result.returncode != 0:
-            # The tail goes to the log, not into the error body: it is
-            # kilobytes of TeX chatter, wanted only when someone is actually
-            # debugging. GET /logs/{request_id} is where they ask for it.
-            logger.error("  pdflatex failed for %s:\n%s", tex_path.name,
-                         self._scrub(result.stdout[-4000:] + result.stderr[-2000:]))
+            # The tail goes with the error as well as to the log: a failed
+            # render is nearly always this, and only the TeX log says where.
+            tail = self._scrub(result.stdout[-4000:] + result.stderr[-2000:])
+            logger.error("  pdflatex failed for %s:\n%s", tex_path.name, tail)
             raise LatexCompileError(
                 f"pdflatex failed for {tex_path.name}",
                 stage="compile",
                 detail={"file": tex_path.name},
+                log_tail=tail,
             )
 
         pdf_path = self.work_dir / f"{tex_path.stem}.pdf"

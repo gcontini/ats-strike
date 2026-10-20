@@ -18,12 +18,14 @@ from openai import APIError
 from pydantic import ValidationError
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from ..jobstore import SAFE_ID, STATUS
+from resumix_contracts import CVFailure, TokenUsage
+
+from ..jobstore import SAFE_ID
 from ..observability import LOGGER_ROOT, Run, configure_logging, use_run
 from ..pipeline.errors import PipelineError
 from .deps import AppState, require_token
 from .errors import ApiError, handle_exception
-from .routers import cv, health, jd, letter, logs
+from .routers import cv, health, jd, letter
 from .settings import Settings
 
 logger = logging.getLogger(f"{LOGGER_ROOT}.api")
@@ -39,9 +41,10 @@ class RequestContextMiddleware:
     to — must see, and that only holds reliably when no task boundary sits in
     between.
 
-    An inbound ``X-Request-Id`` is honoured only if it looks like one. The id
-    names a directory under the work root, so anything else is a way to write
-    where the server was not asked to.
+    An inbound ``X-Request-Id`` is honoured only if it looks like one. For a
+    CV job the client derives it from the posting, and it names the session's
+    directory under the work root, so anything else is a way to write where
+    the server was not asked to.
     """
 
     def __init__(self, app: ASGIApp) -> None:
@@ -113,8 +116,6 @@ def create_app(
 
     app.include_router(health.router, tags=["health"])
     guarded = [Depends(require_token)]
-    # Logs can quote prompts, so they are behind the same token as the rest.
-    app.include_router(logs.router, tags=["logs"], dependencies=guarded)
     app.include_router(cv.router, prefix=API_PREFIX, tags=["cv"], dependencies=guarded)
     app.include_router(jd.router, prefix=API_PREFIX, tags=["jd"], dependencies=guarded)
     app.include_router(letter.router, prefix=API_PREFIX, tags=["letter"], dependencies=guarded)
@@ -124,20 +125,21 @@ def create_app(
 def _fail_orphans(state: AppState) -> None:
     """Close jobs a previous process left running.
 
-    A fresh process owns no worker threads, so a directory that still says
-    ``running`` is provably orphaned — by a restart, a crash or a SIGKILL,
-    which a shutdown hook would not have caught. Run one instance per work
-    root: the semaphore and the workers are per-process, so a second one would
-    declare a live job dead.
+    A fresh process owns no worker threads, so a session that has not ended
+    is provably orphaned — by a restart, a crash, a SIGKILL or an instance
+    released mid-job, none of which a shutdown hook would have caught. It
+    ends with an error, so a client following it stops waiting. Run one
+    instance per work root: the semaphore and the workers are per-process, so
+    a second one would declare a live job dead. What the job had spent is not
+    known any more; the total says nothing.
     """
     for job in state.jobs.all():
-        record = job.read(STATUS) or {}
-        if record.get("state") != "running":
+        if not job.running:
             continue
-        job.write(STATUS, {**record, "state": "failed", "http_status": 503,
-                           "error": "unavailable: the server restarted while this "
-                                    "job was running"})
-        job.drop_work()
+        job.append("error", CVFailure(
+            http_status=503, total=TokenUsage(),
+            error="unavailable: the server restarted while this job was running",
+        ).model_dump(mode="json"))
         logger.warning("  ⚠ job %s was left running by a previous process", job.request_id)
 
 

@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 import os
 import threading
-import time
 from pathlib import Path
 
 import httpx
@@ -137,25 +136,49 @@ def completion(model: str, content: str, finish_reason: str = "stop") -> dict:
     }
 
 
-def wait_for_job(client, request_id: str, *, timeout: float = 10.0):
-    """Poll a CV job until it settles. Returns the last response, 2xx or not.
-
-    A job may finish before the first poll — the fakes answer instantly — and
-    that is fine: the state is a file, and reading it consumes nothing.
-    """
-    deadline = time.monotonic() + timeout
-    while True:
-        response = client.get(f"/v1/cv/{request_id}/status")
-        if response.status_code != 200:
-            return response
-        if response.json()["data"]["status"] == "END":
-            return response
-        assert time.monotonic() < deadline, f"job {request_id} never finished"
-        time.sleep(0.02)
-
-
-def start_cv(client, parts, **data):
-    """POST /v1/cv and return the job id."""
-    response = client.post("/v1/cv", data={"jd_text": "x" * 1200, **data}, files=parts)
+def start_cv(client, parts, *, request_id: str | None = None, **data) -> str:
+    """POST /v1/cv and return the session id."""
+    headers = {"X-Request-Id": request_id} if request_id else {}
+    response = client.post("/v1/cv", data={"jd_text": "x" * 1200, **data}, files=parts,
+                           headers=headers)
     assert response.status_code == 202, response.text
     return response.json()["request_id"]
+
+
+def read_events(client, request_id: str, *, after: int = 0) -> list[tuple[int, str, dict]]:
+    """Follow a session's stream to its end: ``[(id, type, data), ...]``.
+
+    The stream ends with the job's last event, so this waits for the job; the
+    fakes answer at once, and a closed gate gives up after ten seconds.
+    """
+    return [event for event in raw_events(client, request_id, after=after)
+            if event[1] != "ping"]
+
+
+def raw_events(client, request_id: str, *, after: int = 0) -> list[tuple[int, str, dict]]:
+    """The same, with each keep-alive comment as a ``(0, "ping", {})``."""
+    headers = {"Last-Event-ID": str(after)} if after else {}
+    events, fields = [], {}
+    with client.stream("GET", f"/v1/cv/{request_id}/events", headers=headers) as response:
+        assert response.status_code == 200, response.read()
+        assert response.headers["content-type"].startswith("text/event-stream")
+        for line in response.iter_lines():
+            if line.startswith(":"):
+                events.append((0, "ping", {}))
+            elif line:
+                name, _, value = line.partition(": ")
+                fields[name] = value
+            elif fields:
+                events.append((int(fields["id"]), fields["event"], json.loads(fields["data"])))
+                fields = {}
+    return events
+
+
+def run_cv(client, parts, **data) -> list[tuple[int, str, dict]]:
+    """Start a CV job and follow it to its end."""
+    return read_events(client, start_cv(client, parts, **data))
+
+
+def of_type(events, kind: str) -> list[dict]:
+    """The payloads of one type of event, in order."""
+    return [data for _, event, data in events if event == kind]

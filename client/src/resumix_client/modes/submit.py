@@ -27,7 +27,7 @@ from ..workspace import Workspace
 
 
 def run(config: Config, jd_file: Path, out: Path, *, analysis: Optional[Path] = None,
-        assume_yes: bool = False, track: bool = True, resume: Optional[str] = None) -> int:
+        assume_yes: bool = False, track: bool = True, new: bool = False) -> int:
     jd_file = Path(jd_file).expanduser()
     if not jd_file.is_file():
         fail(f"no such file: {jd_file}")
@@ -43,9 +43,8 @@ def run(config: Config, jd_file: Path, out: Path, *, analysis: Optional[Path] = 
 
     workspace = Workspace(out).ensure()
     console = Console()
-    calls = Calls(HttpApi(config.server_url, token=config.token, verbose=config.verbose),
-                  debug=config.debug)
-    writer = CvWriter(calls, config, resume=resume)
+    calls = Calls(HttpApi(config.server_url, token=config.token, verbose=config.verbose))
+    writer = CvWriter(calls, config, new=new)
     working = WorkingProcessor(workspace, writer, build_tracker(workspace.root, track), console)
     if assume_yes:
         confirmer: Confirmer = AutoConfirmer()

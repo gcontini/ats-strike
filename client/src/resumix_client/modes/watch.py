@@ -26,7 +26,7 @@ from ..workspace import Workspace
 
 
 def run(config: Config, inbox: Optional[Path], out: Path, *, assume_yes: bool = False,
-        track: bool = True) -> int:
+        track: bool = True, new: bool = False) -> int:
     if inbox is None:
         inbox = Path.cwd() / "incoming"
         warn(f"no --in given, watching {inbox}")
@@ -48,9 +48,8 @@ def run(config: Config, inbox: Optional[Path], out: Path, *, assume_yes: bool = 
 
     ask = not assume_yes
     console = Console()
-    calls = Calls(HttpApi(config.server_url, token=config.token, verbose=config.verbose),
-                  debug=config.debug)
-    writer = CvWriter(calls, config)
+    calls = Calls(HttpApi(config.server_url, token=config.token, verbose=config.verbose))
+    writer = CvWriter(calls, config, new=new)
     working = WorkingProcessor(workspace, writer, build_tracker(workspace.root, track), console,
                                ask=ask)
     keyboard = Keyboard(sys.stdin)
