@@ -1,0 +1,19 @@
+Input:
+* KEY POINTS: JSON list of the job's requirements. Each has id, requirement, keywords, importance (0-100).
+* FORMATS: JSON object of the CV formats: for each one, how many work experiences it shows, the minimum and
+  maximum duties of each experience, and the maximum duties overall.
+* WORK EXPERIENCES: JSON list from the candidate's profile, most recent first. Each duty ends with "|<scores>",
+  e.g. "|3-80,7-40": the KEY POINTS it matches (by id), each with how well it matches (0-100).
+
+Choose the CV format, the work experiences to show and how many duties each one shows.
+* The most recent work experience is always shown.
+* An experience is relevant when 2-3 of its duties score high on important KEY POINTS and the experience is long compared to others (see dates), not relevant when most of its duties score low (generally lower than other experiences) and/or its short in time compared to other experiences. 
+   - If you are unsure you can have a full check of the work experience vs high scoring key points, if they feel different (semantically or by responsibility) the work experience isn't relevant.
+* Choose the format that shows the relevant experiences best, and fill its places with the best experiences.
+* duty_caps: how many duties each chosen experience shows, within the format's minimum and maximum and its maximum
+  overall, never more than the work experience has. Give more duty_caps to the more relevant experiences.
+  - experiences whose duties score higher get more
+  - newer experiences get more duty_caps
+
+Output only JSON, with the experience ids in profile order and one duty cap for each, in the same order:
+{"reason": "<why this format and these experiences, one or two sentences>", "format": "B", "experience_ids": [0, 1, 2, 4], "duty_caps": [5, 6, 3, 2]}

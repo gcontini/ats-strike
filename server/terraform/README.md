@@ -20,11 +20,8 @@ terraform plan
 terraform apply
 ```
 
-The first plan adopts the resources made by hand in the console
-(`imports.tf`): **6 to import, 1 to change**. The change only records which
-environment variables are secret; the values are unchanged and nothing is sent
-to the function. After that, a plan says *No changes* until a new image is
-pushed.
+The first deploy goes as in *From scratch*, below. After that, a plan says
+*No changes* until a new image is pushed.
 
 ## Deploy
 
@@ -74,22 +71,25 @@ To look at what is there:
 aliyun ossutil ls oss://$(terraform output -raw sessions_bucket)/
 ```
 
-The function's role, `resumix-fc`, can do nothing but read and write that
+The function's role, `<namespace>-fc`, can do nothing but read and write that
 bucket. FC delivers the logs and pulls the image with its own service-linked
 role, so they do not depend on it.
 
 ## What to know
 
 - **`terraform.tfvars` and the state hold the provider keys and the trigger
-  token in clear text.** Both are gitignored; treat them like `.env`. The import
-  plan prints the trigger token once, because the provider does not mark that
-  field sensitive.
+  token in clear text.** Both are gitignored; treat them like `.env`.
 - **The trigger token is set once, when the trigger is created.** FC stamps
   every token with an id and timestamps, so Terraform ignores the trigger's
   configuration after that. Rotate the token in the console.
 - **Renaming the function replaces it**, and the trigger URL — the clients'
   `server_url` — changes with it.
 - **From scratch**, in an account with none of this: create the Personal
-  Edition instance and its password in the console, delete `imports.tf`, run
+  Edition instance and its password in the console, run
   `terraform apply -target=alicloud_cr_repo.main`, push an image as in
   *Deploy*, then run `terraform apply`.
+- **A second deployment** in the same account, to try a branch: a checkout
+  and state of its own, deployed from scratch, with its own `function_name`
+  and `namespace` in `terraform.tfvars`. The namespace also names its bucket
+  and role. An image of uncommitted work gets a tag that is not a commit hash,
+  set as `image_tag`, so no deploy ever picks it as the newest build.

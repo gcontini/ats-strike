@@ -73,9 +73,11 @@ No auth. What this server is and whether it can do its job.
   "status": "ok",                 // "degraded" when pdflatex is missing
   "version": "0.2.0",
   "pdflatex": true,
-  "models": {"detect": "qwen3.8-flash", "analysis": "qwen3.8-flash",
-             "letter": "qwen3.8-flash", "cv": "qwen3.8-max", "review": "qwen3.8-max",
-             "highlight": "qwen3.8-flash"},
+  "models": {"detect": "deepseek-v4.1-flash", "analysis": "qwen3.8-flash",
+             "letter": "qwen3.8-flash", "jd_evaluation": "deepseek-flash",
+             "profile_scoring": "deepseek-flash", "format_selection": "deepseek-flash",
+             "cv": "deepseek-flash", "validation": "deepseek-flash",
+             "highlight": "deepseek-flash"},
   "auth_required": false
 }}
 ```
@@ -117,6 +119,7 @@ curl -F jd=@JD.txt \
 | `candidate_profile` | required | JSON object: everything you have done |
 | `pers_preferences` / `pers_preferences_text` | required | What you want from a job, in prose |
 | `sys_prompt_analysis` | optional | Replace the analysis prompt |
+| `analysis_extra_body` | optional | JSON object: the analysis model's settings for this request, instead of `models.toml`'s (see `POST /v1/cv`) |
 
 Returns a `JDAnalysis`:
 
@@ -154,7 +157,7 @@ sequenceDiagram
     S-->>C: 202 {reattached: false}
     C->>S: GET /v1/cv/{id}/events
     loop while the job runs
-        S-->>C: status · log · usage
+        S-->>C: status · artifact · log · usage
     end
     S-->>C: result {cv, detail, total} — and the stream closes
     Note over C: stores the CV
@@ -178,12 +181,22 @@ curl -s -X DELETE localhost:8080/v1/cv/$ID    # once the CV is saved
 | `jd` / `jd_text` | required | The posting |
 | `candidate_profile` | required | JSON object — what the model tailors from |
 | `candidate_data` | required | JSON object — what the template prints |
-| `sys_prompt_cv`, `sys_prompt_highlight`, `sys_prompt_review` | optional | Replace a prompt for this request |
-| `template` | optional | Replace `resume.tex.jinja`, page checks included |
+| `sys_prompt_jd_evaluation`, `sys_prompt_profile_scoring`, `sys_prompt_format_selection`, `sys_prompt_cv_body`, `sys_prompt_cv_duties`, `sys_prompt_validation_body`, `sys_prompt_validation_duties`, `sys_prompt_highlight` | optional | Replace a step's prompt for this request |
+| `cv_body_schema`, `cv_duties_schema` | optional | Replace the JSON schema the writer is shown for the body, or for an experience |
+| `template` | optional | Replace `resume.tex.jinja`, page counts included |
 | `images` | optional | Repeatable, ≤10. Each part's file name is the name the template includes it under. |
-| `temperature` | optional | Sampling temperature for the CV model only; the review and highlight models keep theirs |
-| `presence_penalty` | optional | Presence penalty for the CV model only, likewise |
+| `jd_evaluation_extra_body`, `profile_scoring_extra_body`, `format_selection_extra_body`, `cv_extra_body`, `validation_extra_body`, `highlight_extra_body` | optional | JSON object: that step's model settings for this request (see below) |
 | `pages` | optional | Page limit the CV must fit. Default 2, minimum 1. |
+
+**`<role>_extra_body`** is a form field holding a JSON object, sent into the
+request body as is. It supersedes every setting `models.toml` gives that role
+— temperature, the thinking switch, reasoning effort, the output cap, its own
+`extra_body`: besides the model and the messages, what you sent is all that
+goes out (`{"temperature": 0.7, "top_p": 0.9}`, `{"thinking": {"type":
+"disabled"}}`, …). The endpoint and the provider stay. A field that is not a
+JSON object is a `400`. An endpoint ignores the fields for roles it does not
+have, so a client may send all of its own with every request. `detect` takes
+none.
 
 Answers `202` with `{"request_id": "<id>", "ok": true, "data": {"reattached":
 false}}`.
@@ -199,10 +212,10 @@ is not found. With no `X-Request-Id`, the server picks an id and every POST is
 a new job. `429 too_many_jobs` applies to a new job only.
 
 **Why `candidate_data` is required.** The page limit is enforced by actually
-compiling the CV and counting the pages, so the instruction fed back to the
-model is grounded in a real overflow. A page count taken with the contact
-block missing is not the page count of the CV you will send. No model is shown
-`candidate_data`: it goes to the renderer and nowhere else.
+compiling the CV and counting its pages, trimming duties until it fits. A
+page count taken with the contact block missing is not the page count of the
+CV you will send. No model is shown `candidate_data`: it goes to the renderer
+and nowhere else.
 
 ### `GET /v1/cv/{id}/events`
 
@@ -216,42 +229,51 @@ and a dropped one loses nothing: reconnect with the last `id:` you got.
 ```text
 id: 1
 event: status
-data: {"status": "generate", "detail": ""}
+data: {"status": "jd_evaluation", "detail": ""}
 
 id: 2
 event: log
-data: {"ts": "2026-01-15T09:30:53Z", "level": "INFO", "stage": "cv.generate", "message": "  ⏱ [cv] qwen3.8-max 41.2s | input=7104, thinking=610, output=1832, …"}
+data: {"ts": "2026-01-15T09:30:53Z", "level": "INFO", "stage": "cv.jd_evaluation", "message": "  ⏱ [jd_evaluation] deepseek-flash 21.2s | input=1847, thinking=7256, output=832, …"}
 
 id: 3
 event: usage
-data: {"role": "cv", "model": "qwen3.8-max", "seconds": 41.2, "input_tokens": 7104, "thinking_tokens": 610, "output_tokens": 1832}
+data: {"role": "jd_evaluation", "model": "deepseek-flash", "seconds": 21.2, "input_tokens": 1847, "thinking_tokens": 7256, "output_tokens": 832}
 
-id: 42
+id: 4
+event: artifact
+data: {"name": "key_points", "data": [{"id": 1, "requirement": "Engineering manager", "keywords": ["Engineering Manager"], "importance": 100}, …]}
+
+id: 5
+event: status
+data: {"status": "profile_scoring", "detail": "11 key points, tokens used=9935, thinking=7256, elapsed=21.3s"}
+
+id: 97
 event: result
-data: {"cv": {"document": {…}, "tex": "\\documentclass…", "pdf_base64": "JVBERi0…"}, "detail": "done, 6 model calls, …", "total": {"calls": 6, "seconds": 312.4, …}}
+data: {"cv": {"document": {…}, "tex": "\\documentclass…", "pdf_base64": "JVBERi0…"}, "detail": "done, 21 model calls, …", "total": {"calls": 21, "seconds": 961.4, …}}
 ```
 
 | Event | Payload | When |
 |---|---|---|
-| `status` | `CVStatus`: `status`, `detail` | Each step: `generate`, `review`, `re-generate`, `page_check`, `highlight` |
+| `status` | `CVStatus`: `status`, `detail` | Each step: `jd_evaluation`, `profile_scoring`, `format_selection`, `cv`, `validation`, `highlight` |
+| `artifact` | `CVArtifact`: `name`, `data` | Each step's result as it is ready: `key_points`, `scored_profile`, `score_reasons`, `format_selection`, `cv_body`, `cv_experiences`, `checked_body`, `checked_experiences`, `highlighted_resume` |
 | `log` | `LogEntry`: `ts`, `level`, `stage`, `message` | Every line the server logged for the job (at most 2000) |
 | `usage` | `ModelCall`: `role`, `model`, `seconds`, `input_tokens`, `thinking_tokens`, `output_tokens` | After every model call, failed attempts included |
 | `result` | `CVResult`: `cv`, `detail`, `total` | The job is done: the last event |
 | `error` | `CVFailure`: `http_status`, `error`, `total` | The job failed: the last event |
 
-`detail` is written for a person and may span several lines — a rejected
-review quotes the reviewer's complaints verbatim, and a failed page check
-quotes the condense instruction verbatim, because those are the words the
-model is about to be given. `total` adds up every model call of the run, so a
-failed job still says what it cost.
+`detail` is written for a person: what the step that just finished produced,
+and what it cost. An `artifact` is JSON, not a file: the client stores each
+one as it likes — the resumix client as `steps/<name>.json` beside the CV.
+No PDF is ever an artifact; the only one sent is the result's. `total` adds
+up every model call of the run, so a failed job still says what it cost.
 
 **A failed job reports itself here**, with the status its cause maps to
 (`502`, `504`, `422`) and the cause in the same form as any other error. A job
 the server restarted under ends with `503 unavailable`. See
 [the CV pipeline](cv-pipeline.md) for what each step does.
 
-`cv.document` is one flat object — what the model wrote with your
-`candidate_data` merged over the top, so a field the model invents can never
+`cv.document` is one flat object — what the models wrote with your
+`candidate_data` merged over the top, so a field a model invents can never
 replace a real contact detail. It has no schema: what the template reads from
 it is between you and the template. Store it, edit it, post it back to
 `/v1/cv/render`.
@@ -310,8 +332,7 @@ curl -F jd=@JD.txt -F candidate_profile=@candidate_profile.json \
 | `candidate_data` | required | JSON object — the header block's name, email, phone, LinkedIn |
 | `analysis` | optional | A `JDAnalysis` — makes the letter more targeted, and enables the web research |
 | `sys_prompt_letter` | optional | Replace the letter prompt |
-| `temperature` | optional | Sampling temperature for the letter |
-| `presence_penalty` | optional | Presence penalty for the letter |
+| `letter_extra_body` | optional | JSON object: the letter model's settings for this request, instead of `models.toml`'s — a web search it had there goes too, unless you send it again |
 
 Returns `{"text": "…", "words": 312}`, validated between 180 and 450 words.
 When the analysis names the employer *and* the
@@ -329,7 +350,7 @@ the TeX log says where the document breaks:
 
 ```json
 {"request_id": "b510f8dff047", "ok": false,
- "error": "model_output [cv.generate]: No CV passed review in 4 attempts."}
+ "error": "model_output [cv.profile_scoring]: profile_scoring: no usable reply in 3 attempts:\n- it is not a JSON list"}
 ```
 
 | Status | Kind | Means |
@@ -347,7 +368,7 @@ the TeX log says where the document breaks:
 | `504` | `latex_timeout`, `budget_exceeded`, `provider_timeout` | A compile, the whole run, or the provider hit its timeout |
 | `500` | `internal_error` | A bug here. Everything else above is an answer, not a crash |
 
-The stage in brackets (`[cv.generate]`, `[compile]`, `[render]`) says where in
+The stage in brackets (`[cv.profile_scoring]`, `[compile]`, `[render]`) says where in
 the pipeline it happened. For a CV job, the attempts that led there — every
 failed one included, with its token cost — are in the session's `log` and
 `usage` events. For any other request, the server's own log (stdout) has every
@@ -363,7 +384,7 @@ hand-rolling the shapes:
 from resumix_contracts import (
     Envelope, CVStatus, RenderedCV, CoverLetter, ServerStatus,
     JDAnalysis, JDDetection, LogEntry, static_jd_guess,
-    EVENT_PAYLOADS, CVResult, CVFailure, CVSession, ModelCall, TokenUsage,
+    EVENT_PAYLOADS, CVArtifact, CVResult, CVFailure, CVSession, ModelCall, TokenUsage,
 )
 
 envelope = Envelope[RenderedCV].model_validate(response.json())
@@ -373,6 +394,6 @@ result = EVENT_PAYLOADS["result"].model_validate_json(data)   # a result event's
 ```
 
 It depends on pydantic and nothing else. The CV document itself deliberately
-has no model there: it is whatever the CV model wrote merged with whatever
+has no model there: it is whatever the models wrote merged with whatever
 your `candidate_data.json` holds, and only your LaTeX template has an opinion
 about it.

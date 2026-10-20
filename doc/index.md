@@ -47,7 +47,7 @@ a CV job, its state and its result.
 | | |
 |---|---|
 | `client/` | The CLI. Watches your clipboard or a folder, keeps your CV data local, files every result in a dated folder. |
-| `server/` | The HTTP API. Writes the CV, reviews it, compiles the PDF, analyses postings, writes letters. |
+| `server/` | The HTTP API. Writes the CV in six steps, validates it, compiles the PDF, analyses postings, writes letters. |
 | `contracts/` | The shapes both sides agree on — the one thing each side imports, so neither imports the other. |
 
 The short quickstarts live in the repository's `README.md`, `client/README.md`

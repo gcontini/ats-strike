@@ -10,7 +10,7 @@ from resumix_contracts import Envelope, JDAnalysis, JDDetection
 from ...bundle import CandidateInputs
 from ...pipeline.jd_validator import JDValidator
 from ..deps import envelope_of, execute, get_state
-from ..multipart import json_part, text_part
+from ..multipart import extra_bodies, json_part, text_part
 
 router = APIRouter()
 
@@ -53,6 +53,9 @@ async def analyze_jd(
     sys_prompt_analysis: Optional[UploadFile] = File(
         None, description="Override the analysis prompt"
     ),
+    analysis_extra_body: Optional[str] = Form(
+        None, description="JSON object: the analysis model's settings, instead of models.toml's"
+    ),
 ) -> dict:
     """Score a posting against the profile and extract its facts."""
     state = get_state(request)
@@ -68,8 +71,11 @@ async def analyze_jd(
     )
     candidate = CandidateInputs(profile=profile, preferences=preferences)
     prompt = await text_part(sys_prompt_analysis, name="sys_prompt_analysis", max_bytes=limit)
+    llm = state.llm.with_extra_body(
+        await extra_bodies({"analysis": analysis_extra_body}, max_bytes=limit)
+    )
 
-    validator = JDValidator(state.llm)
+    validator = JDValidator(llm)
 
     def job() -> JDAnalysis:
         return validator.analyze(text, candidate, prompt)

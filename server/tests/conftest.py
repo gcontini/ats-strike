@@ -14,7 +14,7 @@ import pytest
 
 from resumix_server.bundle import CandidateInputs, ResourceBundle, default_bundle
 
-from server_helpers import FakeLLM, sample_cv_data
+from server_helpers import FakeLLM, sample_cv
 
 from server_helpers import EXAMPLE_CANDIDATE, GOLDEN
 
@@ -27,13 +27,13 @@ def bundle() -> ResourceBundle:
 
 @pytest.fixture(scope="session")
 def candidate_data() -> dict:
-    """Jordan Rivera's contact details: what the template prints."""
+    """The example candidate's contact details: what the template prints."""
     return json.loads((EXAMPLE_CANDIDATE / "candidate_data.json").read_text())
 
 
 @pytest.fixture(scope="session")
 def candidate(candidate_data) -> CandidateInputs:
-    """The fictional Jordan Rivera set, as a client would post it."""
+    """The fictional example candidate's set, as a client would post it."""
     return CandidateInputs(
         profile=json.loads((EXAMPLE_CANDIDATE / "candidate_profile.json").read_text()),
         preferences=(EXAMPLE_CANDIDATE / "candidate_preferences.md").read_text(),
@@ -51,7 +51,7 @@ def fixture_document() -> dict:
 @pytest.fixture
 def sample_document(candidate_data) -> dict:
     """One flat namespace: what the model wrote, your own data over the top."""
-    return {**sample_cv_data().model_dump(), **dict(candidate_data)}
+    return {**sample_cv(), **dict(candidate_data)}
 
 
 @pytest.fixture

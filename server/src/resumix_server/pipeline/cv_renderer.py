@@ -34,7 +34,7 @@ logger = logging.getLogger(f"{LOGGER_ROOT}.render")
 #: Default template name; the source itself always comes from the caller.
 TEMPLATE_NAME = "resume.tex.jinja"
 
-#: The CV must fit this many pages; over it, the generator condenses and retries.
+#: The CV must fit this many pages; over it, the generator drops a duty and renders again.
 PAGE_LIMIT = 2
 
 DEFAULT_LATEX_TIMEOUT = 120.0
@@ -289,8 +289,8 @@ class CVRenderer:
 def check_pdf_pages(pdf_path: Path, limit: int = PAGE_LIMIT) -> Dict[str, Any]:
     """Page count plus, when it is too long, how much spilled past the limit.
 
-    Only measures. What to tell the model about it depends on how many rounds
-    have already been too long, which is the validator's to know.
+    Only measures. What to cut is the generator's to decide: a duty at a
+    time, until the page count fits.
 
     The count is of *text* lines, so it understates the overflow: an image or
     vertical space that moved past the limit counts for nothing.

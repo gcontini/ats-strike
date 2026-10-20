@@ -13,9 +13,11 @@ it on if the run has a session to write to. Pipeline code keeps calling
 
 The active run is found through a :class:`~contextvars.ContextVar`. A CV job
 runs in a thread of its own and re-establishes it with :func:`use_run`, so a
-line emitted deep inside the CV loop still lands in the right job's session.
-Outside a request — a test, a REPL — the default is :data:`NULL_RUN`, which
-discards.
+line emitted deep inside the CV pipeline still lands in the right job's
+session — and so does one from the nodes LangGraph runs side by side, which it
+starts in a copy of the job's context. They report at the same time, so a run
+counts under a lock. Outside a request — a test, a REPL — the default is
+:data:`NULL_RUN`, which discards.
 """
 
 from __future__ import annotations
@@ -26,6 +28,7 @@ import sys
 from contextlib import contextmanager
 from contextvars import ContextVar
 from datetime import datetime, timezone
+from threading import Lock
 from typing import Any, Callable, Iterator, Optional
 
 from pydantic import BaseModel
@@ -54,14 +57,17 @@ class Run:
         self.total = TokenUsage()
         self._collect = collect
         self._lines = 0
+        self._lock = Lock()
 
     # --- collection (called by the handler and by ModelSelector) -----------
     def add_log(self, level: str, stage: str, message: str) -> None:
         if not self._collect or self.sink is None:
             return
-        self._lines += 1
-        if self._lines > MAX_LOG_ENTRIES:
-            if self._lines == MAX_LOG_ENTRIES + 1:
+        with self._lock:
+            self._lines += 1
+            lines = self._lines
+        if lines > MAX_LOG_ENTRIES:
+            if lines == MAX_LOG_ENTRIES + 1:
                 self._emit("log", self._entry(
                     "WARNING", "run", f"further log lines dropped (cap {MAX_LOG_ENTRIES})"
                 ))
@@ -72,11 +78,12 @@ class Run:
         """Count one model call into the total, and report it."""
         if not self._collect:
             return
-        self.total.calls += 1
-        self.total.seconds += call.seconds
-        self.total.input_tokens += call.input_tokens
-        self.total.thinking_tokens += call.thinking_tokens
-        self.total.output_tokens += call.output_tokens
+        with self._lock:
+            self.total.calls += 1
+            self.total.seconds += call.seconds
+            self.total.input_tokens += call.input_tokens
+            self.total.thinking_tokens += call.thinking_tokens
+            self.total.output_tokens += call.output_tokens
         self._emit("usage", call)
 
     def _emit(self, kind: str, payload: BaseModel) -> None:

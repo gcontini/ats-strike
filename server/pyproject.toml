@@ -15,6 +15,9 @@ dependencies = [
     # for any OpenAI-compatible endpoint, ChatDeepSeek for api.deepseek.com.
     "langchain-openai>=1.6",
     "langchain-deepseek>=1.1",
+    # The CV pipeline's steps as a graph, with Send for the calls a step makes
+    # side by side (resumix_server/pipeline/cv_generator.py).
+    "langgraph>=1.2",
     # Still imported directly: the API layer maps its errors to 502/504.
     "openai",
     # Templating the LaTeX CV.
@@ -50,4 +53,4 @@ packages = [
 ]
 
 [tool.setuptools.package-data]
-"resumix_server.resources" = ["*.txt", "*.toml", "*.jinja", "*.png"]
+"resumix_server.resources" = ["*.txt", "*.json", "*.toml", "*.jinja", "*.png"]

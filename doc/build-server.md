@@ -78,7 +78,8 @@ cd server && docker compose up --build
 The published image is on Docker Hub:
 
 ```bash
-docker run -d -p 8080:8080 -e MODEL_API_KEY=... lmstch/resumix:latest
+docker run -d -p 8080:8080 -e MODEL_API_KEY=... \
+  -e MODEL_API_KEY2=... -e MODEL_BASE_URL2=https://api.deepseek.com lmstch/resumix:latest
 ```
 
 `:latest` and `:x.y.z` are pushed by the release workflow, not by hand — see
@@ -104,11 +105,13 @@ names the same two variables and does not need to change.
 
 A model that sets `use_alternate_provider = 2` calls a second endpoint,
 from `MODEL_API_KEY2` / `MODEL_BASE_URL2`, instead; `3` uses
-`MODEL_API_KEY3` / `MODEL_BASE_URL3`, and so on.
+`MODEL_API_KEY3` / `MODEL_BASE_URL3`, and so on. The shipped six CV steps all
+use `2`, DeepSeek's own API (`https://api.deepseek.com`): the server builds
+every role at startup and does not start without those two.
 
 Per-role overrides need no rebuild either — `RESUMIX_<ROLE>_<FIELD>`, for any
-key of a role, for `DETECT`, `ANALYSIS`, `LETTER`, `CV`, `REVIEW` and
-`HIGHLIGHT`:
+key of a role, for `DETECT`, `ANALYSIS`, `LETTER`, `JD_EVALUATION`,
+`PROFILE_SCORING`, `FORMAT_SELECTION`, `CV`, `VALIDATION` and `HIGHLIGHT`:
 
 ```bash
 RESUMIX_CV_MODEL=qwen-max
@@ -130,9 +133,9 @@ declares is what is sent. The comments in `models.toml` list the known traps.
 
 | Variable | Default | What it does |
 |---|---|---|
-| `MODEL_API_KEY` | — | The provider key. Without it the server starts but every model call fails |
+| `MODEL_API_KEY` | — | The provider key. Without it the server does not start |
 | `MODEL_BASE_URL` | DashScope intl. | The OpenAI-compatible endpoint |
-| `MODEL_API_KEY<N>` / `MODEL_BASE_URL<N>` | — | Key/endpoint N (2, 3, …), for models with `use_alternate_provider = N` |
+| `MODEL_API_KEY<N>` / `MODEL_BASE_URL<N>` | — | Key/endpoint N (2, 3, …), for models with `use_alternate_provider = N`. As shipped, 2 is required: DeepSeek, for the CV steps |
 | `PORT` / `HOST` | `8080` / `0.0.0.0` | Where uvicorn listens |
 | `WEB_CONCURRENCY` | `1` | uvicorn worker processes. **Keep it at 1** per work root |
 | `RESUMIX_KEEPALIVE` | `75` | uvicorn keep-alive timeout, seconds |
@@ -142,8 +145,7 @@ declares is what is sent. The comments in `models.toml` list the known traps.
 | `RESUMIX_SESSION_TTL_DAYS` | `1` | Days a session nobody acknowledged is kept after its last event |
 | `RESUMIX_MAX_CONCURRENT_JOBS` | `10` | Requests in flight; the rest get `429` |
 | `RESUMIX_LATEX_TIMEOUT` | `120` | Seconds before a compile is killed |
-| `RESUMIX_REQUEST_BUDGET_SECONDS` | `1200` | Wall clock for one CV run before `504` |
-| `RESUMIX_MAX_ATTEMPTS` | `4` | Generate → review → page-check rounds |
+| `RESUMIX_REQUEST_BUDGET_SECONDS` | `1200` | Wall clock for one CV run before `504`, checked before each step |
 | `RESUMIX_MAX_PART_BYTES` | `2000000` | Cap on any one uploaded part |
 | `RESUMIX_JD_MIN_CHARS` / `_MAX_CHARS` | `500` / `30000` | Length band for the free JD check |
 | `RESUMIX_LOG_LEVEL` | `INFO` | Logging level |
@@ -199,12 +201,13 @@ That is the one thing to plan around.
   the client reconnects after a cut, but some platforms restart the instance
   on a timeout.
 - **Size for the compiles, not the waiting.** Ten jobs in flight is the
-  default; each is mostly idle on the provider, but each also compiles LaTeX
-  several times.
+  default; each is mostly idle on the provider — up to ten calls at once,
+  for the steps that score or write one item each — but each also compiles
+  LaTeX once, or a few times when it has to be trimmed.
 - **Scaling.** A running job lives in the instance that started it: run one
   instance.
-- **Cold starts** build three HTTP clients and read six files. Fast — but the
-  first request also warms the LaTeX font cache in `/tmp`.
+- **Cold starts** build an HTTP client per model role and read the prompts.
+  Fast — but the first request also warms the LaTeX font cache in `/tmp`.
 
 ### Sandboxing
 

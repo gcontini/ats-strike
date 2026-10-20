@@ -42,13 +42,13 @@ resource "alicloud_cr_repo" "main" {
 
 resource "alicloud_oss_bucket" "sessions" {
   # Names are global across every account. New buckets are private.
-  bucket = "resumix-${data.alicloud_account.current.id}-${var.region}"
+  bucket = "${var.namespace}-${data.alicloud_account.current.id}-${var.region}"
 }
 
 # The function's own role. The mount is all it is used for: FC delivers the
 # logs and pulls the image with its service-linked role, AliyunServiceRoleForFC.
 resource "alicloud_ram_role" "function" {
-  role_name   = "resumix-fc"
+  role_name   = "${var.namespace}-fc"
   description = "resumix function: its sessions bucket"
   assume_role_policy_document = jsonencode({
     Version = "1"
@@ -62,7 +62,7 @@ resource "alicloud_ram_role" "function" {
 
 # What an OSS mount needs to read and write, and nothing else.
 resource "alicloud_ram_policy" "sessions" {
-  policy_name = "resumix-fc-sessions"
+  policy_name = "${var.namespace}-fc-sessions"
   description = "Read and write the resumix sessions bucket"
   policy_document = jsonencode({
     Version = "1"
@@ -177,7 +177,8 @@ resource "alicloud_fcv3_function" "main" {
 
   environment_variables = local.environment
 
-  # The console writes this block; leaving it out would show as a change.
+  # The console writes this block, and FC never returns it for a function
+  # created through the API, so either way it would show as a change: ignored.
   invocation_restriction {
     disable = false
   }
@@ -221,6 +222,10 @@ resource "alicloud_fcv3_function" "main" {
 
   # The role must be able to reach the bucket before FC mounts it.
   depends_on = [alicloud_ram_role_policy_attachment.sessions]
+
+  lifecycle {
+    ignore_changes = [invocation_restriction]
+  }
 }
 
 # The trigger is bound to the alias rather than the function, so the alias can

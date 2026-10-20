@@ -19,13 +19,26 @@ def home(tmp_path, monkeypatch):
 
 def test_files_in_the_current_folder_are_found_by_name(home):
     (home / "candidate_profile.json").write_text("{}")
-    (home / "sys_prompt_cv.txt").write_text("prompt")
+    (home / "sys_prompt_cv_body.txt").write_text("prompt")
+    (home / "cv_body_schema.json").write_text("{}")
 
     config = load_config()
 
     assert config.path("candidate_profile.json") == home / "candidate_profile.json"
-    assert config.path("sys_prompt_cv.txt") == home / "sys_prompt_cv.txt"
+    assert config.path("sys_prompt_cv_body.txt") == home / "sys_prompt_cv_body.txt"
+    assert config.prompt_overrides() == {"sys_prompt_cv_body": "prompt", "cv_body_schema": "{}"}
     assert config.path("resume.tex.jinja") is None, "absent means 'the server's default'"
+
+
+def test_extra_body_tables_are_read_by_role(home):
+    (home / "resumix.toml").write_text(
+        '[extra_body.cv]\ntemperature = 0.7\n\n[extra_body.analysis]\ntop_p = 0.5\n'
+    )
+    assert load_config().extra_body == {"cv": {"temperature": 0.7}, "analysis": {"top_p": 0.5}}
+
+
+def test_no_extra_body_means_the_server_s_settings(home):
+    assert load_config().extra_body == {}
 
 
 def test_the_config_file_is_read_from_the_same_place(home):

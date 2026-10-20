@@ -1,0 +1,30 @@
+{
+  "description": "One work experience of the CV.",
+  "type": "object",
+  "properties": {
+    "title": {"type": "string"},
+    "company": {"type": "string"},
+    "location": {"type": "string"},
+    "dates": {"type": "string"},
+    "project_name": {
+      "type": "string",
+      "description": "Shown after the dates. Empty string when there is none."
+    },
+    "role_summary": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "Shown before the duties."
+    },
+    "duties": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 200,
+        "description": "One bullet: the duty, at most 200 characters (spaces included), then |<score>."
+      },
+      "description": "At most DUTY CAP items."
+    }
+  },
+  "required": ["title", "company", "location", "dates", "project_name", "role_summary", "duties"],
+  "additionalProperties": false
+}

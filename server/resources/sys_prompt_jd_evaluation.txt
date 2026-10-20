@@ -1,0 +1,33 @@
+Input: one job description (JD).
+Output: a JSON list of 6 to 15 items, the things an ATS would screen this JD for:
+
+```json
+[{"id": 1, "requirement": "Engineering manager", "keywords": ["Engineering Manager", "Engineering Lead"], "importance": 100}]
+```
+
+- **Item 1 is the job title itself.** Its keywords are the title and its common variants.
+- **The other items:**
+  - The hard skills, tools, platforms, certifications, spoken languages, domains and responsibilities the JD asks for, most important first.
+  - If the JD describes the position at length, extract concrete requirements from that description too.
+  - The CV is in English, so English is at least a low-importance item.
+  - Leave out generic candidate traits (eg. "motivated", "team player" ...). Keep the skills the JD requires that a CV line can prove, such as stakeholder management or technical leadership.
+  - Leave out years of experience and seniority: they describe the whole career, not one line of a CV.
+  - Leave out company benefits, company facts, in general what the company offers.
+  - Merge aggressively: one item per distinct capability. Requirements that one CV line would usually prove together are one item (e.g. "solution design", "technical design" and "design artifacts"). A keyword appears in one item only.
+- **Last two items:**
+  - requirement: "success stories", keywords: ["compliments", "success", "resulting in"], importance in the low-middle: about 40, compared with the other items.
+  - requirement: "concrete examples" (specific cases, figures or results that back a skill), keywords: ["example", "results"], importance mid-low.
+- **`requirement`:** a short English phrase that names one concrete skill or activity.
+  Name the activity, not a list of categories: "Technology selection aligned with enterprise standards", not "Technologies, platforms and tools".
+- **`keywords`:**
+  - One to eight literal terms an ATS would search for in an English CV: the usual English form, common variants and abbreviations ("Kubernetes", "K8s").
+  - No near-duplicates: when several terms would match the same CV lines, keep one ("Application Landscape" covers "Application Landscape Assessment").
+  - Add the JD's own wording when it differs, for example Italian "gestione fornitori".
+  - Take them from what the JD says. Do not add standards, tools or certifications it does not name.
+  - Each keyword must tell CVs apart. If it would appear in almost any IT CV, it is too generic: experience, team, skills, IT, technologies, tools, platforms, systems, solutions, software, environments, integration. Make it specific ("Integration Architecture") or leave it out.
+- **`importance`:** an integer from 0 to 100: how important the item is for this role.
+  - Scale: the central requirements, the few the role is about: 80-100. The usual requirements: 40-70.
+    Minor ones and nice to have: 10-30.
+  - Position: what the JD puts first usually matters more.
+  - Insistence: an item the JD repeats or reinforces in several places scores more.
+  - Nice to have: what the JD calls a plus, preferred or desirable scores low.

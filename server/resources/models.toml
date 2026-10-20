@@ -1,16 +1,22 @@
 # resumix model configuration
 # =============================
-# resumix calls exactly six models, one per job, all through the SAME
-# provider — unless a model sets use_alternate_provider = N (N >= 2), in which
-# case it calls provider N instead: [provider]'s variable names with N
-# appended, e.g. MODEL_API_KEY2 / MODEL_BASE_URL2 for 2:
+# resumix calls one model per job, all through the SAME provider — unless a
+# model sets use_alternate_provider = N (N >= 2), in which case it calls
+# provider N instead: [provider]'s variable names with N appended, e.g.
+# MODEL_API_KEY2 / MODEL_BASE_URL2 for 2:
 #
-#   detect     JD detection: is the clipboard a job posting at all?
-#   analysis   the JD analysis
-#   letter     the cover letter
-#   cv         CV writing
-#   review     the content review of each CV against the master profile
-#   highlight  the **bold**/*italic* keyword pass over the validated CV
+#   detect            JD detection: is the clipboard a job posting at all?
+#   analysis          the JD analysis
+#   letter            the cover letter
+#
+# and the six steps of a CV, in the order they run (doc/cv-pipeline.md):
+#
+#   jd_evaluation     the JD's key points, each with its importance
+#   profile_scoring   every item of the profile scored against them
+#   format_selection  the CV format, the experiences and their duty caps
+#   cv                the CV body and each experience, written separately
+#   validation        the body and each experience checked against the profile
+#   highlight         the **bold**/*italic* keyword pass
 #
 # [provider] declares the endpoint once; each [models.*] table below is just
 # the model name and generation settings for that job. Any OpenAI-compatible
@@ -19,10 +25,17 @@
 #
 # Docker: every key of a [models.<role>] table can be overridden with an env
 # var, without touching this file — RESUMIX_<ROLE>_<FIELD>, e.g.
-# RESUMIX_CV_MODEL, RESUMIX_CV_TEMPERATURE, RESUMIX_CV_API (roles: DETECT,
-# ANALYSIS, LETTER, CV, REVIEW, HIGHLIGHT). An empty value drops the key, as if
-# it were not declared here; RESUMIX_<ROLE>_EXTRA_BODY is JSON and replaces the
-# whole table. See .env.example.
+# RESUMIX_CV_MODEL, RESUMIX_CV_TEMPERATURE, RESUMIX_PROFILE_SCORING_API (roles:
+# DETECT, ANALYSIS, LETTER, JD_EVALUATION, PROFILE_SCORING, FORMAT_SELECTION,
+# CV, VALIDATION, HIGHLIGHT). An empty value drops the key, as if it were not
+# declared here; RESUMIX_<ROLE>_EXTRA_BODY is JSON and replaces the whole table.
+# See .env.example.
+#
+# A client can do the same per request for every role but detect, with a
+# <role>_extra_body part (e.g. cv_extra_body={"temperature": 0.7}). It
+# supersedes ALL of the role's settings below — temperature, thinking,
+# reasoning_effort, max_output_tokens, extra_body: only the model, the
+# endpoint and what the client sent go out.
 #
 # Nothing checks that a combination makes sense for your endpoint: what a
 # table declares is what is sent, and a request the endpoint refuses fails on
@@ -100,34 +113,48 @@ thinking          = "on"
 reasoning_effort  = "max"
 extra_body        = { enable_search = true }
 
-# The large one: writes the tailored CV. Thinking is worth paying for here,
-# capped so a long reasoning chain cannot eat the output budget and truncate
-# the JSON: max_output_tokens counts the thinking too, so it is the budget
-# plus the room the CV needs.
+# The six steps of a CV, as adapticv-ai ran them: DeepSeek V4.1 Flash on
+# DeepSeek's own API (MODEL_API_KEY2 / MODEL_BASE_URL2), reasoning effort as
+# in its bench of 2026-10-19 — 3.5 to 5.9 minutes and about 230k tokens a CV.
+# No temperature: DeepSeek ignores it while thinking. The cv and validation
+# roles each serve two prompts, the body's and the experiences'. Every reply
+# is JSON asked for by its prompt (structured_output does not apply), except
+# validation's, which are calls of a replace_in_* tool.
+[models.jd_evaluation]
+model                  = "deepseek-flash"
+model_provider         = "deepseek"
+use_alternate_provider = 2
+reasoning_effort       = "medium"
+
+# One call per list of the profile, all at once.
+[models.profile_scoring]
+model                  = "deepseek-flash"
+model_provider         = "deepseek"
+use_alternate_provider = 2
+reasoning_effort       = "high"
+
+[models.format_selection]
+model                  = "deepseek-flash"
+model_provider         = "deepseek"
+use_alternate_provider = 2
+reasoning_effort       = "medium"
+
+# The body, and one call per experience shown, all at once.
 [models.cv]
-model             = "qwen3.8-max-0902"
-structured_output = "json_schema"
-max_output_tokens = 24500
-thinking          = "on"
-extra_body        = { thinking_budget = 9000 }
+model                  = "deepseek-flash"
+model_provider         = "deepseek"
+use_alternate_provider = 2
+reasoning_effort       = "medium"
 
-# The judge: reads the CV against the master profile and answers in plain
-# text, one violation per line — "OK" when there is nothing to fix. A large
-# model, so the reviewer is never weaker than the writer.
-# temperature = 0 is load-bearing: a reviewer that samples draws a different
-# set of violations every round, and the loop never settles.
-[models.review]
-model             = "deepseek-v4-pro-0813"
-temperature       = 0.0
-max_output_tokens = 24000
-thinking          = "on"
-extra_body        = { thinking_budget = 9000 }
+# Up to five rounds per document; the documents are checked at once.
+[models.validation]
+model                  = "deepseek-flash"
+model_provider         = "deepseek"
+use_alternate_provider = 2
+reasoning_effort       = "medium"
 
-# Mid-size, no thinking: the highlighter only inserts Markdown markers into
-# already-validated JSON. Letting a hybrid-reasoning model think about that
-# burns the whole output budget on reasoning tokens and returns truncated JSON.
 [models.highlight]
-model             = "qwen3.8-flash"
-structured_output = "json_mode"
-temperature       = 0.1
-thinking          = "off"
+model                  = "deepseek-flash"
+model_provider         = "deepseek"
+use_alternate_provider = 2
+reasoning_effort       = "medium"

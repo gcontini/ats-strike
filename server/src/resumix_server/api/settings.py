@@ -41,10 +41,8 @@ class Settings:
     max_concurrent_jobs: int = 10
     #: Per-compile timeout — a supplied template can loop forever otherwise.
     latex_timeout: float = 120.0
-    #: Wall-clock budget for one CV run, checked between attempts.
+    #: Wall-clock budget for one CV run, checked before each step.
     request_budget_seconds: float = 1200.0
-    #: Generate -> review -> render rounds before giving up.
-    max_attempts: int = 4
     #: Length band for the free JD pre-check.
     jd_min_chars: int = MIN_JD_CHARS
     jd_max_chars: int = MAX_JD_CHARS
@@ -61,7 +59,6 @@ class Settings:
             max_concurrent_jobs=_int("RESUMIX_MAX_CONCURRENT_JOBS", 10),
             latex_timeout=_float("RESUMIX_LATEX_TIMEOUT", 120.0),
             request_budget_seconds=_float("RESUMIX_REQUEST_BUDGET_SECONDS", 1200.0),
-            max_attempts=_int("RESUMIX_MAX_ATTEMPTS", 4),
             jd_min_chars=_int("RESUMIX_JD_MIN_CHARS", MIN_JD_CHARS),
             jd_max_chars=_int("RESUMIX_JD_MAX_CHARS", MAX_JD_CHARS),
         )

@@ -34,7 +34,7 @@ variable "log_project" {
 }
 
 variable "namespace" {
-  description = "Container Registry namespace that holds the resumix repository."
+  description = "Container Registry namespace that holds the resumix repository. It also names the sessions bucket and the function's role, so a second deployment in the account needs one of its own."
   type        = string
   default     = "resumix"
 }

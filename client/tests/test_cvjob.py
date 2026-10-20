@@ -51,7 +51,7 @@ def test_a_cv_that_could_not_be_kept_is_not_acknowledged(api, config):
 
 def test_a_failed_job_is_acknowledged_then_raised_with_its_cause(api, config):
     api.session = api.session[:3] + [("error", CVFailure(
-        http_status=504, error="budget_exceeded [cv.generate]: out of time",
+        http_status=504, error="budget_exceeded [cv.cv]: out of time",
         total=TokenUsage(calls=3)))]
     said = []
     with pytest.raises(ResumixError) as failure:
@@ -70,7 +70,7 @@ def test_a_dropped_stream_is_reopened_after_the_last_event_it_delivered(api, con
     assert api.seen_after == [0, 2]
     assert kept == [api.rendered]
     assert any("reconnecting" in line for line in said)
-    assert said.count("   generate") == 1, "nothing delivered twice"
+    assert said.count("   jd_evaluation") == 1, "nothing delivered twice"
 
 
 def test_a_stream_that_never_reaches_the_end_gives_up_at_the_timeout(api, config):

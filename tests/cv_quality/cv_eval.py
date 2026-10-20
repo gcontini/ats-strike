@@ -33,7 +33,7 @@ from pathlib import Path
 import httpx
 from resumix_client.api import HttpApi, ResumixError
 from resumix_client.config import load_config
-from resumix_client.cvjob import write_cv
+from resumix_client.cvjob import session_id, write_cv
 
 HERE = Path(__file__).resolve().parent
 JDS = HERE / "jds"
@@ -50,9 +50,9 @@ CANDIDATE_FILES = ("candidate_profile.json", "candidate_data.json")
 QUICK = 10
 #: CV jobs in flight at once. The server has 10 job slots.
 PARALLEL = 4
-#: Seconds to wait for one CV: above the server's own 1200 s budget, so a job
+#: Seconds to follow one CV: above the server's own 1200 s budget, so a job
 #: that runs out of time fails with the server's cause, not with ours.
-POLL_TIMEOUT = 1500
+CV_TIMEOUT = 1500
 #: Seconds the local server may take to answer /healthz.
 SERVER_START = 120
 #: Weight of an ai_tells.md pattern, by the first letter of its id.
@@ -176,9 +176,13 @@ def local_server(log: Path):
 
 
 def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
-    """One CV per job description of the set, written into a new run folder."""
-    config = load_config(config_file=DATA_DIR / "resumix.toml", data_dir=DATA_DIR,
-                         overrides={"temperature": temperature})
+    """One CV per job description of the set, written into a new run folder.
+
+    A temperature goes to the cv step as its extra_body, which replaces every
+    other setting models.toml gives that step."""
+    config = load_config(config_file=DATA_DIR / "resumix.toml", data_dir=DATA_DIR)
+    if temperature is not None:
+        config = replace(config, extra_body={**config.extra_body, "cv": {"temperature": temperature}})
     config = replace(config, files={**config.files,
                                     **{name: candidate / name for name in CANDIDATE_FILES}})
     jds = sorted(JDS.glob("*.txt"))[: QUICK if set_name == "quick" else None]
@@ -186,11 +190,12 @@ def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
     run = RUNS / f"{now:%Y-%m-%d_%H%M}-{set_name}"
     run.mkdir(parents=True)
     with local_server(run / "server.log") as url:
-        config = replace(config, server_url=url, token=None, timeout=POLL_TIMEOUT, verbose=False)
+        config = replace(config, server_url=url, token=None, timeout=CV_TIMEOUT, verbose=False)
         health = httpx.get(url + "/healthz", timeout=60).json()["data"]
         (run / "run.json").write_text(json.dumps({
             "version": health["version"], "models": health["models"], "server": url,
-            "date": f"{now:%Y-%m-%d}", "set": set_name, "temperature": config.temperature,
+            "date": f"{now:%Y-%m-%d}", "set": set_name,
+            "temperature": config.extra_body.get("cv", {}).get("temperature"),
             "candidate": str(candidate),
             "jds": [jd.stem for jd in jds],
         }, indent=2), encoding="utf-8")
@@ -199,18 +204,20 @@ def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
 
         def one(jd: Path) -> None:
             say = lambda message: print(f"{jd.stem[:2]} {message.strip()}", flush=True)  # noqa: E731
+            text, kept = jd.read_text(encoding="utf-8"), []
             try:
-                request_id, rendered = write_cv(api, config, jd.read_text(encoding="utf-8"), say=say)
+                write_cv(api, config, text, say=say, keep=kept.append)
             except ResumixError as exc:
                 (run / f"{jd.stem}.error.txt").write_text(
                     f"{exc} (request {exc.request_id})\n", encoding="utf-8")
                 say(f"FAILED: {exc}")
                 return
+            [rendered] = kept
             (run / f"{jd.stem}.cv.json").write_text(
                 json.dumps(rendered.document, indent=2, ensure_ascii=False), encoding="utf-8")
             (run / f"{jd.stem}.pdf").write_bytes(rendered.pdf_bytes())
             (run / f"{jd.stem}.units.txt").write_text(units_text(rendered.document), encoding="utf-8")
-            say(f"done (request {request_id})")
+            say(f"done (request {session_id(text)})")
 
         with ThreadPoolExecutor(PARALLEL) as pool:
             list(pool.map(one, jds))
@@ -255,7 +262,8 @@ def main() -> None:
     gen = steps.add_parser("generate", help="Write the CVs of a set into a new run folder.")
     gen.add_argument("set", choices=("quick", "thorough"))
     gen.add_argument("--temperature", type=float,
-                     help="CV model temperature. Default: resumix.toml, else the server's.")
+                     help="The cv step's temperature, as its whole extra_body. "
+                          "Default: resumix.toml's [extra_body], else the server's settings.")
     gen.add_argument("--candidate", type=Path, default=CANDIDATE,
                      help="Folder with candidate_profile.json and candidate_data.json. "
                           "Default: examples/candidate.")

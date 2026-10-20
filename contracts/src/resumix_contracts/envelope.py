@@ -29,7 +29,7 @@ class LogEntry(BaseModel):
 
     ts: datetime = Field(description="When the line was emitted")
     level: str = Field(description="INFO | WARNING | ERROR")
-    stage: str = Field(description="Pipeline stage, e.g. 'cv.generate' or 'render'")
+    stage: str = Field(description="Pipeline stage, e.g. 'cv.profile_scoring' or 'render'")
     message: str = Field(description="The message itself")
 
 

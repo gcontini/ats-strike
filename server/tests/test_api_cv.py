@@ -26,30 +26,38 @@ from resumix_contracts import CVFailure, CVResult, CVStatus, RenderedCV
 from resumix_server.api.app import create_app
 from resumix_server.api.multipart import MAX_IMAGES
 from resumix_server.jobstore import JobStore
+from resumix_server.pipeline.cv_generator import ARTIFACTS
 
 from server_helpers import (
     EXAMPLE_CANDIDATE,
+    SAMPLE_BODY,
     of_type,
     raw_events,
     read_events,
     run_cv,
-    sample_cv_data,
+    script_cv,
     start_cv,
+    user_text,
 )
 
 needs_latex = pytest.mark.skipif(shutil.which("pdflatex") is None, reason="pdflatex not installed")
-OK_REVIEW = "OK"                        # the reviewer's "nothing to fix"
+STEPS = ["jd_evaluation", "profile_scoring", "format_selection", "cv", "validation", "highlight"]
 
 
-def load_replies(models, *replies):
-    """Script the writer; the reviewer approves whatever it is shown."""
-    models["cv"].replies = list(replies)
-    models["review"].replies = [OK_REVIEW]
+def a_good_run(fake_llm, **script):
+    """Every step answers; the validators find nothing to fix."""
+    script_cv(fake_llm, **script)
 
 
-def a_good_run(fake_llm, **overrides):
-    load_replies(fake_llm, sample_cv_data(**overrides).model_dump_json())
-    fake_llm["highlight"].replies = [sample_cv_data(**overrides).model_dump_json()]
+def a_quick_failure(fake_llm):
+    """The first step never gets a usable answer: the job ends at once, with an error."""
+    fake_llm["jd_evaluation"].replies = ["never valid json"]
+
+
+def hold(fake_llm) -> threading.Event:
+    """Keep the job provably running: its first model call waits for the gate."""
+    fake_llm["jd_evaluation"].gate = threading.Event()
+    return fake_llm["jd_evaluation"].gate
 
 
 def result_of(events) -> CVResult:
@@ -62,36 +70,36 @@ def result_of(events) -> CVResult:
 def test_the_job_is_accepted_not_waited_for(client, fake_llm, parts):
     """202 and an id: the only thing the caller gets up front is the handle."""
     a_good_run(fake_llm)
-    fake_llm["cv"].gate = threading.Event()
+    gate = hold(fake_llm)
     try:
         response = client.post("/v1/cv", data={"jd_text": "jd"}, files=parts)
         assert response.status_code == 202
         assert response.json()["data"] == {"reattached": False}
         assert response.headers["x-request-id"] == response.json()["request_id"]
     finally:
-        fake_llm["cv"].gate.set()
+        gate.set()
 
 
 def test_a_job_in_flight_is_a_session_that_has_started(client, fake_llm, parts, app_state):
     """The first step is in the session before the POST answers, so a client
     that follows it at once never finds it empty."""
     a_good_run(fake_llm)
-    fake_llm["cv"].gate = threading.Event()
+    gate = hold(fake_llm)
     try:
         request_id = start_cv(client, parts)
         events = app_state.jobs.open(request_id).events()
-        assert events[0] == (1, "status", {"status": "generate", "detail": ""})
+        assert events[0] == (1, "status", {"status": "jd_evaluation", "detail": ""})
     finally:
-        fake_llm["cv"].gate.set()
+        gate.set()
     read_events(client, request_id)
 
 
 @needs_latex
 def test_a_repeated_step_is_not_reported_twice(client, fake_llm, parts):
-    """The generator announces "generate" too; once is enough."""
+    """The generator announces "jd_evaluation" too; once is enough."""
     a_good_run(fake_llm)
     statuses = of_type(run_cv(client, parts), "status")
-    assert statuses[0]["status"] == "generate"
+    assert statuses[0]["status"] == "jd_evaluation"
     assert all(a != b for a, b in zip(statuses, statuses[1:]))
 
 
@@ -114,12 +122,9 @@ def test_the_session_ends_with_the_document_the_tex_and_the_pdf(client, fake_llm
     """One event, everything the client files — no second round trip to turn
     the content into a PDF."""
     a_good_run(fake_llm)
-    fake_llm["highlight"].replies = [
-        sample_cv_data(summary="**Bold**.").model_dump_json()
-    ]
     rendered = result_of(run_cv(client, parts)).cv
-    assert rendered.document["summary"] == "**Bold**."          # highlighted
-    assert rendered.document["job_title"] == "Staff Platform Engineer"
+    assert rendered.document["summary"] == f"**{SAMPLE_BODY['summary']}**"     # highlighted
+    assert rendered.document["job_title"] == SAMPLE_BODY["job_title"]
     assert rendered.pdf_bytes().startswith(b"%PDF")
     assert r"\documentclass" in rendered.tex
 
@@ -136,11 +141,9 @@ def test_your_own_data_comes_back_in_the_document(client, fake_llm, parts, candi
 
 @needs_latex
 def test_a_field_the_schema_never_declared_is_handed_back_too(client, fake_llm, parts):
-    """The reply is validated, not filtered: your prompt and your template can
-    agree on something this server has never heard of."""
-    written = {**sample_cv_data().model_dump(), "availability": "Immediate"}
-    load_replies(fake_llm, json.dumps(written))
-    fake_llm["highlight"].replies = [json.dumps(written)]
+    """The reply is parsed, not filtered: your prompt, your schema and your
+    template can agree on something this server has never heard of."""
+    a_good_run(fake_llm, body={**SAMPLE_BODY, "availability": "Immediate"})
     assert result_of(run_cv(client, parts)).cv.document["availability"] == "Immediate"
 
 
@@ -150,7 +153,7 @@ def test_each_step_is_reported_and_the_end_says_what_it_cost(client, fake_llm, p
     events = run_cv(client, parts)
 
     steps = [s["status"] for s in of_type(events, "status")]
-    assert steps[0] == "generate" and "highlight" in steps
+    assert steps == STEPS
     assert [n for n, _, _ in events] == list(range(1, len(events) + 1))
     result = result_of(events)
     assert "tokens used=" in result.detail
@@ -158,22 +161,45 @@ def test_each_step_is_reported_and_the_end_says_what_it_cost(client, fake_llm, p
 
 
 @needs_latex
-def test_the_temperature_reaches_the_cv_model_and_no_other(client, fake_llm, parts):
+def test_the_session_hands_over_each_intermediate_result_and_only_the_last_pdf(
+    client, fake_llm, parts
+):
     a_good_run(fake_llm)
-    for role in ("cv", "review", "highlight"):
-        fake_llm._chat[role].temperature = 0.4
-    run_cv(client, parts, temperature="1.5")
-    assert fake_llm["cv"].calls[0]["temperature"] == 1.5
-    for role in ("review", "highlight"):
-        assert all(call["temperature"] == 0.4 for call in fake_llm[role].calls)
+    events = run_cv(client, parts)
+    assert [a["name"] for a in of_type(events, "artifact")] == list(ARTIFACTS)
+    assert [kind for _, kind, data in events if "pdf_base64" in json.dumps(data)] == ["result"]
 
 
 @needs_latex
-def test_pages_is_forwarded_to_the_page_check(client, fake_llm, parts):
-    """A ``pages`` override reaches the generator's page check, not just the
-    default of 2 — proving the whole client-to-page-check chain is wired."""
+def test_an_extra_body_is_all_its_step_sends_and_no_other_step_changes(client, fake_llm, parts):
     a_good_run(fake_llm)
-    assert "1 page(s)" in result_of(run_cv(client, parts, pages=1)).detail
+    for role in ("cv", "validation"):
+        fake_llm._chat[role].temperature = 0.4
+        fake_llm._chat[role].reasoning_effort = "high"
+    run_cv(client, parts, cv_extra_body=json.dumps({"top_p": 0.9}))
+    for call in fake_llm["cv"].calls:
+        assert call["top_p"] == 0.9
+        assert "temperature" not in call and "reasoning_effort" not in call
+    for call in fake_llm["validation"].calls:
+        assert (call["temperature"], call["reasoning_effort"]) == (0.4, "high")
+        assert "top_p" not in call
+
+
+@pytest.mark.parametrize("sent", ["not json", "[0.9]"])
+def test_an_extra_body_that_is_not_a_json_object_is_a_400(client, parts, sent):
+    response = client.post("/v1/cv", data={"jd_text": "jd", "highlight_extra_body": sent},
+                           files=parts)
+    assert response.status_code == 400
+    assert "highlight_extra_body" in response.json()["error"]
+
+
+@needs_latex
+def test_pages_is_forwarded_to_the_page_count(client, fake_llm, parts):
+    """A ``pages`` override reaches the render's page count, not just the
+    default of 2 — proving the whole client-to-render chain is wired."""
+    a_good_run(fake_llm)
+    lines = of_type(run_cv(client, parts, pages=1), "log")
+    assert any("past page 1" in line["message"] for line in lines)
 
 
 @needs_latex
@@ -196,8 +222,8 @@ def test_every_line_the_job_logged_is_in_its_session(client, fake_llm, parts):
     lines = of_type(run_cv(client, parts), "log")
 
     stages = {line["stage"] for line in lines}
-    assert {"cv.generate", "cv.review", "render"} <= stages
-    assert any("Review OK" in line["message"] for line in lines)
+    assert {f"cv.{step}" for step in STEPS} | {"render"} <= stages
+    assert any("attempt 1: OK" in line["message"] for line in lines)
     costs = [line["message"] for line in lines if "⏱" in line["message"]]
     assert costs and all("input=" in line and "thinking=" in line for line in costs)
 
@@ -210,7 +236,7 @@ def test_every_model_call_is_reported_and_added_up(client, fake_llm, parts):
     calls = of_type(events, "usage")
     total = result_of(events).total
 
-    assert {call["role"] for call in calls} >= {"cv", "review", "highlight"}
+    assert {call["role"] for call in calls} == set(STEPS)
     assert all((c["input_tokens"], c["thinking_tokens"], c["output_tokens"]) == (11, 2, 20)
                for c in calls)
     assert total.calls == len(calls)
@@ -243,16 +269,16 @@ def test_the_same_id_again_replays_the_session_and_starts_nothing(client, fake_l
 @needs_latex
 def test_a_job_still_running_is_joined_not_restarted(client, fake_llm, parts):
     a_good_run(fake_llm)
-    fake_llm["cv"].gate = threading.Event()
+    gate = hold(fake_llm)
     try:
         start_cv(client, parts, request_id="posting-2")
         again = client.post("/v1/cv", data={"jd_text": "x" * 1200}, files=parts,
                             headers={"X-Request-Id": "posting-2"})
         assert again.json()["data"] == {"reattached": True}
     finally:
-        fake_llm["cv"].gate.set()
+        gate.set()
     assert result_of(read_events(client, "posting-2"))
-    assert len(fake_llm["cv"].calls) == 1
+    assert len(fake_llm["jd_evaluation"].calls) == 1
 
 
 @needs_latex
@@ -266,7 +292,7 @@ def test_last_event_id_sends_only_what_was_missed(client, fake_llm, parts):
 def test_a_stream_past_the_end_closes_at_once(client, fake_llm, parts):
     """A client that already has the last event, and reconnects anyway,
     must not be left waiting for one that will never come."""
-    load_replies(fake_llm, "never valid json")
+    a_quick_failure(fake_llm)
     request_id = start_cv(client, parts)
     last = read_events(client, request_id)[-1][0]
     assert raw_events(client, request_id, after=last) == []
@@ -274,10 +300,10 @@ def test_a_stream_past_the_end_closes_at_once(client, fake_llm, parts):
 
 def test_a_quiet_stream_says_it_is_still_there(client, fake_llm, parts, monkeypatch):
     monkeypatch.setattr("resumix_server.api.routers.cv.PING_SECONDS", 0.05)
-    load_replies(fake_llm, "never valid json")
-    fake_llm["cv"].gate = threading.Event()
+    a_quick_failure(fake_llm)
+    gate = hold(fake_llm)
     request_id = start_cv(client, parts)
-    threading.Timer(0.5, fake_llm["cv"].gate.set).start()
+    threading.Timer(0.5, gate.set).start()
 
     events = raw_events(client, request_id)
     assert ("ping" in {kind for _, kind, _ in events})
@@ -305,22 +331,22 @@ def test_a_running_session_cannot_be_acknowledged(client, fake_llm, parts):
     """Its worker is still writing there, and a new session for the same
     posting would get the same directory."""
     a_good_run(fake_llm)
-    fake_llm["cv"].gate = threading.Event()
+    gate = hold(fake_llm)
     try:
         request_id = start_cv(client, parts)
         response = client.delete(f"/v1/cv/{request_id}")
         assert response.status_code == 409
         assert "still running" in response.json()["error"]
     finally:
-        fake_llm["cv"].gate.set()
+        gate.set()
     read_events(client, request_id)
 
 
 def test_a_reset_deletes_every_session_but_a_running_one(client, fake_llm, parts, app_state):
-    load_replies(fake_llm, "never valid json")              # quick to finish
+    a_quick_failure(fake_llm)                               # quick to finish
     for name in ("done-1", "done-2"):
         read_events(client, start_cv(client, parts, request_id=name))
-    fake_llm["cv"].gate = threading.Event()
+    gate = hold(fake_llm)
     try:
         start_cv(client, parts, request_id="busy")
         response = client.delete("/v1/cv?all")
@@ -328,7 +354,7 @@ def test_a_reset_deletes_every_session_but_a_running_one(client, fake_llm, parts
         assert response.json()["data"] == {"deleted": 2, "running": 1}
         assert [p.name for p in app_state.settings.work_root.iterdir()] == ["busy"]
     finally:
-        fake_llm["cv"].gate.set()
+        gate.set()
     read_events(client, "busy")
 
 
@@ -340,7 +366,7 @@ def test_a_reset_has_to_be_asked_for(client):
 
 def test_an_expired_session_is_not_replayed(client, fake_llm, parts, app_state):
     """Older than the TTL, it is pruned before the lookup: a new job starts."""
-    load_replies(fake_llm, "never valid json")
+    a_quick_failure(fake_llm)
     read_events(client, start_cv(client, parts, request_id="old-posting"))
     day_and_more = time.time() - 86400 * app_state.settings.session_ttl_days - 60
     for path in (app_state.settings.work_root / "old-posting" / "events").iterdir():
@@ -356,7 +382,7 @@ def test_a_job_a_previous_process_left_running_ends_with_an_error(app_state):
     """A fresh process owns no workers, so the session is closed for it — a
     client following it stops waiting."""
     job = JobStore(app_state.settings.work_root).create("orphan")
-    job.append("status", CVStatus(status="review").model_dump(mode="json"))
+    job.append("status", CVStatus(status="validation").model_dump(mode="json"))
 
     with TestClient(create_app(state=app_state)) as fresh:
         events = read_events(fresh, "orphan")
@@ -370,17 +396,31 @@ def test_a_job_a_previous_process_left_running_ends_with_an_error(app_state):
 @needs_latex
 def test_an_uploaded_prompt_is_the_one_used(client, fake_llm, parts):
     a_good_run(fake_llm)
-    files = {**parts, "sys_prompt_cv": ("sys_prompt_cv.txt", "MY OWN PROMPT", "text/plain")}
+    files = {**parts, "sys_prompt_cv_body": ("sys_prompt_cv_body.txt", "MY OWN PROMPT", "text/plain")}
     run_cv(client, files)
 
-    assert fake_llm["cv"].calls[0]["messages"][0]["content"].startswith("MY OWN PROMPT")
+    body = next(c for c in fake_llm["cv"].calls if "DUTY CAP:" not in user_text(c))
+    assert body["messages"][0]["content"] == "MY OWN PROMPT"
+    duties = [c for c in fake_llm["cv"].calls if "DUTY CAP:" in user_text(c)]
+    assert all(c["messages"][0]["content"] != "MY OWN PROMPT" for c in duties)
+
+
+@needs_latex
+def test_an_uploaded_schema_is_the_one_the_writer_is_shown(client, fake_llm, parts):
+    a_good_run(fake_llm)
+    files = {**parts, "cv_duties_schema": ("cv_duties_schema.json", '{"MY": "SCHEMA"}', "application/json")}
+    run_cv(client, files)
+
+    duties = [c for c in fake_llm["cv"].calls if "DUTY CAP:" in user_text(c)]
+    assert duties and all('SCHEMA:\n{"MY": "SCHEMA"}' in user_text(c) for c in duties)
 
 
 @needs_latex
 def test_without_an_override_the_shipped_prompt_is_used(client, fake_llm, parts, bundle):
     a_good_run(fake_llm)
     run_cv(client, parts)
-    assert fake_llm["cv"].calls[0]["messages"][0]["content"].startswith(bundle.sys_prompt_cv)
+    for call in fake_llm["profile_scoring"].calls:
+        assert call["messages"][0]["content"] == bundle.sys_prompt_profile_scoring
 
 
 @needs_latex
@@ -431,7 +471,7 @@ def test_a_non_positive_pages_is_a_400(client, parts):
 
 
 def test_an_oversized_part_is_a_413(client, app_state, parts):
-    files = {**parts, "sys_prompt_cv": ("p.txt", "x" * (app_state.settings.max_part_bytes + 1))}
+    files = {**parts, "sys_prompt_cv_body": ("p.txt", "x" * (app_state.settings.max_part_bytes + 1))}
     response = client.post("/v1/cv", data={"jd_text": "jd"}, files=files)
     assert response.status_code == 413
 
@@ -440,7 +480,7 @@ def test_a_request_id_cannot_name_a_directory_of_its_own_choosing(
     client, fake_llm, parts, app_state
 ):
     """The id is a path component, so anything that is not one is replaced."""
-    load_replies(fake_llm, "never valid json")
+    a_quick_failure(fake_llm)
     response = client.post("/v1/cv", data={"jd_text": "jd"}, files=parts,
                            headers={"X-Request-Id": "../../evil"})
     assert response.json()["request_id"] != "../../evil"
@@ -450,14 +490,14 @@ def test_a_request_id_cannot_name_a_directory_of_its_own_choosing(
 
 # --- failing -----------------------------------------------------------------
 def test_a_failed_job_ends_its_session_with_the_cause_and_the_bill(client, fake_llm, parts):
-    load_replies(fake_llm, "never valid json")
+    a_quick_failure(fake_llm)
     events = run_cv(client, parts)
 
     assert events[-1][1] == "error"
     failure = CVFailure.model_validate(events[-1][2])
     assert failure.http_status == 502
     assert "model_output" in failure.error
-    assert "cv.generate" in failure.error
+    assert "cv.jd_evaluation" in failure.error
     # The attempts that were paid for are all there, and added up.
     assert failure.total.calls == len(of_type(events, "usage")) >= 1
     assert sum("rejected" in line["message"] for line in of_type(events, "log")) >= 1

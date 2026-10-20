@@ -5,6 +5,8 @@ log_project   = "serverless-eu-central-1-<uuid>"
 
 environment = {
   MODEL_BASE_URL = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+  # DeepSeek's own API: the six CV steps run there (use_alternate_provider = 2).
+  MODEL_BASE_URL2 = "https://api.deepseek.com"
   TZ             = "Europe/Rome"
   # The sessions bucket, where main.tf mounts it.
   RESUMIX_WORK_DIR = "/mnt/resumix"
@@ -14,7 +16,8 @@ environment = {
 }
 
 secrets = {
-  MODEL_API_KEY = "sk-..."
+  MODEL_API_KEY  = "sk-..."
+  MODEL_API_KEY2 = "sk-..."
 }
 
 # 32–128 characters from A-Z a-z 0-9 + / = - ~ .  The client sends it as

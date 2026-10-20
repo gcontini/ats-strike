@@ -1,7 +1,7 @@
 """Writing the cover letter: prose in, prose out.
 
 Much simpler than the CV pipeline — no schema, no renderer, no highlighter,
-no content review. Whether the model can look the employer up is the
+no validation. Whether the model can look the employer up is the
 ``letter`` role's own configuration (its ``extra_body``), not this code's.
 """
 

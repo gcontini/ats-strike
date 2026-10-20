@@ -4,13 +4,13 @@ Layers, outermost first:
 
 - ``api`` — FastAPI routers, multipart handling, auth, error mapping. Knows
   about HTTP and nothing about LaTeX or prompts.
-- ``pipeline`` — :class:`CVGenerator`, :class:`CVValidator`,
-  :class:`CVRenderer`, :class:`JDValidator`, :class:`LetterGenerator`. Pure
-  library code: every
+- ``pipeline`` — :class:`CVGenerator` (the CV's six steps, with
+  ``cv_review`` for its validation), :class:`CVRenderer`,
+  :class:`JDValidator`, :class:`LetterGenerator`. Pure library code: every
   input arrives in memory, every output is returned, nothing is read from a
   configured path.
 - ``models`` — one long-lived chat model per role, from
-  ``resources/models.toml``, and ``call_llm`` to ask it.
+  ``resources/models.toml``, and ``call_llm`` / ``call_tools`` to ask it.
 - ``bundle`` / ``defaults`` — where the impersonal defaults come from, and the
   per-request split between them and the personal inputs.
 - ``observability`` / ``jobstore`` — what a CV job says about itself (every

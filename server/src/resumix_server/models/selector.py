@@ -1,11 +1,14 @@
-"""One long-lived chat model per role, and the one way to call it.
+"""One long-lived chat model per role, and the two ways to call it.
 
 :meth:`ModelSelector.call_llm` sends a system prompt and a conversation to a
 role and returns the reply as the type asked for: a pydantic model, ``bool``
-(YES/NO) or ``str``. A reply that is empty, cut off by the token cap or not
+(YES/NO), ``str``, or a JSON ``list`` or ``dict``.
+:meth:`ModelSelector.call_tools` asks for the reply as calls of one tool and
+returns their arguments. A reply that is empty, cut off by the token cap or not
 that type is retried, with what was wrong appended to the conversation, up to
 :data:`ATTEMPTS` calls in all. Every call logs what was sent and what it cost,
-and adds its tokens and time to the :class:`Usage` it is handed.
+and adds its tokens and time to the :class:`Usage` it is handed — from as many
+threads at once as the CV pipeline runs nodes, hence the lock.
 """
 
 from __future__ import annotations
@@ -17,11 +20,13 @@ import re
 import time
 from dataclasses import dataclass, fields
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar
+from threading import Lock
+from typing import Any, Dict, List, Mapping, Optional, Tuple, Type, TypeVar
 
 import httpx
 from dotenv import load_dotenv
 from langchain_core.output_parsers import PydanticOutputParser
+from langchain_core.utils.json import parse_json_markdown
 from openai import LengthFinishReasonError
 from pydantic import BaseModel, ValidationError
 from resumix_contracts import ModelCall
@@ -45,6 +50,9 @@ PROVIDERS: Dict[str, Provider] = {"standard": StandardProvider(), "deepseek": De
 
 #: Request timeout when ``[defaults]`` declares no ``timeout_seconds``.
 DEFAULT_TIMEOUT = 600
+
+#: Guards every :class:`Usage` update: the CV pipeline's parallel nodes share one.
+_LEDGER = Lock()
 
 T = TypeVar("T")
 
@@ -104,31 +112,30 @@ class ModelSelector:
                 http_client=http_client,
             )
             logger.info("  🧠 %s: %s (%s, %s)", role, spec.model, spec.model_provider, spec.api)
-        #: (role, output type) -> (runnable, text appended to the system prompt).
+        #: (role, output type or ("tools", tool)) -> (runnable, text appended to
+        #: the system prompt).
         self._wrapped: Dict[Tuple[str, Any], Tuple[Any, str]] = {}
 
-    def with_overrides(
-        self,
-        role: str,
-        *,
-        temperature: Optional[float] = None,
-        presence_penalty: Optional[float] = None,
-    ) -> "ModelSelector":
-        """A copy whose ``role`` samples differently; ``None`` keeps the configured value.
+    def with_extra_body(self, bodies: Mapping[str, Dict[str, Any]]) -> "ModelSelector":
+        """A copy where each role in ``bodies`` sends that ``extra_body`` and no other setting.
 
-        The new chat model shares the original's HTTP client and connection
-        pool. Returns ``self`` when there is nothing to override.
+        A client's ``<role>_extra_body``. It supersedes every request setting
+        ``models.toml`` gives the role — temperature, the thinking switch,
+        ``reasoning_effort``, the output cap and its own ``extra_body`` — so
+        besides the model and the messages, what the client sent is all that
+        goes out. The endpoint, the provider and how a reply is asked for stay.
+        The new chat models share the originals' HTTP clients. Returns ``self``
+        when there is nothing to change.
         """
-        update = {
-            k: v
-            for k, v in (("temperature", temperature), ("presence_penalty", presence_penalty))
-            if v is not None
-        }
-        if not update:
+        if not bodies:
             return self
+        cleared = {"temperature": None, "reasoning_effort": None, "max_tokens": None}
         new = copy.copy(self)
-        new._chat = {**self._chat, role: self._chat[role].model_copy(update=update)}
-        new._wrapped = {key: value for key, value in self._wrapped.items() if key[0] != role}
+        new._chat = {**self._chat, **{
+            role: self._chat[role].model_copy(update={**cleared, "extra_body": dict(body)})
+            for role, body in bodies.items()
+        }}
+        new._wrapped = {key: value for key, value in self._wrapped.items() if key[0] not in bodies}
         return new
 
     def _wrapper(self, role: str, output_type: Any) -> Tuple[Any, str]:
@@ -137,7 +144,8 @@ class ModelSelector:
         A pydantic type goes through ``with_structured_output`` with the
         role's ``structured_output`` method. ``json_mode`` puts no schema in
         the request, so LangChain's format instructions carry it in the
-        system prompt instead.
+        system prompt instead. Any other type is the plain chat model: a JSON
+        ``list`` or ``dict`` is asked for by the prompt, and parsed here.
         """
         key = (role, output_type)
         if key not in self._wrapped:
@@ -169,17 +177,49 @@ class ModelSelector:
         :class:`ModelOutputError` after :data:`ATTEMPTS` unusable replies;
         provider errors propagate unchanged.
         """
-        usage = usage if usage is not None else Usage()
         runnable, instructions = self._wrapper(model_name, output_type)
-        system = system_prompt + instructions
+        return self._ask(model_name, runnable, output_type, system_prompt + instructions,
+                         messages, usage, tools=False)
+
+    def call_tools(
+        self,
+        role: str,
+        tool: Type[BaseModel],
+        system_prompt: str,
+        messages: List[Dict[str, str]],
+        *,
+        usage: Optional[Usage] = None,
+    ) -> List[Dict[str, Any]]:
+        """Ask ``role`` to answer with calls of ``tool``; their arguments, in order.
+
+        ``tool`` is only a schema — its title is the tool's name, its
+        docstring the description the model reads — and nothing here runs it:
+        the caller applies the arguments. Several calls may come in one reply.
+        A reply that calls nothing (an "OK") is ``[]``; an empty or cut-off
+        one is retried as in :meth:`call_llm`.
+        """
+        key = (role, ("tools", tool))
+        if key not in self._wrapped:
+            bound = self._chat[role].bind_tools([tool], parallel_tool_calls=True)
+            self._wrapped[key] = (bound, "")
+        return self._ask(role, self._wrapped[key][0], list, system_prompt, messages, usage,
+                         tools=True)
+
+    def _ask(
+        self, role: str, runnable: Any, output_type: Any, system: str,
+        messages: List[Dict[str, str]], usage: Optional[Usage], *, tools: bool,
+    ) -> Any:
+        """The calls of one request: the first, and a correction per unusable reply."""
+        usage = usage if usage is not None else Usage()
         history = ([{"role": "system", "content": system}] if system else []) + list(messages)
         for attempt in range(1, ATTEMPTS + 1):
-            value, reply, problem = self._attempt(model_name, runnable, history, output_type, usage)
+            value, reply, problem = self._attempt(role, runnable, history, output_type, usage,
+                                                  tools=tools)
             if problem is None:
                 return value
             logger.warning(
                 "  ✗ [%s] reply %d/%d rejected:\n%s\n    reply: %s",
-                model_name, attempt, ATTEMPTS, problem, raw_excerpt(reply),
+                role, attempt, ATTEMPTS, problem, raw_excerpt(reply),
             )
             if reply:
                 history.append({"role": "assistant", "content": reply})
@@ -189,21 +229,25 @@ class ModelSelector:
                 "Reply again with the complete, corrected output only.",
             })
         raise ModelOutputError(
-            f"{model_name}: no usable reply in {ATTEMPTS} attempts:\n{problem}",
+            f"{role}: no usable reply in {ATTEMPTS} attempts:\n{problem}",
             stage=current_stage(),
         )
 
     def _attempt(
-        self, role: str, runnable: Any, history: List[Dict[str, str]], output_type: Any, usage: Usage
+        self, role: str, runnable: Any, history: List[Dict[str, str]], output_type: Any,
+        usage: Usage, *, tools: bool,
     ) -> Tuple[Any, str, Optional[str]]:
         """One call: ``(value, reply, problem)``, ``problem`` ``None`` when ``value`` is usable."""
         chat = self._chat[role]
+        if tools:
+            asked = "tools"
+        else:
+            asked = "-" if runnable is chat else self.specs[role].structured_output
         logger.info(
             "  → [%s] %s | api=%s, structured_output=%s, max_output_tokens=%s, temperature=%s, "
-            "presence_penalty=%s, reasoning_effort=%s, extra_body=%s, input=%d msgs/%d chars",
-            role, chat.model_name, self.specs[role].api,
-            "-" if runnable is chat else self.specs[role].structured_output,
-            chat.max_tokens, chat.temperature, chat.presence_penalty, chat.reasoning_effort,
+            "reasoning_effort=%s, extra_body=%s, input=%d msgs/%d chars",
+            role, chat.model_name, self.specs[role].api, asked,
+            chat.max_tokens, chat.temperature, chat.reasoning_effort,
             chat.extra_body, len(history), sum(len(m["content"]) for m in history),
         )
         logger.debug("  → [%s] messages: %s", role, history)
@@ -218,8 +262,9 @@ class ModelSelector:
             error = e
         finally:
             seconds = time.perf_counter() - started
-            usage.calls += 1
-            usage.seconds += seconds
+            with _LEDGER:
+                usage.calls += 1
+                usage.seconds += seconds
 
         raw = out["raw"] if isinstance(out, dict) else out
         if isinstance(error, LengthFinishReasonError):
@@ -234,14 +279,19 @@ class ModelSelector:
             finish = raw.response_metadata.get("finish_reason") or raw.response_metadata.get("status")
         else:
             tokens, finish = (0, 0, 0), None
-        usage.input_tokens += tokens[0]
-        usage.thinking_tokens += tokens[1]
-        usage.output_tokens += tokens[2]
+        with _LEDGER:
+            usage.input_tokens += tokens[0]
+            usage.thinking_tokens += tokens[1]
+            usage.output_tokens += tokens[2]
 
-        # The reply as text: its content, or the tool call it made instead.
+        # The reply as text: its content, or the tool call(s) it made instead.
+        calls = [call["args"] for call in raw.tool_calls] if raw is not None else []
         reply = ""
         if raw is not None:
-            reply = json.dumps(raw.tool_calls[0]["args"]) if raw.tool_calls else raw.text
+            if calls:
+                reply = json.dumps(calls if tools else calls[0])
+            else:
+                reply = raw.text
         logger.info(
             "  ⏱ [%s] %s %.1fs | input=%d, thinking=%d, output=%d, finish=%s, content=%d chars",
             role, chat.model_name, seconds, *tokens, finish, len(reply),
@@ -258,6 +308,8 @@ class ModelSelector:
             return None, "", "- it was cut off by the output token limit"
         if not reply.strip():
             return None, "", "- it was empty"
+        if tools:
+            return calls, reply, None
         if isinstance(out, dict):
             if out["parsing_error"] is not None:
                 error = out["parsing_error"]
@@ -272,6 +324,17 @@ class ModelSelector:
             if word not in ("YES", "NO"):
                 return None, reply, "- expected YES or NO"
             return word == "YES", reply, None
+        if output_type in (list, dict):
+            # LangChain's JSON output parser, as adapticv-ai used it: a fence
+            # around the JSON, or text before the fence, is fine.
+            try:
+                value = parse_json_markdown(reply)
+            except ValueError as e:
+                return None, reply, _describe(e)
+            if not isinstance(value, output_type):
+                kind = "list" if output_type is list else "object"
+                return None, reply, f"- it is not a JSON {kind}"
+            return value, reply, None
         return reply, reply, None
 
 

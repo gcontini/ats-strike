@@ -2,8 +2,9 @@
 
 :class:`CvWriter` finishes a job folder in place: the CV document, its LaTeX,
 its PDF and the images the LaTeX includes — everything needed to render it
-again later with no model call. :class:`GenerationWorker` is the loop around
-it: take the next folder, write it, and hand it back to the
+again later with no model call — and, under ``steps/``, what each step of the
+server handed the next one, as it streamed in. :class:`GenerationWorker` is
+the loop around it: take the next folder, write it, and hand it back to the
 :class:`~.working.WorkingProcessor` to deliver, or to file under ``error/``.
 ``watch`` and ``clipboard`` run it on a thread of its own; ``submit`` drains
 it on the main thread and waits.
@@ -18,13 +19,13 @@ import threading
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
-from resumix_contracts import RenderedCV
+from resumix_contracts import CVArtifact, RenderedCV
 
 from ..api import ResumixError, read_text
 from ..config import LETTER_PROMPT, Config
 from ..cvjob import write_cv
 from ..joblog import JobLog
-from ..workspace import LETTER_FILENAME, Artifacts
+from ..workspace import LETTER_FILENAME, STEPS_DIRNAME, Artifacts
 from .calls import Calls
 from .jobfolder import read_analysis, read_jd, render_source
 from .terminal import Console, TaggedLog
@@ -56,7 +57,8 @@ class CvWriter:
                 write_cv(
                     self.calls.api, self.config, jd_text, say=log.step,
                     keep=lambda rendered: self._save(folder, rendered, log, document=True),
-                    log_line=log.server_line, new=self.new,
+                    log_line=log.server_line,
+                    artifact=lambda result: self._save_step(folder, result), new=self.new,
                 )
             if self.config.cover_letter in ("yes", "letter_only"):
                 self._letter(folder, jd_text, log)
@@ -123,6 +125,15 @@ class CvWriter:
             shutil.copy2(path, folder / name)
         log.step(f"CV Path: {artifacts.pdf}")
 
+    @staticmethod
+    def _save_step(folder: Path, artifact: CVArtifact) -> None:
+        """One step's intermediate result, as ``steps/<name>.json``."""
+        steps = folder / STEPS_DIRNAME
+        steps.mkdir(exist_ok=True)
+        (steps / f"{Path(artifact.name).name}.json").write_text(
+            json.dumps(artifact.data, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+
     def _letter(self, folder: Path, jd_text: str, log: JobLog) -> None:
         log.step("✉ writing the cover letter...")
         letter = self.calls.make(lambda: self.calls.api.letter(
@@ -131,8 +142,7 @@ class CvWriter:
             candidate_data=self.config.require("candidate_data.json").read_bytes(),
             analysis=read_analysis(folder).model_dump_json(),
             prompt=read_text(self.config.path(LETTER_PROMPT)),
-            temperature=self.config.temperature,
-            presence_penalty=self.config.presence_penalty,
+            extra_body=self.config.extra_body,
         ))
         (folder / LETTER_FILENAME).write_text(letter.text, encoding="utf-8")
         log.step(f"Letter Path: {LETTER_FILENAME}")

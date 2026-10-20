@@ -23,21 +23,25 @@ def test_returns_the_letter_and_its_word_count(client, fake_llm, candidate):
     assert body["data"]["words"] == 200
 
 
-def test_the_letter_takes_the_temperature_sent_by_the_client(client, fake_llm, candidate):
+def test_the_letter_runs_on_the_extra_body_sent_by_the_client(client, fake_llm, candidate):
+    """It supersedes the letter's own settings: what it says is all that is sent."""
     fake_llm._chat["letter"].temperature = 0.4
+    fake_llm._chat["letter"].extra_body = {"enable_search": True}
     fake_llm["letter"].replies = [LETTER]
-    client.post("/v1/letter", data={"jd_text": "a jd", "temperature": "1.5"},
+    client.post("/v1/letter", data={"jd_text": "a jd", "letter_extra_body": '{"temperature": 1.5}'},
                 files=letter_parts(candidate))
-    assert fake_llm["letter"].calls[-1]["temperature"] == 1.5
+    sent = fake_llm["letter"].calls[-1]
+    assert sent["temperature"] == 1.5 and "enable_search" not in sent
 
 
-def test_the_letters_temperature_does_not_stick_to_the_model(client, fake_llm, candidate):
-    """The override is for one request: the next analysis runs on the same model."""
+def test_the_letters_extra_body_does_not_stick_to_the_model(client, fake_llm, candidate):
+    """The override is for one request: the next letter runs on the same model."""
     fake_llm._chat["letter"].temperature = 0.4
     fake_llm["letter"].replies = [LETTER]
-    client.post("/v1/letter", data={"jd_text": "a jd", "temperature": "1.5"},
+    client.post("/v1/letter", data={"jd_text": "a jd", "letter_extra_body": '{"temperature": 1.5}'},
                 files=letter_parts(candidate))
-    assert fake_llm._chat["letter"].temperature == 0.4
+    client.post("/v1/letter", data={"jd_text": "a jd"}, files=letter_parts(candidate))
+    assert fake_llm["letter"].calls[-1]["temperature"] == 0.4
 
 
 def test_a_short_letter_is_rejected_and_retried(client, fake_llm, candidate):

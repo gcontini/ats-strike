@@ -50,7 +50,7 @@ class ModelOutputError(PipelineError):
 
 
 class BudgetExceededError(PipelineError):
-    """The run hit its wall-clock budget between attempts."""
+    """The run hit its wall-clock budget before a step."""
 
     kind = "budget_exceeded"
 

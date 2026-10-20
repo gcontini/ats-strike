@@ -10,6 +10,7 @@ import pytest
 from resumix_contracts import (
     EVENT_PAYLOADS,
     TERMINAL_EVENTS,
+    CVArtifact,
     CVFailure,
     CVResult,
     CVStatus,
@@ -29,15 +30,20 @@ def test_a_status_carries_one_step_and_nothing_else():
 
 
 def test_a_status_starts_with_no_detail():
-    """The first poll lands before any step has finished."""
-    assert CVStatus(status="generate").detail == ""
+    """The first step is announced before any step has finished."""
+    assert CVStatus(status="jd_evaluation").detail == ""
+
+
+def test_the_steps_are_the_six_of_the_pipeline_in_order():
+    steps = CVStatus.model_fields["status"].annotation.__args__
+    assert steps == ("jd_evaluation", "profile_scoring", "format_selection", "cv",
+                     "validation", "highlight")
 
 
 def test_a_detail_may_span_lines():
-    """The reviewer's complaints and the condense instruction are quoted
-    verbatim, and both are lists or paragraphs."""
-    status = CVStatus(status="re-generate", detail="review rejected the CV\n- Invented Kubernetes")
-    assert status.detail.splitlines()[-1] == "- Invented Kubernetes"
+    """The format's reason follows the choice, on lines of its own."""
+    status = CVStatus(status="cv", detail="format B: experiences [0, 1, 2]\n  most relevant")
+    assert status.detail.splitlines()[-1] == "  most relevant"
 
 
 def test_an_unknown_status_is_refused():
@@ -86,20 +92,22 @@ def test_a_failure_says_why_in_one_line():
     """One string, not a structure: the detail that would not fit is in the
     log, which is where a reader who wants it is going anyway."""
     envelope = Envelope[JDAnalysis](
-        request_id="abc", ok=False, error="model_output [cv.generate]: no valid CV"
+        request_id="abc", ok=False, error="model_output [cv.cv]: no usable reply"
     )
-    assert "cv.generate" in envelope.error
+    assert "cv.cv" in envelope.error
 
 
 # --- the events a CV job streams --------------------------------------------
 def test_every_event_type_names_its_payload():
-    assert set(EVENT_PAYLOADS) == {"status", "log", "usage", "result", "error"}
+    assert set(EVENT_PAYLOADS) == {"status", "artifact", "log", "usage", "result", "error"}
     assert set(TERMINAL_EVENTS) == {"result", "error"}
 
 
 @pytest.mark.parametrize("payload", [
-    CVStatus(status="review", detail="generation finished"),
-    LogEntry(ts=datetime(2026, 1, 15, 9, 0), level="INFO", stage="cv.generate",
+    CVStatus(status="validation", detail="cv finished"),
+    CVArtifact(name="key_points", data=[{"id": 1, "requirement": "Kubernetes",
+                                         "keywords": ["K8s"], "importance": 90}]),
+    LogEntry(ts=datetime(2026, 1, 15, 9, 0), level="INFO", stage="cv.profile_scoring",
              message="gpt-fake 1.2s | input=10, output=20"),
     ModelCall(role="cv", model="gpt-fake", seconds=1.2, input_tokens=10,
               thinking_tokens=0, output_tokens=20),
@@ -122,7 +130,7 @@ def test_a_result_carries_the_cv_and_the_bill():
 
 def test_a_failure_still_carries_the_bill():
     """A user who paid for four attempts is entitled to see all four."""
-    failure = CVFailure(http_status=502, error="model_output [cv.generate]: no valid CV",
+    failure = CVFailure(http_status=502, error="model_output [cv.cv]: no usable reply",
                         total=TokenUsage(calls=4))
     assert CVFailure.model_validate_json(failure.model_dump_json()).total.calls == 4
 

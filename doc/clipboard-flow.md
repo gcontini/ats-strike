@@ -48,15 +48,16 @@ sequenceDiagram
     Wp->>Gen: queued for its CV
     In-->>Lis: back to the clipboard at once
 
-    Gen->>Api: create_cv(jd, profile, candidate_data, template, images, pages)
+    Gen->>Api: create_cv(jd, profile, candidate_data, prompts, template, images, extra_body, pages)
     Api->>Srv: POST /v1/cv, X-Request-Id: sha256(jd)
     Srv-->>Api: 202 {reattached}
 
     Gen->>Api: events(id)
     Api->>Srv: GET /v1/cv/{id}/events
     loop until the last event
-        Srv-->>Api: status · log · usage
+        Srv-->>Api: status · artifact · log · usage
         Gen-->>You: [Acme_Corp_Head_of_IT] the step, each model call's cost (and detail with -v)
+        Gen->>Gen: steps/<name>.json for each artifact
     end
     Srv-->>Api: result {cv, detail, total}
     Gen->>Gen: cv_you_head_of_it.json · cv_you_head_of_it.tex · cv_you_head_of_it.pdf
@@ -140,11 +141,11 @@ written finish; the approved ones still queued stay in `working/`.
 `202` at once, under a session id that is the SHA-256 of the posting's text.
 The client then reads the session's events as the server writes them: each
 new step, printed; what each model call cost, printed; with `-v`, each step's
-`detail` too — the token spend of the step that just finished, and the
-reviewer's or the page check's own words. Every line the server logs for the
-job goes into `log.log`. The last event holds the document, the LaTeX and the
-PDF, and what the whole run cost; once those are written, the client
-acknowledges the session and the server deletes it.
+`detail` too — what the step that just finished produced, and its token
+spend. Each step's result goes into the folder's `steps/`, as JSON, and every
+line the server logs for the job into `log.log`. The last event holds the
+document, the LaTeX and the PDF, and what the whole run cost; once those are
+written, the client acknowledges the session and the server deletes it.
 
 If the connection drops, the client opens the stream again from the last
 event it got. If the client dies mid-job, the job does not: the server keeps

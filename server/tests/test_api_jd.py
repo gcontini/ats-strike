@@ -94,13 +94,18 @@ def test_detect_ignores_a_temperature_sent_by_the_client(client, fake_llm):
     assert fake_llm["detect"].calls[-1]["temperature"] == 0.0
 
 
-def test_analysis_ignores_a_temperature_sent_by_the_client(client, fake_llm, candidate):
-    """The client's temperature is for the CV; analysis keeps its own."""
+def test_analysis_runs_on_its_own_extra_body_and_ignores_the_others(client, fake_llm, candidate):
+    """A client sends every extra_body it has; each endpoint reads its own."""
     fake_llm._chat["analysis"].temperature = 0.4
     fake_llm["analysis"].replies = [json.dumps(ANALYSIS)]
-    client.post("/v1/jd/analysis", data={"jd_text": "a jd", "temperature": "1.5"},
+    client.post("/v1/jd/analysis", data={"jd_text": "a jd", "cv_extra_body": '{"temperature": 1.5}'},
                 files=jd_parts(candidate))
     assert fake_llm["analysis"].calls[-1]["temperature"] == 0.4
+
+    client.post("/v1/jd/analysis", data={"jd_text": "a jd", "analysis_extra_body": '{"top_p": 0.5}'},
+                files=jd_parts(candidate))
+    sent = fake_llm["analysis"].calls[-1]
+    assert sent["top_p"] == 0.5 and "temperature" not in sent
 
 
 def test_analysis_returns_a_validated_analysis(client, fake_llm, candidate):

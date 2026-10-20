@@ -66,10 +66,6 @@ def global_options() -> argparse.ArgumentParser:
                         help="Server URL (default: http://localhost:8080).")
     common.add_argument("--token", default=argparse.SUPPRESS,
                         help="Bearer token, if the server requires one.")
-    common.add_argument("--temperature", type=float, default=argparse.SUPPRESS,
-                        help="Sampling temperature override for the CV and the cover letter.")
-    common.add_argument("--presence-penalty", type=float, default=argparse.SUPPRESS,
-                        help="Presence penalty override for the CV and the cover letter.")
     common.add_argument("--pages", type=int, default=argparse.SUPPRESS,
                         help="Page limit the CV must fit (default: 2).")
     common.add_argument("-v", "--verbose", action="store_true", default=argparse.SUPPRESS,
@@ -182,8 +178,6 @@ def main(argv: Optional[List[str]] = None) -> int:
             overrides={
                 "server_url": flag("server"),
                 "token": flag("token"),
-                "temperature": flag("temperature"),
-                "presence_penalty": flag("presence_penalty"),
                 "pages": flag("pages"),
                 "cover_letter": getattr(args, "cover_letter", None),
                 "verbose": flag("verbose"),

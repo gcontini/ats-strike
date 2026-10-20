@@ -18,6 +18,7 @@ import pytest
 from resumix_contracts import (
     Cleanup,
     CoverLetter,
+    CVArtifact,
     CVResult,
     CVSession,
     CVStatus,
@@ -76,16 +77,22 @@ def envelope(data, *, request_id: str = "test-request") -> Envelope:
     return Envelope(request_id=request_id, ok=True, data=data)
 
 
+#: The intermediate result the fake session hands over.
+KEY_POINTS = [{"id": 1, "requirement": "IT management", "keywords": ["IT"], "importance": 90}]
+
+
 def cv_session(rendered: RenderedCV) -> list:
     """What a CV job streams, as ``(type, payload)``: a step, a log line, a
-    model call, another step, then the CV with the run's total."""
+    model call, the step's result, another step, then the CV with the run's
+    total."""
     return [
-        ("status", CVStatus(status="generate")),
-        ("log", LogEntry(ts=datetime(2026, 1, 15, 9, 0), level="INFO", stage="cv.generate",
+        ("status", CVStatus(status="jd_evaluation")),
+        ("log", LogEntry(ts=datetime(2026, 1, 15, 9, 0), level="INFO", stage="cv.jd_evaluation",
                          message="⏱ [cv] gpt-fake 1.2s | input=10, thinking=0, output=20")),
         ("usage", ModelCall(role="cv", model="gpt-fake", seconds=1.2, input_tokens=10,
                             thinking_tokens=0, output_tokens=20)),
-        ("status", CVStatus(status="review", detail="generation finished, tokens used=30")),
+        ("artifact", CVArtifact(name="key_points", data=KEY_POINTS)),
+        ("status", CVStatus(status="profile_scoring", detail="1 key points, tokens used=30")),
         ("result", CVResult(cv=rendered, detail="done, 1 model call, 1 page(s)",
                             total=TokenUsage(calls=1, seconds=1.2, input_tokens=10,
                                              output_tokens=20))),
@@ -130,23 +137,22 @@ class FakeApi:
         self._record("detect")
         return envelope(JDDetection(is_job_description=self.is_jd))
 
-    def analyze(self, text, *, profile, preferences, prompt=None):
+    def analyze(self, text, *, profile, preferences, prompt=None, extra_body=None):
         self._record("analyze")
         self.seen_profile = profile
         self.seen_preferences = preferences
         self.seen_analysis_prompt = prompt
+        self.seen_analysis_extra_body = extra_body
         return envelope(self.analysis)
 
     def create_cv(self, text, *, request_id, profile, candidate_data, prompts=None,
-                  template=None, images=None, temperature=None, presence_penalty=None,
-                  pages=None):
+                  template=None, images=None, extra_body=None, pages=None):
         self._record("create_cv")
         self.seen_request_id = request_id
         self.seen_prompts = dict(prompts or {})
         self.seen_template = template
         self.seen_images = dict(images or {})
-        self.seen_temperature = temperature
-        self.seen_presence_penalty = presence_penalty
+        self.seen_extra_body = extra_body
         self.seen_candidate_data = candidate_data
         self.seen_pages = pages
         return envelope(CVSession(reattached=self.reattached), request_id=request_id)
@@ -181,11 +187,10 @@ class FakeApi:
         return envelope(self.rendered)
 
     def letter(self, text, *, profile, candidate_data, analysis=None, prompt=None,
-               temperature=None, presence_penalty=None):
+               extra_body=None):
         self._record("letter")
         self.seen_candidate_data = candidate_data
-        self.seen_letter_temperature = temperature
-        self.seen_letter_presence_penalty = presence_penalty
+        self.seen_letter_extra_body = extra_body
         return envelope(self.cover_letter)
 
 

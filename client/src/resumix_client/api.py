@@ -43,6 +43,9 @@ Part = Tuple[str, Tuple[str, Any, str]]
 #: model :data:`resumix_contracts.EVENT_PAYLOADS` names for that type.
 Event = Tuple[int, str, BaseModel]
 
+#: Model role -> the request settings it runs on, instead of the server's.
+ExtraBody = Mapping[str, Mapping[str, Any]]
+
 #: Analysis, letters and renders are waited on, and a model call with retries
 #: can take minutes. A CV's stream is never this quiet: the server pings it.
 REQUEST_TIMEOUT = 500.0
@@ -77,13 +80,14 @@ class ResumixApi(Protocol):
 
     def analyze(
         self, text: str, *, profile: bytes, preferences: str, prompt: Optional[str] = None,
+        extra_body: Optional[ExtraBody] = None,
     ) -> Envelope[JDAnalysis]: ...
 
     def create_cv(
         self, text: str, *, request_id: str, profile: bytes, candidate_data: bytes,
         prompts: Optional[Mapping[str, str]] = None, template: Optional[str] = None,
-        images: Optional[Mapping[str, bytes]] = None, temperature: Optional[float] = None,
-        presence_penalty: Optional[float] = None, pages: Optional[int] = None,
+        images: Optional[Mapping[str, bytes]] = None, extra_body: Optional[ExtraBody] = None,
+        pages: Optional[int] = None,
     ) -> Envelope[CVSession]: ...
 
     def events(self, request_id: str, *, after: int = 0) -> Iterator[Event]: ...
@@ -99,9 +103,8 @@ class ResumixApi(Protocol):
 
     def letter(
         self, text: str, *, profile: bytes, candidate_data: bytes,
-        analysis: Optional[str] = None,
-        prompt: Optional[str] = None, temperature: Optional[float] = None,
-        presence_penalty: Optional[float] = None,
+        analysis: Optional[str] = None, prompt: Optional[str] = None,
+        extra_body: Optional[ExtraBody] = None,
     ) -> Envelope[CoverLetter]: ...
 
 
@@ -136,7 +139,7 @@ class HttpApi:
         self._ensure_healthy()
         return self._post("/v1/jd/detect", JDDetection, data={"jd_text": text})
 
-    def analyze(self, text, *, profile, preferences, prompt=None):
+    def analyze(self, text, *, profile, preferences, prompt=None, extra_body=None):
         files: List[Part] = [
             ("candidate_profile", ("candidate_profile.json", profile, "application/json")),
         ]
@@ -145,13 +148,13 @@ class HttpApi:
         self._ensure_healthy()
         return self._post(
             "/v1/jd/analysis", JDAnalysis,
-            data={"jd_text": text, "pers_preferences_text": preferences},
+            data={"jd_text": text, "pers_preferences_text": preferences,
+                  **_extra_bodies(extra_body)},
             files=files,
         )
 
     def create_cv(self, text, *, request_id, profile, candidate_data, prompts=None,
-                  template=None, images=None, temperature=None, presence_penalty=None,
-                  pages=None):
+                  template=None, images=None, extra_body=None, pages=None):
         """Start a CV job as session ``request_id``, or find the one it already is.
 
         ``candidate_data`` goes with it because the server renders the CV to
@@ -169,9 +172,8 @@ class HttpApi:
         files.extend(_image_parts(images))
         self._ensure_healthy()
         return self._post("/v1/cv", CVSession,
-                          data=_clean({"jd_text": text, "temperature": temperature,
-                                       "presence_penalty": presence_penalty,
-                                       "pages": pages}),
+                          data={**_clean({"jd_text": text, "pages": pages}),
+                                **_extra_bodies(extra_body)},
                           files=files, headers={"X-Request-Id": request_id},
                           request_id=request_id)
 
@@ -214,7 +216,7 @@ class HttpApi:
         return self._post("/v1/cv/render", RenderedCV, files=files)
 
     def letter(self, text, *, profile, candidate_data, analysis=None, prompt=None,
-               temperature=None, presence_penalty=None):
+               extra_body=None):
         files: List[Part] = [
             ("candidate_profile", ("candidate_profile.json", profile, "application/json")),
             ("candidate_data", ("candidate_data.json", candidate_data, "application/json")),
@@ -224,8 +226,7 @@ class HttpApi:
         if prompt is not None:
             files.append(("sys_prompt_letter", ("sys_prompt_letter.txt", prompt, "text/plain")))
         return self._post("/v1/letter", CoverLetter,
-                          data=_clean({"jd_text": text, "temperature": temperature,
-                                       "presence_penalty": presence_penalty}),
+                          data={"jd_text": text, **_extra_bodies(extra_body)},
                           files=files)
 
     # --- plumbing -----------------------------------------------------------
@@ -340,6 +341,15 @@ def _clean(values: Dict[str, Any]) -> Dict[str, Any]:
     return {k: v for k, v in values.items() if v is not None}
 
 
+def _extra_bodies(extra_body: Optional[ExtraBody]) -> Dict[str, str]:
+    """Every configured extra_body as a ``<role>_extra_body`` form field.
+
+    All of them go with every request: each endpoint reads the roles it has
+    and ignores the rest, so the client keeps no list of which is which.
+    """
+    return {f"{role}_extra_body": json.dumps(body) for role, body in (extra_body or {}).items()}
+
+
 def _parse_events(lines: Iterable[str]) -> Iterator[Event]:
     """Server-sent events, one per blank-line-terminated block of fields.
 
@@ -389,12 +399,8 @@ def _major_minor(version: str) -> Optional[Tuple[int, int]]:
         return None
 
 
-def read_bytes(path: Optional[Path]) -> Optional[bytes]:
-    return path.read_bytes() if path is not None else None
-
-
 def read_text(path: Optional[Path]) -> Optional[str]:
     return path.read_text(encoding="utf-8") if path is not None else None
 
 
-__all__ = ["ResumixApi", "HttpApi", "ResumixError", "read_bytes", "read_text", "version_compat"]
+__all__ = ["ResumixApi", "HttpApi", "ResumixError", "read_text", "version_compat"]

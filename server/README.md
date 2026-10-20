@@ -47,14 +47,16 @@ settings below already wired.
 
 ### API keys
 
-The server calls six models, all through one provider (resumix assumes a
-single API key). The endpoint is declared once, in the `[provider]` table of
-`resources/models.toml`; the key itself comes from the
-environment:
+The server calls one model per job. The endpoint is declared once, in the
+`[provider]` table of `resources/models.toml`; the key itself comes from the
+environment. A role that sets `use_alternate_provider = 2` calls a second
+endpoint instead — as shipped, the six steps of a CV, on DeepSeek's own API:
 
 ```bash
 MODEL_API_KEY=sk-...
 MODEL_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+MODEL_API_KEY2=sk-...
+MODEL_BASE_URL2=https://api.deepseek.com
 ```
 
 Any OpenAI-compatible endpoint works — OpenAI, OpenRouter, DeepSeek, a local
@@ -68,13 +70,14 @@ doesn't need to change.
 | `detect` | JD detection, a one-word YES/NO | `deepseek-v4.1-flash`, thinking **off**, 1000 max output tokens |
 | `analysis` | JD analysis, with web search | `qwen3.8-flash`, thinking on, max effort |
 | `letter` | Cover letters, with web search | `qwen3.8-flash`, thinking on, max effort |
-| `cv` | Writing the CV | `qwen3.8-max-0902`, thinking on, 7500-token budget |
-| `review` | Reviewing each CV against your profile, in plain text | `deepseek-v4-pro-0813`, thinking on, temperature 0 |
-| `highlight` | The `**bold**` keyword pass | `qwen3.8-flash`, thinking **off** |
+| `jd_evaluation` | A CV's key points, from the posting | `deepseek-flash` (provider 2), medium effort |
+| `profile_scoring` | Your profile scored against them, one list at a time | the same, high effort |
+| `format_selection` | The CV format, the experiences and their duties | the same, medium effort |
+| `cv` | Writing the CV body, and each experience on its own | the same, medium effort |
+| `validation` | Checking them against your profile, as replacements | the same, medium effort |
+| `highlight` | The `**bold**`/`*italic*` keyword pass | the same, medium effort |
 
-Thinking is off for the highlighter deliberately: letting a reasoning model
-think about inserting markers burns the output budget and returns truncated
-JSON.
+See [the CV pipeline](../doc/cv-pipeline.md) for what the six steps do.
 
 Each key of a role — `model`, `model_provider` (`standard` or `deepseek`),
 `api` (`chat_completions` or `responses`), `structured_output`,
@@ -99,7 +102,9 @@ one (OpenAI's reasoning models). Nothing checks that a combination suits your
 endpoint; the comments in `models.toml` list the known traps.
 
 The pattern is `RESUMIX_<ROLE>_<FIELD>` for `DETECT`, `ANALYSIS`, `LETTER`,
-`CV`, `REVIEW` and `HIGHLIGHT`; see `.env.example`.
+`JD_EVALUATION`, `PROFILE_SCORING`, `FORMAT_SELECTION`, `CV`, `VALIDATION` and
+`HIGHLIGHT`; see `.env.example`. A request can do the same for one call with
+`<role>_extra_body`, which replaces every setting of that role.
 
 Model calls go through LangChain. Setting `LANGSMITH_TRACING` sends every
 prompt — your profile included — to LangSmith; leave it unset unless you mean
@@ -117,15 +122,15 @@ to.
 | `RESUMIX_SESSION_TTL_DAYS` | `1` | Days a session nobody acknowledged is kept after its last event |
 | `RESUMIX_MAX_CONCURRENT_JOBS` | `10` | Requests in flight; the rest get `429` |
 | `RESUMIX_LATEX_TIMEOUT` | `120` | Seconds before a compile is killed |
-| `RESUMIX_REQUEST_BUDGET_SECONDS` | `1200` | Wall clock for one CV run before `504` |
-| `RESUMIX_MAX_ATTEMPTS` | `4` | Generate → validate rounds |
+| `RESUMIX_REQUEST_BUDGET_SECONDS` | `1200` | Wall clock for one CV run before `504`, checked before each step |
 | `RESUMIX_MAX_PART_BYTES` | `2000000` | Cap on any one uploaded part |
 | `RESUMIX_JD_MIN_CHARS` / `_MAX_CHARS` | `500` / `30000` | Length band for the free JD check |
 | `RESUMIX_LOG_LEVEL` | `INFO` | Logging level |
 
 ### Prompts and the template
 
-The four prompts and `resume.tex.jinja` ship inside the image. To change
+The prompts, the two JSON schemas the CV writer is shown and
+`resume.tex.jinja` ship inside the image. To change
 them permanently, mount a directory with your versions and set
 `RESUMIX_RESOURCES`; anything missing there falls back to the built-in copy.
 To change them for one request, upload them as parts — that is what the client
@@ -162,11 +167,12 @@ one line saying what went wrong, its kind and its stage:
 
 ```json
 {"request_id": "b510f8dff047", "ok": false,
- "error": "model_output [cv.generate]: Could not obtain valid TailoredCVData after 3 validation attempts."}
+ "error": "model_output [cv.profile_scoring]: profile_scoring: no usable reply in 3 attempts:\n- it is not a JSON list"}
 ```
 
 Nothing else rides on a reply. A CV job streams what the server did — every
-line it logged, every model call and its cost — as events; every other
+step and its result, every line it logged, every model call and its cost — as
+events; every other
 request's lines are in the server's own log (stdout), under its request id.
 
 ### `GET /healthz`
@@ -197,18 +203,19 @@ curl -F jd=@JD.txt \
 ```
 
 Required: `jd`, `candidate_profile`, `pers_preferences`. Optional:
-`temperature`. Returns a `JDAnalysis` — match percentage and rationale, title,
+`sys_prompt_analysis`, `analysis_extra_body`. Returns a `JDAnalysis` — match percentage and rationale, title,
 location, work mode, salary, hard and soft skills, company, the gaps against
 your profile, a score against your stated preferences and a `should_apply`
 verdict (`NO`, `CHECK` or `YES`) with a one-line reason.
 
 ### `POST /v1/cv` → `GET /v1/cv/{id}/events` → `DELETE /v1/cv/{id}`
 
-The expensive one: minutes of model calls. It writes the CV, and each round
-checks it — reviewed against your profile, rendered, and measured against the
-page limit (2 by default, or `pages` in the request) — feeding everything
-wrong with it back into the next round, until it passes or the rounds run
-out. Then it highlights the keywords and renders it for good.
+The expensive one: minutes of model calls, in six steps. It finds the
+posting's key points, scores your profile against them, chooses a format and
+the experiences to show, writes the body and each experience, validates them
+against your profile and highlights the keywords. Then it renders the CV,
+cutting the duties worth least until it fits the page limit (2 by default, or
+`pages` in the request).
 
 It does not wait. The `POST` answers **`202`** and starts the job as a
 session; you follow its events to the last, which holds the CV, and then
@@ -230,18 +237,18 @@ already there — `"reattached": true`, and nothing new is started or paid for.
 | Part | | |
 |---|---|---|
 | `jd` | required | The posting |
-| `candidate_profile` | required | Everything you have done — what the model tailors from |
+| `candidate_profile` | required | Everything you have done — what the models tailor from |
 | `candidate_data` | required | Your name, email and the rest — what the template prints |
-| `sys_prompt_cv`, `sys_prompt_highlight`, `sys_prompt_review` | optional | Replace a prompt for this request |
+| `sys_prompt_jd_evaluation`, `sys_prompt_profile_scoring`, `sys_prompt_format_selection`, `sys_prompt_cv_body`, `sys_prompt_cv_duties`, `sys_prompt_validation_body`, `sys_prompt_validation_duties`, `sys_prompt_highlight` | optional | Replace a step's prompt for this request |
+| `cv_body_schema`, `cv_duties_schema` | optional | Replace the JSON schema the writer is shown |
 | `template` | optional | Replace `resume.tex.jinja` |
 | `images` | optional | Repeatable. Each part's **file name** is the name the template includes it under. Up to 10. |
-| `temperature`, `presence_penalty` | optional | Tuning, for the CV model only |
+| `<step>_extra_body` | optional | JSON object: that step's model settings for this request, instead of all of `models.toml`'s — `jd_evaluation`, `profile_scoring`, `format_selection`, `cv`, `validation`, `highlight` |
 | `pages` | optional | Page limit the CV must fit. Default: 2. |
 
 **Why it needs `candidate_data`, and the template.** The page limit is
-enforced by actually compiling the CV and counting the pages, so the
-instruction fed back to the model ("remove one duty") is grounded in a
-real overflow. A page count taken with a different template, or with the
+enforced by actually compiling the CV and counting its pages, removing duties
+until it fits. A page count taken with a different template, or with the
 contact block missing, is not the page count of the CV you will send. No model
 is shown `candidate_data`: it goes to the renderer and nowhere else.
 
@@ -254,19 +261,19 @@ you got.
 
 | Event | What it carries |
 |---|---|
-| `status` | The step starting now — `generate`, `review`, `re-generate`, `page_check`, `highlight` — and a `detail` about the one before |
+| `status` | The step starting now — `jd_evaluation`, `profile_scoring`, `format_selection`, `cv`, `validation`, `highlight` — and a `detail` about the one before |
+| `artifact` | One step's result, as JSON: `key_points`, `scored_profile`, `score_reasons`, `format_selection`, `cv_body`, `cv_experiences`, `checked_body`, `checked_experiences`, `highlighted_resume` |
 | `log` | One line the server logged for the job |
 | `usage` | One model call: role, model, seconds, input / thinking / output tokens |
 | `result` | The last event: the CV (`document`, `tex`, `pdf_base64`), a summary line, and the run's `total` |
 | `error` | The last event: the status and cause the work produced — `502`, `504`, `422` — and the run's `total` |
 
-`detail` is written for a person to read and may span several lines: a
-rejected CV is followed by everything wrong with it, one per line — the
-reviewer's complaints and, when the PDF ran over, the condense instruction —
-because those are the words the model is about to be given.
+`detail` is written for a person to read: what the step that just finished
+produced, and its tokens and time. No PDF is ever an artifact: the only one
+sent is the result's.
 
-`document` is one flat object — what the model wrote with your
-`candidate_data` merged over the top, so a field the model invents can never
+`document` is one flat object — what the models wrote with your
+`candidate_data` merged over the top, so a field a model invents can never
 replace a real contact detail. It has no schema: what the template reads from
 it is between you and the template. Store it, edit it, and post it back to
 `/v1/cv/render`.
@@ -304,8 +311,8 @@ curl -F jd=@JD.txt -F candidate_profile=@candidate_profile.json \
 Required: `jd`, `candidate_profile`, `candidate_data` (the header block's name,
 email, phone, LinkedIn — the letter is prose the model writes directly, not a
 template, so it needs the real contact details). Optional: `analysis` (makes
-the letter more targeted), `sys_prompt_letter`, `temperature`,
-`presence_penalty`. The letter prompt asks the model to look the employer up
+the letter more targeted), `sys_prompt_letter`, `letter_extra_body`. The
+letter prompt asks the model to look the employer up
 when it can search the web; whether it can is the `letter` role's
 `extra_body` in `models.toml`.
 
@@ -341,7 +348,7 @@ answered. That is the one thing to plan around.
 - **Scaling.** A running job lives in the instance that started it. Run one
   instance; with a shared work root, any instance can replay a finished
   session, but only one may start up and close orphans at a time.
-- **Cold starts** build three HTTP clients and read six files. It is fast, but
+- **Cold starts** build an HTTP client per model role and read the prompts. It is fast, but
   the first request also has to warm the LaTeX font cache in `/tmp`.
 
 ### Sandboxing
@@ -364,7 +371,7 @@ the LaTeX log before it goes back.
 | `413` | A part exceeded `RESUMIX_MAX_PART_BYTES` |
 | `422` `latex_compile [compile]` | The template or the `.tex` does not compile. The end of the TeX log follows the error line and says where |
 | `429` with `Retry-After` | All job slots are busy — retry, or raise `RESUMIX_MAX_CONCURRENT_JOBS` |
-| `502` `model_output [cv.generate]` in an `error` event | The job failed: the model never produced valid output. The session's `log` and `usage` events show each failed attempt |
+| `502` `model_output [cv.<step>]` in an `error` event | The job failed: the model never produced valid output. The session's `log` and `usage` events show each failed attempt |
 | `404` `unknown_request` | No CV session by that id: acknowledged, expired, or never started |
 | `409` `job_not_ready` from `DELETE /v1/cv/{id}` | The job is still running; acknowledge it once its last event is in |
 | `504` | The compile, or the whole run, hit its timeout |

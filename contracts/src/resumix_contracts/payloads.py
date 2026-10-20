@@ -17,14 +17,16 @@ class CVStatus(BaseModel):
     """A step a CV job has reached, and what the step before it cost: the
     ``status`` event.
 
-    ``detail`` is written by the server and printed as-is, and may span
-    several lines — the reviewer's complaints and the condense instruction are
-    both quoted in it verbatim, because they are what was sent to the model.
-    How the job ended is not a status: it is the session's last event.
+    The steps run in this order, each on a model of its own: the job
+    description's key points, the profile scored against them, the format,
+    the CV itself, its validation and the keyword highlight — the final
+    render belongs to the last one. ``detail`` is written by the server and
+    printed as-is, and may span several lines. How the job ended is not a
+    status: it is the session's last event.
     """
 
     status: Literal[
-        "generate", "review", "re-generate", "page_check", "highlight"
+        "jd_evaluation", "profile_scoring", "format_selection", "cv", "validation", "highlight"
     ] = Field(description="The step running now")
     detail: str = Field("", description="One line about the step that just finished")
 

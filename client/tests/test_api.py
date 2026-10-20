@@ -72,7 +72,7 @@ def test_a_matching_version_is_quiet(capsys):
 
 # --- a CV session over HTTP -------------------------------------------------------
 STREAM = (
-    b'id: 1\nevent: status\ndata: {"status": "generate", "detail": ""}\n\n'
+    b'id: 1\nevent: status\ndata: {"status": "jd_evaluation", "detail": ""}\n\n'
     b": ping\n\n"
     b'id: 2\nevent: something-newer\ndata: {"x": 1}\n\n'
     b'id: 3\nevent: usage\ndata: {"role": "cv", "model": "m", "seconds": 1.5, '
@@ -145,6 +145,16 @@ def test_a_cv_job_is_sent_under_its_session_id():
     api = HttpApi("http://server.invalid", client=_server(seen))
     api.create_cv("posting", request_id="abc123", profile=b"{}", candidate_data=b"{}")
     assert seen[0].headers["x-request-id"] == "abc123"
+
+
+def test_every_extra_body_goes_as_a_json_field_named_for_its_role():
+    """All of them, with every request: each endpoint reads the roles it has."""
+    seen: list = []
+    api = HttpApi("http://server.invalid", client=_server(seen))
+    api.create_cv("posting", request_id="abc123", profile=b"{}", candidate_data=b"{}",
+                  extra_body={"cv": {"temperature": 0.7}, "analysis": {"top_p": 0.5}})
+    assert b'name="cv_extra_body"\r\n\r\n{"temperature": 0.7}' in seen[0].content
+    assert b'name="analysis_extra_body"\r\n\r\n{"top_p": 0.5}' in seen[0].content
 
 
 def test_a_reset_has_to_say_all():

@@ -66,6 +66,7 @@ jobs:
         run: |
           docker run -d --name api -p 8080:8080 \
             -e MODEL_API_KEY=ci -e MODEL_BASE_URL=http://invalid/v1 \
+            -e MODEL_API_KEY2=ci -e MODEL_BASE_URL2=http://invalid/v1 \
             resumix-server
           for i in $(seq 1 30); do
             curl -fsS localhost:8080/healthz && break || sleep 2
@@ -117,6 +118,9 @@ jobs:
         env:
           MODEL_API_KEY: ci
           MODEL_BASE_URL: http://invalid/v1
+          # The CV steps call provider 2, and every role is built at startup.
+          MODEL_API_KEY2: ci
+          MODEL_BASE_URL2: http://invalid/v1
           PORT: "8080"
           # The runner's /tmp is shared and holds unreadable directories;
           # the server should not have to scan it at all.

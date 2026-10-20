@@ -33,10 +33,14 @@ from resumix_server.api.deps import AppState                    # noqa: E402
 from resumix_server.api.settings import Settings                # noqa: E402
 from resumix_server.bundle import default_bundle                # noqa: E402
 
-from server_helpers import FakeLLM, sample_cv_data                # noqa: E402
+from resumix_client.workspace import Artifacts                   # noqa: E402
+
+from server_helpers import SAMPLE_BODY, FakeLLM, script_cv       # noqa: E402
 
 needs_latex = pytest.mark.skipif(shutil.which("pdflatex") is None, reason="pdflatex not installed")
 EXAMPLE = REPO_ROOT / "examples" / "candidate"
+NAME = json.loads((EXAMPLE / "candidate_data.json").read_text())["name"]
+STEM = Artifacts(NAME, "Head of IT").stem
 JD_TEXT = "We are hiring a Head of IT in Milan. Responsibilities and requirements. " * 30
 
 ANALYSIS = {
@@ -63,14 +67,10 @@ class Scripted:
 @pytest.fixture
 def models():
     llm = FakeLLM()
-    # YES to the detection call; the analysis and the CV model follow.
+    # YES to the detection call; the analysis and the six steps of the CV follow.
     llm["detect"].replies = ["YES"]
     llm["analysis"].replies = [json.dumps(ANALYSIS)]
-    llm["cv"].replies = [sample_cv_data().model_dump_json()]
-    # "OK": the reviewer finds nothing to fix.
-    llm["review"].replies = ["OK"]
-    llm["highlight"].replies = [sample_cv_data(summary="**Bold** summary.").model_dump_json()]
-    return llm
+    return script_cv(llm)
 
 
 @pytest.fixture
@@ -140,14 +140,18 @@ def test_a_posting_becomes_a_real_pdf(run, models, tmp_path):
 
     assert folder.parent.parent == run.workspace.cv, (folder / "log.log").read_text()
     assert folder.name == "Acme_Corp_Head_of_IT"
-    pdf = folder / "cv_jordan_rivera_head_of_it.pdf"
+    pdf = folder / f"{STEM}.pdf"
     assert pdf.read_bytes().startswith(b"%PDF")
-    assert r"\documentclass" in (folder / "cv_jordan_rivera_head_of_it.tex").read_text()
+    assert r"\documentclass" in (folder / f"{STEM}.tex").read_text()
+    assert len(list((folder / "steps").glob("*.json"))) == 9, "each step's result, kept"
+    assert [p.name for p in folder.glob("*.pdf")] == [pdf.name], "and no PDF but the last"
 
     log = (folder / "log.log").read_text()
     assert "writing the CV" in log
     # Every step the job went through: the session keeps them all.
-    assert "   generate" in log and "   review" in log and "   highlight" in log
+    for step in ("jd_evaluation", "profile_scoring", "format_selection", "cv", "validation",
+                 "highlight"):
+        assert f"   {step}\n" in log, step
     # Filed, so acknowledged: the server keeps nothing of it.
     assert not any((tmp_path / "work").iterdir())
 
@@ -158,9 +162,11 @@ def test_the_cv_s_own_server_log_and_its_cost_come_with_it(run):
     stay in the server's own log."""
     log = (run(JD_TEXT) / "log.log").read_text()
 
-    assert "[cv.generate]" in log and "[render]" in log
+    assert "[cv.profile_scoring]" in log and "[render]" in log
     assert "jd.analysis" not in log
-    assert "⏱ cv fake-cv" in log, "each model call, as it is made"
+    assert "⏱ cv fake-cv" in log and "⏱ validation fake-validation" in log, (
+        "each model call, as it is made"
+    )
     assert "Σ " in log and "model call(s)" in log, "and the total"
 
 
@@ -187,11 +193,11 @@ def test_a_posting_the_server_already_wrote_is_replayed_not_paid_for_twice(run, 
 
 @needs_latex
 def test_the_rendered_pdf_can_be_re_rendered_from_its_document(run, api):
-    document = run(JD_TEXT) / "cv_jordan_rivera_head_of_it.json"
+    document = run(JD_TEXT) / f"{STEM}.json"
 
     stored = json.loads(document.read_text())
-    assert stored["name"] == "Jordan Rivera", "your own data, merged in server-side"
-    assert stored["job_title"] == "Staff Platform Engineer", "and the model's"
+    assert stored["name"] == NAME, "your own data, merged in server-side"
+    assert stored["job_title"] == SAMPLE_BODY["job_title"], "and the model's"
 
     envelope = api.render(document=stored)
     assert envelope.data.pdf_bytes().startswith(b"%PDF")

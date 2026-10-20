@@ -21,12 +21,18 @@ model = "analysis-1"
 temperature = 0.1
 [models.letter]
 model = "letter-1"
+[models.jd_evaluation]
+model = "jd-evaluation-1"
+[models.profile_scoring]
+model = "profile-scoring-1"
+[models.format_selection]
+model = "format-selection-1"
 [models.cv]
 model = "cv-1"
 structured_output = "json_schema"
 extra_body = { thinking_budget = 6000 }
-[models.review]
-model = "review-1"
+[models.validation]
+model = "validation-1"
 use_alternate_provider = 2
 [models.highlight]
 model = "highlight-1"
@@ -41,7 +47,7 @@ def load(tmp_path):
     return load
 
 
-def test_parses_the_six_roles_with_their_defaults(load):
+def test_parses_every_role_with_its_defaults(load):
     config = load()
     assert tuple(config.models) == MODEL_ROLES
     detect = config.models["detect"]
@@ -84,9 +90,9 @@ def test_provider_n_reads_suffixed_vars_and_never_the_literal(load, monkeypatch)
     monkeypatch.setenv("PROVIDER_KEY2", "k2")
     config = load()
     with pytest.raises(RuntimeError, match="PROVIDER_URL2"):
-        config.endpoint(config.models["review"])
+        config.endpoint(config.models["validation"])
     monkeypatch.setenv("PROVIDER_URL2", "https://two.example/v1")
-    assert config.endpoint(config.models["review"]) == ("k2", "https://two.example/v1")
+    assert config.endpoint(config.models["validation"]) == ("k2", "https://two.example/v1")
 
 
 def test_a_missing_key_is_named(load, monkeypatch):

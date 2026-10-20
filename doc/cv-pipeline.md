@@ -1,177 +1,178 @@
 # The CV pipeline
 
-What `POST /v1/cv` does with the minutes it takes: writes the CV, reviews it
-against your profile, compiles it, measures it, condenses it until it fits,
-highlights the keywords and renders it for good.
+What `POST /v1/cv` does with the minutes it takes: six steps, each on a model
+of its own, then a render that trims the CV until it fits. The method is the
+one adapticv-ai worked out.
 
 The code is `server/src/resumix_server/pipeline/cv_generator.py`
-(`CVGenerator.generate`) for the rounds, `cv_validator.py` (`CVValidator`) for
-what is wrong with each CV, and `cv_renderer.py` for the compile and the page
-count.
+(`CVGenerator`, the steps as a LangGraph graph), `cv_review.py` (the
+validation loop) and `cv_renderer.py` (the compile and the page count).
 
-## The loop
+## The steps
 
 ```mermaid
 flowchart TD
-    START(["POST /v1/cv accepted<br/>202 + request_id"]) --> DL{"time budget left?<br/>REQUEST_BUDGET_SECONDS"}
-    DL -->|"no"| BUDGET["504 budget_exceeded"]
-    DL -->|"yes"| GEN["<b>generate</b><br/>cv model, TailoredCVData schema"]
-
-    GEN --> VAL{"valid against<br/>the schema?"}
-    VAL -->|"no, &lt;3 tries"| FEED["feed the validation<br/>error back"] --> GEN
-    VAL -->|"no, 3 tries"| FAIL502["502 model_output"]
-    VAL -->|"yes"| REVIEWED{"already passed<br/>review?"}
-
-    REVIEWED -->|"no"| REV["<b>review</b><br/>review model vs. the master profile,<br/>one violation per line"]
-    REV --> RENDER
-    REVIEWED -->|"yes"| RENDER["<b>page_check</b><br/>render + pdflatex + count pages"]
-
-    RENDER --> VERDICT{"anything wrong?<br/>content, then length"}
-    VERDICT -->|"yes"| VIO["one list of violations,<br/>verbatim, into the next prompt"] --> NEXT{"attempts left?<br/>MAX_ATTEMPTS = 4"}
-    NEXT -->|"yes"| DL
-    NEXT -->|"no"| LAST["keep the last render,<br/>violations and all"]
-    VERDICT -->|"no"| HL
-    LAST --> HL["<b>highlight</b><br/>highlight model, **bold** markers"]
-
-    HL --> FINAL["final render, kept"] --> FIN(["<b>result</b><br/>document · tex · pdf"])
+    START(["POST /v1/cv accepted<br/>202 + request_id"]) --> JD["<b>jd_evaluation</b><br/>the JD's key points, each with an importance"]
+    JD -->|"Send, one per list"| SC["<b>profile_scoring</b><br/>one list of the profile against the key points"]
+    SC --> MS["the scores into the profile<br/>text|3-80,7-40"]
+    MS --> FS["<b>format_selection</b><br/>a format, the experiences, their duty caps"]
+    FS -->|"Send"| WB["<b>cv</b><br/>the body"]
+    FS -->|"Send, one per experience"| WD["<b>cv</b><br/>one experience"]
+    WB --> CC["back in order"]
+    WD --> CC
+    CC -->|"Send"| VB["<b>validation</b><br/>the body, up to 5 rounds"]
+    CC -->|"Send, one per experience"| VD["<b>validation</b><br/>one experience, up to 5 rounds"]
+    VB --> CK["back in order"]
+    VD --> CK
+    CK --> HL["<b>highlight</b><br/>**bold** keywords, *italic* stacks"]
+    HL --> R{"rendered:<br/>over the page limit?"}
+    R -->|"yes, and a duty can go"| TRIM["remove the duty<br/>worth least"] --> R
+    R -->|"no, or none can go"| FIN(["<b>result</b><br/>document · tex · pdf"])
 ```
 
-Four things about that picture are deliberate:
+| Step | Calls | Shown | Hands over |
+|---|---|---|---|
+| `jd_evaluation` | 1 | the JD | `key_points`: 6 to 15 requirements, each with keywords and an importance from 0 to 100 |
+| `profile_scoring` | one per list of the profile — 9 for the example candidate | the key points, one list, and its experience when the list is inside one | `scored_profile`, `score_reasons` |
+| `format_selection` | 1 | the key points, the formats, the scored experiences | `format_selection`: the format, the experiences shown, the duties of each, and why |
+| `cv` | 1 for the body, 1 per experience shown | the key points, the writing style, the schema, the scored profile or experience, its duty cap and its evidence | `cv_body`, `cv_experiences` |
+| `validation` | 1 to 5 per document | the writing style, the round, the profile or the experience without scores, the generated text, the replacements that failed | `checked_body`, `checked_experiences` |
+| `highlight` | 1 | the key points, the CV the models wrote, the evidence | `highlighted_resume` |
 
-**The render in the middle is the point.** The page limit is enforced by
-actually compiling the CV and counting its pages, so the instruction fed back
-to the model ("remove 1 duty") is grounded in a real overflow rather
-than an estimate.
+Each step has its own role in [`models.toml`](build-server.md#the-provider);
+`cv` and `validation` each serve two prompts, the body's and the
+experiences'. Each step's result is streamed to the client as it is ready,
+and stored beside the CV under `steps/`.
 
-**And it is never rationed.** Every attempt is compiled and measured, whether
-the reviewer accepted it or not. A `pdflatex` pass costs about a second and a
-review costs the most expensive call in the pipeline, so withholding the page
-count from a rejected CV saves nothing — it only means a CV that is both
-overstated and too long spends one round learning about each. Both complaints
-come back as one list, and an overflowing page is a violation like any other.
+**Scores.** `profile_scoring` gives every item of the profile the key points
+it matches, at most four, each scored 0–100 for how completely the item proves
+it: a string becomes `Led the migration.|3-80,7-40` (key point 3 at 80, key
+point 7 at 40), an object gets a `"score": "3-80,7-40"` field. The words that
+prove each match stay out of the profile, in `score_reasons`; the writer and
+the highlighter are shown them as EVIDENCE. The scores ride along to the end
+and come off at the render.
 
-**That is why the endpoint takes `candidate_data`.** A page count taken with
-the contact block missing, or with a different template, is not the page count
-of the CV you will send. No model is ever shown `candidate_data` — it goes to
-the renderer and nowhere else — but the renderer cannot measure without it.
+**Coverage.** A key point counts its two best duty scores, up to twice its
+importance (`COVERAGE_BEST`, `COVERAGE_CAP`): a duty on a key point already
+covered adds nothing, and weak matches cannot fill a key point before its
+strong ones. The duties prompt says the same in words, and the trim below
+uses the same rule.
 
-**The review runs until it passes once.** After that, later attempts only
-shorten a CV the reviewer has already accepted, so re-reviewing would spend a
-large-model call to re-confirm what it already said. When it does reject, the
-reviewer's own words are what the generator is given next. A review that gets
-no usable answer at all — empty or cut off, every call — leaves the CV
-unreviewed, not passed: the next round reviews the same CV again instead of
-writing a new one, and only the last round delivers it unreviewed.
+**Formats.** What `format_selection` chooses from, and what the trim keeps:
+
+| Format | Experiences | Duties each | Duties in all |
+|---|---|---|---|
+| A | 3 | 3–8 | 22 |
+| B | 4 | 2–6 | 17 |
+| C | 5 | 1–4 | 13 |
+
+The code assumes nothing about the CV or the profile beyond the work
+experiences (each with an `id` and its `duties`), their duties and the
+`writing_style`: the prompts and the template decide everything else.
+
+## Side by side
+
+A step that makes several calls fans them out with LangGraph's `Send`: one
+node per profile list, per experience, and they run at the same time. Each
+writes its answer, tagged with its position, into a list the graph collects;
+a node in code puts the answers back in profile order before the next step
+starts. The steps themselves run one after another.
+
+The parallel nodes run in the job's own context, so their log lines and their
+token counts land in the job's session like any other. A call that fails —
+three unusable replies, an endpoint that refuses — fails the job with its own
+cause and stage, after the calls beside it have finished.
+
+## Validation
+
+The validators check facts and grammar against your profile, with minimal
+edits; style is the writers' business. Each violation comes back as a call of
+a tool — `replace_in_body` or `replace_in_duties` — which is only a schema:
+the code applies the replacement, in the order the calls came, and asks
+again. A round with no call ends the review. A replacement whose text is not
+found goes back to the model as a FAILED REPLACEMENT. After five rounds
+(`MAX_VALIDATIONS`) the CV goes on with the last edits: a CV with a doubtful
+line in it is worth more to you than an error.
+
+The validators count no pages. The page limit is the render's business alone.
+
+## The render
+
+After the highlight the CV is rendered — your `candidate_data` merged over
+the top, the scores removed — and its pages are counted. While it runs past
+the page limit (`pages`, 2 by default), one duty goes: of the experiences with
+more duties than the format's minimum, the duty whose removal loses the
+fewest coverage points; on a tie, the one with the lowest total score, then
+the older experience's. Then it is rendered again. When no duty can go, the
+longer CV is delivered.
+
+Every render is of the merged document, so every page count is the page
+count of the CV you will send. **That is why the endpoint takes
+`candidate_data`.** No model is ever shown it: the highlighter sees what the
+models wrote, and your data goes over the top at the render, so a field a
+model invents can never replace a real name, email or address.
+
+The renders before the last stay in the job's scratch directory. Only the
+final PDF is sent, in the result.
 
 ## Retries, budgets and what each failure costs
 
 | Guard | Limit | Set by | On exhaustion |
 |---|---|---|---|
-| Generate → validate rounds | 4 | `RESUMIX_MAX_ATTEMPTS` | the last render is kept, with whatever is still open named in the log |
-| Calls per model request (empty, cut off or invalid reply) | 3 | `ATTEMPTS` in `models/selector.py` | `502 model_output` for the CV; see the next two rows |
-| Review calls | 3 | the same | the round does not pass; the next one reviews the same CV again |
-| Highlight calls | 3 | the same | a warning; the un-highlighted CV is returned |
-| Wall clock for the whole run | 1200 s | `RESUMIX_REQUEST_BUDGET_SECONDS` | `504`, checked between rounds |
+| Calls per model request (empty, cut off, or not the JSON asked for) | 3 | `ATTEMPTS` in `models/selector.py` | `502 model_output`, except for the highlight |
+| Highlight | the same | the same | a warning; the CV is delivered unmarked |
+| Validation rounds per document | 5 | `MAX_VALIDATIONS` in `pipeline/cv_review.py` | the CV goes on with the last edits |
+| Wall clock for the whole run | 1200 s | `RESUMIX_REQUEST_BUDGET_SECONDS` | `504 budget_exceeded`, checked before each step |
 | One `pdflatex` compile | 120 s | `RESUMIX_LATEX_TIMEOUT` | `504 latex_timeout` |
 
-Both checks are therefore best-effort. A CV that never satisfies the reviewer
-and a CV that never fits are delivered exactly as the last round left them,
-with what is still wrong named in the log — failing a job that has a usable CV
-in hand serves nobody. The one thing that does fail it is a model that cannot
-produce schema-valid content at all.
+A reply that is JSON is parsed and its type checked — a list or an object —
+and nothing more, as adapticv-ai does: no schema is enforced. A reply whose
+items do not line up with what was asked (fewer scores than items) fails the
+job.
 
 ## What the client sees while it runs
 
 The job's session streams a `status` event as each step starts, with one line
-about the step that just finished, between the `log` and `usage` events that
-say what each model call did and cost. Print the status as it comes; print
-`detail` when you want to know what the step before cost.
-
-```mermaid
-stateDiagram-v2
-    [*] --> generate
-    generate --> review: first round only
-    generate --> page_check: already reviewed
-    review --> re_generate: violations
-    review --> highlight: nothing wrong,<br/>or out of attempts
-    page_check --> re_generate: violations
-    page_check --> highlight: nothing wrong,<br/>or out of attempts
-    re_generate --> generate
-    highlight --> FIN
-    state "result" as FIN
-    FIN --> [*]
-```
-
-The render is part of whichever step is running — `review` in the first round,
-`page_check` after it has passed — because it takes about a second, and a
-step that short is not worth a status of its own.
-
-`re_generate` is spelled `re-generate` on the wire. `detail` is written for a
-person and may span several lines: a rejected CV is followed by everything
-wrong with it, one per line — the reviewer's complaints, and the condense
-instruction when the PDF ran over — because those are the words the model is
-about to be given.
+about the step that just finished: what it produced, and its tokens, thinking
+and time. Between them come an `artifact` event with each step's result, as
+the JSON it is, and the `log` and `usage` events that say what each model
+call did and cost.
 
 ```json
-{"status": "review",
- "detail": "generation finished, tokens used=5341, thinking=610, elapsed=26.6s"}
+{"status": "cv",
+ "detail": "format A: experiences [0, 1, 2], duties [8, 8, 6], tokens used=4210, thinking=1952, elapsed=24.3s"}
 ```
 
+The render belongs to the `highlight` step: it takes a second or a few.
+
 The session ends with a `result` event — the document, its LaTeX and its PDF,
-and what the whole run cost — or, for a job that failed, an `error` event with
-the status and cause the work produced (`502`, `504`, `422`) and what it cost
-anyway. Either way it is the last thing the stream carries.
+and what the whole run cost — or, for a job that failed, an `error` event
+with the status and cause the work produced (`502`, `504`, `422`) and what it
+cost anyway. Either way it is the last thing the stream carries.
 
-## The condense instruction
+## Changing it for one request
 
-When the PDF is too long, the overflow is measured in non-empty text lines on
-the pages past the limit, and the instruction scales with it
-(`check_pdf_pages`). It is appended to that round's violations as the last
-entry, in these words:
+Every prompt and both schemas the writer is shown can be replaced by a part
+of the same name: `sys_prompt_jd_evaluation`, `sys_prompt_profile_scoring`,
+`sys_prompt_format_selection`, `sys_prompt_cv_body`, `cv_body_schema`,
+`sys_prompt_cv_duties`, `cv_duties_schema`, `sys_prompt_validation_body`,
+`sys_prompt_validation_duties`, `sys_prompt_highlight`. So can the template
+and its images. The prompts and schemas are what the models read: editing one
+changes what they write.
 
-| Overflow | What the model is told |
-|---|---|
-| ≤ 2 lines | Condense the summary, remove 1 duty, cut more than `lines × 90` characters |
-| < 15 lines | Condense the summary, remove `(lines+1)/2` duties, cut more than `lines × 90` characters |
-| ≥ 15 lines | Serious overflow: remove one work experience completely; aim for 3 experiences and 15 duties in total |
-
-That wording is part of the prompt. Editing it changes what the model
-produces.
-
-## The schema is a prompt
-
-`TailoredCVData` (`pipeline/cv_schema.py`) is what the `cv` model is asked to
-write, and every `Field(description=...)` in it reaches the model — in the
-request's strict schema (`json_schema`), or in the system prompt's format
-instructions (`json_mode`).
-
-| Field | Shape | Notes |
-|---|---|---|
-| `job_title` | string | Target title, taken from the posting |
-| `summary` | string | The professional summary at the top |
-| `skills` | 6–8 strings | Prioritised for this posting, grounded in the profile |
-| `experiences` | 3–5 objects | `title`, `company`, `location`, `dates`, optional `project_name`, `role_summary` (one line before the duties, counts as one duty), `duties` (at least 1) |
-| `certifications` | 0–5 objects | `date`, `name` — most relevant first |
-
-Extra fields are allowed on the way in *and* on the way out: they survive
-validation and reach the template.
-
-The bounds are load-bearing: the page limit and the LaTeX template both depend
-on them. The model is *asked* for a closed schema (`additionalProperties:
-false`, which strict endpoints require) but whatever comes back is validated
-by an open model — so a request that brings its own prompt and its own
-template can put a new field on the page without the schema in the middle
-having to learn about it first.
+Each step's model settings can be replaced too: `<step>_extra_body`, a JSON
+object, supersedes every setting `models.toml` gives that step — temperature,
+thinking, reasoning effort, the output cap, its own `extra_body` — and only the
+model, the endpoint and what you sent go out.
 
 ## What comes back
 
-`GET /v1/cv/{id}` returns `{document, tex, pdf_base64}`.
+The `result` event's `cv` is `{document, tex, pdf_base64}`.
 
-`document` is one flat object: what the model wrote with your
-`candidate_data` merged **over the top**, so a field the model invents can
-never replace a real name, email or address. It has no schema of its own —
-what the template reads from it is between you and the template. Store it,
-edit it, and post it back to `POST /v1/cv/render`, which costs one LaTeX
+`document` is one flat object: what the models wrote, without the scores,
+with your `candidate_data` merged **over the top**. It has no schema of its
+own — what the template reads from it is between you and the template. Store
+it, edit it, and post it back to `POST /v1/cv/render`, which costs one LaTeX
 compile and no model call.
 
 ## Rendering
@@ -187,7 +188,7 @@ file name the part carried, because `\includegraphics` resolves relative to
 it. One `pdflatex` pass, not two: the shipped template has no `\ref`,
 `\label` or `\tableofcontents`, so a second pass would change nothing.
 
-## The other two pipelines
+## The other three pipelines
 
 None has a loop. Each runs on its own model: `detect`, `analysis` and `letter`.
 

@@ -6,7 +6,9 @@ description: Evaluate resumix CV quality on the fixed test set. It generates the
 # Evaluate CV quality
 
 Arguments are the set, `quick` (default) or `thorough`, and an optional
-temperature for the CV model. Run everything from the repository root.
+temperature for the `cv` step. It is sent as that step's whole `extra_body`, so
+the step's other `models.toml` settings are dropped for the run. Run everything
+from the repository root.
 
 1. **Generate.** Each CV takes minutes, so run this in the background and wait for it to exit:
 

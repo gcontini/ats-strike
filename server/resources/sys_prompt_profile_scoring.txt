@@ -1,0 +1,20 @@
+Input:
+- KEY POINTS: JSON list extracted from a job description (JD).
+  Each has id, requirement, keywords, importance (0-100: how important it is for the role).
+- EXPERIENCE (only when the items are duties): the job they belong to.
+- ITEMS: JSON list from the candidate's profile: strings (job titles, summaries, skills, duties)
+  or objects (e.g. a certification).
+
+For every item, find the key points it matches: at most 4, the best first.
+Score each match 0-100: how completely the item proves the key point's skill.
+The smaller the item is compared to the skill, the lower the score. Anchors (values in between are fine):
+   - 100: the item is the skill, or fully implies it (Terraform -> Infrastructure as Code).
+   - 50: the item is a large part of a more generic skill (Terraform -> Cloud Engineering).
+   - 20: the item is a small piece of a large skill (designed a library -> Solution Architecture).
+   - 10: the item only touches the skill (LDAP authentication -> Secure Solution Design).
+Leave out the matches under 25. Score each match on its own: do not weigh it by importance or position,
+do not combine matches.
+evidence: the words of the item that prove the match, at most 5, copied word for word.
+
+Output only a JSON list, one object per item, in the same order as ITEMS. An item with no match has "matches": [].
+[{"reason": "<the matches and why, one short sentence>", "matches": [{"key_point": 3, "score": 80, "evidence": "<at most 5 words of the item>"}]}]

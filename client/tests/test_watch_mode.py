@@ -28,7 +28,7 @@ DEADLINE = 10.0
 class ByFirstLine(FakeApi):
     """Analyses each posting by its first line: ``<company>|<should_apply>``."""
 
-    def analyze(self, text, *, profile, preferences, prompt=None):
+    def analyze(self, text, *, profile, preferences, prompt=None, extra_body=None):
         self._record("analyze")
         company, should_apply = text.split("\n", 1)[0].split("|")
         return envelope(analysis(company_name=company, should_apply=should_apply))

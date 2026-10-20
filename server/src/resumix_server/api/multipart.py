@@ -8,7 +8,7 @@ file wins when both are sent.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Mapping, Optional
 
 import json
 
@@ -92,6 +92,22 @@ async def json_part(
     return data
 
 
+async def extra_bodies(
+    fields: Mapping[str, Optional[str]], *, max_bytes: int
+) -> Dict[str, Dict[str, Any]]:
+    """The ``<role>_extra_body`` fields a request sent, parsed, by role.
+
+    Each is a JSON object that replaces every request setting ``models.toml``
+    gives that role (see :meth:`ModelSelector.with_extra_body`).
+    """
+    bodies: Dict[str, Dict[str, Any]] = {}
+    for role, raw in fields.items():
+        body = await json_part(None, raw, name=f"{role}_extra_body", max_bytes=max_bytes)
+        if body is not None:
+            bodies[role] = body
+    return bodies
+
+
 async def images_part(
     uploads: Optional[List[UploadFile]], *, max_bytes: int
 ) -> Dict[str, bytes]:
@@ -116,4 +132,4 @@ async def images_part(
     return images
 
 
-__all__ = ["bytes_part", "text_part", "json_part", "images_part", "MAX_IMAGES"]
+__all__ = ["bytes_part", "text_part", "json_part", "extra_bodies", "images_part", "MAX_IMAGES"]

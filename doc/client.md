@@ -312,8 +312,8 @@ server, which deletes the session. Anything in between costs nothing:
   instead of writing a new CV. `↺ this posting already has a run on the
   server` says so.
 - **`--new`** drops that run and writes the CV again: for when you changed your
-  profile, your template or `--temperature`, none of which change the
-  posting's text. It is refused while the old run is still being written.
+  profile, your template, a prompt or an `[extra_body]`, none of which change
+  the posting's text. It is refused while the old run is still being written.
 
 A session nobody came back for is kept for a day (the server's
 `RESUMIX_SESSION_TTL_DAYS`), and `resumix reset` drops them all.
@@ -326,12 +326,10 @@ A session nobody came back for is kept for a day (the server's
 |---|---|
 | `--server URL` | The resumix server. Default `http://localhost:8080`. |
 | `--token TOKEN` | Bearer token, if the server requires one. |
-| `--temperature F` | Sampling temperature for the CV and the cover letter, passed to the server. The analysis, the review and the highlight pass keep the server's. |
-| `--presence-penalty F` | Presence penalty for the CV and the cover letter, passed to the server the same way. |
 | `--pages N` | Page limit the CV must fit. Default: the server's, which is 2. |
 | `--config FILE` | Use this `resumix.toml` instead of searching for one. |
 | `--data-dir DIR` | Look for your files here before the current folder. |
-| `-v`, `--verbose` | Print `version x.y.z` at startup, then what the server reports about each finished step — tokens, thinking tokens, elapsed, and the reviewer's or the page check's own words — plus the CV's session id and the `/healthz` attempts. |
+| `-v`, `--verbose` | Print `version x.y.z` at startup, then what the server reports about each finished step — what it produced, tokens, thinking tokens, elapsed — plus the CV's session id and the `/healthz` attempts. |
 
 ### Per mode
 
@@ -370,8 +368,6 @@ the current folder.
 server_url   = "https://resumix.example.run.app"
 token        = "the-bearer-token"   # only if the server requires one
 cover_letter = "no"                 # no | yes | letter_only
-# temperature = 0.4                 # CV and cover letter, passed to the server
-# presence_penalty = 0.5            # CV and cover letter, passed to the server
 # pages       = 2                   # page limit the CV must fit
 # timeout     = 1800                # seconds to follow one CV job
 # verbose     = true                # same as -v on every run
@@ -381,11 +377,21 @@ cover_letter = "no"                 # no | yes | letter_only
 # candidate_data = "~/cv/candidate_data.json"
 # preferences    = "~/cv/candidate_preferences.md"
 # template       = "~/cv/resume.tex.jinja"
-# prompt_cv      = "~/cv/sys_prompt_cv.txt"
-# prompt_highlight = "~/cv/sys_prompt_highlight.txt"
-# prompt_review    = "~/cv/sys_prompt_review.txt"
-# prompt_letter    = "~/cv/sys_prompt_letter.txt"
-# prompt_analysis  = "~/cv/sys_prompt_analysis.txt"
+# prompt_jd_evaluation     = "~/cv/sys_prompt_jd_evaluation.txt"
+# prompt_profile_scoring   = "~/cv/sys_prompt_profile_scoring.txt"
+# prompt_format_selection  = "~/cv/sys_prompt_format_selection.txt"
+# prompt_cv_body           = "~/cv/sys_prompt_cv_body.txt"
+# schema_cv_body           = "~/cv/cv_body_schema.json"
+# prompt_cv_duties         = "~/cv/sys_prompt_cv_duties.txt"
+# schema_cv_duties         = "~/cv/cv_duties_schema.json"
+# prompt_validation_body   = "~/cv/sys_prompt_validation_body.txt"
+# prompt_validation_duties = "~/cv/sys_prompt_validation_duties.txt"
+# prompt_highlight         = "~/cv/sys_prompt_highlight.txt"
+# prompt_letter            = "~/cv/sys_prompt_letter.txt"
+# prompt_analysis          = "~/cv/sys_prompt_analysis.txt"
+
+# [extra_body.cv]                   # a role's settings, instead of all the server's
+# temperature = 0.4
 ```
 
 A relative path under `[files]` is resolved against the config file's own
@@ -393,6 +399,16 @@ folder, and a path that does not exist is an error rather than a silent
 fallback. The keys are short on purpose: TOML reads
 `candidate_profile.json = "x"` as a dotted key, which is not what anyone
 means.
+
+`[extra_body.<role>]` is what one model role runs on instead of the server's
+`models.toml` settings — all of them, not just the keys you set: what the
+table holds is sent into the request as is (`temperature`, `top_p`,
+`reasoning_effort`, a provider's own fields), with the model and the
+messages. The roles are the CV's six steps — `jd_evaluation`,
+`profile_scoring`, `format_selection`, `cv`, `validation`, `highlight` — and
+`analysis` and `letter`. Every table goes with every request, and each
+endpoint reads its own; a role the server does not have is ignored. An empty
+table sends an empty object: that role then runs with no settings at all.
 
 ### Environment
 
@@ -409,11 +425,12 @@ up by name:
 
 | File | What it is | Required |
 |---|---|---|
-| `candidate_profile.json` | Everything you have ever done. The model tailors the CV from this — the more complete, the better. | **yes** |
+| `candidate_profile.json` | Everything you have ever done. The models tailor the CV from this — the more complete, the better. Its `experiences` each need an `id` and `duties`. | **yes** |
 | `candidate_data.json` | Name, email, phone, LinkedIn, languages, location, education. Printed by the template as-is; no model is shown it. | **yes** |
 | `candidate_preferences.md` | What you want from a job, in prose. Scored against each posting. | for analysis |
 | `resume.tex.jinja` | Your own LaTeX template. | no — the server's is used |
-| `sys_prompt_cv.txt`, `sys_prompt_highlight.txt`, `sys_prompt_review.txt`, `sys_prompt_letter.txt`, `sys_prompt_analysis.txt` | Your own prompts. | no — same |
+| `sys_prompt_jd_evaluation.txt`, `sys_prompt_profile_scoring.txt`, `sys_prompt_format_selection.txt`, `sys_prompt_cv_body.txt`, `sys_prompt_cv_duties.txt`, `sys_prompt_validation_body.txt`, `sys_prompt_validation_duties.txt`, `sys_prompt_highlight.txt`, `sys_prompt_letter.txt`, `sys_prompt_analysis.txt` | Your own prompts. | no — same |
+| `cv_body_schema.json`, `cv_duties_schema.json` | Your own JSON schemas for the CV body and for an experience: the writer is shown them, so a field you add here and in your template reaches the page. | no — same |
 
 Every `.png`, `.jpg` and `.jpeg` in those folders is sent too, under its own
 file name — and that name is the whole contract: the server writes each one
@@ -438,6 +455,7 @@ Start from the fictional set in the repository's `examples/candidate/`.
 │           ├── analysis.json            match score, salary, skills, gaps
 │           ├── jd.txt                   the posting, whatever the file was called
 │           ├── cover_letter.txt         with --cover-letter
+│           ├── steps/                   each step's result, as JSON: key_points.json, scored_profile.json, …
 │           └── log.log                  every step, and the server's own lines for the CV
 ├── discarded/26-01-15/…                 postings you said no to, analysis kept
 ├── error/26-01-15/…                     rejected or failed, with a .log beside it
@@ -457,16 +475,23 @@ wrote the CV, indented under them, as they streamed in:
 
 ```text
 2026-01-15T09:30:12 ✍ writing the CV (this takes minutes)...
-2026-01-15T09:30:12    generate
-  2026-01-15T09:30:53+00:00 INFO    [cv.generate]   ⏱ [cv] qwen3.8-max 41.2s | input=7104, thinking=903, output=1832, …
-2026-01-15T09:30:53    ⏱ cv qwen3.8-max 41.2s | input=7104, thinking=903, output=1832
-2026-01-15T09:30:54    review
+2026-01-15T09:30:12    jd_evaluation
+  2026-01-15T09:30:33+00:00 INFO    [cv.jd_evaluation]   ⏱ [jd_evaluation] deepseek-flash 21.2s | input=1847, thinking=7256, output=832, …
+2026-01-15T09:30:33    ⏱ jd_evaluation deepseek-flash 21.2s | input=1847, thinking=7256, output=832
+2026-01-15T09:30:33    profile_scoring
 …
-2026-01-15T09:36:24    Σ 6 model call(s), 312.4s | input=41210, thinking=27100, output=9380
+2026-01-15T09:35:24    Σ 21 model call(s), 961.4s | input=64148, thinking=161200, output=14091
 ```
 
 One line per model call is what it cost, and the `Σ` line is the whole run —
-failed attempts included.
+failed attempts included. The steps that make several calls make them at
+once, so the calls' seconds add up to more than the run took.
+
+`steps/` holds what each step handed the next one, as the server streamed it:
+the posting's key points, your profile with its scores and the evidence for
+them, the format chosen and why, the CV before and after validation, and the
+highlighted CV. A CV that failed half-way keeps the steps it finished, under
+`error/`. Only the final PDF is ever downloaded.
 
 ## What leaves your machine
 

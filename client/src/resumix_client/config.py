@@ -33,18 +33,36 @@ CONFIG_KEYS = {
     "candidate_data": "candidate_data.json",
     "preferences": "candidate_preferences.md",
     "template": "resume.tex.jinja",
-    "prompt_cv": "sys_prompt_cv.txt",
+    "prompt_jd_evaluation": "sys_prompt_jd_evaluation.txt",
+    "prompt_profile_scoring": "sys_prompt_profile_scoring.txt",
+    "prompt_format_selection": "sys_prompt_format_selection.txt",
+    "prompt_cv_body": "sys_prompt_cv_body.txt",
+    "schema_cv_body": "cv_body_schema.json",
+    "prompt_cv_duties": "sys_prompt_cv_duties.txt",
+    "schema_cv_duties": "cv_duties_schema.json",
+    "prompt_validation_body": "sys_prompt_validation_body.txt",
+    "prompt_validation_duties": "sys_prompt_validation_duties.txt",
     "prompt_highlight": "sys_prompt_highlight.txt",
-    "prompt_review": "sys_prompt_review.txt",
     "prompt_letter": "sys_prompt_letter.txt",
     "prompt_analysis": "sys_prompt_analysis.txt",
 }
 
-#: Prompt files, mapped to the multipart part name the server expects.
+#: The CV's prompt and schema files, mapped to the multipart part name the
+#: server expects: the file name without its extension.
 PROMPT_FILES = {
-    "sys_prompt_cv.txt": "sys_prompt_cv",
-    "sys_prompt_highlight.txt": "sys_prompt_highlight",
-    "sys_prompt_review.txt": "sys_prompt_review",
+    name: name.rsplit(".", 1)[0]
+    for name in (
+        "sys_prompt_jd_evaluation.txt",
+        "sys_prompt_profile_scoring.txt",
+        "sys_prompt_format_selection.txt",
+        "sys_prompt_cv_body.txt",
+        "cv_body_schema.json",
+        "sys_prompt_cv_duties.txt",
+        "cv_duties_schema.json",
+        "sys_prompt_validation_body.txt",
+        "sys_prompt_validation_duties.txt",
+        "sys_prompt_highlight.txt",
+    )
 }
 LETTER_PROMPT = "sys_prompt_letter.txt"
 
@@ -59,8 +77,10 @@ class Config:
 
     server_url: str = "http://localhost:8080"
     token: Optional[str] = None
-    temperature: Optional[float] = None
-    presence_penalty: Optional[float] = None
+    #: Model role -> the request settings it runs on instead of the server's,
+    #: from ``[extra_body.<role>]``: sent as ``<role>_extra_body`` with every
+    #: request, and read by the endpoints that have that role.
+    extra_body: Mapping[str, Mapping[str, Any]] = field(default_factory=dict)
     #: Page limit the CV must fit. None means the server's default.
     pages: Optional[int] = None
     cover_letter: str = "no"
@@ -94,7 +114,7 @@ class Config:
         return {name: path.read_bytes() for name, path in self.images.items()}
 
     def prompt_overrides(self) -> Dict[str, str]:
-        """The CV prompts the user supplied, as multipart parts."""
+        """The CV prompts and schemas the user supplied, as multipart parts."""
         return {
             part: self.files[name].read_text(encoding="utf-8")
             for name, part in PROMPT_FILES.items()
@@ -137,8 +157,7 @@ def load_config(
     config = Config(
         server_url=raw.get("server_url", Config.server_url),
         token=raw.get("token"),
-        temperature=raw.get("temperature"),
-        presence_penalty=raw.get("presence_penalty"),
+        extra_body=dict(raw.get("extra_body") or {}),
         pages=raw.get("pages"),
         cover_letter=raw.get("cover_letter", Config.cover_letter),
         timeout=float(raw.get("timeout", Config.timeout)),

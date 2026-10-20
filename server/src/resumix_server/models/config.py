@@ -21,8 +21,12 @@ from ..defaults import default_path
 
 MODELS_FILE = "models.toml"
 
-#: The six jobs resumix has a model for, in the order a run uses them.
-MODEL_ROLES = ("detect", "analysis", "letter", "cv", "review", "highlight")
+#: The jobs resumix has a model for, in the order a run uses them: the JD
+#: check, its analysis and the letter, then the six steps of a CV.
+MODEL_ROLES = (
+    "detect", "analysis", "letter",
+    "jd_evaluation", "profile_scoring", "format_selection", "cv", "validation", "highlight",
+)
 
 
 class ModelSpec(BaseModel):

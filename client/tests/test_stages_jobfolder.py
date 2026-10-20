@@ -12,6 +12,7 @@ from resumix_client.stages.jobfolder import (
     route,
     write_approval,
 )
+from resumix_client.workspace import STEPS_DIRNAME
 
 from conftest import analysis
 
@@ -79,6 +80,16 @@ def test_an_analysis_that_does_not_validate_is_an_error_that_says_so(tmp_path):
     where, why = classify(folder)
     assert where == "error"
     assert "analysis.json is not valid" in why
+
+
+def test_a_cv_that_failed_half_way_is_written_again_not_rendered(tmp_path):
+    """The steps it finished are JSON, but under steps/: not a CV to render."""
+    folder = job_folder(tmp_path, jd__txt="a posting",
+                        analysis__json=analysis(should_apply="YES").model_dump_json())
+    (folder / STEPS_DIRNAME).mkdir()
+    (folder / STEPS_DIRNAME / "key_points.json").write_text("[]")
+    assert classify(folder)[0] == "generate"
+    assert render_source(folder) is None
 
 
 def test_a_folder_holding_only_a_subfolder_is_an_error(tmp_path):

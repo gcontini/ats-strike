@@ -1,11 +1,24 @@
 """What each provider puts on the wire — pinned, because the endpoint reads it."""
 
+import json
+
 import pytest
+from resumix_contracts import JDAnalysis
 
 from resumix_server.models import Usage
-from resumix_server.pipeline.cv_schema import TailoredCVData
 
-from server_helpers import FakeLLM, completion, sample_cv_data
+from server_helpers import FakeLLM, completion
+
+#: A reply the analysis model may give, every key present as a strict
+#: json_schema requires: valid, so a structured call succeeds.
+ANALYSIS = json.dumps({
+    "match_percentage": 82, "match_rationale": "Strong overlap.", "job_title": "Head of IT",
+    "work_location": "Milan, Italy", "work_mode": "hybrid", "expected_salary": None,
+    "max_salary": -1, "salary_match": None, "hard_skills": ["AWS"],
+    "soft_skills": ["Communication"], "company_name": "Acme Corp", "posting_url": None,
+    "gaps": "No SAP.", "pers_preferences": "Hybrid is fine.", "pers_preference_score": 1.5,
+    "should_apply": "YES", "should_apply_reason": "Strong match.", "company_evaluation": None,
+})
 
 USER = [{"role": "user", "content": "go"}]
 
@@ -41,21 +54,21 @@ def test_a_declared_extra_body_key_wins_over_thinking():
     assert sent(llm, "cv")["enable_thinking"] is False
 
 
-def test_json_schema_sends_the_cv_schema_strict_and_closed():
-    llm = FakeLLM(cv=dict(structured_output="json_schema"))
-    body = sent(llm, "cv", TailoredCVData, sample_cv_data().model_dump_json())
+def test_json_schema_sends_the_schema_strict_and_closed():
+    llm = FakeLLM(analysis=dict(structured_output="json_schema"))
+    body = sent(llm, "analysis", JDAnalysis, ANALYSIS)
     block = body["response_format"]["json_schema"]
     assert block["strict"] is True
     assert block["schema"]["additionalProperties"] is False
-    assert all(d["additionalProperties"] is False for d in block["schema"]["$defs"].values())
+    assert all(d["additionalProperties"] is False for d in block["schema"].get("$defs", {}).values())
 
 
 def test_a_structured_reply_cut_off_is_retried_and_paid_for():
-    llm, usage = FakeLLM(cv=dict(structured_output="json_schema")), Usage()
-    llm["cv"].replies = [completion("fake-cv", "{", "length"), sample_cv_data().model_dump_json()]
-    assert llm.call_llm("cv", TailoredCVData, "sys", USER, usage=usage) == sample_cv_data()
+    llm, usage = FakeLLM(analysis=dict(structured_output="json_schema")), Usage()
+    llm["analysis"].replies = [completion("fake-analysis", "{", "length"), ANALYSIS]
+    assert llm.call_llm("analysis", JDAnalysis, "sys", USER, usage=usage).company_name == "Acme Corp"
     assert (usage.calls, usage.input_tokens) == (2, 22)
-    assert "cut off" in llm["cv"].calls[-1]["messages"][-1]["content"]
+    assert "cut off" in llm["analysis"].calls[-1]["messages"][-1]["content"]
 
 
 def response(text, status="completed"):
@@ -97,13 +110,13 @@ def test_responses_api_incomplete_is_retried():
 
 
 def test_responses_api_structured_output_goes_in_text_format():
-    llm = FakeLLM(letter=dict(api="responses", structured_output="json_schema"))
-    body = sent(llm, "letter", TailoredCVData, response(sample_cv_data().model_dump_json()))
+    llm = FakeLLM(analysis=dict(api="responses", structured_output="json_schema"))
+    body = sent(llm, "analysis", JDAnalysis, response(ANALYSIS))
     assert body["text"]["format"]["type"] == "json_schema"
 
 
 def test_deepseek_thinking_switch():
-    body = sent(FakeLLM(review=dict(model_provider="deepseek", thinking="on")), "review")
+    body = sent(FakeLLM(validation=dict(model_provider="deepseek", thinking="on")), "validation")
     assert body["thinking"] == {"type": "enabled"}
 
 

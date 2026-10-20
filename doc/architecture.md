@@ -18,8 +18,8 @@ flowchart TB
 
     subgraph host["wherever you run it"]
         API["<b>resumix-server</b><br/>FastAPI + uvicorn"]
-        PIPE["pipeline<br/>jd_validator · cv_generator · cv_validator<br/>cv_renderer · letter_generator"]
-        RES["resources<br/>5 prompts · resume.tex.jinja<br/>models.toml"]
+        PIPE["pipeline<br/>jd_validator · cv_generator (LangGraph) · cv_review<br/>cv_renderer · letter_generator"]
+        RES["resources<br/>11 prompts · 2 schemas · resume.tex.jinja<br/>models.toml"]
         STORE["RESUMIX_WORK_DIR<br/>one session per CV job"]
         API --> PIPE
         RES --> PIPE
@@ -45,7 +45,7 @@ server and by a frozen executable, and has to stay cheap in both.
 | Package | Holds | Ships as |
 |---|---|---|
 | `client/` | Your profile, your contact data, your template and images, the output tree, the spreadsheet | A PyInstaller executable, ~1 file |
-| `server/` | The provider API key, the five prompts, the LaTeX template, the LaTeX toolchain | A container image, ~780 MB |
+| `server/` | The provider API keys, the prompts and schemas, the LaTeX template, the LaTeX toolchain | A container image, ~780 MB |
 | `contracts/` | The response envelope, the payload models, the free JD pre-check | A pydantic-only package, vendored into both |
 
 ## What crosses the wire
@@ -59,6 +59,7 @@ $RESUMIX_WORK_DIR/<session id>/events/
     000001.json   {"type": "status", "data": {...}}
     000002.json   {"type": "log", "data": {...}}
     000003.json   {"type": "usage", "data": {...}}
+    000004.json   {"type": "artifact", "data": {...}}   a step's result
     ...
     000042.json   {"type": "result", "data": {...}}   the CV: the last event
 ```
@@ -88,7 +89,7 @@ flowchart TB
     KIND -->|"/v1/jd/*, /v1/letter, /v1/cv/render"| POOL["threadpool<br/>answer when done"]
     KIND -->|"/v1/cv"| THREAD["worker thread<br/>answer 202 now"]
     POOL --> ENV["Envelope<br/>its log: stdout"]
-    THREAD --> EVENTS["an event per step,<br/>log line and model call"]
+    THREAD --> EVENTS["an event per step, step result,<br/>log line and model call"]
     EVENTS --> STREAM["GET /v1/cv/{id}/events"]
 ```
 
@@ -112,11 +113,11 @@ events that are there.
   `TEXMFVAR`. A request may supply both the template and a whole `.tex`, so
   both are treated as hostile input.
 
-## The six models
+## The models
 
 One provider, one API key, one endpoint — declared once in the `[provider]`
-table of `resources/models.toml`. Six roles call it; a role that sets
-`use_alternate_provider = N` (N ≥ 2) calls provider N instead — the
+table of `resources/models.toml`. Every role calls it, except a role that sets
+`use_alternate_provider = N` (N ≥ 2), which calls provider N instead — the
 `[provider]` variable names with N appended (`MODEL_API_KEY2` /
 `MODEL_BASE_URL2` for 2):
 
@@ -125,27 +126,35 @@ table of `resources/models.toml`. Six roles call it; a role that sets
 | `detect` | JD detection: a one-word YES/NO on text that passed the free checks | `deepseek-v4.1-flash`, thinking **off**, 1000 max output tokens, temperature 0 |
 | `analysis` | JD analysis; searches the web for the company evaluation | `qwen3.8-flash`, thinking on, max effort |
 | `letter` | Cover letters; searches the web for the employer | `qwen3.8-flash`, thinking on, max effort |
-| `cv` | Writing the CV | `qwen3.8-max-0902`, thinking on, 7500-token budget, strict JSON schema |
-| `review` | Reviewing each CV against the master profile; answers in plain text, one violation per line, or `OK` | `deepseek-v4-pro-0813`, thinking on, 9000-token budget, temperature 0 |
-| `highlight` | The `**bold**` keyword pass over validated CV JSON | `qwen3.8-flash`, thinking **off** |
+| `jd_evaluation` | A CV's first step: the JD's key points, each with an importance | `deepseek-flash` on DeepSeek's API (provider 2), medium effort |
+| `profile_scoring` | Each list of the profile scored against the key points | the same, high effort |
+| `format_selection` | The CV format, the experiences shown and their duty caps | the same, medium effort |
+| `cv` | Writing the CV body, and each experience on its own | the same, medium effort |
+| `validation` | Checking the body and each experience against the profile, as `replace_in_*` tool calls | the same, medium effort |
+| `highlight` | The `**bold**`/`*italic*` keyword pass over the validated CV | the same, medium effort |
+
+See [the CV pipeline](cv-pipeline.md) for how the last six fit together.
 
 Every call goes through `resumix_server.models`: one LangChain chat model per
 role, built once at startup by the role's `model_provider` (`standard`, on
-`ChatOpenAI`, or `deepseek`, on `ChatDeepSeek`), and one method,
-`ModelSelector.call_llm(role, type, system_prompt, messages)`. It returns the
-reply as a pydantic model, a `bool` (YES/NO) or a `str`, and retries a reply
-that is empty, cut off or invalid — three calls in all, each retry told what
-was wrong. Provider-specific request fields (`thinking_budget`,
-`enable_search`) are the role's `extra_body`, sent as given: nothing checks a
-combination against what the endpoint supports. Any key of a role can be
-overridden with a `RESUMIX_<ROLE>_<FIELD>` environment variable without
-editing the file; an empty value drops the key. The client's `temperature`
-and `presence_penalty` reach only the `cv` role in a CV job and the `letter`
-role in a letter job.
+`ChatOpenAI`, or `deepseek`, on `ChatDeepSeek`), and two methods.
+`ModelSelector.call_llm(role, type, system_prompt, messages)` returns the reply
+as a pydantic model, a `bool` (YES/NO), a `str`, or a JSON `list` or `dict`;
+`call_tools(role, tool, …)` returns the arguments of the tool calls the reply
+made. Both retry a reply that is empty, cut off or invalid — three calls in
+all, each retry told what was wrong. Provider-specific request fields
+(`thinking_budget`, `enable_search`) are the role's `extra_body`, sent as
+given: nothing checks a combination against what the endpoint supports. Any
+key of a role can be overridden with a `RESUMIX_<ROLE>_<FIELD>` environment
+variable without editing the file; an empty value drops the key. A request
+can bring a `<role>_extra_body` for every role but `detect`, which supersedes
+all of that role's settings for that request.
 
-Every structured reply is validated by pydantic. Its schema reaches the model
-once: in the request with `json_schema`, in the system prompt with
-`json_mode`. A weak mode costs a retry, never correctness.
+Every pydantic reply is validated. Its schema reaches the model once: in the
+request with `json_schema`, in the system prompt with `json_mode`. A weak mode
+costs a retry, never correctness. The CV steps reply with JSON their prompts
+describe — the writer's two schemas are part of its input — and are parsed,
+not validated.
 
 ## Asynchrony, and why
 
@@ -175,8 +184,9 @@ Every response carries a `request_id`, and so does the `X-Request-Id` header.
 Every line the server logs to stdout carries it too.
 
 A CV job streams its own account: every line it logged as a `log` event, every
-model call as a `usage` event with its duration and token counts, and the
-run's total in its last event — failed attempts included, because they were
-paid for. The client writes all of it into `log.log` next to the CV. Nothing
+model call as a `usage` event with its duration and token counts, each step's
+result as an `artifact` event, and the run's total in its last event — failed
+attempts included, because they were paid for. The client writes the lines
+and the calls into `log.log` next to the CV, and each result into `steps/`. Nothing
 else rides on a reply: for a detection, an analysis, a letter or a render, the
 server's own log is where the commentary is.

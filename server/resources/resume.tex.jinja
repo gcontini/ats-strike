@@ -17,6 +17,10 @@
 \newcommand\textstyleEmphasis[1]{\textit{#1}}
 % Outline numbering
 \setcounter{secnumdepth}{0}
+% Experience title: 0.3ex above the dates line (article's default is 1.5ex)
+\makeatletter
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}{-3.25ex\@plus -1ex \@minus -.2ex}{0.3ex}{\normalfont\normalsize\bfseries}}
+\makeatother
 % List styles
 \newcommand\liststyleListi{%
 \renewcommand\labelitemi{{\textbullet}}
@@ -79,7 +83,7 @@
 \BLOCK{ else }
 \paragraph[\VAR{ exp.dates }]{\textstyleEmphasis{\VAR{ exp.dates }}}
 \BLOCK{ endif }
-\mbox{}\\
+\leavevmode\\[0.7ex]
 \VAR{ exp.role_summary }
 \liststyleListi
 \begin{itemize}\setlength\itemsep{0pt}\setlength\parsep{3pt}

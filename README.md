@@ -16,9 +16,10 @@ Produces an honest CV that you can actually defend in a job interview. Though yo
 
 Features:
 - **Analyses** the Job Description you select against your profile — match score, salary, skills, gaps (optional).
-- **Writes** an honest CV tailored to the posting, reviewed against your profile for
-  invented claims, condensed until it fits two pages, with matching keywords
-  highlighted.
+- **Writes** an honest CV tailored to the posting: every item of your profile is
+  scored against the posting's key points, the CV is written from the best ones and
+  checked against your profile for invented claims, the least useful duties are cut
+  until it fits two pages, and the matching keywords are highlighted.
 - **Renders** real LaTeX to a PDF, and optionally a cover letter.
 - It can watch your **clipboard** or a **folder** for  multiple generation, or run **once** on a single file.
 
@@ -55,8 +56,11 @@ other installed locally — the client talks to the server over HTTP.
 ```bash
 docker run -d -p 8080:8080 \
   -e MODEL_API_KEY=... \
+  -e MODEL_API_KEY2=... -e MODEL_BASE_URL2=https://api.deepseek.com \
   lmstch/resumix:latest
 ```
+
+The second key is DeepSeek's: the six steps that write a CV run there.
 
 Any OpenAI-compatible provider works — see
 [`server/README.md`](server/README.md) for the other providers and the full

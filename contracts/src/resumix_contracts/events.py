@@ -5,15 +5,16 @@ posting, and ``GET /v1/cv/{id}/events`` streams what it does as server-sent
 events. Each event carries an ``id`` (its position in the session, from 1), a
 type, and one of the payloads below as JSON:
 
-========== ============== ==============================================
-type       payload        when
-========== ============== ==============================================
-``status`` CVStatus       each step: generate, review, page check, ...
-``log``    LogEntry       every line the server logged for the job
-``usage``  ModelCall      after every model call, failed ones included
-``result`` CVResult       the job is done — the last event
-``error``  CVFailure      the job failed — the last event
-========== ============== ==============================================
+============ ============== ==============================================
+type         payload        when
+============ ============== ==============================================
+``status``   CVStatus       each step: jd_evaluation, profile_scoring, ...
+``artifact`` CVArtifact     each intermediate result, as a step finishes
+``log``      LogEntry       every line the server logged for the job
+``usage``    ModelCall      after every model call, failed ones included
+``result``   CVResult       the job is done — the last event
+``error``    CVFailure      the job failed — the last event
+============ ============== ==============================================
 
 The server keeps the events until the client acknowledges the session with
 ``DELETE /v1/cv/{id}``, so a client that lost its connection, or comes back
@@ -22,7 +23,7 @@ later, replays them from the start.
 
 from __future__ import annotations
 
-from typing import Dict, Type
+from typing import Any, Dict, Type
 
 from pydantic import BaseModel, Field
 
@@ -43,12 +44,25 @@ class TokenUsage(BaseModel):
 class ModelCall(BaseModel):
     """One model call: the ``usage`` event."""
 
-    role: str = Field(description="Which model role made it: cv, review, highlight, ...")
+    role: str = Field(description="Which model role made it: jd_evaluation, cv, validation, ...")
     model: str = Field(description="The model name the provider was asked for")
     seconds: float = Field(description="How long the call took")
     input_tokens: int = Field(description="Prompt tokens")
     thinking_tokens: int = Field(description="Reasoning tokens")
     output_tokens: int = Field(description="Reply tokens, thinking excluded")
+
+
+class CVArtifact(BaseModel):
+    """One intermediate result of a CV job: the ``artifact`` event.
+
+    What each step hands the next one — the job description's key points, the
+    scored profile, the chosen format, the CV before and after validation, the
+    highlighted CV — as the JSON it is. Only the final PDF is ever sent: it is
+    in the result.
+    """
+
+    name: str = Field(description="What it is, e.g. key_points or checked_body: a file name")
+    data: Any = Field(description="The result itself, as JSON")
 
 
 class CVResult(BaseModel):
@@ -86,6 +100,7 @@ class Cleanup(BaseModel):
 #: Each event type, and the payload its ``data`` holds.
 EVENT_PAYLOADS: Dict[str, Type[BaseModel]] = {
     "status": CVStatus,
+    "artifact": CVArtifact,
     "log": LogEntry,
     "usage": ModelCall,
     "result": CVResult,
@@ -99,6 +114,7 @@ TERMINAL_EVENTS = ("result", "error")
 __all__ = [
     "TokenUsage",
     "ModelCall",
+    "CVArtifact",
     "CVResult",
     "CVFailure",
     "CVSession",

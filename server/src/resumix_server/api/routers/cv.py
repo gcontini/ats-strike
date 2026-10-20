@@ -1,7 +1,7 @@
 """Writing and rendering CVs.
 
-``POST /v1/cv`` is the expensive one — minutes of model calls and several
-LaTeX compiles — so it does not wait: it starts the job, answers with its id
+``POST /v1/cv`` is the expensive one — minutes of model calls, then a LaTeX
+compile or a few — so it does not wait: it starts the job, answers with its id
 and writes the CV in the background. ``GET /v1/cv/{id}/events`` streams the
 job's session as it grows, from the first event or from any later one, and
 ``DELETE /v1/cv/{id}`` is the client saying it has everything.
@@ -11,9 +11,13 @@ it from the posting, so posting the same job description twice finds the
 session already there instead of paying for a second CV.
 
 It takes ``candidate_data`` as well as ``candidate_profile``. No model is
-shown it — only the template is — but the loop renders the CV to count its
-pages, and a page count taken without the contact details is not the page
-count of the CV you will send.
+shown it — only the template is — but the CV is rendered to count its pages
+while duties are trimmed to fit, and a page count taken without the contact
+details is not the page count of the CV you will send.
+
+Every prompt the six steps use, both JSON schemas the writer is shown, the
+template and its images can be replaced for one request, and each step's
+model settings too: ``<role>_extra_body`` supersedes all of them.
 
 ``POST /v1/cv/render`` is the cheap, deterministic half: a document you have
 edited, or a ``.tex`` you have edited, compiled again for nothing.
@@ -40,7 +44,7 @@ from ...pipeline.cv_renderer import CVRenderer
 from .. import jobs
 from ..deps import claim_slot, envelope_for, envelope_of, execute, get_state
 from ..errors import ApiError, BadPart, JobNotReady, MissingPart, UnknownRequest
-from ..multipart import images_part, json_part, text_part
+from ..multipart import extra_bodies, images_part, json_part, text_part
 
 router = APIRouter()
 
@@ -62,24 +66,59 @@ async def create_cv(
     candidate_data: Optional[UploadFile] = File(
         None, description="candidate_data.json — what the template prints"
     ),
-    sys_prompt_cv: Optional[UploadFile] = File(None, description="Override the CV prompt"),
+    sys_prompt_jd_evaluation: Optional[UploadFile] = File(
+        None, description="Override the jd_evaluation prompt"
+    ),
+    sys_prompt_profile_scoring: Optional[UploadFile] = File(
+        None, description="Override the profile_scoring prompt"
+    ),
+    sys_prompt_format_selection: Optional[UploadFile] = File(
+        None, description="Override the format_selection prompt"
+    ),
+    sys_prompt_cv_body: Optional[UploadFile] = File(
+        None, description="Override the prompt that writes the CV body"
+    ),
+    cv_body_schema: Optional[UploadFile] = File(
+        None, description="Override the CV body's JSON schema, shown to that prompt"
+    ),
+    sys_prompt_cv_duties: Optional[UploadFile] = File(
+        None, description="Override the prompt that writes each experience"
+    ),
+    cv_duties_schema: Optional[UploadFile] = File(
+        None, description="Override an experience's JSON schema, shown to that prompt"
+    ),
+    sys_prompt_validation_body: Optional[UploadFile] = File(
+        None, description="Override the prompt that validates the CV body"
+    ),
+    sys_prompt_validation_duties: Optional[UploadFile] = File(
+        None, description="Override the prompt that validates each experience"
+    ),
     sys_prompt_highlight: Optional[UploadFile] = File(
         None, description="Override the highlighting prompt"
     ),
-    sys_prompt_review: Optional[UploadFile] = File(
-        None, description="Override the review prompt"
-    ),
     template: Optional[UploadFile] = File(
-        None, description="Override resume.tex.jinja (also used for the page check)"
+        None, description="Override resume.tex.jinja (also used for the page count)"
     ),
     images: List[UploadFile] = File(
         [], description="Images the template includes, each by its own file name"
     ),
-    temperature: Optional[float] = Form(
-        None, description="Sampling temperature override for the CV model only"
+    jd_evaluation_extra_body: Optional[str] = Form(
+        None, description="JSON object: the jd_evaluation model's settings, instead of models.toml's"
     ),
-    presence_penalty: Optional[float] = Form(
-        None, description="Presence penalty override for the CV model only"
+    profile_scoring_extra_body: Optional[str] = Form(
+        None, description="JSON object: the profile_scoring model's settings, instead of models.toml's"
+    ),
+    format_selection_extra_body: Optional[str] = Form(
+        None, description="JSON object: the format_selection model's settings, instead of models.toml's"
+    ),
+    cv_extra_body: Optional[str] = Form(
+        None, description="JSON object: the cv model's settings, instead of models.toml's"
+    ),
+    validation_extra_body: Optional[str] = Form(
+        None, description="JSON object: the validation model's settings, instead of models.toml's"
+    ),
+    highlight_extra_body: Optional[str] = Form(
+        None, description="JSON object: the highlight model's settings, instead of models.toml's"
     ),
     pages: Optional[int] = Form(None, description="Page limit the CV must fit (default: 2)"),
 ) -> dict:
@@ -97,34 +136,45 @@ async def create_cv(
         candidate_data, name="candidate_data", max_bytes=limit, required=True
     )
 
+    prompts = {
+        "sys_prompt_jd_evaluation": sys_prompt_jd_evaluation,
+        "sys_prompt_profile_scoring": sys_prompt_profile_scoring,
+        "sys_prompt_format_selection": sys_prompt_format_selection,
+        "sys_prompt_cv_body": sys_prompt_cv_body,
+        "cv_body_schema": cv_body_schema,
+        "sys_prompt_cv_duties": sys_prompt_cv_duties,
+        "cv_duties_schema": cv_duties_schema,
+        "sys_prompt_validation_body": sys_prompt_validation_body,
+        "sys_prompt_validation_duties": sys_prompt_validation_duties,
+        "sys_prompt_highlight": sys_prompt_highlight,
+    }
     bundle = state.bundle.with_overrides(
-        sys_prompt_cv=await text_part(sys_prompt_cv, name="sys_prompt_cv", max_bytes=limit),
-        sys_prompt_highlight=await text_part(
-            sys_prompt_highlight, name="sys_prompt_highlight", max_bytes=limit
-        ),
-        sys_prompt_review=await text_part(
-            sys_prompt_review, name="sys_prompt_review", max_bytes=limit
-        ),
+        **{name: await text_part(part, name=name, max_bytes=limit) for name, part in prompts.items()},
         template_source=await text_part(template, name="template", max_bytes=limit),
         images=await images_part(images, max_bytes=limit),
     )
     candidate = CandidateInputs(profile=profile, data=data)
 
-    llm = state.llm.with_overrides(
-        "cv", temperature=temperature, presence_penalty=presence_penalty
-    )
+    llm = state.llm.with_extra_body(await extra_bodies({
+        "jd_evaluation": jd_evaluation_extra_body,
+        "profile_scoring": profile_scoring_extra_body,
+        "format_selection": format_selection_extra_body,
+        "cv": cv_extra_body,
+        "validation": validation_extra_body,
+        "highlight": highlight_extra_body,
+    }, max_bytes=limit))
 
-    def build(work: Path, progress) -> Tuple[Dict[str, Any], str, bytes, str]:
+    def build(work: Path, progress, artifact) -> Tuple[Dict[str, Any], str, bytes, str]:
         return CVGenerator(
             llm=llm,
             bundle=bundle,
             candidate=candidate,
             work_dir=work,
-            max_attempts=state.settings.max_attempts,
             deadline=time.monotonic() + state.settings.request_budget_seconds,
             latex_timeout=state.settings.latex_timeout,
             page_limit=pages,
             progress=progress,
+            artifact=artifact,
         ).generate(job_description)
 
     run = current_run()

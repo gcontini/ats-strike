@@ -9,7 +9,7 @@ from resumix_contracts import CoverLetter, Envelope
 
 from ...pipeline.letter_generator import LetterGenerator
 from ..deps import envelope_of, execute, get_state
-from ..multipart import json_part, text_part
+from ..multipart import extra_bodies, json_part, text_part
 
 router = APIRouter()
 
@@ -31,8 +31,9 @@ async def create_letter(
     sys_prompt_letter: Optional[UploadFile] = File(
         None, description="Override the letter prompt"
     ),
-    temperature: Optional[float] = Form(None, description="Sampling temperature override"),
-    presence_penalty: Optional[float] = Form(None, description="Presence penalty override"),
+    letter_extra_body: Optional[str] = Form(
+        None, description="JSON object: the letter model's settings, instead of models.toml's"
+    ),
 ) -> dict:
     """Write a cover letter for one job description."""
     state = get_state(request)
@@ -52,8 +53,8 @@ async def create_letter(
         )
     )
 
-    llm = state.llm.with_overrides(
-        "letter", temperature=temperature, presence_penalty=presence_penalty
+    llm = state.llm.with_extra_body(
+        await extra_bodies({"letter": letter_extra_body}, max_bytes=limit)
     )
 
     def job() -> CoverLetter:

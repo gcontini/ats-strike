@@ -20,12 +20,13 @@ global state); this file is the file map and the day-to-day commands.
 ## Components (file map)
 
 **`contracts/src/resumix_contracts/`** — the wire format, nothing else
-- `payloads.py` — `CVStatus` (`status`, `detail`: where a CV job is now and
-  one line about the step before, no history), `RenderedCV`
-  (`tex`, `pdf_base64`, `document`), `CoverLetter`, `ServerStatus`. The CV
-  document is a raw flat dict with no schema — what the model wrote with your
-  `candidate_data` merged over the top. The schema the CV model writes to is
-  *not* here — see `pipeline/cv_schema.py`.
+- `payloads.py` — `CVStatus` (`status`: one of the six steps, `jd_evaluation`
+  … `highlight`; `detail`: one line about the step before, no history),
+  `RenderedCV` (`tex`, `pdf_base64`, `document`), `CoverLetter`,
+  `ServerStatus`. The CV document is a raw flat dict with no schema — what the
+  models wrote with your `candidate_data` merged over the top. What the writer
+  is asked for is described by the two JSON schemas in `server/resources/`,
+  not here.
 - `jd.py` — `JDAnalysis` (the analysis endpoint's output), `JDDetection`
   (`is_job_description: bool`, nothing else — the reason lives in the log,
   not the reply).
@@ -33,9 +34,10 @@ global state); this file is the file map and the day-to-day commands.
   endpoint returns this shape, success or failure), `LogEntry`. No
   usage/token fields here.
 - `events.py` — the session a CV job streams: `EVENT_PAYLOADS` (type →
-  payload: `status` `CVStatus`, `log` `LogEntry`, `usage` `ModelCall`,
-  `result` `CVResult`, `error` `CVFailure`), `TERMINAL_EVENTS`, `TokenUsage`
-  (the run's total), `CVSession` (what `POST /v1/cv` answers), `Cleanup`.
+  payload: `status` `CVStatus`, `artifact` `CVArtifact` (a step's result as
+  JSON), `log` `LogEntry`, `usage` `ModelCall`, `result` `CVResult`, `error`
+  `CVFailure`), `TERMINAL_EVENTS`, `TokenUsage` (the run's total),
+  `CVSession` (what `POST /v1/cv` answers), `Cleanup`.
 - `guess.py` — `static_jd_guess(text) -> bool`, the free structural check
   (length band, no binary) both sides can run before paying for anything.
 
@@ -49,8 +51,8 @@ job's session is the only thing kept
   `execute()` (the blocking endpoints: semaphore + threadpool hop + a local
   scratch dir; they keep nothing).
 - `api/jobs.py` — the CV worker thread: re-establishes the `Run`, appends a
-  `status` event per step, ends with `result` or `error` (each with the run's
-  total), on a local scratch dir.
+  `status` event per step and an `artifact` event per step result, ends with
+  `result` or `error` (each with the run's total), on a local scratch dir.
 - `jobstore.py` — a session per CV job under `RESUMIX_WORK_DIR`:
   `events/<n>.json`, each written once and never changed (so the root can be a
   bucket mounted as a folder); pruned by age, never while running.
@@ -60,16 +62,18 @@ job's session is the only thing kept
   (acknowledge), `DELETE /v1/cv?all` (reset), `POST /v1/cv/render`.
 - `api/errors.py` — maps `PipelineError`/`ValidationError`/`openai.APIError`
   to a status and an `ok:false` envelope; never echoes the provider body.
-- `pipeline/cv_generator.py` — `CVGenerator`: write → validate → regenerate
-  (up to `max_attempts` rounds) → keyword highlight → render for good.
+- `pipeline/cv_generator.py` — `CVGenerator`: adapticv-ai's six steps as a
+  LangGraph `StateGraph` — `jd_evaluation` → `profile_scoring` →
+  `format_selection` → `cv` → `validation` → `highlight` — with `Send` for
+  the calls a step makes side by side (one per profile list, per experience),
+  then a render that drops the duties worth least until the CV fits.
   Returns `(document, tex, pdf, summary)`. Pure library code — inputs in
-  memory, outputs returned, nothing read from a configured path; progress
-  leaves through an injected `progress(status, detail)` callback, not a file.
-- `pipeline/cv_validator.py` — `CVValidator`: what is wrong with one CV, as
-  one list of violations — the content review against the master profile,
-  then the render and the page count, whose condense instruction is appended
-  as the last violation. Every attempt is rendered, rejected or not: a compile
-  is cheap next to a model call. The review runs until it passes once.
+  memory, outputs returned, nothing read from a configured path; progress and
+  step results leave through injected `progress(status, detail)` and
+  `artifact(name, data)` callbacks, not a file.
+- `pipeline/cv_review.py` — the validation loop: the model reports each
+  violation as a `replace_in_body`/`replace_in_duties` tool call (schemas
+  only), the code applies it and asks again, up to 5 rounds per document.
 - `pipeline/cv_renderer.py` — `CVRenderer`: Jinja (`\VAR{}`/`\BLOCK{}`
   delimiters, `DictLoader` built fresh per request since the template can be
   client-supplied) → `pdflatex`, sandboxed (`-no-shell-escape`,
@@ -77,27 +81,23 @@ job's session is the only thing kept
   `mkdtemp` removed in a `finally`) → page count.
 - `pipeline/jd_validator.py`, `pipeline/letter_generator.py` — the other two
   LLM pipelines; same shape as `cv_generator.py`.
-- `pipeline/cv_schema.py` — `TailoredCVData`, the CV model's output schema and
-  the response model of `POST /v1/cv`. Every `Field(description=...)` reaches
-  the model in its schema — editing one changes model behaviour.
-  `extra="allow"`, so an undeclared field survives validation and reaches the
-  template; the schema the model is shown is still closed
-  (`additionalProperties: false`), because strict `json_schema` endpoints
-  refuse `additionalProperties: true`.
 - `models/` — `ModelSelector`: one LangChain chat model per role
-  (`detect`/`analysis`/`letter`/`cv`/`review`/`highlight`) from
+  (`detect`/`analysis`/`letter` and the six CV steps) from
   `resources/models.toml`, built by the role's `model_provider`
-  (`standard.py` on `ChatOpenAI`, `deepseek.py` on `ChatDeepSeek`), and one
-  method, `call_llm(role, type, system_prompt, messages)`, which returns a
-  pydantic model, `bool` or `str` and retries empty, cut-off or invalid
-  replies (3 calls). Every call logs one line with model, duration and
+  (`standard.py` on `ChatOpenAI`, `deepseek.py` on `ChatDeepSeek`), and two
+  methods: `call_llm(role, type, system_prompt, messages)`, which returns a
+  pydantic model, `bool`, `str` or a JSON `list`/`dict`, and
+  `call_tools(role, tool, …)`, which returns the arguments of the tool calls
+  a reply made; both retry empty, cut-off or invalid replies (3 calls).
+  `with_extra_body({role: body})` is a request's `<role>_extra_body`, which
+  supersedes all of that role's settings. Every call logs one line with model, duration and
   input/thinking/output tokens, adds them to the `Usage` it is handed, and
   reports them to the current `Run` (a CV job's `usage` event and total).
-- `bundle.py` — `ResourceBundle` (impersonal: prompts, template, image assets
-  keyed by file name — built once at startup, `with_overrides()` per request) vs.
-  `CandidateInputs` (personal: profile and preferences — always per-request,
-  never cached, never written to disk). No candidate data: no endpoint takes
-  it, because no model reads it.
+- `bundle.py` — `ResourceBundle` (impersonal: prompts, the writer's two
+  schemas, template, image assets keyed by file name — built once at startup,
+  `with_overrides()` per request) vs. `CandidateInputs` (personal: profile,
+  preferences and candidate data — always per-request, never cached). Only
+  the template reads the candidate data; no model is shown it.
 - `observability.py` — `Run`/`NULL_RUN`, `current_run` contextvar, `stage()`
   context manager, the logging handler that turns log records into
   `LogEntry`s for the run. A CV job's `Run` has a `sink` — its session's
@@ -188,7 +188,7 @@ required to run it (PyInstaller `--onefile`)
   instead of paying twice. `GET /v1/cv/{id}/events` streams it; the client
   stores the CV and only then `DELETE`s it (409 while running). The job runs
   in a detached thread that appends events. `candidate_data` is there because
-  the loop compiles the CV to count its pages — no model is shown it.
+  the render counts the CV's pages to trim it — no model is shown it.
 - **The LaTeX subprocess is always sandboxed**: shell escape off
   (`-no-shell-escape`, `shell_escape=f`), reads/writes confined to the
   per-request scratch dir (`openin_any=p`/`openout_any=p`), no stdin, a
@@ -200,9 +200,10 @@ required to run it (PyInstaller `--onefile`)
 - **Concurrency**: one `BoundedSemaphore(RESUMIX_MAX_CONCURRENT_JOBS)`
   (default 10) gates job handlers → `429` + `Retry-After` when full. No
   second gate for the LaTeX compile — it is fast enough not to need one.
-- **Every model reply is re-validated.** The schema is shown in the prompt
-  *and* requested via `response_format`, and the reply is parsed by pydantic;
-  a `ValidationError` is fed back to the model rather than trusted.
+- **Every pydantic reply is re-validated.** The schema is shown in the prompt
+  or requested via `response_format`, and the reply is parsed by pydantic; a
+  `ValidationError` is fed back to the model rather than trusted. The CV
+  steps' JSON replies are parsed and type-checked only, as adapticv-ai does.
 
 ## Conventions
 
@@ -214,8 +215,8 @@ required to run it (PyInstaller `--onefile`)
   the `[provider]` table of
   `server/resources/models.toml`. A role with `use_alternate_provider = N`
   (N ≥ 2) calls provider N instead (`MODEL_API_KEY<N>`/`MODEL_BASE_URL<N>`).
-  The six roles
-  (`detect`/`analysis`/`letter`/`cv`/`review`/`highlight`) each declare only
+  The roles
+  (`detect`/`analysis`/`letter` and the six CV steps) each declare only
   model name and generation settings; provider-specific fields go in
   `extra_body`, sent as given, and nothing checks them. Any key can be
   overridden per role via `RESUMIX_<ROLE>_<FIELD>` env vars (an empty value

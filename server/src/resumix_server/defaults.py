@@ -17,17 +17,7 @@ from importlib import resources
 from pathlib import Path
 from typing import Optional
 
-#: Files the server ships and will look for.
-PROMPT_FILES = (
-    "sys_prompt_cv.txt",
-    "sys_prompt_highlight.txt",
-    "sys_prompt_review.txt",
-    "sys_prompt_letter.txt",
-    "sys_prompt_analysis.txt",
-    "sys_prompt_jd_detect.txt",
-)
 TEMPLATE_FILE = "resume.tex.jinja"
-MODELS_FILE = "models.toml"
 #: The blank signature shipped so the stock template compiles with no image.
 SIGNATURE_FILE = "candidate_signature.png"
 
@@ -71,9 +61,7 @@ def read_bytes_default(name: str) -> bytes:
 
 
 __all__ = [
-    "PROMPT_FILES",
     "TEMPLATE_FILE",
-    "MODELS_FILE",
     "SIGNATURE_FILE",
     "packaged_dir",
     "override_dir",

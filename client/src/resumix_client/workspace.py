@@ -34,6 +34,9 @@ JD_FILENAME = "jd.txt"
 ANALYSIS_FILENAME = "analysis.json"
 LOG_FILENAME = "log.log"
 LETTER_FILENAME = "cover_letter.txt"
+#: Inside a job folder: each step's intermediate result, one JSON file each.
+#: A folder, so no file of it can be mistaken for the CV beside it.
+STEPS_DIRNAME = "steps"
 
 
 def timestamp(now: Optional[datetime] = None) -> str:
@@ -213,5 +216,5 @@ class Workspace:
 __all__ = [
     "Workspace", "Artifacts", "sanitize_name", "job_name", "staged_job", "unstage",
     "timestamp", "day",
-    "JD_FILENAME", "ANALYSIS_FILENAME", "LOG_FILENAME", "LETTER_FILENAME",
+    "JD_FILENAME", "ANALYSIS_FILENAME", "LOG_FILENAME", "LETTER_FILENAME", "STEPS_DIRNAME",
 ]

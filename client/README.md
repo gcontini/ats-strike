@@ -20,11 +20,12 @@ your own and no LaTeX install (for the client).
 
    | File | What it is |
    |---|---|
-   | `candidate_profile.json` | Everything you have ever done. The model tailors the CV from this — the more complete, the better. **Required.** |
+   | `candidate_profile.json` | Everything you have ever done. The models tailor the CV from this — the more complete, the better. **Required.** |
    | `candidate_data.json` | Name, email, phone, LinkedIn, languages, location, education. Merged into the CV here and printed as-is; **Required.** |
    | `candidate_preferences.md` | What you want from a job, in prose. Scored against each posting. **Required** for analysis. |
    | `resume.tex.jinja` | Your own LaTeX template. Optional — the server's is used otherwise. |
-   | `sys_prompt_cv.txt`, `sys_prompt_highlight.txt`, `sys_prompt_review.txt`, `sys_prompt_letter.txt`, `sys_prompt_analysis.txt` | Your own prompts. Optional, same. |
+   | `sys_prompt_jd_evaluation.txt`, `sys_prompt_profile_scoring.txt`, `sys_prompt_format_selection.txt`, `sys_prompt_cv_body.txt`, `sys_prompt_cv_duties.txt`, `sys_prompt_validation_body.txt`, `sys_prompt_validation_duties.txt`, `sys_prompt_highlight.txt`, `sys_prompt_letter.txt`, `sys_prompt_analysis.txt` | Your own prompts. Optional, same. |
+   | `cv_body_schema.json`, `cv_duties_schema.json` | Your own JSON schemas for the CV body and for an experience, which the writer is shown. Optional, same. |
 
    Every `.png`, `.jpg` and `.jpeg` in the folder is sent along too, under its
    own file name — that is the name your template includes it under, so
@@ -41,9 +42,13 @@ your own and no LaTeX install (for the client).
    server_url = "https://resumix.example.run.app"
    token      = "the-bearer-token"      # only if the server requires one
    cover_letter = "no"                  # no | yes | letter_only
-   # temperature = 0.4                  # optional, CV and cover letter only
-   # presence_penalty = 0.5             # optional, CV and cover letter only
    # verbose = true                     # same as -v on every run
+
+   # Optional: a model role's settings, instead of all of the server's for it.
+   # Roles: jd_evaluation, profile_scoring, format_selection, cv, validation,
+   # highlight, analysis, letter.
+   # [extra_body.cv]
+   # temperature = 0.4
    ```
 
    …or `--server`/`--token` on the command line, or `RESUMIX_API_URL` and
@@ -201,10 +206,10 @@ when `resumix.toml` is wrong. Every `-v` run prints the same line at startup.
 | `--yes` | clipboard, watch, submit | Submit every valid posting without asking. Unattended runs spend tokens on their own. In `watch`: never ask, and CHECK postings wait in `working/`. |
 | `--no-xlsx` | clipboard, watch, submit | Do not record delivered CVs in the spreadsheet. |
 | `--new` | clipboard, watch, submit, submit-raw | Write the CV again even when the server still has a run for the same posting, which is otherwise replayed. |
-| `--server`, `--token`, `--temperature`, `--presence-penalty` | all | Override the config for one run. |
+| `--server`, `--token` | all | Override the config for one run. |
 | `--pages N` | clipboard, watch, submit, submit-raw | Page limit the CV must fit. Default: 2. |
 | `--config FILE`, `--data-dir DIR` | all | Use a specific config, or look for your files somewhere else. |
-| `-v`, `--verbose` | all | Print `version x.y.z` at startup; while a CV is being written, print what the server reports about each step it finishes — tokens, thinking tokens, elapsed, and the reviewer's or the page check's own words. |
+| `-v`, `--verbose` | all | Print `version x.y.z` at startup; while a CV is being written, print what the server reports about each step it finishes — what it produced, tokens, thinking tokens, elapsed. |
 
 Both work on either side of the mode name: `resumix -v submit posting.txt
 --out ~/applications` and `resumix submit -v …` do the same thing.
@@ -224,6 +229,7 @@ Both work on either side of the mode name: `resumix -v submit posting.txt
 │           ├── analysis.json            match score, salary, skills, gaps
 │           ├── jd.txt                   the posting (or its original filename)
 │           ├── cover_letter.txt         with --cover-letter
+│           ├── steps/                   what each step of the CV handed the next, as JSON
 │           └── log.log                  every step, and the server's own lines for the CV
 ├── discarded/26-01-15/…                 postings you said no to, analysis kept
 ├── error/26-01-15/…                     rejected or failed, with a .log beside it
@@ -243,11 +249,12 @@ it wrote the CV, indented under them:
 
 ```
 2026-01-15T09:30:12 ✍ writing the CV (this takes minutes)...
-2026-01-15T09:30:12    generate
-  2026-01-15T09:30:53+00:00 INFO    [cv.generate]   ⏱ [cv] qwen3.8-max 41.2s | input=7104, thinking=903, output=1832, …
-2026-01-15T09:30:53    ⏱ cv qwen3.8-max 41.2s | input=7104, thinking=903, output=1832
+2026-01-15T09:30:12    jd_evaluation
+  2026-01-15T09:30:33+00:00 INFO    [cv.jd_evaluation]   ⏱ [jd_evaluation] deepseek-flash 21.2s | input=1847, thinking=7256, output=832, …
+2026-01-15T09:30:33    ⏱ jd_evaluation deepseek-flash 21.2s | input=1847, thinking=7256, output=832
+2026-01-15T09:30:33    profile_scoring
 …
-2026-01-15T09:36:24    Σ 6 model call(s), 312.4s | input=41210, thinking=27100, output=9380
+2026-01-15T09:35:24    Σ 21 model call(s), 961.4s | input=64148, thinking=161200, output=14091
 ```
 
 One `⏱` line per model call is what it cost; the `Σ` line is the whole run,

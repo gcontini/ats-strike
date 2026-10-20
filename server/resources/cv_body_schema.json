@@ -1,0 +1,40 @@
+{
+  "description": "Main body of the CV: the fields outside the work experiences that come from the candidate's profile.",
+  "type": "object",
+  "properties": {
+    "job_title": {
+      "type": "string",
+      "maxLength": 60,
+      "description": "Under the name, at the top of the CV."
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 600,
+      "maxLength": 800,
+      "description": "Profile section: one paragraph of about 700 characters."
+    },
+    "skills": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 6,
+      "maxItems": 6,
+      "description": "Skills section, on one line."
+    },
+    "certifications": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {"type": "string"},
+          "name": {"type": "string"}
+        },
+        "required": ["date", "name"],
+        "additionalProperties": false
+      },
+      "description": "Professional Certifications section, most recent first."
+    }
+  },
+  "required": ["job_title", "summary", "skills", "certifications"],
+  "additionalProperties": false
+}

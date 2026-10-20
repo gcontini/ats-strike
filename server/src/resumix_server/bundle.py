@@ -6,18 +6,19 @@ override any part of it.
 
 :class:`CandidateInputs` is personal — the profile the model reads, the
 preferences the JD analysis scores against, and the candidate data the
-template prints. It only ever comes from the request body, is never cached and
-is never written to disk. That is the whole reason this file has two classes
-instead of one: the thing worth caching and the thing that must not be. Only
-``profile`` and ``preferences`` are ever shown to a model; ``data`` goes to
-the renderer, which cannot count pages without it.
+template prints. It only ever comes from the request body and is never cached;
+it reaches disk only as what a CV job streams back to its own client — the
+scored profile, the CV — in a session deleted once the client has it. That is
+the whole reason this file has two classes instead of one: the thing worth
+caching and the thing that must not be. Only ``profile`` and ``preferences``
+are ever shown to a model; ``data`` goes to the renderer, which cannot count
+pages without it.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
 from functools import lru_cache
-from pathlib import Path
 from typing import Any, Mapping
 
 from .defaults import (
@@ -27,17 +28,25 @@ from .defaults import (
     read_text_default,
 )
 
-#: What counts as an image when a bundle is built from a folder.
-IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg")
-
 
 @dataclass(frozen=True)
 class ResourceBundle:
-    """Prompts, template and assets for one request."""
+    """Prompts, template and assets for one request.
 
-    sys_prompt_cv: str
+    Each prompt and schema is the server file of the same name (``.txt``, or
+    ``.json`` for a schema), and the multipart part that replaces it.
+    """
+
+    sys_prompt_jd_evaluation: str
+    sys_prompt_profile_scoring: str
+    sys_prompt_format_selection: str
+    sys_prompt_cv_body: str
+    cv_body_schema: str
+    sys_prompt_cv_duties: str
+    cv_duties_schema: str
+    sys_prompt_validation_body: str
+    sys_prompt_validation_duties: str
     sys_prompt_highlight: str
-    sys_prompt_review: str
     sys_prompt_letter: str
     template_source: str
     template_name: str = TEMPLATE_FILE
@@ -75,49 +84,24 @@ def default_bundle() -> ResourceBundle:
     """The shipped defaults, read once per process.
 
     Cached deliberately: these files cannot change under a running server
-    without a restart, and re-reading them per request would be four opens on
-    the hot path.
+    without a restart, and re-reading them per request would be a dozen opens
+    on the hot path.
     """
     return ResourceBundle(
-        sys_prompt_cv=read_text_default("sys_prompt_cv.txt"),
+        sys_prompt_jd_evaluation=read_text_default("sys_prompt_jd_evaluation.txt"),
+        sys_prompt_profile_scoring=read_text_default("sys_prompt_profile_scoring.txt"),
+        sys_prompt_format_selection=read_text_default("sys_prompt_format_selection.txt"),
+        sys_prompt_cv_body=read_text_default("sys_prompt_cv_body.txt"),
+        cv_body_schema=read_text_default("cv_body_schema.json"),
+        sys_prompt_cv_duties=read_text_default("sys_prompt_cv_duties.txt"),
+        cv_duties_schema=read_text_default("cv_duties_schema.json"),
+        sys_prompt_validation_body=read_text_default("sys_prompt_validation_body.txt"),
+        sys_prompt_validation_duties=read_text_default("sys_prompt_validation_duties.txt"),
         sys_prompt_highlight=read_text_default("sys_prompt_highlight.txt"),
-        sys_prompt_review=read_text_default("sys_prompt_review.txt"),
         sys_prompt_letter=read_text_default("sys_prompt_letter.txt"),
         template_source=read_text_default(TEMPLATE_FILE),
         assets={SIGNATURE_FILE: read_bytes_default(SIGNATURE_FILE)},
     )
 
 
-def bundle_from_dir(directory: Path) -> ResourceBundle:
-    """Build a bundle from a folder of files — for local runs and tests."""
-    directory = Path(directory)
-
-    def text(name: str) -> str:
-        path = directory / name
-        return path.read_text(encoding="utf-8") if path.is_file() else read_text_default(name)
-
-    # The blank signature first, so a folder with no image of its own still
-    # renders the stock template; anything in the folder wins by name.
-    assets = {SIGNATURE_FILE: read_bytes_default(SIGNATURE_FILE)}
-    assets.update({
-        path.name: path.read_bytes()
-        for path in sorted(directory.iterdir())
-        if path.suffix.lower() in IMAGE_SUFFIXES and path.is_file()
-    })
-    return ResourceBundle(
-        sys_prompt_cv=text("sys_prompt_cv.txt"),
-        sys_prompt_highlight=text("sys_prompt_highlight.txt"),
-        sys_prompt_review=text("sys_prompt_review.txt"),
-        sys_prompt_letter=text("sys_prompt_letter.txt"),
-        template_source=text(TEMPLATE_FILE),
-        assets=assets,
-    )
-
-
-__all__ = [
-    "ResourceBundle",
-    "CandidateInputs",
-    "default_bundle",
-    "bundle_from_dir",
-    "IMAGE_SUFFIXES",
-]
+__all__ = ["ResourceBundle", "CandidateInputs", "default_bundle"]

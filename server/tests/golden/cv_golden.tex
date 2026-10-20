@@ -17,6 +17,10 @@
 \newcommand\textstyleEmphasis[1]{\textit{#1}}
 % Outline numbering
 \setcounter{secnumdepth}{0}
+% Experience title: 0.3ex above the dates line (article's default is 1.5ex)
+\makeatletter
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}{-3.25ex\@plus -1ex \@minus -.2ex}{0.3ex}{\normalfont\normalsize\bfseries}}
+\makeatother
 % List styles
 \newcommand\liststyleListi{%
 \renewcommand\labelitemi{{\textbullet}}
@@ -74,29 +78,29 @@
 \textcolor{darkblue}{\subsection{Work Experience}}
 \subsubsection[IT Director / Globex S.p.A. (Milan, Italy)]{\textstyleStrongEmphasis{IT Director / Globex S.p.A.} \textmd{(Milan, Italy)}}
 \paragraph[February 2021 {}-- Present, Winter Olympics {}-- Organizing Committee]{\textstyleEmphasis{February 2021 {}-- Present, }\textstyleStrongEmphasis{Winter Olympics {}-- Organizing Committee}}
-\mbox{}\\
+\leavevmode\\[0.7ex]
 IT \& infrastructure lead for a 50\% larger venue network, reporting to the CIO.
 \liststyleListi
-\begin{itemize}\setlength\itemsep{0pt}\setlength\parsep{3pt plus 2pt minus 1pt}
+\begin{itemize}\setlength\itemsep{0pt}\setlength\parsep{3pt}
 \item {Cut spend by \textbf{30\%} while scaling to 100+ nodes (a\textasciicircum{}b notation, 50\% uptime SLA).}
 \item {Ran a \textbackslash{}team of 12; owned the \{roadmap\} and the {[}backlog{]}.}
 \item {Migrated \textasciitilde{}200 workloads to \textit{hybrid} cloud.}
 \end{itemize}
 \subsubsection[Head of Infrastructure / Initech (Lisbon, Portugal)]{\textstyleStrongEmphasis{Head of Infrastructure / Initech} \textmd{(Lisbon, Portugal)}}
 \paragraph[March 2018 {}-- January 2021]{\textstyleEmphasis{March 2018 {}-- January 2021}}
-\mbox{}\\
+\leavevmode\\[0.7ex]
 Ran the infrastructure team across 4 data centres.
 \liststyleListi
-\begin{itemize}\setlength\itemsep{0pt}\setlength\parsep{3pt plus 2pt minus 1pt}
+\begin{itemize}\setlength\itemsep{0pt}\setlength\parsep{3pt}
 \item {Consolidated 4 data centres into 2.}
 \item {Introduced SRE practice \& on-call rotation.}
 \end{itemize}
 \subsubsection[Systems Engineer / Umbrella Ltd (Porto, Portugal)]{\textstyleStrongEmphasis{Systems Engineer / Umbrella Ltd} \textmd{(Porto, Portugal)}}
 \paragraph[June 2012 {}-- February 2018]{\textstyleEmphasis{June 2012 {}-- February 2018}}
-\mbox{}\\
+\leavevmode\\[0.7ex]
 Operations engineer for a 300-server fleet.
 \liststyleListi
-\begin{itemize}\setlength\itemsep{0pt}\setlength\parsep{3pt plus 2pt minus 1pt}
+\begin{itemize}\setlength\itemsep{0pt}\setlength\parsep{3pt}
 \item {Automated provisioning for 300 servers.}
 \end{itemize}
 \textcolor{darkblue}{\subsection{Languages}}
@@ -120,13 +124,6 @@ June 2019 & : & DELE B2 (Spanish language proficiency)\\
 \includegraphics[width=5.278cm,height=1.36cm]{candidate_signature.png}
 \end{flushright}
 
-
-\bigskip
-
-
-\bigskip
-
-
-\bigskip
+\vfill
 \noindent{\small\textcolor[rgb]{0.5,0.5,0.5}{I hereby consent to the processing of the data I provided in this CV according to UE regulation 2016/679}}
 \end{document}

@@ -67,6 +67,9 @@ Endpoint: `https://api.deepseek.com`.
 - **works:** `json_mode` with thinking on (`deepseek-flash`, 2026-10-08). The
   call succeeds; the reply follows the schema only when the prompt carries it,
   which `json_mode` roles now always do.
+- **works:** tool calls that are not forced, with thinking on and
+  `parallel_tool_calls` — what the `validation` role sends (`deepseek-flash`
+  and `deepseek-v4-pro`, adapticv-ai's bench, 2026-10-19).
 
 ### OpenAI
 
@@ -90,8 +93,11 @@ Endpoint: `https://api.openai.com/v1`.
   `extra_body`. Fix: `RESUMIX_<ROLE>_EXTRA_BODY={}`.
 - Do not leave `thinking = "on"` on an OpenAI role: it sends `enable_thinking`,
   which OpenAI does not take. Use `RESUMIX_<ROLE>_THINKING=auto`.
-- Chat Completions function calling needs `reasoning_effort = "none"`. resumix
-  sends no tools, so this does not apply.
+- Chat Completions function calling was reported to need
+  `reasoning_effort = "none"`. It did not on `gpt-6.1-sol`: adapticv-ai's
+  validators made their `replace_in_*` tool calls with `medium` (2026-10-19).
+  The `validation` role sends tools; if a model refuses them while
+  reasoning, set its `reasoning_effort` to `none`.
 
 ## Roles
 
@@ -125,17 +131,41 @@ the rows below are its JD-analysis runs. Settings named in the old keys:
 |---|---|---|---|---|---|
 | DashScope | `qwen3.8-flash` (shipped) | `thinking = on`, `reasoning_effort = max`, `temperature = 0.4`, `extra_body = { enable_search = true }` | **unconfirmed** | 2026-10-08 | Current `models.toml`; split out of `summary`. |
 
+### The six CV steps (`jd_evaluation`, `profile_scoring`, `format_selection`, `cv`, `validation`, `highlight`)
+
+Since 2026-10-20 a CV is written in adapticv-ai's six steps, one role each.
+The rows here are adapticv-ai's own bench of 2026-10-19 on the ten quick JDs
+of `tests/cv_quality/` — the same prompts, called through `ChatOpenAI` from
+that project, not through resumix — and resumix's shipped setting. Each row
+is the whole pipeline: every step on the same model, `reasoning_effort` high
+for `profile_scoring` and medium for the other five, no temperature.
+
+| Provider | Model | Settings | Status | Date | Notes |
+|---|---|---|---|---|---|
+| DeepSeek (`use_alternate_provider = 2`) | `deepseek-flash` (shipped) | `model_provider = "deepseek"`, `thinking = auto`, reasoning efforts as above | **unconfirmed** | 2026-10-20 | Current `models.toml`; not yet run through resumix. |
+| DeepSeek, native (adapticv-ai) | `deepseek-flash` | thinking by default, reasoning efforts as above | **works** | 2026-10-19 | 21–27 calls a CV, 3.5–5.9 min, 205k–258k tokens, most of them thinking (9.4k–14.9k on the longest scoring calls). Validation and tool calls (`parallel_tool_calls`) accepted. |
+| DeepSeek, native (adapticv-ai) | `deepseek-v4-pro` | the same | **works** | 2026-10-19 | 20–25 calls, 9.7–13.4 min, 282k–354k tokens. The validators made replacements through the tool calls. |
+| OpenAI (provider 3, adapticv-ai) | `gpt-6.1-sol` | Chat Completions, reasoning efforts as above | **works** | 2026-10-19 | 20–22 calls, 2.2–3.1 min, 71k–81k tokens. Tool calls with `reasoning_effort = medium` on Chat Completions: the validators made replacements. |
+
 ### cv (CV writing)
+
+Until 2026-10-20 this role wrote the whole CV in one call, to the
+`TailoredCVData` schema, in the generate → review → condense loop. It now
+writes the body and each experience in the six-step pipeline above; the rows
+below are the old loop's.
 
 | Provider | Model | Settings | Status | Date | Notes |
 |---|---|---|---|---|---|
 | OpenAI (`use_alternate_provider = 3`) | `gpt-6-sol` | Chat Completions, `json_schema`, `reasoning_effort = xhigh`, `thinking = auto`, `extra_body = {}`, `max_output_tokens = 24500` | **unconfirmed** | 2026-10-16 | Set after the failure below. |
 | OpenAI (`use_alternate_provider = 3`) | `gpt-6-sol` | Chat Completions, `json_schema`, `thinking = auto`, `extra_body = { reasoning = { mode = "pro", effort = "xhigh" } }`, `max_output_tokens = 24500` | **fails** | 2026-10-16 | 400 `Unknown parameter: 'reasoning'`. The `reasoning` object is the Responses API's; Chat Completions takes only a top-level `reasoning_effort`, and pro mode (`reasoning.mode = "pro"`) is documented for Responses only ([OpenAI reasoning guide](https://developers.openai.com/api/docs/guides/reasoning)). |
 | DashScope | `qwen3.8-max-0902` (shipped) | `json_schema` (strict), `thinking = on`, `extra_body = { thinking_budget = 7500 }`, `max_output_tokens = 24500` | **unconfirmed** | 2026-10-08 | Same room for the reply as the `max_tokens = 17000` before it: the new cap counts the thinking. |
-| DashScope | `qwen3.8-max-0902` | `json_schema_strict`, `thinking = on`, `thinking_budget = 7500`, `max_tokens = 17000` | **unconfirmed** | 2026-10-08 | Current `models.toml`. The budget behaviour is confirmed under *Providers*. CVs were produced on 2026-10-06, but the client logs do not record the model id; `resumix logs <request id>` does. |
+| DashScope | `qwen3.8-max-0902` | `json_schema_strict`, `thinking = on`, `thinking_budget = 7500`, `max_tokens = 17000` | **unconfirmed** | 2026-10-08 | Current `models.toml`. The budget behaviour is confirmed under *Providers*. CVs were produced on 2026-10-06, but the client logs of the time did not record the model id; the server's log did (a CV's `log.log` now records it per call). |
 | DashScope | `qwen3.8-max` | `json_schema_strict`, `thinking_budget = 6000`, `max_tokens = 16000`, `temperature = 0.9` | **works** | 2026-09-23 | Generate finished in 133 s with 5610 reasoning tokens, under the budget. The review pass on the same model finished in 42 s. |
 
-### review (CV against the master profile)
+### review (CV against the master profile) — retired
+
+Retired on 2026-10-20 with the generate → review loop; the six-step
+pipeline's `validation` role replaces it.
 
 | Provider | Model | Settings | Status | Date | Notes |
 |---|---|---|---|---|---|
@@ -151,6 +181,9 @@ the rows below are its JD-analysis runs. Settings named in the old keys:
 | DashScope | `qwen3.8-flash` (shipped) | same settings | **unconfirmed** | 2026-10-08 | Current `models.toml`. |
 
 ### highlight (the `**bold**` pass)
+
+Since 2026-10-20 the highlight is the last of the six CV steps, with
+adapticv-ai's prompt; the row below is the old loop's.
 
 | Provider | Model | Settings | Status | Date | Notes |
 |---|---|---|---|---|---|

@@ -6,7 +6,8 @@ shapes both sides agree on, so neither has to import the other:
 - ``payloads`` — :class:`CVStatus`, each step of a CV job, and
   :class:`RenderedCV`, the finished document, LaTeX and PDF in one.
 - ``events`` — the session a CV job streams: :data:`EVENT_PAYLOADS` names
-  each event type's payload, :class:`CVResult` and :class:`CVFailure` end it.
+  each event type's payload, :class:`CVArtifact` is a step's intermediate
+  result, :class:`CVResult` and :class:`CVFailure` end it.
 - ``jd`` — :class:`JDAnalysis` (``analysis.json``) and :class:`JDDetection`.
 - ``envelope`` — :class:`Envelope`, the uniform response body, and
   :class:`LogEntry`, one line of the server's log.
@@ -22,6 +23,7 @@ from .events import (
     EVENT_PAYLOADS,
     TERMINAL_EVENTS,
     Cleanup,
+    CVArtifact,
     CVFailure,
     CVResult,
     CVSession,
@@ -43,6 +45,7 @@ __all__ = [
     "LogEntry",
     "TokenUsage",
     "ModelCall",
+    "CVArtifact",
     "CVResult",
     "CVFailure",
     "CVSession",

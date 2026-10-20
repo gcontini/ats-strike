@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import ast
 from pathlib import Path
-from typing import Iterator, Set
+from typing import Set
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = {
@@ -45,14 +45,14 @@ def test_the_contracts_depend_on_pydantic_and_nothing_else():
     cheap."""
     heavy = {"fastapi", "httpx", "openai", "jinja2", "openpyxl", "uvicorn", "pypdf",
              "starlette", "pyperclip", "langchain_core", "langchain_openai",
-             "langchain_deepseek"}
+             "langchain_deepseek", "langgraph"}
     assert not (imports_of(PACKAGES["contracts"]) & heavy)
 
 
 def test_the_client_carries_no_server_side_dependency():
     """No LaTeX, no model SDK, no templating in the shipped executable."""
     forbidden = {"openai", "jinja2", "pypdf", "fastapi", "uvicorn", "subprocess",
-                 "langchain_core", "langchain_openai", "langchain_deepseek"}
+                 "langchain_core", "langchain_openai", "langchain_deepseek", "langgraph"}
     assert not (imports_of(PACKAGES["client"]) & forbidden - {"subprocess"})
     # subprocess is allowed in exactly one place: probing the clipboard helper.
     users = [p.name for p in PACKAGES["client"].rglob("*.py")

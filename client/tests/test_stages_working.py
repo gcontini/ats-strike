@@ -10,9 +10,13 @@ from resumix_client.stages.jobfolder import read_analysis
 from resumix_client.stages.terminal import TaggedLog
 from resumix_client.stages.working import WorkingProcessor
 from resumix_client.tracking import build_tracker
-from resumix_client.workspace import day
+from resumix_client.workspace import Artifacts, day
 
-from conftest import JD_TEXT, analysis, document, make_job
+from conftest import EXAMPLE_CANDIDATE, JD_TEXT, analysis, document, make_job
+
+#: What the example candidate's CV for the Head of IT posting is called.
+STEM = Artifacts(json.loads((EXAMPLE_CANDIDATE / "candidate_data.json").read_text())["name"],
+                 "Head of IT").stem
 
 
 def submit(processor, **fields):
@@ -235,20 +239,20 @@ def test_recovery_follows_the_table(processor, workspace, api):
 def test_a_leftover_holding_its_cv_is_rendered_and_delivered_without_a_row(
         processor, workspace, api):
     make_job(workspace.working, should_apply="CHECK",
-             **{"cv_jordan_rivera_head_of_it.json": json.dumps(document())})
+             **{f"{STEM}.json": json.dumps(document())})
 
     processor.recover()
 
     assert api.calls == ["render"]
     assert api.seen_document == document()
     delivered = workspace.cv / day() / "Acme_Corp_Head_of_IT"
-    assert (delivered / "cv_jordan_rivera_head_of_it.pdf").read_bytes() == b"%PDF-fake"
+    assert (delivered / f"{STEM}.pdf").read_bytes() == b"%PDF-fake"
     assert (delivered / "candidate_signature.png").is_file()
     assert not (workspace.root / "applications.xlsx").exists(), "a render is not an application"
 
 
 def test_a_leftover_with_only_its_tex_is_compiled_as_it_stands(processor, workspace, api):
-    make_job(workspace.working, **{"cv_jordan_rivera_head_of_it.tex": r"\documentclass{article}"})
+    make_job(workspace.working, **{f"{STEM}.tex": r"\documentclass{article}"})
     processor.recover()
     assert api.calls == ["render"]
     assert api.seen_document is None, "the .tex was sent, not a document"
@@ -256,7 +260,7 @@ def test_a_leftover_with_only_its_tex_is_compiled_as_it_stands(processor, worksp
 
 def test_a_failed_render_goes_to_error_with_its_cause(processor, workspace, api):
     api.fail_on = "render"
-    make_job(workspace.working, **{"cv_jordan_rivera_head_of_it.json": json.dumps(document())})
+    make_job(workspace.working, **{f"{STEM}.json": json.dumps(document())})
 
     processor.recover()
 
@@ -283,7 +287,7 @@ def test_a_file_failing_again_replaces_itself_and_its_log(processor, workspace):
 
 
 def test_a_document_that_is_not_json_fails_without_a_call(processor, workspace, api):
-    make_job(workspace.working, **{"cv_jordan_rivera_head_of_it.json": "{not json"})
+    make_job(workspace.working, **{f"{STEM}.json": "{not json"})
     processor.recover()
     assert api.calls == []
     [failed] = workspace.error.glob("*/*_Acme_Corp_Head_of_IT")
@@ -292,7 +296,7 @@ def test_a_document_that_is_not_json_fails_without_a_call(processor, workspace, 
 
 def test_a_tex_that_is_not_text_fails_without_a_call(processor, workspace, api):
     job = make_job(workspace.working)
-    (job / "cv_jordan_rivera_head_of_it.tex").write_bytes(b"\xff\xfe\x00latex")
+    (job / f"{STEM}.tex").write_bytes(b"\xff\xfe\x00latex")
     processor.recover()
     assert api.calls == []
     [failed] = workspace.error.glob("*/*_Acme_Corp_Head_of_IT")
@@ -314,10 +318,10 @@ def test_a_dropped_folder_is_copied_whole_and_routed(processor, workspace, tmp_p
 
 
 def test_a_dropped_folder_holding_its_cv_is_rendered(processor, workspace, api, tmp_path):
-    source = make_job(tmp_path / "in", **{"cv_jordan_rivera_head_of_it.json": json.dumps(document())})
+    source = make_job(tmp_path / "in", **{f"{STEM}.json": json.dumps(document())})
     processor.submit_folder(source, TaggedLog(processor.console, source.name))
     assert api.calls == ["render"]
-    assert (workspace.cv / day() / "Acme_Corp_Head_of_IT" / "cv_jordan_rivera_head_of_it.pdf").is_file()
+    assert (workspace.cv / day() / "Acme_Corp_Head_of_IT" / f"{STEM}.pdf").is_file()
 
 
 def test_a_dropped_folder_seen_before_writes_nothing(processor, workspace, tmp_path):

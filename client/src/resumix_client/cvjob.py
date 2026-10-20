@@ -1,8 +1,9 @@
 """Starting a CV job and following it to the end.
 
 The server answers at once and writes the CV as a session of events, which
-this follows over one stream: each step, every line the server logs, what
-each model call cost, then the CV or the error, with the total. The session
+this follows over one stream: each step, each step's intermediate result,
+every line the server logs, what each model call cost, then the CV or the
+error, with the total. The session
 is keyed by the posting, so running the same posting again finds it and
 replays it from the start: a client that died, or lost its connection, loses
 nothing it paid for. Only once the CV is safely stored is the session
@@ -17,6 +18,7 @@ import time
 from typing import Callable, Optional, Union
 
 from resumix_contracts import (
+    CVArtifact,
     CVFailure,
     CVResult,
     CVStatus,
@@ -41,7 +43,8 @@ def session_id(jd_text: str) -> str:
 def write_cv(
     api: ResumixApi, config: Config, jd_text: str, *,
     say: Callable[[str], None], keep: Callable[[RenderedCV], None],
-    log_line: Optional[Callable[[LogEntry], None]] = None, new: bool = False,
+    log_line: Optional[Callable[[LogEntry], None]] = None,
+    artifact: Optional[Callable[[CVArtifact], None]] = None, new: bool = False,
 ) -> None:
     """Write one CV, reporting progress through ``say``.
 
@@ -49,8 +52,9 @@ def write_cv(
     returned is the session acknowledged. A job that failed raises
     :class:`ResumixError` with the cause and status the work had, once its
     session is acknowledged too. ``log_line`` receives every line the server
-    logged for the job. ``new`` drops the posting's session first, so the CV
-    is written again rather than replayed.
+    logged for the job, ``artifact`` every intermediate result. ``new`` drops
+    the posting's session first, so the CV is written again rather than
+    replayed.
     """
     request_id = session_id(jd_text)
     if new:
@@ -63,8 +67,7 @@ def write_cv(
         prompts=config.prompt_overrides(),
         template=read_text(config.path("resume.tex.jinja")),
         images=config.image_parts(),
-        temperature=config.temperature,
-        presence_penalty=config.presence_penalty,
+        extra_body=config.extra_body,
         pages=config.pages,
     ).data
     if session.reattached:
@@ -73,7 +76,7 @@ def write_cv(
     if config.verbose:
         say(f"   session: {request_id}")
 
-    ending = _follow(api, config, request_id, say=say, log_line=log_line)
+    ending = _follow(api, config, request_id, say=say, log_line=log_line, artifact=artifact)
     say(f"   Σ {_cost(ending.total)}")
     if isinstance(ending, CVResult):
         if config.verbose and ending.detail:
@@ -88,6 +91,7 @@ def write_cv(
 def _follow(
     api: ResumixApi, config: Config, request_id: str, *,
     say: Callable[[str], None], log_line: Optional[Callable[[LogEntry], None]],
+    artifact: Optional[Callable[[CVArtifact], None]],
 ) -> Union[CVResult, CVFailure]:
     """Every event up to the session's last, which is returned. A stream that
     breaks is reopened after the last event it delivered, until the timeout."""
@@ -111,6 +115,8 @@ def _follow(
                         f"{_tokens(payload)}")
                 elif isinstance(payload, LogEntry) and log_line is not None:
                     log_line(payload)
+                elif isinstance(payload, CVArtifact) and artifact is not None:
+                    artifact(payload)
         except ResumixError as exc:
             if exc.status:  # the server answered: there is nothing to reconnect to
                 raise
