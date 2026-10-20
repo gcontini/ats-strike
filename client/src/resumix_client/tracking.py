@@ -26,10 +26,13 @@ TEMPLATE_NAME = "applications.xlsx"
 STATUS_VALUES = (
     "not applied",
     "applied",
-    "wait 1st interview",
-    "wait follow up",
+    "waiting 1st interview",
+    "waiting 2nd interview",
+    "waiting further follow up",
     "skip_application",
-    "candidate rejected",
+    "rejected before 1st interview",
+    "rejected after 1st interview",
+    "rejected after technical interview",
 )
 
 #: Column names of a freshly seeded spreadsheet, in order.
@@ -138,6 +141,13 @@ class XlsxTracker:
                 if rng.min_row <= target_row <= rng.max_row:
                     continue
                 rng.max_row = max(rng.max_row, target_row)
+
+        # Likewise the autofilter, so new rows stay inside it.
+        if ws.auto_filter.ref:
+            lo, hi = ws.auto_filter.ref.split(":")
+            last = "".join(ch for ch in hi if ch.isdigit())
+            if int(last) < target_row:
+                ws.auto_filter.ref = f"{lo}:{hi.rstrip('0123456789')}{target_row}"
 
         wb.save(self.xlsx_path)
 

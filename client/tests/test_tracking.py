@@ -88,3 +88,29 @@ def test_tracking_off_writes_nothing(tmp_path):
     assert isinstance(tracker, NullTracker)
     tracker.record(tmp_path / "job", analysis())
     assert not (tmp_path / "applications.xlsx").exists()
+
+
+def test_waiting_and_rejected_statuses_are_coloured_deeper_as_they_progress(tracker, tmp_path):
+    tracker.record(tmp_path / "job", analysis())
+    sheet = openpyxl.load_workbook(tracker.xlsx_path).active
+    colours = {}
+    for rules in sheet.conditional_formatting._cf_rules.values():
+        for rule in rules:
+            colours[rule.formula[0].strip('"')] = rule.dxf.fill.bgColor.rgb[-6:]
+    ordered = [v for v in STATUS_VALUES if v.startswith(("waiting", "rejected"))]
+    assert set(colours) == set(ordered)
+    for prefix in ("waiting", "rejected"):
+        shades = [colours[v] for v in ordered if v.startswith(prefix)]
+        assert shades == sorted(shades, reverse=True) and len(set(shades)) == 3
+
+
+def test_the_autofilter_grows_with_the_rows(tracker, tmp_path):
+    tracker.record(tmp_path / "job", analysis())
+    wb = openpyxl.load_workbook(tracker.xlsx_path)
+    sheet = wb.active
+    assert sheet.auto_filter.ref == "A1:G500"
+    for row in range(3, 501):
+        sheet.cell(row=row, column=3, value="2026-01-01")
+    wb.save(tracker.xlsx_path)
+    tracker.record(tmp_path / "job2", analysis())
+    assert openpyxl.load_workbook(tracker.xlsx_path).active.auto_filter.ref == "A1:G501"

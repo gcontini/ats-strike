@@ -1,5 +1,4 @@
 {
-  "linkedin": "https://www.linkedin.com/in/example-jordan-rivera",
   "job_title": [ "Service digitalization specialist", "IT Technical Manager", "Solution Architect", "Infrastructure Solution Architect", "Cloud Engineer", "Cloud Architect", "Lead Engineer", "Distributed Systems & Cloud Architect" ],
   "writing_style": "C1 English: very direct, highly structured. Slight italian inflections. Keep the structure of the sentences simple and clear. Keep the tone extremely concrete. Avoid: abstract role descriptions, long sentences, complex structures, buzzwords and excessive use of adjectives.",
   "summaries": [
@@ -8,7 +7,7 @@
   ],
   "skills": [
     "Chinese speaker",
-    "Alibaba Cloud",
+    "Huawei Cloud",
     "Working with Chinese teams and technologies",
     "Requirements Gathering",
     "Vendor Management",
@@ -37,7 +36,7 @@
     },
     {
       "date": "September 2023",
-      "name": "Alibaba Cloud Certified Professional ACP"
+      "name": "Huawei Cloud Certified Professional ACP"
     },
     {
       "date": "January 2023",
@@ -49,7 +48,7 @@
     },
     {
       "date": "June 2019",
-      "name": "HSK 4 (Chinese language proficiency exam)"
+      "name": "HSK 5 (Chinese language proficiency exam)"
     },
     {
       "date": "April 2017 - March 2018",
@@ -87,7 +86,7 @@
       "context": "Continental Multi-Sport Games 2022 -- Results Distribution System",
       "role_summary": "My team supported the delivery of the 'Games Results' system, a mission critical software for the Games: it keeps the scores and generates the official web site. The software was developed in Europe; my team adapted it to the client's environment and to the requests of the system integrator.",
       "duties": [
-        "Technical bridge between the European development team and the Chinese system integrator (Alibaba). Mapped the system integrator's requirements onto the software architecture provided by the European team and adapted it to the client's needs.",
+        "Technical bridge between the European development team and the Chinese system integrator (Huawei). Mapped the system integrator's requirements onto the software architecture provided by the European team and adapted it to the client's needs.",
         "Presented and discussed the system architecture with the client, in Chinese, in a difficult environment, while gathering non-functional requirements (high availability, performance, scalability).",
         "Designed and implemented solutions to the customer's requests locally where possible; coordinated code changes with the European team.",
         "Prepared environments for application deployment: configured DNS and Kubernetes, optimized Helm packages, solved deployment specific issues (e.g. Redis instability when master nodes restarted).",
