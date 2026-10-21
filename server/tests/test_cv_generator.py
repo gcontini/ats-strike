@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import threading
 import time
@@ -154,8 +155,12 @@ def test_a_failure_in_a_parallel_call_fails_the_run_with_its_cause(bundle, candi
     assert caught.value.stage == "cv.profile_scoring"
 
 
-def test_the_calls_of_a_step_run_side_by_side(bundle, candidate, tmp_path, renders):
+def test_the_calls_of_a_step_run_side_by_side(bundle, candidate, tmp_path, renders, monkeypatch):
     """Nine scoring calls that each wait for the others can only finish together."""
+    # LangGraph's pool has min(32, cpus + 4) threads: a 4-vCPU runner has 8, one
+    # short of the nine this test needs. What it checks is that the calls are
+    # not serialised, not how big the machine is.
+    monkeypatch.setattr(os, "cpu_count", lambda: 32)
     barrier = threading.Barrier(9, timeout=10)
 
     def waits(body):
