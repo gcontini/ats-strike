@@ -1,0 +1,2052 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Turn a job description into a tailored LaTeX CV, with any OpenAI-compatible model.">
+      
+      
+      
+        <link rel="canonical" href="https://gcontini.github.io/ats-strike/1.0.0/protocol.html">
+      
+      
+        <link rel="prev" href="development-setup.html">
+      
+      
+        <link rel="next" href="build-server.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>The HTTP API - ats-strike</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-3YNR617DVZ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-3YNR617DVZ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-3YNR617DVZ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-http-api" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="ats-strike" class="md-header__button md-logo" aria-label="ats-strike" data-md-component="logo">
+      
+  <img src="images/ats-strike-icon-128.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ats-strike
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              The HTTP API
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gcontini/ats-strike" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="ats-strike" class="md-nav__button md-logo" aria-label="ats-strike" data-md-component="logo">
+      
+  <img src="images/ats-strike-icon-128.png" alt="logo">
+
+    </a>
+    ats-strike
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gcontini/ats-strike" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ats-strike
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How it works
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="architecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="cv-pipeline.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The CV pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="clipboard-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A run, end to end
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using it
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Using it
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="client.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The client
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="deployment.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running the two halves apart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="development-setup.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developing locally in VS Code
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The HTTP API
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="protocol.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The HTTP API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conventions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#endpoints-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Endpoints at a glance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-healthz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET /healthz
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-v1jddetect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /v1/jd/detect
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-v1jdanalysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /v1/jd/analysis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-v1cv-get-v1cvidevents-delete-v1cvid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /v1/cv → GET /v1/cv/{id}/events → DELETE /v1/cv/{id}
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /v1/cv → GET /v1/cv/{id}/events → DELETE /v1/cv/{id}">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-v1cv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /v1/cv
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-v1cvidevents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET /v1/cv/{id}/events
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-v1cvid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DELETE /v1/cv/{id}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-v1cvall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DELETE /v1/cv?all
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-v1cvrender" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /v1/cv/render
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-v1letter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /v1/letter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-wire-format-as-a-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The wire format as a package
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="build-server.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building the server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="model-configurations.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model configurations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="build-client.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building the client
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="release.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cutting a release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="credits.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conventions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#endpoints-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Endpoints at a glance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-healthz" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET /healthz
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-v1jddetect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /v1/jd/detect
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-v1jdanalysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /v1/jd/analysis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-v1cv-get-v1cvidevents-delete-v1cvid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /v1/cv → GET /v1/cv/{id}/events → DELETE /v1/cv/{id}
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /v1/cv → GET /v1/cv/{id}/events → DELETE /v1/cv/{id}">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-v1cv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /v1/cv
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-v1cvidevents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET /v1/cv/{id}/events
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-v1cvid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DELETE /v1/cv/{id}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-v1cvall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DELETE /v1/cv?all
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-v1cvrender" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /v1/cv/render
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-v1letter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /v1/letter
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-wire-format-as-a-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The wire format as a package
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="the-http-api">The HTTP API<a class="headerlink" href="#the-http-api" title="Permanent link">&para;</a></h1>
+<p>Everything is <code>multipart/form-data</code> in and JSON out. There is no database and
+no accounts: every request carries what it needs. The one thing the server
+keeps is a CV job's session — the events it streams — until the client says it
+has everything, or until it is older than <code>ATS_SESSION_TTL_DAYS</code>.</p>
+<p>Base URL is wherever you run it — <code>http://localhost:8080</code> by default. The
+interactive OpenAPI page FastAPI generates is at <code>/docs</code>.</p>
+<h2 id="conventions">Conventions<a class="headerlink" href="#conventions" title="Permanent link">&para;</a></h2>
+<p><strong>Parts.</strong> Every text part can be sent as a file (<code>-F jd=@JD.txt</code>) or as a
+plain field (<code>-F jd_text=...</code>); the file wins if you send both. JSON parts
+(<code>candidate_profile</code>, <code>candidate_data</code>, <code>document</code>, <code>analysis</code>) must be files,
+must parse, and must be JSON <em>objects</em>. A UTF-8 BOM is stripped. Any single
+part over <code>ATS_MAX_PART_BYTES</code> (2 MB) is refused with <code>413</code> before it is
+read.</p>
+<p><strong>Images.</strong> The <code>images</code> part is repeatable, at most 10 per request. Each
+part's <strong>file name</strong> is the name the template includes it under — that is the
+whole interface. Path components are stripped.</p>
+<p><strong>Auth.</strong> If <code>ATS_API_TOKEN</code> is set, every <code>/v1/...</code> call must send
+<code>Authorization: Bearer &lt;token&gt;</code>; <code>/healthz</code> stays open so a platform probe
+works. With no token set, the server is open to anyone who
+can reach it, which is only reasonable on a private network.</p>
+<p><strong>The envelope.</strong> Every response, success or failure, has the same shape:</p>
+<div class="highlight"><pre><span></span><code>{
+  "request_id": "b510f8dff047",   // also in the X-Request-Id header
+  "ok": true,
+  "data": { },                    // the payload, when ok
+  "error": null                   // one line, when not
+}
+</code></pre></div>
+<p>Fields that are null are omitted. Nothing else rides on a reply. What the
+server <em>did</em> — every line it logged, every model call and its cost — is
+streamed by a CV job as events; for any other request it is in the server's
+own log, under the request id.</p>
+<p><strong>Request ids.</strong> The server generates a 12-hex-character id per request and
+echoes it in the <code>X-Request-Id</code> header. An inbound <code>X-Request-Id</code> is honoured
+if it matches <code>[A-Za-z0-9_-]{1,64}</code>. For <code>POST /v1/cv</code> it is the session's id,
+and names its directory under the work root, so anything else would be a way
+to write where the server was not asked to.</p>
+<h2 id="endpoints-at-a-glance">Endpoints at a glance<a class="headerlink" href="#endpoints-at-a-glance" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Costs</th>
+<th>Returns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/healthz</code></td>
+<td>no</td>
+<td>nothing</td>
+<td><code>ServerStatus</code></td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/v1/jd/detect</code></td>
+<td>yes</td>
+<td>0–1 small model call</td>
+<td><code>JDDetection</code></td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/v1/jd/analysis</code></td>
+<td>yes</td>
+<td>1 small model call</td>
+<td><code>JDAnalysis</code></td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/v1/cv</code></td>
+<td>yes</td>
+<td>minutes of model calls, or nothing for a session already there</td>
+<td><code>202</code> + <code>CVSession</code></td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/v1/cv/{id}/events</code></td>
+<td>yes</td>
+<td>nothing</td>
+<td>server-sent events</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td><code>/v1/cv/{id}</code></td>
+<td>yes</td>
+<td>nothing</td>
+<td><code>200</code>, no data</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td><code>/v1/cv?all</code></td>
+<td>yes</td>
+<td>nothing</td>
+<td><code>Cleanup</code></td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/v1/cv/render</code></td>
+<td>yes</td>
+<td>one <code>pdflatex</code> run</td>
+<td><code>RenderedCV</code></td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/v1/letter</code></td>
+<td>yes</td>
+<td>1 small model call</td>
+<td><code>CoverLetter</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="get-healthz"><code>GET /healthz</code><a class="headerlink" href="#get-healthz" title="Permanent link">&para;</a></h2>
+<p>No auth. What this server is and whether it can do its job.</p>
+<div class="highlight"><pre><span></span><code>{"request_id": "…", "ok": true, "data": {
+  "status": "ok",                 // "degraded" when pdflatex is missing
+  "version": "0.2.0",
+  "pdflatex": true,
+  "models": {"detect": "deepseek-v4.1-flash", "analysis": "qwen3.8-flash",
+             "letter": "qwen3.8-flash", "jd_evaluation": "deepseek-flash",
+             "profile_scoring": "deepseek-flash", "format_selection": "deepseek-flash",
+             "cv": "deepseek-flash", "validation": "deepseek-flash",
+             "highlight": "deepseek-flash"},
+  "auth_required": false
+}}
+</code></pre></div>
+<h2 id="post-v1jddetect"><code>POST /v1/jd/detect</code><a class="headerlink" href="#post-v1jddetect" title="Permanent link">&para;</a></h2>
+<p>Is this text a job posting?</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-F<span class="w"> </span><span class="nv">jd</span><span class="o">=</span>@JD.txt<span class="w"> </span>localhost:8080/v1/jd/detect
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>jd</code> / <code>jd_text</code></td>
+<td>required</td>
+<td>The text to check</td>
+</tr>
+</tbody>
+</table>
+<p>Structural checks run first — length band (<code>ATS_JD_MIN_CHARS</code> …
+<code>_MAX_CHARS</code>, 500–30000 by default), no binary payload — and only if they
+pass does it cost one small model call. The answer is
+<code>{"is_job_description": true|false}</code>; why it was rejected is in the request's
+log, not in the reply. The same structural check ships in
+<code>cv_contracts.static_jd_guess</code>, so a client can run it before spending
+the call at all.</p>
+<h2 id="post-v1jdanalysis"><code>POST /v1/jd/analysis</code><a class="headerlink" href="#post-v1jdanalysis" title="Permanent link">&para;</a></h2>
+<p>Scores a posting against your profile and extracts its facts.</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-F<span class="w"> </span><span class="nv">jd</span><span class="o">=</span>@JD.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-F<span class="w"> </span><span class="nv">candidate_profile</span><span class="o">=</span>@candidate_profile.json<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-F<span class="w"> </span><span class="nv">pers_preferences</span><span class="o">=</span>@candidate_preferences.md<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>localhost:8080/v1/jd/analysis
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>jd</code> / <code>jd_text</code></td>
+<td>required</td>
+<td>The posting</td>
+</tr>
+<tr>
+<td><code>candidate_profile</code></td>
+<td>required</td>
+<td>JSON object: everything you have done</td>
+</tr>
+<tr>
+<td><code>pers_preferences</code> / <code>pers_preferences_text</code></td>
+<td>required</td>
+<td>What you want from a job, in prose</td>
+</tr>
+<tr>
+<td><code>sys_prompt_analysis</code></td>
+<td>optional</td>
+<td>Replace the analysis prompt</td>
+</tr>
+<tr>
+<td><code>analysis_extra_body</code></td>
+<td>optional</td>
+<td>JSON object: the analysis model's settings for this request, instead of <code>models.toml</code>'s (see <code>POST /v1/cv</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Returns a <code>JDAnalysis</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>match_percentage</code></td>
+<td>int</td>
+<td>0–100, how well the posting fits the profile</td>
+</tr>
+<tr>
+<td><code>match_rationale</code></td>
+<td>str?</td>
+<td>One line saying why</td>
+</tr>
+<tr>
+<td><code>job_title</code></td>
+<td>str</td>
+<td>As extracted from the posting</td>
+</tr>
+<tr>
+<td><code>work_location</code></td>
+<td>str?</td>
+<td>e.g. <code>"Milan, Italy"</code></td>
+</tr>
+<tr>
+<td><code>work_mode</code></td>
+<td>str</td>
+<td><code>full_remote</code> | <code>hybrid</code> | <code>on_site</code> | <code>not_specified</code></td>
+</tr>
+<tr>
+<td><code>expected_salary</code></td>
+<td>str?</td>
+<td>As stated, e.g. <code>"EUR 60k-80k"</code></td>
+</tr>
+<tr>
+<td><code>max_salary</code></td>
+<td>int</td>
+<td>Upper bound, or <code>-1</code> if not found</td>
+</tr>
+<tr>
+<td><code>salary_match</code></td>
+<td>bool?</td>
+<td>Whether the JD's salary meets your preferences; <code>null</code> if the JD states none</td>
+</tr>
+<tr>
+<td><code>hard_skills</code>, <code>soft_skills</code></td>
+<td>str[]</td>
+<td>Up to 4 each</td>
+</tr>
+<tr>
+<td><code>company_name</code></td>
+<td>str</td>
+<td>The employer, or the agency</td>
+</tr>
+<tr>
+<td><code>posting_url</code></td>
+<td>str?</td>
+<td>If the posting text carries one</td>
+</tr>
+<tr>
+<td><code>gaps</code></td>
+<td>str</td>
+<td>Where you fall short of the posting</td>
+</tr>
+<tr>
+<td><code>pers_preferences</code></td>
+<td>str</td>
+<td>How the posting reads against your preferences</td>
+</tr>
+<tr>
+<td><code>pers_preference_score</code></td>
+<td>float</td>
+<td>The summed score of the preferences it satisfies</td>
+</tr>
+<tr>
+<td><code>should_apply</code></td>
+<td>str</td>
+<td><code>NO</code> (skip) | <code>CHECK</code> (human check) | <code>YES</code> (apply) — per the <code>should_apply</code> rules in your preferences, else <code>salary_match</code></td>
+</tr>
+<tr>
+<td><code>should_apply_reason</code></td>
+<td>str</td>
+<td>Why should apply</td>
+</tr>
+<tr>
+<td><code>company_evaluation</code></td>
+<td>str?</td>
+<td>Only for <code>CHECK</code>: what online reviews (Trustpilot, Glassdoor) say about the hiring company</td>
+</tr>
+</tbody>
+</table>
+<h2 id="post-v1cv-get-v1cvidevents-delete-v1cvid"><code>POST /v1/cv</code> → <code>GET /v1/cv/{id}/events</code> → <code>DELETE /v1/cv/{id}</code><a class="headerlink" href="#post-v1cv-get-v1cvidevents-delete-v1cvid" title="Permanent link">&para;</a></h2>
+<p>The expensive one: minutes of model calls. It does not wait. It starts the job
+as a <strong>session</strong>, which the caller follows as a stream of server-sent events
+and lets go of once it has stored the CV.</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant C as caller
+    participant S as server
+    C-&gt;&gt;S: POST /v1/cv (jd, profile, candidate_data, …)&lt;br/&gt;X-Request-Id: the session id
+    S--&gt;&gt;C: 202 {reattached: false}
+    C-&gt;&gt;S: GET /v1/cv/{id}/events
+    loop while the job runs
+        S--&gt;&gt;C: status · artifact · log · usage
+    end
+    S--&gt;&gt;C: result {cv, detail, total} — and the stream closes
+    Note over C: stores the CV
+    C-&gt;&gt;S: DELETE /v1/cv/{id}
+    S--&gt;&gt;C: 200</code></pre>
+<div class="highlight"><pre><span></span><code><span class="nv">ID</span><span class="o">=</span><span class="k">$(</span>sha256sum<span class="w"> </span>JD.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-c1-64<span class="k">)</span>
+curl<span class="w"> </span>-s<span class="w"> </span>-H<span class="w"> </span><span class="s2">"X-Request-Id: </span><span class="nv">$ID</span><span class="s2">"</span><span class="w"> </span>-F<span class="w"> </span><span class="nv">jd</span><span class="o">=</span>@JD.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-F<span class="w"> </span><span class="nv">candidate_profile</span><span class="o">=</span>@candidate_profile.json<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-F<span class="w"> </span><span class="nv">candidate_data</span><span class="o">=</span>@candidate_data.json<span class="w"> </span>localhost:8080/v1/cv
+curl<span class="w"> </span>-sN<span class="w"> </span>localhost:8080/v1/cv/<span class="nv">$ID</span>/events<span class="w">      </span><span class="c1"># the job, to its last event</span>
+curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>DELETE<span class="w"> </span>localhost:8080/v1/cv/<span class="nv">$ID</span><span class="w">    </span><span class="c1"># once the CV is saved</span>
+</code></pre></div>
+<h3 id="post-v1cv"><code>POST /v1/cv</code><a class="headerlink" href="#post-v1cv" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>jd</code> / <code>jd_text</code></td>
+<td>required</td>
+<td>The posting</td>
+</tr>
+<tr>
+<td><code>candidate_profile</code></td>
+<td>required</td>
+<td>JSON object — what the model tailors from</td>
+</tr>
+<tr>
+<td><code>candidate_data</code></td>
+<td>required</td>
+<td>JSON object — what the template prints</td>
+</tr>
+<tr>
+<td><code>sys_prompt_jd_evaluation</code>, <code>sys_prompt_profile_scoring</code>, <code>sys_prompt_format_selection</code>, <code>sys_prompt_cv_body</code>, <code>sys_prompt_cv_duties</code>, <code>sys_prompt_validation_body</code>, <code>sys_prompt_validation_duties</code>, <code>sys_prompt_highlight</code></td>
+<td>optional</td>
+<td>Replace a step's prompt for this request</td>
+</tr>
+<tr>
+<td><code>cv_body_schema</code>, <code>cv_duties_schema</code></td>
+<td>optional</td>
+<td>Replace the JSON schema the writer is shown for the body, or for an experience</td>
+</tr>
+<tr>
+<td><code>template</code></td>
+<td>optional</td>
+<td>Replace <code>resume.tex.jinja</code>, page counts included</td>
+</tr>
+<tr>
+<td><code>images</code></td>
+<td>optional</td>
+<td>Repeatable, ≤10. Each part's file name is the name the template includes it under.</td>
+</tr>
+<tr>
+<td><code>jd_evaluation_extra_body</code>, <code>profile_scoring_extra_body</code>, <code>format_selection_extra_body</code>, <code>cv_extra_body</code>, <code>validation_extra_body</code>, <code>highlight_extra_body</code></td>
+<td>optional</td>
+<td>JSON object: that step's model settings for this request (see below)</td>
+</tr>
+<tr>
+<td><code>pages</code></td>
+<td>optional</td>
+<td>Page limit the CV must fit. Default 2, minimum 1.</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>&lt;role&gt;_extra_body</code></strong> is a form field holding a JSON object, sent into the
+request body as is. It supersedes every setting <code>models.toml</code> gives that role
+— temperature, the thinking switch, reasoning effort, the output cap, its own
+<code>extra_body</code>: besides the model and the messages, what you sent is all that
+goes out (<code>{"temperature": 0.7, "top_p": 0.9}</code>, <code>{"thinking": {"type":
+"disabled"}}</code>, …). The endpoint and the provider stay. A field that is not a
+JSON object is a <code>400</code>. An endpoint ignores the fields for roles it does not
+have, so a client may send all of its own with every request. <code>detect</code> takes
+none.</p>
+<p>Answers <code>202</code> with <code>{"request_id": "&lt;id&gt;", "ok": true, "data": {"reattached":
+false}}</code>.</p>
+<p><strong>The session id is the caller's.</strong> Send it as <code>X-Request-Id</code>. The client
+uses the SHA-256 of the posting's text, so running the same posting again finds
+the session it already has, and a client that died, or lost its connection,
+loses nothing it paid for. When the id already has a session, nothing is
+started — no slot is claimed either — and the answer says <code>"reattached":
+true</code>: follow its events as for a new one. Sessions whose last event is older
+than <code>ATS_SESSION_TTL_DAYS</code> (1 by default) are deleted first, so an old one
+is not found. With no <code>X-Request-Id</code>, the server picks an id and every POST is
+a new job. <code>429 too_many_jobs</code> applies to a new job only.</p>
+<p><strong>Why <code>candidate_data</code> is required.</strong> The page limit is enforced by actually
+compiling the CV and counting its pages, trimming duties until it fits. A
+page count taken with the contact block missing is not the page count of the
+CV you will send. No model is shown <code>candidate_data</code>: it goes to the renderer
+and nowhere else.</p>
+<h3 id="get-v1cvidevents"><code>GET /v1/cv/{id}/events</code><a class="headerlink" href="#get-v1cvidevents" title="Permanent link">&para;</a></h3>
+<p><code>text/event-stream</code>. Every event the session has — from the first, or from the
+one after <code>Last-Event-ID: n</code> — then each new one as the job writes it, until
+the last, after which the stream closes. A <code>: ping</code> line every 15 quiet seconds
+keeps the connection open through a long model call. The session is files, so
+a stream can be opened as often as you like, while the job runs or long after,
+and a dropped one loses nothing: reconnect with the last <code>id:</code> you got.</p>
+<div class="highlight"><pre><span></span><code>id: 1
+event: status
+data: {"status": "jd_evaluation", "detail": ""}
+
+id: 2
+event: log
+data: {"ts": "2026-01-15T09:30:53Z", "level": "INFO", "stage": "cv.jd_evaluation", "message": "  ⏱ [jd_evaluation] deepseek-flash 21.2s | input=1847, thinking=7256, output=832, …"}
+
+id: 3
+event: usage
+data: {"role": "jd_evaluation", "model": "deepseek-flash", "seconds": 21.2, "input_tokens": 1847, "thinking_tokens": 7256, "output_tokens": 832}
+
+id: 4
+event: artifact
+data: {"name": "key_points", "data": [{"id": 1, "requirement": "Engineering manager", "keywords": ["Engineering Manager"], "importance": 100}, …]}
+
+id: 5
+event: status
+data: {"status": "profile_scoring", "detail": "11 key points, tokens used=9935, thinking=7256, elapsed=21.3s"}
+
+id: 97
+event: result
+data: {"cv": {"document": {…}, "tex": "\\documentclass…", "pdf_base64": "JVBERi0…"}, "detail": "done, 21 model calls, …", "total": {"calls": 21, "seconds": 961.4, …}}
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Payload</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td><code>CVStatus</code>: <code>status</code>, <code>detail</code></td>
+<td>Each step: <code>jd_evaluation</code>, <code>profile_scoring</code>, <code>format_selection</code>, <code>cv</code>, <code>validation</code>, <code>highlight</code></td>
+</tr>
+<tr>
+<td><code>artifact</code></td>
+<td><code>CVArtifact</code>: <code>name</code>, <code>data</code></td>
+<td>Each step's result as it is ready: <code>key_points</code>, <code>scored_profile</code>, <code>score_reasons</code>, <code>format_selection</code>, <code>cv_body</code>, <code>cv_experiences</code>, <code>checked_body</code>, <code>checked_experiences</code>, <code>highlighted_resume</code></td>
+</tr>
+<tr>
+<td><code>log</code></td>
+<td><code>LogEntry</code>: <code>ts</code>, <code>level</code>, <code>stage</code>, <code>message</code></td>
+<td>Every line the server logged for the job (at most 2000)</td>
+</tr>
+<tr>
+<td><code>usage</code></td>
+<td><code>ModelCall</code>: <code>role</code>, <code>model</code>, <code>seconds</code>, <code>input_tokens</code>, <code>thinking_tokens</code>, <code>output_tokens</code></td>
+<td>After every model call, failed attempts included</td>
+</tr>
+<tr>
+<td><code>result</code></td>
+<td><code>CVResult</code>: <code>cv</code>, <code>detail</code>, <code>total</code></td>
+<td>The job is done: the last event</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td><code>CVFailure</code>: <code>http_status</code>, <code>error</code>, <code>total</code></td>
+<td>The job failed: the last event</td>
+</tr>
+</tbody>
+</table>
+<p><code>detail</code> is written for a person: what the step that just finished produced,
+and what it cost. An <code>artifact</code> is JSON, not a file: the client stores each
+one as it likes — the ats-strike client as <code>steps/&lt;name&gt;.json</code> beside the CV.
+No PDF is ever an artifact; the only one sent is the result's. <code>total</code> adds
+up every model call of the run, so a failed job still says what it cost.</p>
+<p><strong>A failed job reports itself here</strong>, with the status its cause maps to
+(<code>502</code>, <code>504</code>, <code>422</code>) and the cause in the same form as any other error. A job
+the server restarted under ends with <code>503 unavailable</code>. See
+<a href="cv-pipeline.html">the CV pipeline</a> for what each step does.</p>
+<p><code>cv.document</code> is one flat object — what the models wrote with your
+<code>candidate_data</code> merged over the top, so a field a model invents can never
+replace a real contact detail. It has no schema: what the template reads from
+it is between you and the template. Store it, edit it, post it back to
+<code>/v1/cv/render</code>.</p>
+<p><code>404 unknown_request</code> means there is no session by that id: it was
+acknowledged, it is older than the server keeps sessions, or it never started.</p>
+<h3 id="delete-v1cvid"><code>DELETE /v1/cv/{id}</code><a class="headerlink" href="#delete-v1cvid" title="Permanent link">&para;</a></h3>
+<p>Acknowledge: the caller has everything, and the server deletes the session.
+Do it once the CV is stored, not before — until then the session is what lets
+a caller that died get its CV back for nothing. <code>409 job_not_ready</code> while the
+job runs: its worker is still writing there, and a new session for the same
+posting would be the same directory. <code>404</code> when there is no such session.</p>
+<h3 id="delete-v1cvall"><code>DELETE /v1/cv?all</code><a class="headerlink" href="#delete-v1cvall" title="Permanent link">&para;</a></h3>
+<p>Deletes every session whose job is not running, and answers
+<code>{"deleted": 3, "running": 1}</code>. Without <code>all</code> it is a <code>400</code>: not something to
+do by accident.</p>
+<h2 id="post-v1cvrender"><code>POST /v1/cv/render</code><a class="headerlink" href="#post-v1cvrender" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-F<span class="w"> </span><span class="nv">document</span><span class="o">=</span>@cv.json<span class="w">     </span>localhost:8080/v1/cv/render
+curl<span class="w"> </span>-F<span class="w"> </span><span class="nv">tex</span><span class="o">=</span>@cv_edited.tex<span class="w">    </span>localhost:8080/v1/cv/render
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>document</code></td>
+<td>one of the two</td>
+<td>A CV document as JSON — a CV job's <code>cv.document</code>, or anything else your template can read</td>
+</tr>
+<tr>
+<td><code>tex</code></td>
+<td>one of the two</td>
+<td>Ready LaTeX, compiled as-is</td>
+</tr>
+<tr>
+<td><code>template</code></td>
+<td>optional</td>
+<td>Replace <code>resume.tex.jinja</code></td>
+</tr>
+<tr>
+<td><code>images</code></td>
+<td>optional</td>
+<td>Repeatable, ≤10</td>
+</tr>
+</tbody>
+</table>
+<p>Sending both, or neither, is a <code>400</code>. Returns <code>{tex, pdf_base64}</code>; <code>document</code>
+is not echoed back, because whoever asked for the render already has it.
+Cheap and deterministic: editing the content and re-rendering never costs a
+model call.</p>
+<p>The rendered <code>.tex</code> is dated at render time, so re-rendering yesterday's
+document dates it today.</p>
+<h2 id="post-v1letter"><code>POST /v1/letter</code><a class="headerlink" href="#post-v1letter" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-F<span class="w"> </span><span class="nv">jd</span><span class="o">=</span>@JD.txt<span class="w"> </span>-F<span class="w"> </span><span class="nv">candidate_profile</span><span class="o">=</span>@candidate_profile.json<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-F<span class="w"> </span><span class="nv">candidate_data</span><span class="o">=</span>@candidate_data.json<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-F<span class="w"> </span><span class="nv">analysis</span><span class="o">=</span>@analysis.json<span class="w"> </span>localhost:8080/v1/letter
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>jd</code> / <code>jd_text</code></td>
+<td>required</td>
+<td>The posting</td>
+</tr>
+<tr>
+<td><code>candidate_profile</code></td>
+<td>required</td>
+<td>JSON object</td>
+</tr>
+<tr>
+<td><code>candidate_data</code></td>
+<td>required</td>
+<td>JSON object — the header block's name, email, phone, LinkedIn</td>
+</tr>
+<tr>
+<td><code>analysis</code></td>
+<td>optional</td>
+<td>A <code>JDAnalysis</code> — makes the letter more targeted, and enables the web research</td>
+</tr>
+<tr>
+<td><code>sys_prompt_letter</code></td>
+<td>optional</td>
+<td>Replace the letter prompt</td>
+</tr>
+<tr>
+<td><code>letter_extra_body</code></td>
+<td>optional</td>
+<td>JSON object: the letter model's settings for this request, instead of <code>models.toml</code>'s — a web search it had there goes too, unless you send it again</td>
+</tr>
+</tbody>
+</table>
+<p>Returns <code>{"text": "…", "words": 312}</code>, validated between 180 and 450 words.
+When the analysis names the employer <em>and</em> the
+endpoint supports server-side web search, the model is told to research the
+company; an endpoint that rejects the flag falls back to writing without it.</p>
+<hr />
+<h2 id="errors">Errors<a class="headerlink" href="#errors" title="Permanent link">&para;</a></h2>
+<p>A failed request returns the same envelope with <code>ok: false</code> and one line
+saying what went wrong, its kind and its stage — one line, except that a
+failed compile adds the end of the TeX log on the lines after it, because only
+the TeX log says where the document breaks:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"request_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b510f8dff047"</span><span class="p">,</span><span class="w"> </span><span class="nt">"ok"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"model_output [cv.profile_scoring]: profile_scoring: no usable reply in 3 attempts:\n- it is not a JSON list"</span><span class="p">}</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Kind</th>
+<th>Means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>400</code></td>
+<td><code>bad_request</code>, <code>missing_part</code>, <code>bad_part</code></td>
+<td>A required part is absent, empty, not UTF-8, not JSON, not an object, or mutually exclusive parts were both sent</td>
+</tr>
+<tr>
+<td><code>401</code></td>
+<td><code>unauthorized</code></td>
+<td><code>ATS_API_TOKEN</code> is set and the request had no matching token. Answers with <code>WWW-Authenticate: Bearer</code></td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td><code>unknown_request</code></td>
+<td>No CV session by that id: acknowledged, older than the server keeps sessions, or never started</td>
+</tr>
+<tr>
+<td><code>409</code></td>
+<td><code>job_not_ready</code></td>
+<td>The CV job is still running, so its session cannot be acknowledged yet</td>
+</tr>
+<tr>
+<td><code>413</code></td>
+<td><code>part_too_large</code></td>
+<td>A part exceeded <code>ATS_MAX_PART_BYTES</code></td>
+</tr>
+<tr>
+<td><code>422</code></td>
+<td><code>latex_compile</code></td>
+<td>The template or the <code>.tex</code> does not compile. The end of the TeX log follows the error line</td>
+</tr>
+<tr>
+<td><code>422</code></td>
+<td><code>validation_error</code></td>
+<td>An uploaded document does not match the expected schema</td>
+</tr>
+<tr>
+<td><code>429</code></td>
+<td><code>too_many_jobs</code></td>
+<td>All job slots are busy. Answers with <code>Retry-After: 30</code></td>
+</tr>
+<tr>
+<td><code>502</code></td>
+<td><code>model_output</code></td>
+<td>The model never produced usable output within the attempts allowed</td>
+</tr>
+<tr>
+<td><code>502</code></td>
+<td><code>provider_error</code>, <code>provider_unreachable</code></td>
+<td>The model endpoint failed. The body is never echoed — it can carry the endpoint and the key</td>
+</tr>
+<tr>
+<td><code>504</code></td>
+<td><code>latex_timeout</code>, <code>budget_exceeded</code>, <code>provider_timeout</code></td>
+<td>A compile, the whole run, or the provider hit its timeout</td>
+</tr>
+<tr>
+<td><code>500</code></td>
+<td><code>internal_error</code></td>
+<td>A bug here. Everything else above is an answer, not a crash</td>
+</tr>
+</tbody>
+</table>
+<p>The stage in brackets (<code>[cv.profile_scoring]</code>, <code>[compile]</code>, <code>[render]</code>) says where in
+the pipeline it happened. For a CV job, the attempts that led there — every
+failed one included, with its token cost — are in the session's <code>log</code> and
+<code>usage</code> events. For any other request, the server's own log (stdout) has every
+line under the request id.</p>
+<h2 id="the-wire-format-as-a-package">The wire format as a package<a class="headerlink" href="#the-wire-format-as-a-package" title="Permanent link">&para;</a></h2>
+<p><code>cv_contracts</code> is the same set of pydantic models the server answers
+with, published as its own package so a client can import it instead of
+hand-rolling the shapes:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">cv_contracts</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Envelope</span><span class="p">,</span> <span class="n">CVStatus</span><span class="p">,</span> <span class="n">RenderedCV</span><span class="p">,</span> <span class="n">CoverLetter</span><span class="p">,</span> <span class="n">ServerStatus</span><span class="p">,</span>
+    <span class="n">JDAnalysis</span><span class="p">,</span> <span class="n">JDDetection</span><span class="p">,</span> <span class="n">LogEntry</span><span class="p">,</span> <span class="n">static_jd_guess</span><span class="p">,</span>
+    <span class="n">EVENT_PAYLOADS</span><span class="p">,</span> <span class="n">CVArtifact</span><span class="p">,</span> <span class="n">CVResult</span><span class="p">,</span> <span class="n">CVFailure</span><span class="p">,</span> <span class="n">CVSession</span><span class="p">,</span> <span class="n">ModelCall</span><span class="p">,</span> <span class="n">TokenUsage</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">envelope</span> <span class="o">=</span> <span class="n">Envelope</span><span class="p">[</span><span class="n">RenderedCV</span><span class="p">]</span><span class="o">.</span><span class="n">model_validate</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+<span class="n">pdf_bytes</span> <span class="o">=</span> <span class="n">envelope</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pdf_bytes</span><span class="p">()</span>          <span class="c1"># decodes pdf_base64</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">EVENT_PAYLOADS</span><span class="p">[</span><span class="s2">"result"</span><span class="p">]</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>   <span class="c1"># a result event's data</span>
+</code></pre></div>
+<p>It depends on pydantic and nothing else. The CV document itself deliberately
+has no model there: it is whatever the models wrote merged with whatever
+your <code>candidate_data.json</code> holds, and only your LaTeX template has an opinion
+about it.</p>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+  
+
+
+<h4>Cookie consent</h4>
+<p>We use cookies to recognize your repeated visits and preferences, as well as to measure the effectiveness of our documentation and whether users find what they're searching for. With your consent, you're helping us to make our documentation better.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="github" checked>
+      <span class="task-list-indicator"></span>
+      GitHub
+    </label>
+  </li>
+
+      
+    
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">Accept</button>
+    
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">Manage settings</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.sections", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "provider": "mike"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

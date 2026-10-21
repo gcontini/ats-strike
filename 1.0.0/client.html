@@ -1,0 +1,2241 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Turn a job description into a tailored LaTeX CV, with any OpenAI-compatible model.">
+      
+      
+      
+        <link rel="canonical" href="https://gcontini.github.io/ats-strike/1.0.0/client.html">
+      
+      
+        <link rel="prev" href="clipboard-flow.html">
+      
+      
+        <link rel="next" href="deployment.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>The client - ats-strike</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-3YNR617DVZ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-3YNR617DVZ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-3YNR617DVZ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-client" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="ats-strike" class="md-header__button md-logo" aria-label="ats-strike" data-md-component="logo">
+      
+  <img src="images/ats-strike-icon-128.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ats-strike
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              The client
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gcontini/ats-strike" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="ats-strike" class="md-nav__button md-logo" aria-label="ats-strike" data-md-component="logo">
+      
+  <img src="images/ats-strike-icon-128.png" alt="logo">
+
+    </a>
+    ats-strike
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gcontini/ats-strike" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ats-strike
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How it works
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="architecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="cv-pipeline.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The CV pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="clipboard-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A run, end to end
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using it
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Using it
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The client
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="client.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The client
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#which-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which mode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The modes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The modes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clipboard-copy-a-posting-get-a-cv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clipboard — copy a posting, get a CV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#watch-drop-files-into-a-folder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        watch — drop files into a folder
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#submit-one-file-once" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        submit — one file, once
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#submit-raw-just-the-cv-right-here" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        submit-raw — just the CV, right here
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analysis-just-the-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        analysis — just the analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#render-compile-an-edited-cv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render — compile an edited CV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset-drop-what-the-server-keeps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reset — drop what the server keeps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#version-which-build-is-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        version — which build is this
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#postings-you-have-seen-before" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Postings you have seen before
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-cv-that-was-interrupted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A CV that was interrupted
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#global" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cvtoml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cv.toml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-get" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What you get
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-leaves-your-machine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What leaves your machine
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="deployment.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running the two halves apart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="development-setup.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developing locally in VS Code
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="protocol.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The HTTP API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="build-server.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building the server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="model-configurations.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model configurations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="build-client.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building the client
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="release.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cutting a release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="credits.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#which-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Which mode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The modes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The modes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clipboard-copy-a-posting-get-a-cv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clipboard — copy a posting, get a CV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#watch-drop-files-into-a-folder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        watch — drop files into a folder
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#submit-one-file-once" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        submit — one file, once
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#submit-raw-just-the-cv-right-here" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        submit-raw — just the CV, right here
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#analysis-just-the-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        analysis — just the analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#render-compile-an-edited-cv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render — compile an edited CV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset-drop-what-the-server-keeps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reset — drop what the server keeps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#version-which-build-is-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        version — which build is this
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#postings-you-have-seen-before" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Postings you have seen before
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-cv-that-was-interrupted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A CV that was interrupted
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#global" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cvtoml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cv.toml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your files
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-you-get" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What you get
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-leaves-your-machine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What leaves your machine
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="the-client">The client<a class="headerlink" href="#the-client" title="Permanent link">&para;</a></h1>
+<p>One executable, eight modes. It keeps your CV data on your machine and sends it,
+per request, to a server that holds the model API keys and the LaTeX
+toolchain. No Python, no API key and no LaTeX install of your own.</p>
+<div class="highlight"><pre><span></span><code>cv [global options] MODE [mode options]
+</code></pre></div>
+<p>Global options work on either side of the mode name: <code>cv -v submit
+posting.txt --out ~/applications</code> and <code>cv submit -v …</code> do the same
+thing.</p>
+<h2 id="which-mode">Which mode<a class="headerlink" href="#which-mode" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    Q1{"What do you have?"}
+    Q1 --&gt;|"a posting I am about to copy"| CLIP["&lt;b&gt;clipboard&lt;/b&gt;&lt;br/&gt;watch the clipboard"]
+    Q1 --&gt;|"postings arriving as files"| WATCH["&lt;b&gt;watch&lt;/b&gt;&lt;br/&gt;watch a folder"]
+    Q1 --&gt;|"one file, right now"| Q2{"do you want the&lt;br/&gt;folders, analysis&lt;br/&gt;and spreadsheet?"}
+    Q1 --&gt;|"a CV I have edited"| REND["&lt;b&gt;render&lt;/b&gt;&lt;br/&gt;.json or .tex → PDF"]
+    Q1 --&gt;|"runs the server still keeps"| RESET["&lt;b&gt;reset&lt;/b&gt;&lt;br/&gt;drop them all"]
+    Q1 --&gt;|"a posting, and only its analysis"| ANA["&lt;b&gt;analysis&lt;/b&gt;&lt;br/&gt;JSON or a job folder"]
+    Q2 --&gt;|"yes"| SUB["&lt;b&gt;submit&lt;/b&gt;"]
+    Q2 --&gt;|"no, just the CV"| RAW["&lt;b&gt;submit-raw&lt;/b&gt;"]</code></pre>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Asks before spending</th>
+<th>Detects + analyses</th>
+<th>Writes the folder tree</th>
+<th>Spreadsheet</th>
+<th>Cover letter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clipboard</code></td>
+<td>yes (or <code>--yes</code>)</td>
+<td>yes</td>
+<td>yes</td>
+<td>yes</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>watch</code></td>
+<td>CHECK postings only (none with <code>--yes</code>)</td>
+<td>yes</td>
+<td>yes</td>
+<td>yes</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>submit</code></td>
+<td>yes (or <code>--yes</code>)</td>
+<td>yes</td>
+<td>yes</td>
+<td>yes</td>
+<td>optional</td>
+</tr>
+<tr>
+<td><code>submit-raw</code></td>
+<td><strong>no</strong></td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>analysis</code></td>
+<td><strong>no</strong></td>
+<td>analyses only</td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>render</code></td>
+<td>no — costs no model call</td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>reset</code></td>
+<td>no — costs no model call</td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-modes">The modes<a class="headerlink" href="#the-modes" title="Permanent link">&para;</a></h2>
+<h3 id="clipboard-copy-a-posting-get-a-cv"><code>clipboard</code> — copy a posting, get a CV<a class="headerlink" href="#clipboard-copy-a-posting-get-a-cv" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>cv<span class="w"> </span>clipboard<span class="w"> </span>--out<span class="w"> </span>~/applications
+</code></pre></div>
+<p>Watches the clipboard. When you copy something that looks like a posting, it
+checks with the server, analyses it, prints the analysis and asks — every
+posting, whatever its <code>should_apply</code> says:</p>
+<div class="highlight"><pre><span></span><code>Paste the posting URL to submit, y = submit without link, n/s = skip, q = quit
+&gt; https://jobs.example.com/12345
+</code></pre></div>
+<ul>
+<li><code>y</code>, or the posting URL: its CV is queued and the clipboard is watched
+  again at once. CVs are written in the background, one at a time, while you
+  read the next posting; their lines are tagged with the job's folder name
+  (<code>[Acme_Corp_Head_of_IT] …</code>) and held back while a question is on screen.
+  The URL is stored in <code>analysis.json</code> and goes to the spreadsheet.</li>
+<li><code>n</code> or <code>s</code>: it is filed under <code>discarded/</code>.</li>
+<li><code>q</code>: clipboard mode stops. The posting stays in <code>working/</code>, marked
+  <code>PENDING</code> in its <code>approval_status.txt</code>, and is asked about again at the
+  next start — never decided by its <code>should_apply</code>.</li>
+</ul>
+<p><strong>Stopping.</strong> <code>q</code> also works while nothing is being asked: the CV being
+written is finished, and the approved ones still queued wait in <code>working/</code>
+for the next start. Ctrl-C stops at once.</p>
+<p><strong>Startup.</strong> Anything left in <code>working/</code> by a previous run is offered back to
+you first: <em>resume</em>, <em>clean</em> or <em>quit</em>. Resume sends each folder where its own
+files say — the table under <code>watch</code>'s <em>Startup</em>: approved ones go straight to
+the CV writer, and the ones still waiting for an answer are asked about
+before anything new is read.</p>
+<p>With <code>--yes</code> nothing is asked: every posting is submitted, and so is every
+leftover waiting for an answer.</p>
+<p>On Linux the clipboard needs a helper — <code>apt install xclip</code> (X11) or
+<code>wl-clipboard</code> (Wayland) — and a reachable <code>DISPLAY</code>/<code>WAYLAND_DISPLAY</code>. The
+client probes it at startup and tells you if it cannot read it, instead of
+waiting forever for a change that can never arrive. Over SSH, forward X11 or
+use <code>watch</code>, which needs no clipboard at all.</p>
+<h3 id="watch-drop-files-into-a-folder"><code>watch</code> — drop files into a folder<a class="headerlink" href="#watch-drop-files-into-a-folder" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>cv<span class="w"> </span>watch<span class="w"> </span>--in<span class="w"> </span>~/Downloads/postings<span class="w"> </span>--out<span class="w"> </span>~/applications
+</code></pre></div>
+<p>Each posting goes through four stages, and the analysis decides the route:
+<code>should_apply</code> YES gets its CV without a question, CHECK waits for you, NO is
+put aside. The CVs are written in the background, one at a time, while you
+read the next posting.</p>
+<pre class="mermaid"><code>flowchart LR
+    IN["&lt;b&gt;1 · analysis&lt;/b&gt;&lt;br/&gt;--in"] --&gt;|"YES"| GEN["&lt;b&gt;3 · waiting for the CV&lt;/b&gt;&lt;br/&gt;working/"]
+    IN --&gt;|"CHECK"| ASK["&lt;b&gt;2 · waiting for you&lt;/b&gt;&lt;br/&gt;working/"]
+    IN --&gt;|"NO"| DISC["discarded/"]
+    IN --&gt;|"not a posting,&lt;br/&gt;or a call failed"| ERR["error/"]
+    ASK --&gt;|"y"| GEN
+    ASK --&gt;|"d"| DISC
+    ASK --&gt;|"s / n: later"| ASK
+    GEN --&gt;|"written"| CV["cv/"]
+    GEN --&gt;|"a call failed"| ERR</code></pre>
+<p>What you can drop:</p>
+<ul>
+<li><strong>A <code>.txt</code> file</strong> — the posting, read as UTF-8 text. It has to look like a
+  posting (the local check, then the server's), otherwise it lands in
+  <code>error/</code> with a <code>.log</code> beside it. Once its analysis is filed, the file is
+  deleted from <code>--in</code>. Any other file — a PDF, a <code>.docx</code> — goes to <code>error/</code>
+  with nothing sent: paste its text into a <code>.txt</code>.</li>
+<li><strong>A folder</strong> holding <code>jd.txt</code> and a valid <code>analysis.json</code> — one from <code>cv/</code>,
+  <code>discarded/</code> or <code>error/</code>, for instance. Detection and analysis are skipped:
+  it is copied into <code>working/</code> under its company and title, removed from
+  <code>--in</code>, and goes where its own files say (the table under <em>Startup</em>). One
+  that also holds its CV (<code>cv_&lt;name&gt;_&lt;job_title&gt;.json</code> or a <code>.tex</code>) is re-rendered — one
+  LaTeX compile, no model call, no new spreadsheet row. A folder with no
+  <code>jd.txt</code>, or whose <code>analysis.json</code> does not validate, goes to <code>error/</code> with
+  a <code>log.log</code> inside saying why.</li>
+</ul>
+<p>Names starting with <code>.</code> are ignored, and anything still being copied in is
+left alone until it stops changing.</p>
+<p><strong>When a posting needs you</strong> (CHECK), you see its text, then the analysis,
+and answer:</p>
+<div class="highlight"><pre><span></span><code>y = write the CV (or paste the posting URL), d = discard, s/n = next, q = quit
+&gt; https://jobs.example.com/12345
+</code></pre></div>
+<ul>
+<li><code>y</code>, or the posting URL: its CV is queued. The URL is stored in
+  <code>analysis.json</code> and goes to the spreadsheet.</li>
+<li><code>d</code>: it is filed under <code>discarded/</code>.</li>
+<li><code>s</code> or <code>n</code>: it is asked again after the others.</li>
+</ul>
+<p>Your answer is kept in the folder as <code>approval_status.txt</code> — <code>APPROVED</code> or
+<code>DISCARDED</code> (<code>clipboard</code> and <code>submit</code> also write <code>PENDING</code> while they wait for
+yours). Anything typed before a posting was on screen is thrown away, so
+a stray <code>y</code> never approves one you have not read, and what the inbox and the
+CV writer print is held back until you have answered.</p>
+<p><strong>Stopping.</strong> <code>q</code> works at any time, also when nothing is waiting for you:
+nothing new is started, the posting being analysed and the CV being written
+are finished, then the watcher exits. Ctrl-C stops at once; the next start
+picks up whatever was running, and a posting still in <code>--in</code> is read again.</p>
+<p><strong><code>--yes</code></strong> asks nothing: YES postings get their CV, NO postings are
+discarded, and CHECK postings wait in <code>working/</code> for a run without <code>--yes</code>.</p>
+<p><strong>Startup.</strong> Whatever an earlier run left in <code>working/</code> goes where its own
+files say, before anything new is read. The rules are tried in this order:</p>
+<table>
+<thead>
+<tr>
+<th>The folder holds</th>
+<th>It goes to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>no <code>jd.txt</code>, or no valid <code>analysis.json</code></td>
+<td><code>error/</code></td>
+</tr>
+<tr>
+<td>its CV: <code>cv_&lt;name&gt;_&lt;job_title&gt;.json</code> or a <code>.tex</code></td>
+<td>re-rendered, then <code>cv/</code></td>
+</tr>
+<tr>
+<td>no <code>approval_status.txt</code></td>
+<td>by <code>should_apply</code>: YES to the CV queue, CHECK to you, NO to <code>discarded/</code></td>
+</tr>
+<tr>
+<td><code>approval_status.txt</code> saying <code>APPROVED</code></td>
+<td>the CV queue</td>
+</tr>
+<tr>
+<td><code>approval_status.txt</code> saying <code>DISCARDED</code></td>
+<td><code>discarded/</code></td>
+</tr>
+<tr>
+<td><code>approval_status.txt</code> saying <code>PENDING</code></td>
+<td>you: asked about again, whatever <code>should_apply</code> says</td>
+</tr>
+<tr>
+<td><code>approval_status.txt</code> saying anything else</td>
+<td><code>error/</code></td>
+</tr>
+</tbody>
+</table>
+<p>A folder dropped into <code>--in</code> follows the same table. To retry a job that
+failed, move its folder from <code>error/</code> back into <code>--in</code>; to have a CHECK
+posting written without being asked, set its <code>approval_status.txt</code> to
+<code>APPROVED</code> first. A loose file left in <code>working/</code> by an older version goes to
+<code>error/</code>: move it back into <code>--in</code> to have it read again.</p>
+<p><code>--in</code> defaults to <code>./incoming</code>, created if missing. It may not be the same
+folder as <code>--out</code>, and the watcher has to be allowed to delete from it.</p>
+<h3 id="submit-one-file-once"><code>submit</code> — one file, once<a class="headerlink" href="#submit-one-file-once" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>cv<span class="w"> </span>submit<span class="w"> </span>posting.txt<span class="w"> </span>--out<span class="w"> </span>~/applications<span class="w"> </span>--yes
+</code></pre></div>
+<p>The same steps as <code>clipboard</code>, for a single file: analysed, asked about
+(unless <code>--yes</code>), and the CV written right there — the command returns once
+it is filed. No recovery prompt: a one-off run must not start by asking about
+someone else's leftovers. The file you name is <strong>read</strong>, never moved — unlike
+<code>watch</code>, which empties the folder it watches. <code>q</code> at the question leaves the
+posting in <code>working/</code> as <code>PENDING</code>, to be asked about at the next start of
+<code>clipboard</code> or <code>watch</code>.</p>
+<div class="highlight"><pre><span></span><code>cv<span class="w"> </span>submit<span class="w"> </span>posting.txt<span class="w"> </span>analysis.json<span class="w"> </span>--out<span class="w"> </span>~/applications
+</code></pre></div>
+<p>With an <code>analysis.json</code> for the posting — from an earlier run's folder, say —
+detection and analysis are skipped and it goes straight to the CV; you are
+still asked first, unless <code>--yes</code>. Both are copied into the job folder as
+<code>jd.txt</code> and <code>analysis.json</code>, so the analysis you passed is the one delivered
+beside the CV. One that does not validate stops the command before anything is
+sent or written.</p>
+<h3 id="submit-raw-just-the-cv-right-here"><code>submit-raw</code> — just the CV, right here<a class="headerlink" href="#submit-raw-just-the-cv-right-here" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>cv<span class="w"> </span>submit-raw<span class="w"> </span>posting.txt
+cv<span class="w"> </span>submit-raw<span class="w"> </span>posting.txt<span class="w"> </span>-o<span class="w"> </span>cv.pdf<span class="w"> </span>-o<span class="w"> </span>cv.json<span class="w"> </span>-o<span class="w"> </span>cv.tex
+</code></pre></div>
+<p>The CV and nothing else: no detection, no analysis, no question before
+spending, no cover letter, no spreadsheet, no folders. Files land in the
+directory you are standing in.</p>
+<p><code>-o</code> is repeatable and the suffix is the whole instruction — <code>.pdf</code> writes the
+PDF, <code>.json</code> the document, <code>.tex</code> the LaTeX. A name you chose is overwritten
+without asking, because a name you chose is a name you meant. With no <code>-o</code> you
+get one PDF named after the posting (<code>posting.txt</code> → <code>posting.pdf</code>), and a
+second run counts up to <code>posting_1.pdf</code> rather than replacing it.</p>
+<h3 id="analysis-just-the-analysis"><code>analysis</code> — just the analysis<a class="headerlink" href="#analysis-just-the-analysis" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>cv<span class="w"> </span>analysis<span class="w"> </span>--in<span class="w"> </span>posting.txt
+cv<span class="w"> </span>analysis<span class="w"> </span>--in<span class="w"> </span>posting.txt<span class="w"> </span>--output-format<span class="w"> </span>folder
+</code></pre></div>
+<p>The analysis and nothing else: no detection, no question, no CV. It needs
+<code>candidate_profile.json</code> and <code>candidate_preferences.md</code>, and costs one model
+call. With <code>--output-format json</code> (the default) the analysis is printed on
+stdout — nothing else is, so it pipes straight into <code>jq</code>. With <code>folder</code> it
+writes <code>&lt;Company&gt;_&lt;Title&gt;/</code> holding <code>jd.txt</code> and <code>analysis.json</code> into <code>--out</code>,
+which defaults to <code>incoming/</code> under <code>--data-dir</code> (or the current folder): the
+shape <code>watch</code> takes from its input folder, and the folder it watches by
+default. A folder of the same name is replaced. It is written as
+<code>.&lt;Company&gt;_&lt;Title&gt;/</code> and renamed once both files are in, so a <code>watch</code> running
+on it never picks up half a job. Failures go to stderr.</p>
+<h3 id="render-compile-an-edited-cv"><code>render</code> — compile an edited CV<a class="headerlink" href="#render-compile-an-edited-cv" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>cv<span class="w"> </span>render<span class="w"> </span>~/applications/cv/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
+cv<span class="w"> </span>render<span class="w"> </span>cv_jordan_rivera_head_of_it.tex<span class="w"> </span>--output<span class="w"> </span>/tmp/preview.pdf
+</code></pre></div>
+<p>Give it the <code>.json</code> document to re-render from the content, or the <code>.tex</code> to
+compile a hand-edit. The PDF lands next to the input unless <code>--output</code> says
+otherwise. Needs no profile and no posting — just the server — and costs one
+LaTeX compile and no model call. A failed render prints the end of the TeX
+log, which says where the LaTeX breaks.</p>
+<h3 id="reset-drop-what-the-server-keeps"><code>reset</code> — drop what the server keeps<a class="headerlink" href="#reset-drop-what-the-server-keeps" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>cv<span class="w"> </span>reset
+</code></pre></div>
+<p>Every CV is a session on the server, kept until the client has saved its
+files (see <a href="#a-cv-that-was-interrupted">A CV that was interrupted</a>). <code>reset</code>
+deletes every session the server still has — except one whose CV is still
+being written — and says how many it deleted. After it, every posting is
+written from scratch.</p>
+<h3 id="version-which-build-is-this"><code>version</code> — which build is this<a class="headerlink" href="#version-which-build-is-this" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>cv<span class="w"> </span>version
+</code></pre></div>
+<p>Prints <code>version x.y.z</code> and exits. It reads no configuration and talks to no
+server, so it answers even when <code>cv.toml</code> is wrong. Every <code>--verbose</code> run
+prints the same line at startup, which is what you want in a bug report.</p>
+<p>The number comes from the package metadata bundled into the executable, so it
+is the version the release workflow built — there is no string in the source to
+forget to bump.</p>
+<h2 id="postings-you-have-seen-before">Postings you have seen before<a class="headerlink" href="#postings-you-have-seen-before" title="Permanent link">&para;</a></h2>
+<p>Before anything is spent on a posting, every <code>analysis.json</code> under <code>cv/</code>,
+<code>discarded/</code> and <code>working/</code> is read back. A posting is the same job when its URL matches, or
+when its company <em>and</em> title match — case, accents and spacing ignored. A side
+without a URL is compared by company and title only; one without a company or
+title, by URL only. Old files are read as they are, never validated: one that
+cannot be read is skipped.</p>
+<p>The check runs as soon as a posting is analysed, before you are asked, in
+every mode. A posting already applied to, discarded or still in flight prints
+<code>already applied</code>, <code>already discarded</code> or <code>already in progress</code> with the
+earlier folder, and is dropped: nothing is asked and nothing is written. The
+mode carries on: the clipboard keeps waiting, <code>submit</code> exits. In <code>watch</code>, a
+posting with a <code>JOB_POSTING: &lt;url&gt;</code> line is checked by that URL before
+anything is sent, LinkedIn ids included: one already known is deleted from the
+inbox with the same message, and costs no call at all.</p>
+<p>A posting that is dropped leaves nothing behind: the earlier copy already
+holds it. So to redo one, <em>move</em> the earlier folder out of <code>cv/</code> or
+<code>discarded/</code> first — before you copy the posting again, and instead of
+copying a folder you drop back into <code>watch</code>.</p>
+<h2 id="a-cv-that-was-interrupted">A CV that was interrupted<a class="headerlink" href="#a-cv-that-was-interrupted" title="Permanent link">&para;</a></h2>
+<p>A CV is a session on the server, named after the posting's text. While the CV
+is written the client follows it, printing each step, what each model call
+cost and the total at the end; once the files are saved, the client tells the
+server, which deletes the session. Anything in between costs nothing:</p>
+<ul>
+<li><strong>A dropped connection</strong> is picked up again on its own, from the last thing
+  received.</li>
+<li><strong>A client that died</strong> — a closed laptop, Ctrl-C, a crash: run the same
+  posting again, with <code>submit</code>, <code>submit-raw</code>, <code>clipboard</code> or <code>watch</code>, and the
+  server replays the run from the start, still going or already finished,
+  instead of writing a new CV. <code>↺ this posting already has a run on the
+  server</code> says so.</li>
+<li><strong><code>--new</code></strong> drops that run and writes the CV again: for when you changed your
+  profile, your template, a prompt or an <code>[extra_body]</code>, none of which change
+  the posting's text. It is refused while the old run is still being written.</li>
+</ul>
+<p>A session nobody came back for is kept for a day (the server's
+<code>ATS_SESSION_TTL_DAYS</code>), and <code>cv reset</code> drops them all.</p>
+<h2 id="options">Options<a class="headerlink" href="#options" title="Permanent link">&para;</a></h2>
+<h3 id="global">Global<a class="headerlink" href="#global" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--server URL</code></td>
+<td>The ats-strike server. Default <code>http://localhost:8080</code>.</td>
+</tr>
+<tr>
+<td><code>--token TOKEN</code></td>
+<td>Bearer token, if the server requires one.</td>
+</tr>
+<tr>
+<td><code>--pages N</code></td>
+<td>Page limit the CV must fit. Default: the server's, which is 2.</td>
+</tr>
+<tr>
+<td><code>--config FILE</code></td>
+<td>Use this <code>cv.toml</code> instead of searching for one.</td>
+</tr>
+<tr>
+<td><code>--data-dir DIR</code></td>
+<td>Look for your files here before the current folder.</td>
+</tr>
+<tr>
+<td><code>-v</code>, <code>--verbose</code></td>
+<td>Print <code>version x.y.z</code> at startup, then what the server reports about each finished step — what it produced, tokens, thinking tokens, elapsed — plus the CV's session id and the <code>/healthz</code> attempts.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="per-mode">Per mode<a class="headerlink" href="#per-mode" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Modes</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--out DIR</code></td>
+<td>clipboard, watch, submit</td>
+<td>The output folder (<code>working/</code>, <code>error/</code>, <code>discarded/</code>, <code>cv/</code>). Default: the current folder.</td>
+</tr>
+<tr>
+<td><code>--in DIR</code></td>
+<td>watch</td>
+<td>The folder to watch. Default: <code>./incoming</code>, created if missing.</td>
+</tr>
+<tr>
+<td><code>--in FILE</code></td>
+<td>analysis</td>
+<td>The posting to analyse. Required.</td>
+</tr>
+<tr>
+<td><code>--output-format json\|folder</code></td>
+<td>analysis</td>
+<td><code>json</code>: print the analysis on stdout. <code>folder</code>: write <code>&lt;Company&gt;_&lt;Title&gt;/</code> with <code>jd.txt</code> and <code>analysis.json</code> into <code>--out</code>, replacing one of the same name. Default <code>json</code>.</td>
+</tr>
+<tr>
+<td><code>--out DIR</code></td>
+<td>analysis</td>
+<td>Where <code>--output-format folder</code> writes. Default: <code>&lt;data-dir&gt;/incoming</code>, created if missing.</td>
+</tr>
+<tr>
+<td><code>--cover-letter no\|yes\|letter_only</code></td>
+<td>clipboard, watch, submit</td>
+<td>Also write a cover letter, or write <em>only</em> one. Default <code>no</code>.</td>
+</tr>
+<tr>
+<td><code>--yes</code></td>
+<td>clipboard, watch, submit</td>
+<td>Submit every valid posting without asking. Unattended runs spend tokens on their own. A posting already applied to, discarded or in flight is skipped, still without asking. In <code>watch</code> it only stops the questions: YES postings get their CV, NO postings are discarded, CHECK postings wait in <code>working/</code> for a run without <code>--yes</code>.</td>
+</tr>
+<tr>
+<td><code>--no-xlsx</code></td>
+<td>clipboard, watch, submit</td>
+<td>Do not record delivered CVs in the spreadsheet.</td>
+</tr>
+<tr>
+<td><code>--new</code></td>
+<td>clipboard, watch, submit, submit-raw</td>
+<td>Write each CV again even when the server still has a run for the same posting, which is otherwise replayed. Refused while that run is still being written.</td>
+</tr>
+<tr>
+<td><code>-o FILE</code></td>
+<td>submit-raw</td>
+<td>Write one output here: <code>.pdf</code>, <code>.json</code> or <code>.tex</code>. Repeatable.</td>
+</tr>
+<tr>
+<td><code>--output FILE</code></td>
+<td>render</td>
+<td>Where to write the PDF. Default: beside the input.</td>
+</tr>
+</tbody>
+</table>
+<p>Exit code is <code>0</code> when nothing failed, <code>1</code> when a posting failed or the client
+could not start (a missing file, an unreachable server, a bad config).</p>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<p>Everything resolves in this order:</p>
+<pre class="mermaid"><code>flowchart LR
+    CLI["command line"] --&gt; ENV["environment"] --&gt; TOML["cv.toml"] --&gt; FOUND["a file in the&lt;br/&gt;current folder"] --&gt; SRV["the server's default"]</code></pre>
+<h3 id="cvtoml"><code>cv.toml</code><a class="headerlink" href="#cvtoml" title="Permanent link">&para;</a></h3>
+<p>Looked for as <code>--config</code>, then <code>$ATS_CONFIG</code>, then <code>cv.toml</code> in
+the current folder.</p>
+<div class="highlight"><pre><span></span><code><span class="n">server_url</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://ats-strike.example.run.app"</span>
+<span class="n">token</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">"the-bearer-token"</span><span class="w">   </span><span class="c1"># only if the server requires one</span>
+<span class="n">cover_letter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"no"</span><span class="w">                 </span><span class="c1"># no | yes | letter_only</span>
+<span class="c1"># pages       = 2                   # page limit the CV must fit</span>
+<span class="c1"># timeout     = 1800                # seconds to follow one CV job</span>
+<span class="c1"># verbose     = true                # same as -v on every run</span>
+
+<span class="k">[files]</span><span class="w">                             </span><span class="c1"># explicit paths win over discovery</span>
+<span class="c1"># profile        = "~/cv/candidate_profile.json"</span>
+<span class="c1"># candidate_data = "~/cv/candidate_data.json"</span>
+<span class="c1"># preferences    = "~/cv/candidate_preferences.md"</span>
+<span class="c1"># template       = "~/cv/resume.tex.jinja"</span>
+<span class="c1"># prompt_jd_evaluation     = "~/cv/sys_prompt_jd_evaluation.txt"</span>
+<span class="c1"># prompt_profile_scoring   = "~/cv/sys_prompt_profile_scoring.txt"</span>
+<span class="c1"># prompt_format_selection  = "~/cv/sys_prompt_format_selection.txt"</span>
+<span class="c1"># prompt_cv_body           = "~/cv/sys_prompt_cv_body.txt"</span>
+<span class="c1"># schema_cv_body           = "~/cv/cv_body_schema.json"</span>
+<span class="c1"># prompt_cv_duties         = "~/cv/sys_prompt_cv_duties.txt"</span>
+<span class="c1"># schema_cv_duties         = "~/cv/cv_duties_schema.json"</span>
+<span class="c1"># prompt_validation_body   = "~/cv/sys_prompt_validation_body.txt"</span>
+<span class="c1"># prompt_validation_duties = "~/cv/sys_prompt_validation_duties.txt"</span>
+<span class="c1"># prompt_highlight         = "~/cv/sys_prompt_highlight.txt"</span>
+<span class="c1"># prompt_letter            = "~/cv/sys_prompt_letter.txt"</span>
+<span class="c1"># prompt_analysis          = "~/cv/sys_prompt_analysis.txt"</span>
+
+<span class="c1"># [extra_body.cv]                   # a role's settings, instead of all the server's</span>
+<span class="c1"># temperature = 0.4</span>
+</code></pre></div>
+<p>A relative path under <code>[files]</code> is resolved against the config file's own
+folder, and a path that does not exist is an error rather than a silent
+fallback. The keys are short on purpose: TOML reads
+<code>candidate_profile.json = "x"</code> as a dotted key, which is not what anyone
+means.</p>
+<p><code>[extra_body.&lt;role&gt;]</code> is what one model role runs on instead of the server's
+<code>models.toml</code> settings — all of them, not just the keys you set: what the
+table holds is sent into the request as is (<code>temperature</code>, <code>top_p</code>,
+<code>reasoning_effort</code>, a provider's own fields), with the model and the
+messages. The roles are the CV's six steps — <code>jd_evaluation</code>,
+<code>profile_scoring</code>, <code>format_selection</code>, <code>cv</code>, <code>validation</code>, <code>highlight</code> — and
+<code>analysis</code> and <code>letter</code>. Every table goes with every request, and each
+endpoint reads its own; a role the server does not have is ignored. An empty
+table sends an empty object: that role then runs with no settings at all.</p>
+<h3 id="environment">Environment<a class="headerlink" href="#environment" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ATS_API_URL</code></td>
+<td>The server URL. Beaten by <code>--server</code>.</td>
+</tr>
+<tr>
+<td><code>ATS_API_TOKEN</code></td>
+<td>The bearer token. Beaten by <code>--token</code>.</td>
+</tr>
+<tr>
+<td><code>ATS_CONFIG</code></td>
+<td>Path to <code>cv.toml</code>. Beaten by <code>--config</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="your-files">Your files<a class="headerlink" href="#your-files" title="Permanent link">&para;</a></h3>
+<p>Put them in the folder you run from (or in <code>--data-dir</code>) and they are picked
+up by name:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it is</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>candidate_profile.json</code></td>
+<td>Everything you have ever done. The models tailor the CV from this — the more complete, the better. Its <code>experiences</code> each need an <code>id</code> and <code>duties</code>.</td>
+<td><strong>yes</strong></td>
+</tr>
+<tr>
+<td><code>candidate_data.json</code></td>
+<td>Name, email, phone, LinkedIn, languages, location, education. Printed by the template as-is; no model is shown it.</td>
+<td><strong>yes</strong></td>
+</tr>
+<tr>
+<td><code>candidate_preferences.md</code></td>
+<td>What you want from a job, in prose. Scored against each posting.</td>
+<td>for analysis</td>
+</tr>
+<tr>
+<td><code>resume.tex.jinja</code></td>
+<td>Your own LaTeX template.</td>
+<td>no — the server's is used</td>
+</tr>
+<tr>
+<td><code>sys_prompt_jd_evaluation.txt</code>, <code>sys_prompt_profile_scoring.txt</code>, <code>sys_prompt_format_selection.txt</code>, <code>sys_prompt_cv_body.txt</code>, <code>sys_prompt_cv_duties.txt</code>, <code>sys_prompt_validation_body.txt</code>, <code>sys_prompt_validation_duties.txt</code>, <code>sys_prompt_highlight.txt</code>, <code>sys_prompt_letter.txt</code>, <code>sys_prompt_analysis.txt</code></td>
+<td>Your own prompts.</td>
+<td>no — same</td>
+</tr>
+<tr>
+<td><code>cv_body_schema.json</code>, <code>cv_duties_schema.json</code></td>
+<td>Your own JSON schemas for the CV body and for an experience: the writer is shown them, so a field you add here and in your template reaches the page.</td>
+<td>no — same</td>
+</tr>
+</tbody>
+</table>
+<p>Every <code>.png</code>, <code>.jpg</code> and <code>.jpeg</code> in those folders is sent too, under its own
+file name — and that name is the whole contract: the server writes each one
+next to the <code>.tex</code>, so <code>\includegraphics{photo.jpg}</code> in your template is
+satisfied by a <code>photo.jpg</code> sitting next to you. At most 10 per request.
+<code>candidate_signature.png</code> is just one such image: the stock template includes
+it, and the server has a blank one if you do not.</p>
+<p>Start from the fictional set in the repository's <code>examples/candidate/</code>.</p>
+<h2 id="what-you-get">What you get<a class="headerlink" href="#what-you-get" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>~/applications/
+├── cv/
+│   └── 26-01-15/
+│       └── Acme_Corp_Head_of_IT/
+│           ├── cv_jordan_rivera_head_of_it.pdf     the CV
+│           ├── cv_jordan_rivera_head_of_it.tex     the LaTeX it was compiled from
+│           ├── cv_jordan_rivera_head_of_it.json    the content, for re-rendering
+│           ├── candidate_signature.png  the images your template includes
+│           ├── analysis.json            match score, salary, skills, gaps
+│           ├── jd.txt                   the posting, whatever the file was called
+│           ├── cover_letter.txt         with --cover-letter
+│           ├── steps/                   each step's result, as JSON: key_points.json, scored_profile.json, …
+│           └── log.log                  every step, and the server's own lines for the CV
+├── discarded/26-01-15/…                 postings you said no to, analysis kept
+├── error/26-01-15/…                     rejected or failed, with a .log beside it
+├── working/                             in flight, or waiting for you
+└── applications.xlsx                    one row per delivered CV
+</code></pre></div>
+<p>File names come from your own <code>candidate_data.json</code>, not from the server.</p>
+<p>To revise a CV: edit <code>cv_jordan_rivera_head_of_it.json</code> and run <code>cv render</code> on it —
+one LaTeX compile, no model calls. Editing the <code>.tex</code> and rendering that works
+too. The spreadsheet's own header row is the schema: rename, reorder or add
+columns in your copy and the rows follow.</p>
+<p><code>log.log</code> holds the client's steps, and every line the server logged while it
+wrote the CV, indented under them, as they streamed in:</p>
+<div class="highlight"><pre><span></span><code>2026-01-15T09:30:12 ✍ writing the CV (this takes minutes)...
+2026-01-15T09:30:12    jd_evaluation
+  2026-01-15T09:30:33+00:00 INFO    [cv.jd_evaluation]   ⏱ [jd_evaluation] deepseek-flash 21.2s | input=1847, thinking=7256, output=832, …
+2026-01-15T09:30:33    ⏱ jd_evaluation deepseek-flash 21.2s | input=1847, thinking=7256, output=832
+2026-01-15T09:30:33    profile_scoring
+…
+2026-01-15T09:35:24    Σ 21 model call(s), 961.4s | input=64148, thinking=161200, output=14091
+</code></pre></div>
+<p>One line per model call is what it cost, and the <code>Σ</code> line is the whole run —
+failed attempts included. The steps that make several calls make them at
+once, so the calls' seconds add up to more than the run took.</p>
+<p><code>steps/</code> holds what each step handed the next one, as the server streamed it:
+the posting's key points, your profile with its scores and the evidence for
+them, the format chosen and why, the CV before and after validation, and the
+highlighted CV. A CV that failed half-way keeps the steps it finished, under
+<code>error/</code>. Only the final PDF is ever downloaded.</p>
+<h2 id="what-leaves-your-machine">What leaves your machine<a class="headerlink" href="#what-leaves-your-machine" title="Permanent link">&para;</a></h2>
+<p>Per request: the posting text, your <code>candidate_profile.json</code>, your
+<code>candidate_preferences.md</code> (for the analysis), your <code>candidate_data.json</code> and
+every image in the folder. Whether <em>the model provider</em> keeps what it is shown
+is between you and whoever runs the server — the same question as with any
+hosted model.</p>
+<p><strong>No model is ever shown your <code>candidate_data.json</code>.</strong> It is sent because the
+server compiles the CV to count its pages, and a page count taken with the
+contact block missing is not the page count of the CV you will send; it goes
+to the LaTeX template and nowhere else.</p>
+<p>Nothing at all is sent for text that fails the local length and binary checks,
+so a copied password or a screenful of code never leaves the machine. The
+server keeps a CV's session — what the job logged and the finished CV — until
+the client has saved the files, or for a day at most, and keeps nothing else.</p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>What you see</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cannot reach the ats-strike server at …</code></td>
+<td>The server is down or the URL is wrong. <code>curl &lt;url&gt;/healthz</code> to check.</td>
+</tr>
+<tr>
+<td><code>did not come up after 3 attempts</code></td>
+<td>The server was unreachable on three tries two seconds apart — a cold container may need longer; try again.</td>
+</tr>
+<tr>
+<td><code>401</code> / <code>a valid bearer token is required</code></td>
+<td>The server wants a token: set <code>token</code> in <code>cv.toml</code> or pass <code>--token</code>.</td>
+</tr>
+<tr>
+<td><code>candidate_profile.json is required but was not found</code></td>
+<td>Put it in the current folder, or name it under <code>[files]</code>.</td>
+</tr>
+<tr>
+<td><code>no clipboard here: neither DISPLAY nor WAYLAND_DISPLAY…</code></td>
+<td>Install <code>xclip</code> or <code>wl-clipboard</code>, or use <code>watch</code>.</td>
+</tr>
+<tr>
+<td><code>429</code> / <code>all job slots are busy</code></td>
+<td>The server is at capacity. Try again shortly.</td>
+</tr>
+<tr>
+<td><code>[clipboard] ✗ not a job description (412 chars, nothing sent)</code></td>
+<td>What you copied is a fragment. Nothing was sent anywhere.</td>
+</tr>
+<tr>
+<td>A posting you wanted lands in <code>error/</code></td>
+<td>Read the <code>.log</code> beside it. A wrong "not a job description" verdict usually means the copy grabbed only part of the page.</td>
+</tr>
+<tr>
+<td>A folder you dropped lands in <code>error/</code></td>
+<td>It needs <code>jd.txt</code> and a valid <code>analysis.json</code>. The <code>log.log</code> inside it says which was missing.</td>
+</tr>
+<tr>
+<td>You need more than the error line</td>
+<td>For a CV, its <code>log.log</code> has every line the server logged. For anything else, the server's own log has it under the request id the error names.</td>
+</tr>
+<tr>
+<td><code>working/</code> is not empty</td>
+<td>A previous run stopped mid-job, a CV was still queued when you pressed <code>q</code>, or a posting waits for your answer (CHECK, or <code>PENDING</code>). <code>watch</code> picks everything up by itself at startup (see its <em>Startup</em> table); <code>clipboard</code> offers to resume or clean.</td>
+</tr>
+<tr>
+<td>The client died but the job was running</td>
+<td>Run the same posting again: the server replays the run instead of writing a new CV. <code>--new</code> writes it again.</td>
+</tr>
+<tr>
+<td><code>this posting's CV is still being written on the server</code></td>
+<td><code>--new</code> cannot drop a run that is still going. Run without it to follow that run, or wait until it has finished.</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+  
+
+
+<h4>Cookie consent</h4>
+<p>We use cookies to recognize your repeated visits and preferences, as well as to measure the effectiveness of our documentation and whether users find what they're searching for. With your consent, you're helping us to make our documentation better.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="github" checked>
+      <span class="task-list-indicator"></span>
+      GitHub
+    </label>
+  </li>
+
+      
+    
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">Accept</button>
+    
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">Manage settings</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.sections", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "provider": "mike"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
