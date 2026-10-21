@@ -1,6 +1,6 @@
 [project]
 name = "ats-strike-server"
-version = "0.5.0"
+version = "1.0.0"
 description = "ats-strike HTTP API: turn a job description into tailored CV data and a compiled LaTeX PDF."
 requires-python = ">=3.12"
 license = "MIT"

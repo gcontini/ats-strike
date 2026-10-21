@@ -1,6 +1,6 @@
 [project]
 name = "ats-strike-client"
-version = "0.5.0"
+version = "1.0.0"
 description = "ats-strike CLI: clipboard/watch/submit/render against an ats-strike server."
 requires-python = ">=3.12"
 license = "MIT"
