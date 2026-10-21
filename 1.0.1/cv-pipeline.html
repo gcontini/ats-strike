@@ -1,0 +1,1517 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Turn a job description into a tailored LaTeX CV, with any OpenAI-compatible model.">
+      
+      
+      
+        <link rel="canonical" href="https://gcontini.github.io/ats-strike/1.0.1/cv-pipeline.html">
+      
+      
+        <link rel="prev" href="architecture.html">
+      
+      
+        <link rel="next" href="clipboard-flow.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>The CV pipeline - ats-strike</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-3YNR617DVZ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-3YNR617DVZ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-3YNR617DVZ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-cv-pipeline" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="ats-strike" class="md-header__button md-logo" aria-label="ats-strike" data-md-component="logo">
+      
+  <img src="images/ats-strike-icon-128.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ats-strike
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              The CV pipeline
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gcontini/ats-strike" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="ats-strike" class="md-nav__button md-logo" aria-label="ats-strike" data-md-component="logo">
+      
+  <img src="images/ats-strike-icon-128.png" alt="logo">
+
+    </a>
+    ats-strike
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gcontini/ats-strike" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ats-strike
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How it works
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="architecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The CV pipeline
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="cv-pipeline.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The CV pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#side-by-side" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Side by side
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-render" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The render
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retries-budgets-and-what-each-failure-costs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retries, budgets and what each failure costs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-client-sees-while-it-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the client sees while it runs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changing-it-for-one-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changing it for one request
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-comes-back" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What comes back
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rendering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rendering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-other-three-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The other three pipelines
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="clipboard-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A run, end to end
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using it
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Using it
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="client.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The client
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="deployment.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running the two halves apart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="development-setup.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developing locally in VS Code
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="protocol.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The HTTP API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="build-server.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building the server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="model-configurations.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model configurations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="build-client.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building the client
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="release.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cutting a release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="credits.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#side-by-side" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Side by side
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-render" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The render
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retries-budgets-and-what-each-failure-costs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retries, budgets and what each failure costs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-client-sees-while-it-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the client sees while it runs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changing-it-for-one-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changing it for one request
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-comes-back" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What comes back
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rendering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rendering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-other-three-pipelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The other three pipelines
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="the-cv-pipeline">The CV pipeline<a class="headerlink" href="#the-cv-pipeline" title="Permanent link">&para;</a></h1>
+<p>What <code>POST /v1/cv</code> does with the minutes it takes: six steps, each on a model
+of its own, then a render that trims the CV until it fits. The method is the
+one adapticv-ai worked out.</p>
+<p>The code is <code>server/src/cv_server/pipeline/cv_generator.py</code>
+(<code>CVGenerator</code>, the steps as a LangGraph graph), <code>cv_review.py</code> (the
+validation loop) and <code>cv_renderer.py</code> (the compile and the page count).</p>
+<h2 id="the-steps">The steps<a class="headerlink" href="#the-steps" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    START(["POST /v1/cv accepted&lt;br/&gt;202 + request_id"]) --&gt; JD["&lt;b&gt;jd_evaluation&lt;/b&gt;&lt;br/&gt;the JD's key points, each with an importance"]
+    JD --&gt;|"Send, one per list"| SC["&lt;b&gt;profile_scoring&lt;/b&gt;&lt;br/&gt;one list of the profile against the key points"]
+    SC --&gt; MS["the scores into the profile&lt;br/&gt;text|3-80,7-40"]
+    MS --&gt; FS["&lt;b&gt;format_selection&lt;/b&gt;&lt;br/&gt;a format, the experiences, their duty caps"]
+    FS --&gt;|"Send"| WB["&lt;b&gt;cv&lt;/b&gt;&lt;br/&gt;the body"]
+    FS --&gt;|"Send, one per experience"| WD["&lt;b&gt;cv&lt;/b&gt;&lt;br/&gt;one experience"]
+    WB --&gt; CC["back in order"]
+    WD --&gt; CC
+    CC --&gt;|"Send"| VB["&lt;b&gt;validation&lt;/b&gt;&lt;br/&gt;the body, up to 5 rounds"]
+    CC --&gt;|"Send, one per experience"| VD["&lt;b&gt;validation&lt;/b&gt;&lt;br/&gt;one experience, up to 5 rounds"]
+    VB --&gt; CK["back in order"]
+    VD --&gt; CK
+    CK --&gt; HL["&lt;b&gt;highlight&lt;/b&gt;&lt;br/&gt;**bold** keywords, *italic* stacks"]
+    HL --&gt; R{"rendered:&lt;br/&gt;over the page limit?"}
+    R --&gt;|"yes, and a duty can go"| TRIM["remove the duty&lt;br/&gt;worth least"] --&gt; R
+    R --&gt;|"no, or none can go"| FIN(["&lt;b&gt;result&lt;/b&gt;&lt;br/&gt;document · tex · pdf"])</code></pre>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Calls</th>
+<th>Shown</th>
+<th>Hands over</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>jd_evaluation</code></td>
+<td>1</td>
+<td>the JD</td>
+<td><code>key_points</code>: 6 to 15 requirements, each with keywords and an importance from 0 to 100</td>
+</tr>
+<tr>
+<td><code>profile_scoring</code></td>
+<td>one per list of the profile — 9 for the example candidate</td>
+<td>the key points, one list, and its experience when the list is inside one</td>
+<td><code>scored_profile</code>, <code>score_reasons</code></td>
+</tr>
+<tr>
+<td><code>format_selection</code></td>
+<td>1</td>
+<td>the key points, the formats, the scored experiences</td>
+<td><code>format_selection</code>: the format, the experiences shown, the duties of each, and why</td>
+</tr>
+<tr>
+<td><code>cv</code></td>
+<td>1 for the body, 1 per experience shown</td>
+<td>the key points, the writing style, the schema, the scored profile or experience, its duty cap and its evidence</td>
+<td><code>cv_body</code>, <code>cv_experiences</code></td>
+</tr>
+<tr>
+<td><code>validation</code></td>
+<td>1 to 5 per document</td>
+<td>the writing style, the round, the profile or the experience without scores, the generated text, the replacements that failed</td>
+<td><code>checked_body</code>, <code>checked_experiences</code></td>
+</tr>
+<tr>
+<td><code>highlight</code></td>
+<td>1</td>
+<td>the key points, the CV the models wrote, the evidence</td>
+<td><code>highlighted_resume</code></td>
+</tr>
+</tbody>
+</table>
+<p>Each step has its own role in <a href="build-server.html#the-provider"><code>models.toml</code></a>;
+<code>cv</code> and <code>validation</code> each serve two prompts, the body's and the
+experiences'. Each step's result is streamed to the client as it is ready,
+and stored beside the CV under <code>steps/</code>.</p>
+<p><strong>Scores.</strong> <code>profile_scoring</code> gives every item of the profile the key points
+it matches, at most four, each scored 0–100 for how completely the item proves
+it: a string becomes <code>Led the migration.|3-80,7-40</code> (key point 3 at 80, key
+point 7 at 40), an object gets a <code>"score": "3-80,7-40"</code> field. The words that
+prove each match stay out of the profile, in <code>score_reasons</code>; the writer and
+the highlighter are shown them as EVIDENCE. The scores ride along to the end
+and come off at the render.</p>
+<p><strong>Coverage.</strong> A key point counts its two best duty scores, up to twice its
+importance (<code>COVERAGE_BEST</code>, <code>COVERAGE_CAP</code>): a duty on a key point already
+covered adds nothing, and weak matches cannot fill a key point before its
+strong ones. The duties prompt says the same in words, and the trim below
+uses the same rule.</p>
+<p><strong>Formats.</strong> What <code>format_selection</code> chooses from, and what the trim keeps:</p>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Experiences</th>
+<th>Duties each</th>
+<th>Duties in all</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>3</td>
+<td>3–8</td>
+<td>22</td>
+</tr>
+<tr>
+<td>B</td>
+<td>4</td>
+<td>2–6</td>
+<td>17</td>
+</tr>
+<tr>
+<td>C</td>
+<td>5</td>
+<td>1–4</td>
+<td>13</td>
+</tr>
+</tbody>
+</table>
+<p>The code assumes nothing about the CV or the profile beyond the work
+experiences (each with an <code>id</code> and its <code>duties</code>), their duties and the
+<code>writing_style</code>: the prompts and the template decide everything else.</p>
+<h2 id="side-by-side">Side by side<a class="headerlink" href="#side-by-side" title="Permanent link">&para;</a></h2>
+<p>A step that makes several calls fans them out with LangGraph's <code>Send</code>: one
+node per profile list, per experience, and they run at the same time. Each
+writes its answer, tagged with its position, into a list the graph collects;
+a node in code puts the answers back in profile order before the next step
+starts. The steps themselves run one after another.</p>
+<p>The parallel nodes run in the job's own context, so their log lines and their
+token counts land in the job's session like any other. A call that fails —
+three unusable replies, an endpoint that refuses — fails the job with its own
+cause and stage, after the calls beside it have finished.</p>
+<h2 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">&para;</a></h2>
+<p>The validators check facts and grammar against your profile, with minimal
+edits; style is the writers' business. Each violation comes back as a call of
+a tool — <code>replace_in_body</code> or <code>replace_in_duties</code> — which is only a schema:
+the code applies the replacement, in the order the calls came, and asks
+again. A round with no call ends the review. A replacement whose text is not
+found goes back to the model as a FAILED REPLACEMENT. After five rounds
+(<code>MAX_VALIDATIONS</code>) the CV goes on with the last edits: a CV with a doubtful
+line in it is worth more to you than an error.</p>
+<p>The validators count no pages. The page limit is the render's business alone.</p>
+<h2 id="the-render">The render<a class="headerlink" href="#the-render" title="Permanent link">&para;</a></h2>
+<p>After the highlight the CV is rendered — your <code>candidate_data</code> merged over
+the top, the scores removed — and its pages are counted. While it runs past
+the page limit (<code>pages</code>, 2 by default), one duty goes: of the experiences with
+more duties than the format's minimum, the duty whose removal loses the
+fewest coverage points; on a tie, the one with the lowest total score, then
+the older experience's. Then it is rendered again. When no duty can go, the
+longer CV is delivered.</p>
+<p>Every render is of the merged document, so every page count is the page
+count of the CV you will send. <strong>That is why the endpoint takes
+<code>candidate_data</code>.</strong> No model is ever shown it: the highlighter sees what the
+models wrote, and your data goes over the top at the render, so a field a
+model invents can never replace a real name, email or address.</p>
+<p>The renders before the last stay in the job's scratch directory. Only the
+final PDF is sent, in the result.</p>
+<h2 id="retries-budgets-and-what-each-failure-costs">Retries, budgets and what each failure costs<a class="headerlink" href="#retries-budgets-and-what-each-failure-costs" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Guard</th>
+<th>Limit</th>
+<th>Set by</th>
+<th>On exhaustion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Calls per model request (empty, cut off, or not the JSON asked for)</td>
+<td>3</td>
+<td><code>ATTEMPTS</code> in <code>models/selector.py</code></td>
+<td><code>502 model_output</code>, except for the highlight</td>
+</tr>
+<tr>
+<td>Highlight</td>
+<td>the same</td>
+<td>the same</td>
+<td>a warning; the CV is delivered unmarked</td>
+</tr>
+<tr>
+<td>Validation rounds per document</td>
+<td>5</td>
+<td><code>MAX_VALIDATIONS</code> in <code>pipeline/cv_review.py</code></td>
+<td>the CV goes on with the last edits</td>
+</tr>
+<tr>
+<td>Wall clock for the whole run</td>
+<td>1200 s</td>
+<td><code>ATS_REQUEST_BUDGET_SECONDS</code></td>
+<td><code>504 budget_exceeded</code>, checked before each step</td>
+</tr>
+<tr>
+<td>One <code>pdflatex</code> compile</td>
+<td>120 s</td>
+<td><code>ATS_LATEX_TIMEOUT</code></td>
+<td><code>504 latex_timeout</code></td>
+</tr>
+</tbody>
+</table>
+<p>A reply that is JSON is parsed and its type checked — a list or an object —
+and nothing more, as adapticv-ai does: no schema is enforced. A reply whose
+items do not line up with what was asked (fewer scores than items) fails the
+job.</p>
+<h2 id="what-the-client-sees-while-it-runs">What the client sees while it runs<a class="headerlink" href="#what-the-client-sees-while-it-runs" title="Permanent link">&para;</a></h2>
+<p>The job's session streams a <code>status</code> event as each step starts, with one line
+about the step that just finished: what it produced, and its tokens, thinking
+and time. Between them come an <code>artifact</code> event with each step's result, as
+the JSON it is, and the <code>log</code> and <code>usage</code> events that say what each model
+call did and cost.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cv"</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">"detail"</span><span class="p">:</span><span class="w"> </span><span class="s2">"format A: experiences [0, 1, 2], duties [8, 8, 6], tokens used=4210, thinking=1952, elapsed=24.3s"</span><span class="p">}</span>
+</code></pre></div>
+<p>The render belongs to the <code>highlight</code> step: it takes a second or a few.</p>
+<p>The session ends with a <code>result</code> event — the document, its LaTeX and its PDF,
+and what the whole run cost — or, for a job that failed, an <code>error</code> event
+with the status and cause the work produced (<code>502</code>, <code>504</code>, <code>422</code>) and what it
+cost anyway. Either way it is the last thing the stream carries.</p>
+<h2 id="changing-it-for-one-request">Changing it for one request<a class="headerlink" href="#changing-it-for-one-request" title="Permanent link">&para;</a></h2>
+<p>Every prompt and both schemas the writer is shown can be replaced by a part
+of the same name: <code>sys_prompt_jd_evaluation</code>, <code>sys_prompt_profile_scoring</code>,
+<code>sys_prompt_format_selection</code>, <code>sys_prompt_cv_body</code>, <code>cv_body_schema</code>,
+<code>sys_prompt_cv_duties</code>, <code>cv_duties_schema</code>, <code>sys_prompt_validation_body</code>,
+<code>sys_prompt_validation_duties</code>, <code>sys_prompt_highlight</code>. So can the template
+and its images. The prompts and schemas are what the models read: editing one
+changes what they write.</p>
+<p>Each step's model settings can be replaced too: <code>&lt;step&gt;_extra_body</code>, a JSON
+object, supersedes every setting <code>models.toml</code> gives that step — temperature,
+thinking, reasoning effort, the output cap, its own <code>extra_body</code> — and only the
+model, the endpoint and what you sent go out.</p>
+<h2 id="what-comes-back">What comes back<a class="headerlink" href="#what-comes-back" title="Permanent link">&para;</a></h2>
+<p>The <code>result</code> event's <code>cv</code> is <code>{document, tex, pdf_base64}</code>.</p>
+<p><code>document</code> is one flat object: what the models wrote, without the scores,
+with your <code>candidate_data</code> merged <strong>over the top</strong>. It has no schema of its
+own — what the template reads from it is between you and the template. Store
+it, edit it, and post it back to <code>POST /v1/cv/render</code>, which costs one LaTeX
+compile and no model call.</p>
+<h2 id="rendering">Rendering<a class="headerlink" href="#rendering" title="Permanent link">&para;</a></h2>
+<p><code>render_document()</code> is pure up to the compile: the document is escaped for
+LaTeX (including turning <code>**bold**</code> into <code>\textbf{}</code> and <code>*italics*</code> into
+<code>\textit{}</code>), <code>generation_date</code> is added — so re-rendering yesterday's file
+dates it today — and Jinja fills the template. The Jinja delimiters are
+LaTeX-safe: <code>\VAR{}</code>, <code>\BLOCK{}</code>, <code>\#{}</code>.</p>
+<p>Images sent with the request are written next to the <code>.tex</code> under exactly the
+file name the part carried, because <code>\includegraphics</code> resolves relative to
+it. One <code>pdflatex</code> pass, not two: the shipped template has no <code>\ref</code>,
+<code>\label</code> or <code>\tableofcontents</code>, so a second pass would change nothing.</p>
+<h2 id="the-other-three-pipelines">The other three pipelines<a class="headerlink" href="#the-other-three-pipelines" title="Permanent link">&para;</a></h2>
+<p>None has a loop. Each runs on its own model: <code>detect</code>, <code>analysis</code> and <code>letter</code>.</p>
+<ul>
+<li><strong><code>jd_validator.detect</code></strong> — the free structural checks first (length band,
+  no binary payload: <code>static_jd_guess</code>, shared with the client), and only if
+  they pass does it cost one small model call.</li>
+<li><strong><code>jd_validator.analyze</code></strong> — extracts the posting's facts and scores it
+  against your profile and your stated preferences. Up to three calls, the
+  validation error fed back between them.</li>
+<li><strong><code>letter_generator.generate</code></strong> — prose in, prose out; 180–450 words,
+  validated. The prompt asks the model to look the employer up when it can
+  search the web; whether it can is the <code>letter</code> role's <code>extra_body</code>.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+  
+
+
+<h4>Cookie consent</h4>
+<p>We use cookies to recognize your repeated visits and preferences, as well as to measure the effectiveness of our documentation and whether users find what they're searching for. With your consent, you're helping us to make our documentation better.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="github" checked>
+      <span class="task-list-indicator"></span>
+      GitHub
+    </label>
+  </li>
+
+      
+    
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">Accept</button>
+    
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">Manage settings</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.sections", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "provider": "mike"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
