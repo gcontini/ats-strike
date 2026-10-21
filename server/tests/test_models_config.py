@@ -1,9 +1,9 @@
-"""models.toml and its RESUMIX_<ROLE>_<FIELD> overrides."""
+"""models.toml and its ATS_<ROLE>_<FIELD> overrides."""
 
 import pytest
 from pydantic import ValidationError
 
-from resumix_server.models import MODEL_ROLES, load_model_config
+from cv_server.models import MODEL_ROLES, load_model_config
 
 TOML = """
 [provider]
@@ -59,17 +59,17 @@ def test_parses_every_role_with_its_defaults(load):
 
 
 def test_env_overrides_any_key_with_its_type(load, monkeypatch):
-    monkeypatch.setenv("RESUMIX_CV_TEMPERATURE", "0.7")
-    monkeypatch.setenv("RESUMIX_CV_API", "responses")
-    monkeypatch.setenv("RESUMIX_CV_USE_ALTERNATE_PROVIDER", "3")
-    monkeypatch.setenv("RESUMIX_CV_EXTRA_BODY", '{"enable_search": true}')
+    monkeypatch.setenv("ATS_CV_TEMPERATURE", "0.7")
+    monkeypatch.setenv("ATS_CV_API", "responses")
+    monkeypatch.setenv("ATS_CV_USE_ALTERNATE_PROVIDER", "3")
+    monkeypatch.setenv("ATS_CV_EXTRA_BODY", '{"enable_search": true}')
     cv = load().models["cv"]
     assert (cv.temperature, cv.api, cv.use_alternate_provider) == (0.7, "responses", 3)
     assert cv.extra_body == {"enable_search": True}
 
 
 def test_an_empty_env_value_drops_the_key(load, monkeypatch):
-    monkeypatch.setenv("RESUMIX_ANALYSIS_TEMPERATURE", "")
+    monkeypatch.setenv("ATS_ANALYSIS_TEMPERATURE", "")
     assert load().models["analysis"].temperature is None
 
 

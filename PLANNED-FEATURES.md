@@ -8,9 +8,9 @@ change that made them obvious.
 `POST /v1/cv` returns before its work is done, so a caller that walks away —
 Ctrl-C, a closed laptop, a crashed client — leaves a worker thread writing a
 CV. Running the same posting again picks that CV up, so the work is not
-wasted; but the job holds one of the `RESUMIX_MAX_CONCURRENT_JOBS` slots until
+wasted; but the job holds one of the `ATS_MAX_CONCURRENT_JOBS` slots until
 it ends, and until then its session cannot be acknowledged, so `--new` and
-`resumix reset` cannot drop it either.
+`cv reset` cannot drop it either.
 
 `DELETE /v1/cv/{id}` is taken: it acknowledges a session that has ended, and
 answers `409` while the job runs. A cancel is its own call — `POST

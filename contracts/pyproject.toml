@@ -1,7 +1,7 @@
 [project]
-name = "resumix-contracts"
+name = "ats-strike-contracts"
 version = "0.5.0"
-description = "Wire format shared by the resumix server and client: CV/JD models and the response envelope."
+description = "Wire format shared by the ats-strike server and client: CV/JD models and the response envelope."
 requires-python = ">=3.12"
 license = "MIT"
 dependencies = [

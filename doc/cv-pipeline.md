@@ -4,7 +4,7 @@ What `POST /v1/cv` does with the minutes it takes: six steps, each on a model
 of its own, then a render that trims the CV until it fits. The method is the
 one adapticv-ai worked out.
 
-The code is `server/src/resumix_server/pipeline/cv_generator.py`
+The code is `server/src/cv_server/pipeline/cv_generator.py`
 (`CVGenerator`, the steps as a LangGraph graph), `cv_review.py` (the
 validation loop) and `cv_renderer.py` (the compile and the page count).
 
@@ -122,8 +122,8 @@ final PDF is sent, in the result.
 | Calls per model request (empty, cut off, or not the JSON asked for) | 3 | `ATTEMPTS` in `models/selector.py` | `502 model_output`, except for the highlight |
 | Highlight | the same | the same | a warning; the CV is delivered unmarked |
 | Validation rounds per document | 5 | `MAX_VALIDATIONS` in `pipeline/cv_review.py` | the CV goes on with the last edits |
-| Wall clock for the whole run | 1200 s | `RESUMIX_REQUEST_BUDGET_SECONDS` | `504 budget_exceeded`, checked before each step |
-| One `pdflatex` compile | 120 s | `RESUMIX_LATEX_TIMEOUT` | `504 latex_timeout` |
+| Wall clock for the whole run | 1200 s | `ATS_REQUEST_BUDGET_SECONDS` | `504 budget_exceeded`, checked before each step |
+| One `pdflatex` compile | 120 s | `ATS_LATEX_TIMEOUT` | `504 latex_timeout` |
 
 A reply that is JSON is parsed and its type checked — a list or an object —
 and nothing more, as adapticv-ai does: no schema is enforced. A reply whose

@@ -9,7 +9,7 @@ output "push_repository" {
 }
 
 output "sessions_bucket" {
-  description = "OSS bucket that holds the CV sessions, mounted at /mnt/resumix."
+  description = "OSS bucket that holds the CV sessions, mounted at /mnt/ats-strike."
   value       = alicloud_oss_bucket.sessions.bucket
 }
 

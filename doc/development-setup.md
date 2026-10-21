@@ -1,6 +1,6 @@
 # Developing locally, in VS Code
 
-This page is for working on resumix itself: both halves on your own machine,
+This page is for working on ats-strike itself: both halves on your own machine,
 under the debugger, breakpoints on either side of the HTTP call. No
 container, no cloud instance — the client's `server_url` is `localhost`, and
 if you point the server at a local model endpoint too, nothing leaves the
@@ -37,10 +37,10 @@ cp .env.example .env
 
 Fill in `MODEL_API_KEY` and `MODEL_BASE_URL` for the provider you use — see
 the "API keys" section of the repository's `server/README.md`.
-`resumix_server` loads `.env` itself (`python-dotenv`), so nothing in
+`cv_server` loads `.env` itself (`python-dotenv`), so nothing in
 launch.json needs to pass it along.
 
-Leave `RESUMIX_API_TOKEN` unset. That is fine here for the same reason it is
+Leave `ATS_API_TOKEN` unset. That is fine here for the same reason it is
 fine in deployment's scenario 1: nothing but your own machine can reach
 `localhost:8080`.
 
@@ -58,13 +58,13 @@ MODEL_API_KEY=anything   # Ollama ignores it, but the OpenAI client requires one
 
 | Name | Runs |
 |---|---|
-| `server (resumix-api)` | `resumix_server.server:main` in-process — the same entry point as `uv run resumix-api`, just under `debugpy` |
-| `client (submit-raw)` | `resumix submit-raw examples/posting.txt` against the example candidate in `examples/candidate/` — one CV, no clipboard, no confirmation prompt. The quickest way to prove the two halves talk to each other |
+| `server (ats-strike)` | `cv_server.server:main` in-process — the same entry point as `uv run ats-strike`, just under `debugpy` |
+| `client (submit-raw)` | `cv submit-raw examples/posting.txt` against the example candidate in `examples/candidate/` — one CV, no clipboard, no confirmation prompt. The quickest way to prove the two halves talk to each other |
 | `client (clipboard)` | The interactive mode, against the same example data |
 
 and one compound, **`server + client (clipboard)`**, that starts both. Each
-runs as its own `debugpy` session, so a breakpoint in `resumix_server` and one
-in `resumix_client` both work at the same time — they are two processes, not
+runs as its own `debugpy` session, so a breakpoint in `cv_server` and one
+in `cv_client` both work at the same time — they are two processes, not
 one call stack, so stepping through one will not show you the other side of
 the HTTP request.
 
@@ -75,14 +75,14 @@ the HTTP request.
    on http://0.0.0.0:8080` in its Debug Console before copying a posting.
 2. Copy the text of the repository's `examples/posting.txt` (or any real
    one). The client asks whether to submit; say `y`. Output lands under
-   `resumix-data/dev/`.
+   `ats-strike-data/dev/`.
 3. To check just the wiring without touching the clipboard, run
    `client (submit-raw)` on its own against an already-running server — it
    needs no confirmation and exits when done, which is also the one that
    works over an SSH or container remote with no clipboard to read.
 
-Breakpoints in `resumix_server/api/` catch a request as it arrives;
-breakpoints in `resumix_client/` catch it being built or the response being
+Breakpoints in `cv_server/api/` catch a request as it arrives;
+breakpoints in `cv_client/` catch it being built or the response being
 parsed. `curl localhost:8080/healthz` works the whole time, from either a
 terminal or the client's own startup check.
 
@@ -107,8 +107,8 @@ except `/v1/cv` and `/v1/cv/render` still works — `/v1/jd/detect` and
 
 | What you see | What to do |
 |---|---|
-| `ModuleNotFoundError: resumix_client` / `resumix_server` | VS Code is using a different interpreter than `.venv`. Reselect it, or re-run `uv sync` |
-| `cannot reach the resumix server at http://localhost:8080` | The `server (resumix-api)` session is not running, or is still starting — check its Debug Console |
+| `ModuleNotFoundError: cv_client` / `cv_server` | VS Code is using a different interpreter than `.venv`. Reselect it, or re-run `uv sync` |
+| `cannot reach the ats-strike server at http://localhost:8080` | The `server (ats-strike)` session is not running, or is still starting — check its Debug Console |
 | `"status": "degraded"` from `/healthz` | No `pdflatex` on `PATH`; see [above](#pdflatex-without-the-container) |
 | `no clipboard here: neither DISPLAY nor WAYLAND_DISPLAY…` | `apt install xclip` (X11) or `wl-clipboard` (Wayland) locally, or a devcontainer/SSH remote with no display at all — use `client (submit-raw)` instead |
 | `RuntimeError: ... is not set. Set it in your .env` | `MODEL_API_KEY` is empty in `.env` at the repository root |

@@ -6,9 +6,9 @@ import threading
 
 import pytest
 
-from resumix_client.stages.calls import Calls
-from resumix_client.stages.inbox import InputProcessor
-from resumix_client.workspace import day
+from cv_client.stages.calls import Calls
+from cv_client.stages.inbox import InputProcessor
+from cv_client.workspace import day
 
 from conftest import JD_TEXT, analysis, make_job
 
@@ -180,7 +180,7 @@ def test_a_folder_with_a_bad_analysis_goes_to_error(reader, inbox, workspace):
 
 
 def test_hidden_entries_are_left_alone(reader, inbox, workspace, api):
-    """A dot folder is one ``resumix analysis`` is still writing."""
+    """A dot folder is one ``cv analysis`` is still writing."""
     (inbox / ".posting.txt").write_text(JD_TEXT)
     make_job(inbox, ".Acme_Corp_Head_of_IT")
     scan(reader)
@@ -192,7 +192,7 @@ def test_hidden_entries_are_left_alone(reader, inbox, workspace, api):
 
 def test_a_file_still_being_written_waits(reader, inbox, api, monkeypatch):
     sizes = iter(range(100))
-    monkeypatch.setattr("resumix_client.stages.inbox._footprint",
+    monkeypatch.setattr("cv_client.stages.inbox._footprint",
                         lambda path: (1, next(sizes)))
     (inbox / "posting.txt").write_text(JD_TEXT)
     scan(reader)

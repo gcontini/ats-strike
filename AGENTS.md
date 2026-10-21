@@ -9,7 +9,7 @@ because breaking it has a cost we have already paid once.
   owns paths and moves and nothing else. `WorkingProcessor` decides where a
   job folder goes next and makes every move. If you cannot say what a class
   does in one sentence without "and", split it.
-- **Depend on protocols, not implementations.** `ResumixApi`, `JDSource`,
+- **Depend on protocols, not implementations.** `CVApi`, `JDSource`,
   `Confirmer`, `Tracker` exist so the modes can be tested with no server, no
   terminal and no spreadsheet. A new source of job descriptions should be a
   new `JDSource` and no change anywhere else.
@@ -17,7 +17,7 @@ because breaking it has a cost we have already paid once.
   imports the other; `tests/test_architecture.py` enforces it. The contracts
   package imports nothing but pydantic — it is loaded by a web server and by a
   frozen executable, and has to stay cheap in both.
-- **The pipeline is a library.** Everything under `resumix_server/pipeline/`
+- **The pipeline is a library.** Everything under `cv_server/pipeline/`
   takes its inputs in memory and returns its outputs. It reads no
   configuration, resolves no paths and writes nothing outside the scratch
   directory it is handed. That is what makes it safe to run per request.
@@ -39,7 +39,7 @@ because breaking it has a cost we have already paid once.
   question: a CV takes minutes, and it is written while you read the next
   posting. That is the one concurrency there is; nothing inside a stage runs
   in parallel.
-- **KISS: this runs for one person, not at scale.** Resumix is personal
+- **KISS: this runs for one person, not at scale.** ats-strike is personal
   tooling, not a production service with many tenants. Don't add retries,
   caching layers, queues, connection pools, horizontal scaling or config
   knobs to handle load that will never arrive. If a single-process,

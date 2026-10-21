@@ -4,16 +4,16 @@ from __future__ import annotations
 
 import pytest
 
-from resumix_client.config import ConfigError, load_config
+from cv_client.config import ConfigError, load_config
 
 
 @pytest.fixture
 def home(tmp_path, monkeypatch):
     """A folder that stands in for the current folder."""
     monkeypatch.chdir(tmp_path)
-    monkeypatch.delenv("RESUMIX_API_URL", raising=False)
-    monkeypatch.delenv("RESUMIX_API_TOKEN", raising=False)
-    monkeypatch.delenv("RESUMIX_CONFIG", raising=False)
+    monkeypatch.delenv("ATS_API_URL", raising=False)
+    monkeypatch.delenv("ATS_API_TOKEN", raising=False)
+    monkeypatch.delenv("ATS_CONFIG", raising=False)
     return tmp_path
 
 
@@ -31,7 +31,7 @@ def test_files_in_the_current_folder_are_found_by_name(home):
 
 
 def test_extra_body_tables_are_read_by_role(home):
-    (home / "resumix.toml").write_text(
+    (home / "cv.toml").write_text(
         '[extra_body.cv]\ntemperature = 0.7\n\n[extra_body.analysis]\ntop_p = 0.5\n'
     )
     assert load_config().extra_body == {"cv": {"temperature": 0.7}, "analysis": {"top_p": 0.5}}
@@ -42,26 +42,26 @@ def test_no_extra_body_means_the_server_s_settings(home):
 
 
 def test_the_config_file_is_read_from_the_same_place(home):
-    (home / "resumix.toml").write_text('server_url = "https://cv.example"\ntoken = "abc"\n')
+    (home / "cv.toml").write_text('server_url = "https://cv.example"\ntoken = "abc"\n')
     config = load_config()
     assert (config.server_url, config.token) == ("https://cv.example", "abc")
 
 
 def test_the_environment_beats_the_config_file(home, monkeypatch):
-    (home / "resumix.toml").write_text('server_url = "https://from-file"\n')
-    monkeypatch.setenv("RESUMIX_API_URL", "https://from-env")
+    (home / "cv.toml").write_text('server_url = "https://from-file"\n')
+    monkeypatch.setenv("ATS_API_URL", "https://from-env")
     assert load_config().server_url == "https://from-env"
 
 
 def test_the_command_line_beats_everything(home, monkeypatch):
-    (home / "resumix.toml").write_text('server_url = "https://from-file"\n')
-    monkeypatch.setenv("RESUMIX_API_URL", "https://from-env")
+    (home / "cv.toml").write_text('server_url = "https://from-file"\n')
+    monkeypatch.setenv("ATS_API_URL", "https://from-env")
     config = load_config(overrides={"server_url": "https://from-flag"})
     assert config.server_url == "https://from-flag"
 
 
 def test_unset_flags_do_not_erase_the_config_file(home):
-    (home / "resumix.toml").write_text('cover_letter = "yes"\n')
+    (home / "cv.toml").write_text('cover_letter = "yes"\n')
     assert load_config(overrides={"cover_letter": None}).cover_letter == "yes"
 
 
@@ -70,20 +70,20 @@ def test_an_explicit_path_overrides_discovery(home):
     elsewhere = home / "real"
     elsewhere.mkdir()
     (elsewhere / "mine.json").write_text("{}")
-    (home / "resumix.toml").write_text(
+    (home / "cv.toml").write_text(
         '[files]\nprofile = "real/mine.json"\n'
     )
     assert load_config().path("candidate_profile.json") == elsewhere / "mine.json"
 
 
 def test_a_path_that_does_not_exist_is_refused(home):
-    (home / "resumix.toml").write_text('[files]\nprofile = "nope.json"\n')
+    (home / "cv.toml").write_text('[files]\nprofile = "nope.json"\n')
     with pytest.raises(ConfigError, match="does not exist"):
         load_config()
 
 
 def test_an_unknown_file_entry_is_refused(home):
-    (home / "resumix.toml").write_text('[files]\nwhatever = "x"\n')
+    (home / "cv.toml").write_text('[files]\nwhatever = "x"\n')
     with pytest.raises(ConfigError, match="unknown entry"):
         load_config()
 

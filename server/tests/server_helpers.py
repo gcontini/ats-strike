@@ -11,13 +11,13 @@ from pathlib import Path
 
 import httpx
 
-from resumix_server.models import MODEL_ROLES, ModelConfig, ModelSelector, ModelSpec
+from cv_server.models import MODEL_ROLES, ModelConfig, ModelSelector, ModelSpec
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EXAMPLE_CANDIDATE = REPO_ROOT / "examples" / "candidate"
 GOLDEN = Path(__file__).parent / "golden"
 
-os.environ.setdefault("RESUMIX_FAKE_KEY", "test-key")
+os.environ.setdefault("ATS_FAKE_KEY", "test-key")
 
 
 #: What the cv role writes for the body, in the scripted run.
@@ -114,7 +114,7 @@ class FakeLLM(ModelSelector):
     def __init__(self, **specs: dict) -> None:
         self.roles = {role: FakeRole() for role in MODEL_ROLES}
         config = ModelConfig(
-            provider={"api_key_env": "RESUMIX_FAKE_KEY", "base_url": "http://fake.invalid/v1"},
+            provider={"api_key_env": "ATS_FAKE_KEY", "base_url": "http://fake.invalid/v1"},
             defaults={},
             models={
                 role: ModelSpec(model=f"fake-{role}", **specs.get(role, {})) for role in MODEL_ROLES

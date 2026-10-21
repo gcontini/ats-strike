@@ -6,11 +6,11 @@
 # Versions are pinned in pyproject.toml's `docs` group: MkDocs 1.x and Material
 # 9.x. Material is what renders the mermaid fences and the theming below; a
 # plain mkdocs theme would print the diagrams as code blocks.
-site_name: resumix
+site_name: ats-strike
 site_description: Turn a job description into a tailored LaTeX CV, with any OpenAI-compatible model.
-repo_url: https://github.com/gcontini/resumix
+repo_url: https://github.com/gcontini/ats-strike
 # Where the built site lives. mike needs it for the version selector's links.
-site_url: https://gcontini.github.io/resumix/
+site_url: https://gcontini.github.io/ats-strike/
 docs_dir: doc
 
 # Flat page/index.html folders buy nothing here — doc/ has no subfolders to
@@ -25,7 +25,7 @@ theme:
   name: material
   # doc/images/, not doc/icons/ — strict mode checks links, not asset paths,
   # so a wrong one here is a 404 on every page and a green build.
-  logo: images/resumix-icon-128.png
+  logo: images/ats-strike-icon-128.png
   favicon: images/favicon.ico
   # Without this, Material's default repo icon is a generic git logo, not
   # the recognizable GitHub mark, even though repo_url already links there.
@@ -70,7 +70,7 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
 
 nav:
-  - resumix: index.md
+  - ats-strike: index.md
   - How it works:
       - Architecture: architecture.md
       - The CV pipeline: cv-pipeline.md

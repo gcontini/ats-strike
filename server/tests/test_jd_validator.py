@@ -5,8 +5,8 @@ import json
 import pytest
 from pydantic import ValidationError
 
-from resumix_contracts import JDAnalysis
-from resumix_server.pipeline.jd_validator import JDValidator
+from cv_contracts import JDAnalysis
+from cv_server.pipeline.jd_validator import JDValidator
 from server_helpers import FakeLLM
 
 VALID = {

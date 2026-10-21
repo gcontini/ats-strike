@@ -5,7 +5,7 @@
 ```mermaid
 flowchart TB
     subgraph your["your machine"]
-        CLI["<b>resumix</b> (client)<br/>single executable"]
+        CLI["<b>cv</b> (client)<br/>single executable"]
         FILES["candidate_profile.json<br/>candidate_data.json<br/>candidate_preferences.md<br/>resume.tex.jinja · prompts · images"]
         OUT["cv/ · discarded/ · error/ · working/<br/>applications.xlsx"]
         FILES --> CLI
@@ -13,14 +13,14 @@ flowchart TB
     end
 
     subgraph wire["contracts"]
-        CT["resumix_contracts<br/>Envelope · CVStatus · RenderedCV<br/>JDAnalysis · JDDetection · LogEntry<br/>CV session events · static_jd_guess"]
+        CT["cv_contracts<br/>Envelope · CVStatus · RenderedCV<br/>JDAnalysis · JDDetection · LogEntry<br/>CV session events · static_jd_guess"]
     end
 
     subgraph host["wherever you run it"]
-        API["<b>resumix-server</b><br/>FastAPI + uvicorn"]
+        API["<b>ats-strike-server</b><br/>FastAPI + uvicorn"]
         PIPE["pipeline<br/>jd_validator · cv_generator (LangGraph) · cv_review<br/>cv_renderer · letter_generator"]
         RES["resources<br/>11 prompts · 2 schemas · resume.tex.jinja<br/>models.toml"]
-        STORE["RESUMIX_WORK_DIR<br/>one session per CV job"]
+        STORE["ATS_WORK_DIR<br/>one session per CV job"]
         API --> PIPE
         RES --> PIPE
         PIPE --> STORE
@@ -55,7 +55,7 @@ accounts and no seeded state; the only thing it keeps is a CV job's session,
 one directory of events:
 
 ```text
-$RESUMIX_WORK_DIR/<session id>/events/
+$ATS_WORK_DIR/<session id>/events/
     000001.json   {"type": "status", "data": {...}}
     000002.json   {"type": "log", "data": {...}}
     000003.json   {"type": "usage", "data": {...}}
@@ -71,7 +71,7 @@ what is new; the one file that may not read whole yet is the newest, so a
 reader stops there and finds it complete on its next look. The session id is
 the client's: the SHA-256 of the posting's text, so the same posting finds its
 session again. A session is deleted when the client acknowledges it, or once
-its last event is older than `RESUMIX_SESSION_TTL_DAYS`; a running one, never.
+its last event is older than `ATS_SESSION_TTL_DAYS`; a running one, never.
 The scratch directory a job compiles in is on local disk, and is gone with the
 job.
 
@@ -80,7 +80,7 @@ job.
 ```mermaid
 flowchart TB
     REQ["request"] --> MW["RequestContextMiddleware<br/>assigns request_id, binds the Run"]
-    MW --> AUTH{"RESUMIX_API_TOKEN set?"}
+    MW --> AUTH{"ATS_API_TOKEN set?"}
     AUTH -->|"no match"| E401["401 unauthorized"]
     AUTH -->|"ok / not set"| PARTS["multipart parts<br/>size, UTF-8, JSON, ≤10 images"]
     PARTS --> SLOT{"a free job slot?"}
@@ -101,7 +101,7 @@ events that are there.
   decides what an exception produces on the wire, so a failure body has the
   same shape as a success: a `request_id`, `ok: false` and one line naming the
   kind and the stage. See [error model](protocol.md#errors).
-- **One semaphore.** `RESUMIX_MAX_CONCURRENT_JOBS` (10) bounds requests in
+- **One semaphore.** `ATS_MAX_CONCURRENT_JOBS` (10) bounds requests in
   flight. A full server refuses immediately rather than queueing a caller for
   minutes.
 - **The pipeline is a library.** Everything under `pipeline/` takes its inputs
@@ -135,7 +135,7 @@ table of `resources/models.toml`. Every role calls it, except a role that sets
 
 See [the CV pipeline](cv-pipeline.md) for how the last six fit together.
 
-Every call goes through `resumix_server.models`: one LangChain chat model per
+Every call goes through `cv_server.models`: one LangChain chat model per
 role, built once at startup by the role's `model_provider` (`standard`, on
 `ChatOpenAI`, or `deepseek`, on `ChatDeepSeek`), and two methods.
 `ModelSelector.call_llm(role, type, system_prompt, messages)` returns the reply
@@ -145,7 +145,7 @@ made. Both retry a reply that is empty, cut off or invalid — three calls in
 all, each retry told what was wrong. Provider-specific request fields
 (`thinking_budget`, `enable_search`) are the role's `extra_body`, sent as
 given: nothing checks a combination against what the endpoint supports. Any
-key of a role can be overridden with a `RESUMIX_<ROLE>_<FIELD>` environment
+key of a role can be overridden with a `ATS_<ROLE>_<FIELD>` environment
 variable without editing the file; an empty value drops the key. A request
 can bring a `<role>_extra_body` for every role but `detect`, which supersedes
 all of that role's settings for that request.
@@ -175,7 +175,7 @@ The consequences are worth knowing before you deploy:
   starting process ends every session that has not ended with a `503` error —
   correct for its own orphans, wrong for a sibling's live jobs.
 - **A job cannot be cancelled yet.** An abandoned one holds a slot until its
-  own budget runs out (`RESUMIX_REQUEST_BUDGET_SECONDS`, 20 minutes), and its
+  own budget runs out (`ATS_REQUEST_BUDGET_SECONDS`, 20 minutes), and its
   session cannot be acknowledged until then.
 
 ## Observability

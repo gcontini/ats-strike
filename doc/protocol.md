@@ -3,7 +3,7 @@
 Everything is `multipart/form-data` in and JSON out. There is no database and
 no accounts: every request carries what it needs. The one thing the server
 keeps is a CV job's session — the events it streams — until the client says it
-has everything, or until it is older than `RESUMIX_SESSION_TTL_DAYS`.
+has everything, or until it is older than `ATS_SESSION_TTL_DAYS`.
 
 Base URL is wherever you run it — `http://localhost:8080` by default. The
 interactive OpenAPI page FastAPI generates is at `/docs`.
@@ -14,14 +14,14 @@ interactive OpenAPI page FastAPI generates is at `/docs`.
 plain field (`-F jd_text=...`); the file wins if you send both. JSON parts
 (`candidate_profile`, `candidate_data`, `document`, `analysis`) must be files,
 must parse, and must be JSON *objects*. A UTF-8 BOM is stripped. Any single
-part over `RESUMIX_MAX_PART_BYTES` (2 MB) is refused with `413` before it is
+part over `ATS_MAX_PART_BYTES` (2 MB) is refused with `413` before it is
 read.
 
 **Images.** The `images` part is repeatable, at most 10 per request. Each
 part's **file name** is the name the template includes it under — that is the
 whole interface. Path components are stripped.
 
-**Auth.** If `RESUMIX_API_TOKEN` is set, every `/v1/...` call must send
+**Auth.** If `ATS_API_TOKEN` is set, every `/v1/...` call must send
 `Authorization: Bearer <token>`; `/healthz` stays open so a platform probe
 works. With no token set, the server is open to anyone who
 can reach it, which is only reasonable on a private network.
@@ -94,12 +94,12 @@ curl -F jd=@JD.txt localhost:8080/v1/jd/detect
 |---|---|---|
 | `jd` / `jd_text` | required | The text to check |
 
-Structural checks run first — length band (`RESUMIX_JD_MIN_CHARS` …
+Structural checks run first — length band (`ATS_JD_MIN_CHARS` …
 `_MAX_CHARS`, 500–30000 by default), no binary payload — and only if they
 pass does it cost one small model call. The answer is
 `{"is_job_description": true|false}`; why it was rejected is in the request's
 log, not in the reply. The same structural check ships in
-`resumix_contracts.static_jd_guess`, so a client can run it before spending
+`cv_contracts.static_jd_guess`, so a client can run it before spending
 the call at all.
 
 ## `POST /v1/jd/analysis`
@@ -207,7 +207,7 @@ the session it already has, and a client that died, or lost its connection,
 loses nothing it paid for. When the id already has a session, nothing is
 started — no slot is claimed either — and the answer says `"reattached":
 true`: follow its events as for a new one. Sessions whose last event is older
-than `RESUMIX_SESSION_TTL_DAYS` (1 by default) are deleted first, so an old one
+than `ATS_SESSION_TTL_DAYS` (1 by default) are deleted first, so an old one
 is not found. With no `X-Request-Id`, the server picks an id and every POST is
 a new job. `429 too_many_jobs` applies to a new job only.
 
@@ -263,7 +263,7 @@ data: {"cv": {"document": {…}, "tex": "\\documentclass…", "pdf_base64": "JVB
 
 `detail` is written for a person: what the step that just finished produced,
 and what it cost. An `artifact` is JSON, not a file: the client stores each
-one as it likes — the resumix client as `steps/<name>.json` beside the CV.
+one as it likes — the ats-strike client as `steps/<name>.json` beside the CV.
 No PDF is ever an artifact; the only one sent is the result's. `total` adds
 up every model call of the run, so a failed job still says what it cost.
 
@@ -356,10 +356,10 @@ the TeX log says where the document breaks:
 | Status | Kind | Means |
 |---|---|---|
 | `400` | `bad_request`, `missing_part`, `bad_part` | A required part is absent, empty, not UTF-8, not JSON, not an object, or mutually exclusive parts were both sent |
-| `401` | `unauthorized` | `RESUMIX_API_TOKEN` is set and the request had no matching token. Answers with `WWW-Authenticate: Bearer` |
+| `401` | `unauthorized` | `ATS_API_TOKEN` is set and the request had no matching token. Answers with `WWW-Authenticate: Bearer` |
 | `404` | `unknown_request` | No CV session by that id: acknowledged, older than the server keeps sessions, or never started |
 | `409` | `job_not_ready` | The CV job is still running, so its session cannot be acknowledged yet |
-| `413` | `part_too_large` | A part exceeded `RESUMIX_MAX_PART_BYTES` |
+| `413` | `part_too_large` | A part exceeded `ATS_MAX_PART_BYTES` |
 | `422` | `latex_compile` | The template or the `.tex` does not compile. The end of the TeX log follows the error line |
 | `422` | `validation_error` | An uploaded document does not match the expected schema |
 | `429` | `too_many_jobs` | All job slots are busy. Answers with `Retry-After: 30` |
@@ -376,12 +376,12 @@ line under the request id.
 
 ## The wire format as a package
 
-`resumix_contracts` is the same set of pydantic models the server answers
+`cv_contracts` is the same set of pydantic models the server answers
 with, published as its own package so a client can import it instead of
 hand-rolling the shapes:
 
 ```python
-from resumix_contracts import (
+from cv_contracts import (
     Envelope, CVStatus, RenderedCV, CoverLetter, ServerStatus,
     JDAnalysis, JDDetection, LogEntry, static_jd_guess,
     EVENT_PAYLOADS, CVArtifact, CVResult, CVFailure, CVSession, ModelCall, TokenUsage,

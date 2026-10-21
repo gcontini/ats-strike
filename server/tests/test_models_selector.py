@@ -3,12 +3,12 @@
 import httpx
 import openai
 import pytest
-from resumix_contracts import JDAnalysis, JDDetection
+from cv_contracts import JDAnalysis, JDDetection
 
-from resumix_server.models import ATTEMPTS, Usage
-from resumix_server.observability import stage
-from resumix_server.pipeline.cv_review import ReplaceInDuties
-from resumix_server.pipeline.errors import ModelOutputError
+from cv_server.models import ATTEMPTS, Usage
+from cv_server.observability import stage
+from cv_server.pipeline.cv_review import ReplaceInDuties
+from cv_server.pipeline.errors import ModelOutputError
 
 from server_helpers import FakeLLM, tool_completion
 

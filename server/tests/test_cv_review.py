@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from resumix_server.models import Usage
-from resumix_server.pipeline.cv_review import (
+from cv_server.models import Usage
+from cv_server.pipeline.cv_review import (
     MAX_VALIDATIONS,
     ReplaceInBody,
     ReplaceInDuties,

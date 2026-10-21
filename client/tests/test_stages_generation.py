@@ -7,14 +7,14 @@ from dataclasses import replace
 
 import openpyxl
 import pytest
-from resumix_contracts import CVFailure, CVStatus, TokenUsage
+from cv_contracts import CVFailure, CVStatus, TokenUsage
 
-from resumix_client.stages.calls import Calls
-from resumix_client.stages.generation import CvWriter, GenerationWorker
-from resumix_client.stages.terminal import TaggedLog
-from resumix_client.stages.working import WorkingProcessor
-from resumix_client.tracking import build_tracker
-from resumix_client.workspace import Artifacts, day
+from cv_client.stages.calls import Calls
+from cv_client.stages.generation import CvWriter, GenerationWorker
+from cv_client.stages.terminal import TaggedLog
+from cv_client.stages.working import WorkingProcessor
+from cv_client.tracking import build_tracker
+from cv_client.workspace import Artifacts, day
 
 from conftest import EXAMPLE_CANDIDATE, JD_TEXT, KEY_POINTS, analysis
 

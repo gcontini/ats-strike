@@ -16,7 +16,7 @@ Actions*:
 
 | Secret | What it is |
 |---|---|
-| `DOCKERHUB_USERNAME` | The Docker Hub account that owns `lmstch/resumix`. |
+| `DOCKERHUB_USERNAME` | The Docker Hub account that owns `lmstch/ats-strike`. |
 | `DOCKERHUB_TOKEN` | An access token for it, not the account password. |
 
 Without them the `image` job fails at `docker login`, after the image has been
@@ -58,8 +58,8 @@ It refuses, before writing anything, when:
 ```mermaid
 flowchart TB
     TAG["<b>tag</b><br/>validate · rewrite three pyprojects<br/>uv lock · commit · tag · push --atomic"]
-    B1["<b>build</b> — ubuntu<br/>pyinstaller → resumix<br/>assert <i>resumix version</i>"]
-    B2["<b>build</b> — windows<br/>pyinstaller → resumix.exe<br/>assert <i>resumix version</i>"]
+    B1["<b>build</b> — ubuntu<br/>pyinstaller → cv<br/>assert <i>cv version</i>"]
+    B2["<b>build</b> — windows<br/>pyinstaller → cv.exe<br/>assert <i>cv version</i>"]
     IMG["<b>image</b><br/>DOCKER_BUILDKIT=0 docker build<br/>assert /healthz version<br/>docker push :x.y.z and :latest"]
     DOC["<b>docs</b><br/>mike deploy x.y.z latest<br/>mike set-default latest<br/>→ gh-pages → deploy-pages"]
     PKG["<b>package</b><br/>download both binaries<br/>assemble · tar.gz<br/>gh release create"]
@@ -89,8 +89,8 @@ written in one place and everything else reads it:
 |---|---|
 | `contracts/`, `server/`, `client/` `pyproject.toml` | the workflow, with `sed` |
 | `uv.lock` | `uv lock`, in the same commit |
-| `resumix version`, and every `--verbose` run | `importlib.metadata.version("resumix-client")` |
-| `/healthz` and the OpenAPI document | `importlib.metadata.version("resumix-server")` |
+| `cv version`, and every `--verbose` run | `importlib.metadata.version("ats-strike-client")` |
+| `/healthz` and the OpenAPI document | `importlib.metadata.version("ats-strike-server")` |
 
 `uv.lock` is in that list because it records each workspace member's version
 as well. A bump that did not regenerate it would commit a lock that disagrees
@@ -100,7 +100,7 @@ workspace members from source, so the manifest wins — but a repository whose
 lock contradicts its manifests is a trap for the next person.
 
 What guards the version in the artefacts is not the lock but the assertions:
-both build jobs run `resumix version` on the binary they just produced, and the
+both build jobs run `cv version` on the binary they just produced, and the
 image job reads `/healthz` from the container it just built, before any of it
 is published.
 
@@ -108,17 +108,17 @@ is published.
 
 | Artifact | Where | Name |
 |---|---|---|
-| both executables and the files beside them | the release page | `resumix-x.y.z.tar.gz` and `resumix-x.y.z.zip` |
-| the server image | Docker Hub | `lmstch/resumix:x.y.z` and `:latest` |
+| both executables and the files beside them | the release page | `ats-strike-x.y.z.tar.gz` and `ats-strike-x.y.z.zip` |
+| the server image | Docker Hub | `lmstch/ats-strike:x.y.z` and `:latest` |
 | this site | GitHub Pages, from `gh-pages` | `/x.y.z/`, and `/latest/` which `/` redirects to |
 
 The archive is flat on purpose:
 
 ```text
-resumix                      the Linux executable, already +x
-resumix.exe                  the Windows executable
+cv                           the Linux executable, already +x
+cv.exe                       the Windows executable
 README.md                    the client README, links rewritten for this layout
-resumix.toml                 points at http://localhost:8080; edit it
+cv.toml                 points at http://localhost:8080; edit it
 candidate_profile.json       the fictional set, ready to edit
 candidate_data.json
 candidate_preferences.md
@@ -131,9 +131,9 @@ The client looks for its files **by name in the folder you run it in** — see
 extracted. There is nothing to move and no config to rename:
 
 ```bash
-mkdir resumix && tar xzf resumix-0.3.0.tar.gz -C resumix
-cd resumix
-./resumix submit-raw posting.txt --server https://your-server
+mkdir ats-strike && tar xzf ats-strike-0.3.0.tar.gz -C ats-strike
+cd ats-strike
+./cv submit-raw posting.txt --server https://your-server
 ```
 
 Extract it into a folder of its own, as above. A flat archive unpacks nine

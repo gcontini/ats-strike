@@ -1,4 +1,4 @@
-# The resumix server on Alibaba Cloud: a Container Registry Personal Edition
+# The ats-strike server on Alibaba Cloud: a Container Registry Personal Edition
 # repository the image is built into, and a Function Compute 3.0 function that
 # runs it behind an HTTP trigger. See README.md in this folder.
 

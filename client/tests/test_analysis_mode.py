@@ -1,4 +1,4 @@
-"""``resumix analysis``: one posting in, its analysis out, nothing else."""
+"""``cv analysis``: one posting in, its analysis out, nothing else."""
 
 from __future__ import annotations
 
@@ -6,11 +6,11 @@ import shutil
 from dataclasses import replace
 
 import pytest
-from resumix_contracts import JDAnalysis
+from cv_contracts import JDAnalysis
 
-from resumix_client import cli
-from resumix_client.modes import analysis as analysis_mode
-from resumix_client.stages.jobfolder import classify
+from cv_client import cli
+from cv_client.modes import analysis as analysis_mode
+from cv_client.stages.jobfolder import classify
 
 from conftest import EXAMPLE_CANDIDATE, JD_TEXT, analysis
 
@@ -107,7 +107,7 @@ def test_a_failure_is_reported_on_stderr_with_its_request(posting, config, api, 
 
 def test_out_defaults_to_incoming_under_the_data_dir(posting, tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
-    monkeypatch.delenv("RESUMIX_CONFIG", raising=False)
+    monkeypatch.delenv("ATS_CONFIG", raising=False)
     data = tmp_path / "data"
     data.mkdir()
     for name in ("candidate_profile.json", "candidate_preferences.md"):

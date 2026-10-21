@@ -5,9 +5,9 @@ from __future__ import annotations
 import json
 
 import pytest
-from resumix_contracts import JDAnalysis, static_jd_guess
+from cv_contracts import JDAnalysis, static_jd_guess
 
-from resumix_server.models import ATTEMPTS
+from cv_server.models import ATTEMPTS
 
 ANALYSIS = {
     "match_percentage": 82, "match_rationale": "Strong overlap.",

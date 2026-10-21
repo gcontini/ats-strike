@@ -33,7 +33,7 @@ workspace endpoint of the same form shown in the console.
 - **works:** DeepSeek V4 models served through DashScope do run web search
   (2026-09-27).
 - **fails:** the Responses API. It ignored token limits (8242 reasoning tokens
-  against a budget of 6500) and heavy calls stalled past 600 s. resumix stays
+  against a budget of 6500) and heavy calls stalled past 600 s. ats-strike stays
   on Chat Completions.
 - Some models cap `max_tokens` at 8192; set it per model when the endpoint
   says so.
@@ -83,16 +83,16 @@ Endpoint: `https://api.openai.com/v1`.
   'temperature' does not support 0.4 with this model`
   ([OpenAI forum](https://community.openai.com/t/temperature-in-gpt-5-models/1337133/26));
   LiteLLM's [Luna notes](https://docs.litellm.ai/blog/gpt_6_sol_luna) say the
-  same for Luna. Fix: `RESUMIX_<ROLE>_TEMPERATURE=1`, or empty to send none.
+  same for Luna. Fix: `ATS_<ROLE>_TEMPERATURE=1`, or empty to send none.
 - **fails (expected):** `presence_penalty` with `api = "responses"`: the
   Responses API has no such parameter, and the openai SDK raises before
   sending (`TypeError`, checked offline 2026-10-08). Leave the client's
   `presence_penalty` unset for a role on the Responses API.
 - **fails (expected, not yet observed here):** `enable_search`. It is a
   DashScope parameter, shipped in the `analysis` and `letter` roles'
-  `extra_body`. Fix: `RESUMIX_<ROLE>_EXTRA_BODY={}`.
+  `extra_body`. Fix: `ATS_<ROLE>_EXTRA_BODY={}`.
 - Do not leave `thinking = "on"` on an OpenAI role: it sends `enable_thinking`,
-  which OpenAI does not take. Use `RESUMIX_<ROLE>_THINKING=auto`.
+  which OpenAI does not take. Use `ATS_<ROLE>_THINKING=auto`.
 - Chat Completions function calling was reported to need
   `reasoning_effort = "none"`. It did not on `gpt-6.1-sol`: adapticv-ai's
   validators made their `replace_in_*` tool calls with `medium` (2026-10-19).
@@ -136,13 +136,13 @@ the rows below are its JD-analysis runs. Settings named in the old keys:
 Since 2026-10-20 a CV is written in adapticv-ai's six steps, one role each.
 The rows here are adapticv-ai's own bench of 2026-10-19 on the ten quick JDs
 of `tests/cv_quality/` — the same prompts, called through `ChatOpenAI` from
-that project, not through resumix — and resumix's shipped setting. Each row
+that project, not through ats-strike — and ats-strike's shipped setting. Each row
 is the whole pipeline: every step on the same model, `reasoning_effort` high
 for `profile_scoring` and medium for the other five, no temperature.
 
 | Provider | Model | Settings | Status | Date | Notes |
 |---|---|---|---|---|---|
-| DeepSeek (`use_alternate_provider = 2`) | `deepseek-flash` (shipped) | `model_provider = "deepseek"`, `thinking = auto`, reasoning efforts as above | **unconfirmed** | 2026-10-20 | Current `models.toml`; not yet run through resumix. |
+| DeepSeek (`use_alternate_provider = 2`) | `deepseek-flash` (shipped) | `model_provider = "deepseek"`, `thinking = auto`, reasoning efforts as above | **unconfirmed** | 2026-10-20 | Current `models.toml`; not yet run through ats-strike. |
 | DeepSeek, native (adapticv-ai) | `deepseek-flash` | thinking by default, reasoning efforts as above | **works** | 2026-10-19 | 21–27 calls a CV, 3.5–5.9 min, 205k–258k tokens, most of them thinking (9.4k–14.9k on the longest scoring calls). Validation and tool calls (`parallel_tool_calls`) accepted. |
 | DeepSeek, native (adapticv-ai) | `deepseek-v4-pro` | the same | **works** | 2026-10-19 | 20–25 calls, 9.7–13.4 min, 282k–354k tokens. The validators made replacements through the tool calls. |
 | OpenAI (provider 3, adapticv-ai) | `gpt-6.1-sol` | Chat Completions, reasoning efforts as above | **works** | 2026-10-19 | 20–22 calls, 2.2–3.1 min, 71k–81k tokens. Tool calls with `reasoning_effort = medium` on Chat Completions: the validators made replacements. |
@@ -192,7 +192,7 @@ adapticv-ai's prompt; the row below is the old loop's.
 ## Recording a result
 
 Add a row under the role, with the provider, the exact model id, the settings
-that differ from `models.toml` (including any `RESUMIX_<ROLE>_*` override), the
+that differ from `models.toml` (including any `ATS_<ROLE>_*` override), the
 date and the outcome. For a failure, the error name from the job log
 (`provider_error: … PermissionDeniedError`) or the server's own line for it
 (a CV's `log.log` carries every one) belongs in the notes; the cause belongs there

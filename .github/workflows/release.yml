@@ -100,7 +100,7 @@ jobs:
           enable-cache: true
           cache-dependency-glob: uv.lock
       - run: uv sync --frozen
-      - run: uv run --with pyinstaller pyinstaller --noconfirm client/packaging/resumix.spec
+      - run: uv run --with pyinstaller pyinstaller --noconfirm client/packaging/cv.spec
 
       # The one thing this job exists to prove. -F because Windows prints CRLF
       # and because a version string is not a regex.
@@ -108,12 +108,12 @@ jobs:
         env:
           VERSION: ${{ inputs.version }}
         shell: bash
-        run: ./dist/resumix version | grep -qF "version $VERSION"
+        run: ./dist/cv version | grep -qF "version $VERSION"
 
       - uses: actions/upload-artifact@v7
         with:
           name: binary-${{ matrix.os }}
-          path: dist/resumix*
+          path: dist/cv*
           if-no-files-found: error
 
   # The server image, from the same commit. Classic builder, linux/amd64,
@@ -130,8 +130,8 @@ jobs:
         env:
           VERSION: ${{ inputs.version }}
         run: DOCKER_BUILDKIT=0 docker build
-             -t "lmstch/resumix:$VERSION"
-             -t lmstch/resumix:latest .
+             -t "lmstch/ats-strike:$VERSION"
+             -t lmstch/ats-strike:latest .
 
       # CI's healthz check, plus the version: the image installs from the lock
       # with --no-editable, so this is what proves the lock was regenerated.
@@ -142,7 +142,7 @@ jobs:
           set -eux
           docker run -d --name api -p 8080:8080 \
             -e MODEL_API_KEY=ci -e MODEL_BASE_URL=http://invalid/v1 \
-            "lmstch/resumix:$VERSION"
+            "lmstch/ats-strike:$VERSION"
           for i in $(seq 1 30); do
             curl -fsS localhost:8080/healthz && break || sleep 2
           done
@@ -161,8 +161,8 @@ jobs:
         run: |
           set -eu
           echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-          docker push "lmstch/resumix:$VERSION"
-          docker push lmstch/resumix:latest
+          docker push "lmstch/ats-strike:$VERSION"
+          docker push lmstch/ats-strike:latest
 
   # The doc/ site, one build per release, kept on the gh-pages branch under a
   # version selector. mike owns that branch entirely — nothing else writes it.
@@ -250,7 +250,7 @@ jobs:
         run: |
           set -eux
           cp client/README.md package/
-          cp client/resumix.toml.example package/resumix.toml
+          cp client/cv.toml.example package/cv.toml
           cp examples/candidate/* package/
           cp examples/posting.txt package/
           # The README is written for the repository. Here there is no server/,
@@ -261,20 +261,20 @@ jobs:
           sed -i '/^   cd examples$/d' package/README.md
           # The artifact service hands every file back as 644; tar stores the
           # mode it is given and tar xzf restores it.
-          chmod +x package/resumix
+          chmod +x package/cv
           # An explicit list, so a missing file fails the step instead of
           # silently shipping a smaller archive.
-          tar -czf "resumix-$VERSION.tar.gz" -C package \
-            resumix resumix.exe README.md resumix.toml \
+          tar -czf "ats-strike-$VERSION.tar.gz" -C package \
+            cv cv.exe README.md cv.toml \
             candidate_profile.json candidate_data.json candidate_preferences.md \
             candidate_signature.png posting.txt
-          tar -tzvf "resumix-$VERSION.tar.gz"
+          tar -tzvf "ats-strike-$VERSION.tar.gz"
           # Also create a zip archive for Windows users.
-          zip -q -j "resumix-$VERSION.zip" \
-            package/resumix package/resumix.exe package/README.md package/resumix.toml \
+          zip -q -j "ats-strike-$VERSION.zip" \
+            package/cv package/cv.exe package/README.md package/cv.toml \
             package/candidate_profile.json package/candidate_data.json package/candidate_preferences.md \
             package/candidate_signature.png package/posting.txt
-          unzip -l "resumix-$VERSION.zip"
+          unzip -l "ats-strike-$VERSION.zip"
 
       - name: Publish the release
         env:
@@ -282,5 +282,5 @@ jobs:
           VERSION: ${{ inputs.version }}
         # --verify-tag: without it, gh would happily invent the tag from the
         # default branch tip if the tag job had not made one.
-        run: gh release create "v$VERSION" "resumix-$VERSION.tar.gz" "resumix-$VERSION.zip"
+        run: gh release create "v$VERSION" "ats-strike-$VERSION.tar.gz" "ats-strike-$VERSION.zip"
              --verify-tag --generate-notes

@@ -61,13 +61,13 @@ jobs:
       # Classic builder, as everywhere else: the Dockerfile must stay
       # buildable without BuildKit.
       - name: Build the server image
-        run: DOCKER_BUILDKIT=0 docker build -t resumix-server .
+        run: DOCKER_BUILDKIT=0 docker build -t ats-strike-server .
       - name: Start it and check it is healthy
         run: |
           docker run -d --name api -p 8080:8080 \
             -e MODEL_API_KEY=ci -e MODEL_BASE_URL=http://invalid/v1 \
             -e MODEL_API_KEY2=ci -e MODEL_BASE_URL2=http://invalid/v1 \
-            resumix-server
+            ats-strike-server
           for i in $(seq 1 30); do
             curl -fsS localhost:8080/healthz && break || sleep 2
           done
@@ -94,15 +94,15 @@ jobs:
         uses: actions/cache@v6
         with:
           path: build
-          key: pyinstaller-${{ matrix.os }}-${{ hashFiles('uv.lock', 'client/packaging/resumix.spec') }}
+          key: pyinstaller-${{ matrix.os }}-${{ hashFiles('uv.lock', 'client/packaging/cv.spec') }}
 
       - name: Build the executable
-        run: uv run --with pyinstaller pyinstaller --noconfirm client/packaging/resumix.spec
+        run: uv run --with pyinstaller pyinstaller --noconfirm client/packaging/cv.spec
 
       - name: Check it runs
         run: |
-          ./dist/resumix --help
-          ./dist/resumix version
+          ./dist/cv --help
+          ./dist/cv version
         shell: bash
 
       # The real question is not "does it start" but "does it talk to a
@@ -124,10 +124,10 @@ jobs:
           PORT: "8080"
           # The runner's /tmp is shared and holds unreadable directories;
           # the server should not have to scan it at all.
-          RESUMIX_WORK_DIR: ${{ runner.temp }}/resumix-work
+          ATS_WORK_DIR: ${{ runner.temp }}/ats-strike-work
         run: |
           set -eux
-          uv run resumix-api &
+          uv run ats-strike &
           for i in $(seq 1 30); do
             curl -fsS localhost:8080/healthz && break || sleep 2
           done
@@ -136,7 +136,7 @@ jobs:
             '\begin{document}Hello from CI.\end{document}' > smoke.tex
           # No model is reachable here, and render needs none: this is
           # multipart in, envelope out, pdflatex, base64 back, PDF on disk.
-          ./dist/resumix -v --server http://localhost:8080 render smoke.tex
+          ./dist/cv -v --server http://localhost:8080 render smoke.tex
           head -c 4 smoke.pdf | grep -q '%PDF'
           rm -f smoke.tex smoke.pdf
         shell: bash
@@ -144,6 +144,6 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: binary-${{ matrix.os }}
-          path: dist/resumix*
+          path: dist/cv*
           retention-days: 30
           if-no-files-found: error

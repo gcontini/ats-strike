@@ -12,7 +12,7 @@ import shutil
 
 import pytest
 
-from resumix_server.bundle import CandidateInputs, ResourceBundle, default_bundle
+from cv_server.bundle import CandidateInputs, ResourceBundle, default_bundle
 
 from server_helpers import FakeLLM, sample_cv
 
@@ -64,8 +64,8 @@ def fake_llm() -> FakeLLM:
 def app_state(fake_llm, tmp_path, bundle):
     from threading import BoundedSemaphore
 
-    from resumix_server.api.deps import AppState
-    from resumix_server.api.settings import Settings
+    from cv_server.api.deps import AppState
+    from cv_server.api.settings import Settings
 
     settings = Settings(work_root=tmp_path, request_budget_seconds=60.0)
     return AppState(
@@ -80,7 +80,7 @@ def app_state(fake_llm, tmp_path, bundle):
 @pytest.fixture(autouse=True)
 def fast_streams(monkeypatch):
     """A stream looks for new events every second; the fakes answer at once."""
-    monkeypatch.setattr("resumix_server.api.routers.cv.FOLLOW_SECONDS", 0.01)
+    monkeypatch.setattr("cv_server.api.routers.cv.FOLLOW_SECONDS", 0.01)
 
 
 @pytest.fixture
@@ -88,7 +88,7 @@ def client(app_state):
     """A TestClient over the real app, wired to fake models."""
     from fastapi.testclient import TestClient
 
-    from resumix_server.api.app import create_app
+    from cv_server.api.app import create_app
 
     with TestClient(create_app(state=app_state)) as test_client:
         yield test_client

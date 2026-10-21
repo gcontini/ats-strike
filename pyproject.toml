@@ -1,4 +1,4 @@
-# resumix — a uv workspace with three members.
+# ats-strike — a uv workspace with three members.
 #
 #   contracts/  the wire format both sides agree on (pydantic only)
 #   server/     the HTTP API: LLM calls + pdflatex, deployed as a container
@@ -9,15 +9,15 @@
 #
 #     uv sync                 install every member into one .venv
 #     uv run pytest           run all three test suites
-#     uv run resumix-api    start the server
-#     uv run resumix --help the client
+#     uv run ats-strike       start the server
+#     uv run cv --help        the client
 #     uv run --group docs mkdocs serve   the doc/ site, on localhost:8000
 
 [tool.uv.workspace]
 members = ["contracts", "server", "client"]
 
 [tool.uv.sources]
-resumix-contracts = { workspace = true }
+ats-strike-contracts = { workspace = true }
 
 [dependency-groups]
 dev = ["pytest>=8", "pytest-cov>=5"]

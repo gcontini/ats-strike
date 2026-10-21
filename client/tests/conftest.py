@@ -1,7 +1,7 @@
 """Fixtures for the client tests.
 
 The client is tested against :class:`FakeApi` — an in-memory
-:class:`~resumix_client.api.ResumixApi` — so every test runs with no
+:class:`~cv_client.api.CVApi` — so every test runs with no
 server, no network and no model. One test file goes the other way and drives
 the real server in-process; see ``tests/test_integration.py``.
 """
@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 
 import pytest
-from resumix_contracts import (
+from cv_contracts import (
     Cleanup,
     CoverLetter,
     CVArtifact,
@@ -31,10 +31,10 @@ from resumix_contracts import (
     TokenUsage,
 )
 
-from resumix_client.api import ResumixError
-from resumix_client.config import Config
-from resumix_client.ui import Decision
-from resumix_client.workspace import Workspace
+from cv_client.api import CVError
+from cv_client.config import Config
+from cv_client.ui import Decision
+from cv_client.workspace import Workspace
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EXAMPLE_CANDIDATE = REPO_ROOT / "examples" / "candidate"
@@ -130,7 +130,7 @@ class FakeApi:
     def _record(self, name):
         self.calls.append(name)
         if self.fail_on == name:
-            raise ResumixError(f"model_output [{name}]: {name} failed", status=502,
+            raise CVError(f"model_output [{name}]: {name} failed", status=502,
                                  request_id="failed-request")
 
     def detect(self, text):
@@ -165,14 +165,14 @@ class FakeApi:
                 continue
             if self.break_after is not None and number > self.break_after:
                 self.break_after = None
-                raise ResumixError("lost the stream: connection reset", request_id=request_id)
+                raise CVError("lost the stream: connection reset", request_id=request_id)
             yield number, kind, payload
 
     def acknowledge(self, request_id):
         self._record("acknowledge")
         status = self.acknowledge_errors.pop(0) if self.acknowledge_errors else None
         if status is not None:
-            raise ResumixError(f"acknowledge failed with {status}", status=status,
+            raise CVError(f"acknowledge failed with {status}", status=status,
                                request_id=request_id)
         return Envelope(request_id=request_id, ok=True)
 
@@ -247,7 +247,7 @@ def api() -> FakeApi:
 @pytest.fixture(autouse=True)
 def no_reconnect_delay(monkeypatch):
     """The fake answers instantly; waiting 4s before reconnecting proves nothing."""
-    monkeypatch.setattr("resumix_client.cvjob.RECONNECT_SECONDS", 0)
+    monkeypatch.setattr("cv_client.cvjob.RECONNECT_SECONDS", 0)
 
 
 @pytest.fixture
@@ -259,7 +259,7 @@ def typist():
 
 def typed(*lines: str):
     """A keyboard on which these lines, then the end of input, were typed."""
-    from resumix_client.stages.terminal import Keyboard
+    from cv_client.stages.terminal import Keyboard
 
     keyboard = Keyboard(io.StringIO("".join(f"{line}\n" for line in lines)))
     keyboard._read()  # what the reader thread does, without the thread
@@ -295,22 +295,22 @@ def make_job(parent: Path, name: str = "Acme_Corp_Head_of_IT", *, should_apply="
 
 @pytest.fixture
 def console():
-    from resumix_client.stages.terminal import Console
+    from cv_client.stages.terminal import Console
 
     return Console()
 
 
 @pytest.fixture
 def writer(api, config):
-    from resumix_client.stages.calls import Calls
-    from resumix_client.stages.generation import CvWriter
+    from cv_client.stages.calls import Calls
+    from cv_client.stages.generation import CvWriter
 
     return CvWriter(Calls(api), config)
 
 
 @pytest.fixture
 def processor(workspace, writer, console):
-    from resumix_client.stages.working import WorkingProcessor
-    from resumix_client.tracking import build_tracker
+    from cv_client.stages.working import WorkingProcessor
+    from cv_client.tracking import build_tracker
 
     return WorkingProcessor(workspace, writer, build_tracker(workspace.root, True), console)

@@ -1,6 +1,6 @@
-# resumix server
+# ats-strike server
 
-The compute half of resumix: it turns a job description into tailored CV
+The compute half of ats-strike: it turns a job description into tailored CV
 data, compiles LaTeX into a PDF, analyses postings and writes cover letters.
 
 It holds your provider API keys and a set of default prompts. Everything
@@ -9,18 +9,18 @@ arrives with each request and is thrown away when it ends. There is no
 database and no user accounts.
 
 It does keep one thing, on the filesystem: a session per CV job under
-`RESUMIX_WORK_DIR` — every event the job wrote, its finished PDF included.
+`ATS_WORK_DIR` — every event the job wrote, its finished PDF included.
 Writing a CV takes minutes, so `POST /v1/cv` answers immediately and the client
 follows the session as it grows. It waits there until the client says it has
-everything, or until it is older than `RESUMIX_SESSION_TTL_DAYS`.
+everything, or until it is older than `ATS_SESSION_TTL_DAYS`.
 
 ---
 
 ## Run it
 
 ```bash
-docker build -t resumix-server .
-docker run --rm -p 8080:8080 --env-file .env resumix-server
+docker build -t ats-strike-server .
+docker run --rm -p 8080:8080 --env-file .env ats-strike-server
 curl localhost:8080/healthz
 ```
 
@@ -28,7 +28,7 @@ Or, from a checkout:
 
 ```bash
 uv sync
-uv run resumix-api
+uv run ats-strike
 ```
 
 The image is ~780 MB, almost all of it the LaTeX toolchain. It runs as any
@@ -36,7 +36,7 @@ uid, needs no volume, and works with a read-only root filesystem as long as
 `/tmp` is writable (`docker run --read-only --tmpfs /tmp:exec`). `exec` on
 that tmpfs is required: `pdflatex` writes and then reads back its font cache
 there. A tmpfs also means a session does not survive a restart — mount a
-volume, or a bucket, at `RESUMIX_WORK_DIR` if you want it to.
+volume, or a bucket, at `ATS_WORK_DIR` if you want it to.
 
 `docker compose up --build` from this directory does the same with the
 settings below already wired.
@@ -86,12 +86,12 @@ Each key of a role — `model`, `model_provider` (`standard` or `deepseek`),
 var, without editing `models.toml`. Handy for a Docker deployment:
 
 ```bash
-RESUMIX_CV_MODEL=qwen-max
-RESUMIX_CV_TEMPERATURE=0.2
-RESUMIX_CV_API=responses
-RESUMIX_CV_EXTRA_BODY={"thinking_budget": 4000}
-RESUMIX_CV_USE_ALTERNATE_PROVIDER=2
-RESUMIX_LETTER_EXTRA_BODY={}
+ATS_CV_MODEL=qwen-max
+ATS_CV_TEMPERATURE=0.2
+ATS_CV_API=responses
+ATS_CV_EXTRA_BODY={"thinking_budget": 4000}
+ATS_CV_USE_ALTERNATE_PROVIDER=2
+ATS_LETTER_EXTRA_BODY={}
 ```
 
 `EXTRA_BODY` is JSON and replaces the whole table: it carries what only one
@@ -101,7 +101,7 @@ declared it — an empty `TEMPERATURE` sends none, for an endpoint that rejects
 one (OpenAI's reasoning models). Nothing checks that a combination suits your
 endpoint; the comments in `models.toml` list the known traps.
 
-The pattern is `RESUMIX_<ROLE>_<FIELD>` for `DETECT`, `ANALYSIS`, `LETTER`,
+The pattern is `ATS_<ROLE>_<FIELD>` for `DETECT`, `ANALYSIS`, `LETTER`,
 `JD_EVALUATION`, `PROFILE_SCORING`, `FORMAT_SELECTION`, `CV`, `VALIDATION` and
 `HIGHLIGHT`; see `.env.example`. A request can do the same for one call with
 `<role>_extra_body`, which replaces every setting of that role.
@@ -116,29 +116,29 @@ to.
 |---|---|---|
 | `PORT` / `HOST` | `8080` / `0.0.0.0` | Where uvicorn listens |
 | `WEB_CONCURRENCY` | `1` | uvicorn worker processes |
-| `RESUMIX_API_TOKEN` | unset | Bearer token clients must send. **Unset means no auth.** |
-| `RESUMIX_RESOURCES` | baked in | Directory of replacement prompts/template/`models.toml` |
-| `RESUMIX_WORK_DIR` | system temp | Where CV sessions are kept, one directory of events each |
-| `RESUMIX_SESSION_TTL_DAYS` | `1` | Days a session nobody acknowledged is kept after its last event |
-| `RESUMIX_MAX_CONCURRENT_JOBS` | `10` | Requests in flight; the rest get `429` |
-| `RESUMIX_LATEX_TIMEOUT` | `120` | Seconds before a compile is killed |
-| `RESUMIX_REQUEST_BUDGET_SECONDS` | `1200` | Wall clock for one CV run before `504`, checked before each step |
-| `RESUMIX_MAX_PART_BYTES` | `2000000` | Cap on any one uploaded part |
-| `RESUMIX_JD_MIN_CHARS` / `_MAX_CHARS` | `500` / `30000` | Length band for the free JD check |
-| `RESUMIX_LOG_LEVEL` | `INFO` | Logging level |
+| `ATS_API_TOKEN` | unset | Bearer token clients must send. **Unset means no auth.** |
+| `ATS_RESOURCES` | baked in | Directory of replacement prompts/template/`models.toml` |
+| `ATS_WORK_DIR` | system temp | Where CV sessions are kept, one directory of events each |
+| `ATS_SESSION_TTL_DAYS` | `1` | Days a session nobody acknowledged is kept after its last event |
+| `ATS_MAX_CONCURRENT_JOBS` | `10` | Requests in flight; the rest get `429` |
+| `ATS_LATEX_TIMEOUT` | `120` | Seconds before a compile is killed |
+| `ATS_REQUEST_BUDGET_SECONDS` | `1200` | Wall clock for one CV run before `504`, checked before each step |
+| `ATS_MAX_PART_BYTES` | `2000000` | Cap on any one uploaded part |
+| `ATS_JD_MIN_CHARS` / `_MAX_CHARS` | `500` / `30000` | Length band for the free JD check |
+| `ATS_LOG_LEVEL` | `INFO` | Logging level |
 
 ### Prompts and the template
 
 The prompts, the two JSON schemas the CV writer is shown and
 `resume.tex.jinja` ship inside the image. To change
 them permanently, mount a directory with your versions and set
-`RESUMIX_RESOURCES`; anything missing there falls back to the built-in copy.
+`ATS_RESOURCES`; anything missing there falls back to the built-in copy.
 To change them for one request, upload them as parts — that is what the client
 does when it finds them next to its executable.
 
 ### Auth
 
-Set `RESUMIX_API_TOKEN` and every `/v1/...` call must send
+Set `ATS_API_TOKEN` and every `/v1/...` call must send
 `Authorization: Bearer <token>`. `/healthz` stays open so a platform probe
 works. With no token set the server is open to anyone who can reach it, which
 is only reasonable on a private network.
@@ -323,8 +323,8 @@ when it can search the web; whether it can is the `letter` role's
 A CV job runs for minutes after the request that started it has been
 answered. That is the one thing to plan around.
 
-- **`RESUMIX_WORK_DIR` is state.** Every CV session lives there until the
-  client acknowledges it or it outlives `RESUMIX_SESSION_TTL_DAYS`. The default
+- **`ATS_WORK_DIR` is state.** Every CV session lives there until the
+  client acknowledges it or it outlives `ATS_SESSION_TTL_DAYS`. The default
   is the system temp directory, which on most container platforms is RAM-backed
   and empty again after a redeploy. Mount a volume — or a bucket, as the
   Alibaba deployment in `server/terraform` does — to have sessions outlive the
@@ -337,7 +337,7 @@ answered. That is the one thing to plan around.
 - **A stream lasts as long as its job.** Every other call returns in seconds;
   only `/v1/cv/render` waits on a compile. A CV's event stream stays open for
   the minutes the job takes, pinging every 15 s, so a platform request timeout
-  has to outlast `RESUMIX_REQUEST_BUDGET_SECONDS` plus the round in flight —
+  has to outlast `ATS_REQUEST_BUDGET_SECONDS` plus the round in flight —
   the client reconnects after a cut, but some platforms restart the instance
   on a timeout.
 - **Concurrency.** Ten jobs in flight is the default; each is mostly idle
@@ -367,10 +367,10 @@ the LaTeX log before it goes back.
 
 | What you see | What it means |
 |---|---|
-| `401` with `WWW-Authenticate: Bearer` | `RESUMIX_API_TOKEN` is set on the server and the request had no matching token |
-| `413` | A part exceeded `RESUMIX_MAX_PART_BYTES` |
+| `401` with `WWW-Authenticate: Bearer` | `ATS_API_TOKEN` is set on the server and the request had no matching token |
+| `413` | A part exceeded `ATS_MAX_PART_BYTES` |
 | `422` `latex_compile [compile]` | The template or the `.tex` does not compile. The end of the TeX log follows the error line and says where |
-| `429` with `Retry-After` | All job slots are busy — retry, or raise `RESUMIX_MAX_CONCURRENT_JOBS` |
+| `429` with `Retry-After` | All job slots are busy — retry, or raise `ATS_MAX_CONCURRENT_JOBS` |
 | `502` `model_output [cv.<step>]` in an `error` event | The job failed: the model never produced valid output. The session's `log` and `usage` events show each failed attempt |
 | `404` `unknown_request` | No CV session by that id: acknowledged, expired, or never started |
 | `409` `job_not_ready` from `DELETE /v1/cv/{id}` | The job is still running; acknowledge it once its last event is in |
@@ -392,5 +392,5 @@ in the suite calls a model: `server/tests/server_helpers.py` wires a real
 `ModelSelector` to a fake HTTP transport, so request assembly, structured
 output, retries and usage logging are all the production code paths.
 
-The layout is described in `src/resumix_server/__init__.py`; the rules the
+The layout is described in `src/cv_server/__init__.py`; the rules the
 code follows are in `AGENTS.md` at the repository root.

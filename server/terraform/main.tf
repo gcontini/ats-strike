@@ -25,8 +25,8 @@ resource "alicloud_cr_namespace" "main" {
 
 resource "alicloud_cr_repo" "main" {
   namespace = alicloud_cr_namespace.main.name
-  name      = "resumix"
-  summary   = "resumix_images"
+  name      = "ats-strike"
+  summary   = "ats-strike images"
   repo_type = "PRIVATE"
 }
 
@@ -49,7 +49,7 @@ resource "alicloud_oss_bucket" "sessions" {
 # logs and pulls the image with its service-linked role, AliyunServiceRoleForFC.
 resource "alicloud_ram_role" "function" {
   role_name   = "${var.namespace}-fc"
-  description = "resumix function: its sessions bucket"
+  description = "ats-strike function: its sessions bucket"
   assume_role_policy_document = jsonencode({
     Version = "1"
     Statement = [{
@@ -63,7 +63,7 @@ resource "alicloud_ram_role" "function" {
 # What an OSS mount needs to read and write, and nothing else.
 resource "alicloud_ram_policy" "sessions" {
   policy_name = "${var.namespace}-fc-sessions"
-  description = "Read and write the resumix sessions bucket"
+  description = "Read and write the ats-strike sessions bucket"
   policy_document = jsonencode({
     Version = "1"
     Statement = [
@@ -144,7 +144,7 @@ locals {
 
 resource "alicloud_fcv3_function" "main" {
   function_name = var.function_name
-  description   = "resumix function"
+  description   = "ats-strike function"
   runtime       = "custom-container"
   # Required by the API, never called by a custom container.
   handler = "index.handler"
@@ -208,14 +208,14 @@ resource "alicloud_fcv3_function" "main" {
   # The internal endpoint: bucket and function are in the same region, and
   # the traffic never leaves Alibaba's network. A URL, scheme included (FC
   # rejects a bare host), and HTTPS: a session holds your CV and contact details.
-  # The server writes here only when RESUMIX_WORK_DIR in terraform.tfvars
+  # The server writes here only when ATS_WORK_DIR in terraform.tfvars
   # names mount_dir.
   oss_mount_config {
     mount_points {
       bucket_name = alicloud_oss_bucket.sessions.bucket
       bucket_path = "/"
       endpoint    = "https://oss-${var.region}-internal.aliyuncs.com"
-      mount_dir   = "/mnt/resumix"
+      mount_dir   = "/mnt/ats-strike"
       read_only   = false
     }
   }
@@ -232,9 +232,9 @@ resource "alicloud_fcv3_function" "main" {
 # move to a published version without the URL changing.
 resource "alicloud_fcv3_alias" "main" {
   function_name = alicloud_fcv3_function.main.function_name
-  alias_name    = "resumix"
+  alias_name    = "cv"
   version_id    = "LATEST"
-  description   = "latest version of resumix"
+  description   = "latest version of ats-strike"
 }
 
 resource "alicloud_fcv3_trigger" "main" {
@@ -254,7 +254,7 @@ resource "alicloud_fcv3_trigger" "main" {
       opaqueTokenConfig = {
         tokens = [{
           enable    = true
-          tokenName = "resumix-client"
+          tokenName = "cv-client"
           tokenData = var.api_token
         }]
       }

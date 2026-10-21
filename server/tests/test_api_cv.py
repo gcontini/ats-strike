@@ -21,12 +21,12 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from resumix_contracts import CVFailure, CVResult, CVStatus, RenderedCV
+from cv_contracts import CVFailure, CVResult, CVStatus, RenderedCV
 
-from resumix_server.api.app import create_app
-from resumix_server.api.multipart import MAX_IMAGES
-from resumix_server.jobstore import JobStore
-from resumix_server.pipeline.cv_generator import ARTIFACTS
+from cv_server.api.app import create_app
+from cv_server.api.multipart import MAX_IMAGES
+from cv_server.jobstore import JobStore
+from cv_server.pipeline.cv_generator import ARTIFACTS
 
 from server_helpers import (
     EXAMPLE_CANDIDATE,
@@ -299,7 +299,7 @@ def test_a_stream_past_the_end_closes_at_once(client, fake_llm, parts):
 
 
 def test_a_quiet_stream_says_it_is_still_there(client, fake_llm, parts, monkeypatch):
-    monkeypatch.setattr("resumix_server.api.routers.cv.PING_SECONDS", 0.05)
+    monkeypatch.setattr("cv_server.api.routers.cv.PING_SECONDS", 0.05)
     a_quick_failure(fake_llm)
     gate = hold(fake_llm)
     request_id = start_cv(client, parts)
@@ -574,7 +574,7 @@ def test_a_broken_template_is_422_with_the_tex_log_in_the_reply(client, sample_d
     assert body["error"].startswith("latex_compile [compile]")
     assert "Undefined control sequence" in body["error"]
     # The scratch directory is scrubbed out of it.
-    assert str(Path(tempfile.gettempdir()) / "resumix-") not in json.dumps(body)
+    assert str(Path(tempfile.gettempdir()) / "ats-strike-") not in json.dumps(body)
 
 
 # --- images ------------------------------------------------------------------

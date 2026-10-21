@@ -7,7 +7,7 @@ from datetime import datetime
 
 import pytest
 
-from resumix_contracts import (
+from cv_contracts import (
     EVENT_PAYLOADS,
     TERMINAL_EVENTS,
     CVArtifact,

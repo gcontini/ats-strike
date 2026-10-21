@@ -7,7 +7,7 @@ from datetime import date
 import openpyxl
 import pytest
 
-from resumix_client.tracking import (
+from cv_client.tracking import (
     HEADERS,
     STATUS_VALUES,
     NullTracker,

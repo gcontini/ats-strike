@@ -11,14 +11,14 @@ import time
 import openpyxl
 import pytest
 
-from resumix_client.stages.approval import Answer, HumanApproval
-from resumix_client.stages.calls import Calls
-from resumix_client.stages.generation import CvWriter, GenerationWorker
-from resumix_client.stages.inbox import InputProcessor
-from resumix_client.stages.terminal import Console, Keyboard
-from resumix_client.stages.watcher import Watcher
-from resumix_client.stages.working import WorkingProcessor
-from resumix_client.tracking import build_tracker
+from cv_client.stages.approval import Answer, HumanApproval
+from cv_client.stages.calls import Calls
+from cv_client.stages.generation import CvWriter, GenerationWorker
+from cv_client.stages.inbox import InputProcessor
+from cv_client.stages.terminal import Console, Keyboard
+from cv_client.stages.watcher import Watcher
+from cv_client.stages.working import WorkingProcessor
+from cv_client.tracking import build_tracker
 
 from conftest import JD_TEXT, FakeApi, analysis, envelope, make_job
 

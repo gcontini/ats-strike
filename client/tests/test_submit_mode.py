@@ -1,4 +1,4 @@
-"""``resumix submit``: one posting, one CV, and back only once it is filed."""
+"""``cv submit``: one posting, one CV, and back only once it is filed."""
 
 from __future__ import annotations
 
@@ -6,9 +6,9 @@ import threading
 import time
 
 import pytest
-from resumix_contracts import JDAnalysis
+from cv_contracts import JDAnalysis
 
-from resumix_client.modes import submit
+from cv_client.modes import submit
 
 from conftest import JD_TEXT, analysis, make_job
 

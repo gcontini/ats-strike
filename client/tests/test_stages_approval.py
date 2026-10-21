@@ -7,14 +7,14 @@ import time
 
 import pytest
 
-from resumix_client.stages.approval import (
+from cv_client.stages.approval import (
     Answer,
     HumanApproval,
     TerminalReviewer,
     parse_answer,
 )
-from resumix_client.stages.jobfolder import read_analysis
-from resumix_client.stages.terminal import END_OF_INPUT, TaggedLog
+from cv_client.stages.jobfolder import read_analysis
+from cv_client.stages.terminal import END_OF_INPUT, TaggedLog
 
 from conftest import JD_TEXT, analysis, typed
 

@@ -9,15 +9,15 @@ import queue
 import threading
 import time
 
-from resumix_client.stages.calls import Calls
-from resumix_client.stages.generation import CvWriter, GenerationWorker
-from resumix_client.stages.intake import Intake
-from resumix_client.stages.listener import IDLE_HINT, Listener
-from resumix_client.stages.terminal import Console, Keyboard
-from resumix_client.stages.watcher import Watcher
-from resumix_client.stages.working import WorkingProcessor
-from resumix_client.tracking import build_tracker
-from resumix_client.ui import Decision
+from cv_client.stages.calls import Calls
+from cv_client.stages.generation import CvWriter, GenerationWorker
+from cv_client.stages.intake import Intake
+from cv_client.stages.listener import IDLE_HINT, Listener
+from cv_client.stages.terminal import Console, Keyboard
+from cv_client.stages.watcher import Watcher
+from cv_client.stages.working import WorkingProcessor
+from cv_client.tracking import build_tracker
+from cv_client.ui import Decision
 
 from conftest import JD_TEXT, FakeApi, ScriptedConfirmer, analysis, envelope, make_job, typed
 

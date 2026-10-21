@@ -4,8 +4,8 @@
     uv run python tests/cv_quality/cv_eval.py score tests/cv_quality/runs/<run>
 
 ``generate`` starts this checkout's own server, uncommitted changes included,
-and writes one CV per job description in jds/ through the resumix client, the
-same way ``resumix submit-raw`` does, into a new folder under runs/. The cv-judge agent (.claude/agents/cv-judge.md) then reads each CV and
+and writes one CV per job description in jds/ through the ats-strike client, the
+same way ``cv submit-raw`` does, into a new folder under runs/. The cv-judge agent (.claude/agents/cv-judge.md) then reads each CV and
 writes <stem>.judge.json next to it. ``score`` turns those judgements into
 three numbers per CV and appends their averages to results.csv.
 
@@ -31,16 +31,16 @@ from datetime import datetime
 from pathlib import Path
 
 import httpx
-from resumix_client.api import HttpApi, ResumixError
-from resumix_client.config import load_config
-from resumix_client.cvjob import session_id, write_cv
+from cv_client.api import HttpApi, CVError
+from cv_client.config import load_config
+from cv_client.cvjob import session_id, write_cv
 
 HERE = Path(__file__).resolve().parent
 JDS = HERE / "jds"
 RUNS = HERE / "runs"
 RESULTS = HERE / "results.csv"
 REPO = HERE.parents[1]
-DATA_DIR = REPO / "resumix-data" / "gab"
+DATA_DIR = REPO / "ats-strike-data" / "gab"
 #: Where candidate_profile.json and candidate_data.json come from: the
 #: fictional candidate in the repository, so every run writes for the same person.
 CANDIDATE = REPO / "examples" / "candidate"
@@ -147,7 +147,7 @@ def append_result(path: Path, row: list) -> None:
 
 @contextmanager
 def local_server(log: Path):
-    """This checkout's resumix-api on a free port, once it answers; yields its URL."""
+    """This checkout's ats-strike on a free port, once it answers; yields its URL."""
     with socket.socket() as s:
         s.bind(("127.0.0.1", 0))
         port = s.getsockname()[1]
@@ -155,9 +155,9 @@ def local_server(log: Path):
     # Empty values keep .env from setting them: no auth on a port only this
     # machine can reach, and the prompts of the checkout, not a mounted copy.
     env = {**os.environ, "HOST": "127.0.0.1", "PORT": str(port),
-           "RESUMIX_API_TOKEN": "", "RESUMIX_RESOURCES": ""}
+           "ATS_API_TOKEN": "", "ATS_RESOURCES": ""}
     with log.open("w", encoding="utf-8") as out:
-        server = subprocess.Popen([sys.executable, "-m", "resumix_server.server"], cwd=REPO, env=env,
+        server = subprocess.Popen([sys.executable, "-m", "cv_server.server"], cwd=REPO, env=env,
                                   stdin=subprocess.DEVNULL, stdout=out, stderr=subprocess.STDOUT)
         try:
             deadline = time.monotonic() + SERVER_START
@@ -180,7 +180,7 @@ def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
 
     A temperature goes to the cv step as its extra_body, which replaces every
     other setting models.toml gives that step."""
-    config = load_config(config_file=DATA_DIR / "resumix.toml", data_dir=DATA_DIR)
+    config = load_config(config_file=DATA_DIR / "cv.toml", data_dir=DATA_DIR)
     if temperature is not None:
         config = replace(config, extra_body={**config.extra_body, "cv": {"temperature": temperature}})
     config = replace(config, files={**config.files,
@@ -199,7 +199,7 @@ def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
             "candidate": str(candidate),
             "jds": [jd.stem for jd in jds],
         }, indent=2), encoding="utf-8")
-        print(f"resumix {health['version']} at {url}, {len(jds)} CVs into {run}", flush=True)
+        print(f"ats-strike {health['version']} at {url}, {len(jds)} CVs into {run}", flush=True)
         api = HttpApi(url)
 
         def one(jd: Path) -> None:
@@ -207,7 +207,7 @@ def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
             text, kept = jd.read_text(encoding="utf-8"), []
             try:
                 write_cv(api, config, text, say=say, keep=kept.append)
-            except ResumixError as exc:
+            except CVError as exc:
                 (run / f"{jd.stem}.error.txt").write_text(
                     f"{exc} (request {exc.request_id})\n", encoding="utf-8")
                 say(f"FAILED: {exc}")
@@ -263,7 +263,7 @@ def main() -> None:
     gen.add_argument("set", choices=("quick", "thorough"))
     gen.add_argument("--temperature", type=float,
                      help="The cv step's temperature, as its whole extra_body. "
-                          "Default: resumix.toml's [extra_body], else the server's settings.")
+                          "Default: cv.toml's [extra_body], else the server's settings.")
     gen.add_argument("--candidate", type=Path, default=CANDIDATE,
                      help="Folder with candidate_profile.json and candidate_data.json. "
                           "Default: examples/candidate.")

@@ -3,9 +3,9 @@
 import json
 
 import pytest
-from resumix_contracts import JDAnalysis
+from cv_contracts import JDAnalysis
 
-from resumix_server.models import Usage
+from cv_server.models import Usage
 
 from server_helpers import FakeLLM, completion
 
@@ -121,7 +121,7 @@ def test_deepseek_thinking_switch():
 
 
 def test_deepseek_function_calling_reads_the_tool_call():
-    from resumix_contracts import JDDetection
+    from cv_contracts import JDDetection
 
     llm = FakeLLM(detect=dict(
         model_provider="deepseek", thinking="off", structured_output="function_calling",

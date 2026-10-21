@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from resumix_client.ui import AutoConfirmer, PromptConfirmer
+from cv_client.ui import AutoConfirmer, PromptConfirmer
 
 from conftest import analysis, answering, typed
 

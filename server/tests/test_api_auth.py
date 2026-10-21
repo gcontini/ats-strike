@@ -7,7 +7,7 @@ from dataclasses import replace
 import pytest
 from fastapi.testclient import TestClient
 
-from resumix_server.api.app import create_app
+from cv_server.api.app import create_app
 
 
 @pytest.fixture

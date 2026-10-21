@@ -1,6 +1,6 @@
 # Running the two halves apart
 
-resumix is deliberately two programs. This page is about where to put each
+ats-strike is deliberately two programs. This page is about where to put each
 one, and what the boundary buys you.
 
 ## Why they are separate
@@ -49,13 +49,13 @@ flowchart LR
 ```mermaid
 flowchart TB
     subgraph A["1 — both on your laptop"]
-        A1["resumix"] -->|"localhost:8080"| A2["docker run resumix-server"]
+        A1["cv"] -->|"localhost:8080"| A2["docker run ats-strike-server"]
     end
     subgraph B["2 — server on a box you own"]
-        B1["resumix on 2–3 machines"] -->|"private network"| B2["one container, one work dir"]
+        B1["cv on 2–3 machines"] -->|"private network"| B2["one container, one work dir"]
     end
     subgraph C["3 — server on a cloud platform"]
-        C1["resumix anywhere"] -->|"HTTPS + bearer token"| C2["one instance<br/>scale-to-zero is fine"]
+        C1["cv anywhere"] -->|"HTTPS + bearer token"| C2["one instance<br/>scale-to-zero is fine"]
     end
 ```
 
@@ -65,17 +65,17 @@ machine can reach it. This is also the cheapest way to try a different model —
 the container restarts in a second.
 
 **2 — Server on a machine you own.** A NAS, a home server, a spare box. Set
-`RESUMIX_API_TOKEN` even here: without it, anyone on the network can spend
+`ATS_API_TOKEN` even here: without it, anyone on the network can spend
 your provider credit. Point every client at it with `server_url` in
-`resumix.toml`.
+`cv.toml`.
 
 **3 — Server on a cloud platform.** Works as-is: the image runs as any uid,
 needs no volume, tolerates a read-only root filesystem, and answers `/healthz`
 for the platform probe without a token. Three things to get right:
 
-- **Set `RESUMIX_API_TOKEN` and put TLS in front.** The client sends your
+- **Set `ATS_API_TOKEN` and put TLS in front.** The client sends your
   profile and your contact details in the request body.
-- **One instance per `RESUMIX_WORK_DIR`, and `WEB_CONCURRENCY=1`.** A running
+- **One instance per `ATS_WORK_DIR`, and `WEB_CONCURRENCY=1`.** A running
   CV job lives in the process that started it, and a starting process closes
   every session it finds unfinished.
 - **Scale-to-zero is fine, autoscaling is not.** The client knocks on
@@ -95,12 +95,12 @@ for the platform probe without a token. Three things to get right:
 Exactly three things, and only the first is required:
 
 ```toml
-server_url = "https://resumix.example.run.app"
+server_url = "https://ats-strike.example.run.app"
 token      = "the-bearer-token"
 timeout    = 1800          # how long to follow one CV job
 ```
 
-or `--server`/`--token`, or `RESUMIX_API_URL`/`RESUMIX_API_TOKEN`. That is
+or `--server`/`--token`, or `ATS_API_URL`/`ATS_API_TOKEN`. That is
 the entire coupling. Everything else the client sends is content.
 
 ## Keeping the boundary honest
@@ -125,7 +125,7 @@ repository, the lock file and the version number.
 
 Keeping one repository is the better trade today:
 
-- `resumix_contracts` is imported by both halves as a workspace member. Two
+- `cv_contracts` is imported by both halves as a workspace member. Two
   repositories would mean publishing it to an index, or vendoring it twice, to
   buy nothing a directory boundary does not already give.
 - A wire change currently lands as one commit that updates both sides and one
@@ -137,7 +137,7 @@ Keeping one repository is the better trade today:
 
 Split it when one of these becomes true, and not before: the client acquires
 its own release cadence and users who never touch the server; someone else's
-client needs `resumix_contracts` from an index; or the server grows a
+client needs `cv_contracts` from an index; or the server grows a
 private deployment history that should not be in a public client repository.
 When that day comes, the seam is already cut — publish `contracts/` as a
 versioned package, pin it from both sides, and move the two directories out.

@@ -18,22 +18,22 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "server" / "tests"))
 
-from resumix_client.api import HttpApi, ResumixError          # noqa: E402
-from resumix_client.config import Config                        # noqa: E402
-from resumix_client.stages.calls import Calls                   # noqa: E402
-from resumix_client.stages.generation import CvWriter, GenerationWorker  # noqa: E402
-from resumix_client.stages.intake import Intake                 # noqa: E402
-from resumix_client.stages.terminal import Console              # noqa: E402
-from resumix_client.stages.working import WorkingProcessor      # noqa: E402
-from resumix_client.tracking import build_tracker               # noqa: E402
-from resumix_client.ui import Decision                          # noqa: E402
-from resumix_client.workspace import Workspace                  # noqa: E402
-from resumix_server.api.app import create_app                   # noqa: E402
-from resumix_server.api.deps import AppState                    # noqa: E402
-from resumix_server.api.settings import Settings                # noqa: E402
-from resumix_server.bundle import default_bundle                # noqa: E402
+from cv_client.api import HttpApi, CVError          # noqa: E402
+from cv_client.config import Config                        # noqa: E402
+from cv_client.stages.calls import Calls                   # noqa: E402
+from cv_client.stages.generation import CvWriter, GenerationWorker  # noqa: E402
+from cv_client.stages.intake import Intake                 # noqa: E402
+from cv_client.stages.terminal import Console              # noqa: E402
+from cv_client.stages.working import WorkingProcessor      # noqa: E402
+from cv_client.tracking import build_tracker               # noqa: E402
+from cv_client.ui import Decision                          # noqa: E402
+from cv_client.workspace import Workspace                  # noqa: E402
+from cv_server.api.app import create_app                   # noqa: E402
+from cv_server.api.deps import AppState                    # noqa: E402
+from cv_server.api.settings import Settings                # noqa: E402
+from cv_server.bundle import default_bundle                # noqa: E402
 
-from resumix_client.workspace import Artifacts                   # noqa: E402
+from cv_client.workspace import Artifacts                   # noqa: E402
 
 from server_helpers import SAMPLE_BODY, FakeLLM, script_cv       # noqa: E402
 
@@ -94,7 +94,7 @@ def api(models, tmp_path):
 
 
 class Submit:
-    """``resumix submit`` against the in-process server: one posting, analysed,
+    """``cv submit`` against the in-process server: one posting, analysed,
     approved, and its CV written on this thread."""
 
     def __init__(self, api, root: Path) -> None:
@@ -130,8 +130,8 @@ def run(api, tmp_path):
 @pytest.fixture(autouse=True)
 def no_waiting(monkeypatch):
     """The fakes answer instantly: neither side needs to wait between looks."""
-    monkeypatch.setattr("resumix_client.cvjob.RECONNECT_SECONDS", 0)
-    monkeypatch.setattr("resumix_server.api.routers.cv.FOLLOW_SECONDS", 0.01)
+    monkeypatch.setattr("cv_client.cvjob.RECONNECT_SECONDS", 0)
+    monkeypatch.setattr("cv_server.api.routers.cv.FOLLOW_SECONDS", 0.01)
 
 
 @needs_latex
@@ -174,7 +174,7 @@ def test_the_cv_s_own_server_log_and_its_cost_come_with_it(run):
 def test_a_posting_the_server_already_wrote_is_replayed_not_paid_for_twice(run, api, models):
     """The client died after the server had finished: the next run of the same
     posting gets the CV that is already there."""
-    from resumix_client.cvjob import session_id
+    from cv_client.cvjob import session_id
 
     request_id = session_id(JD_TEXT)
     api.create_cv(JD_TEXT, request_id=request_id,
@@ -217,5 +217,5 @@ def test_a_server_error_reaches_the_client_as_a_typed_failure(run, api, models, 
 
 def test_the_client_reports_an_unreachable_server_clearly():
     api = HttpApi("http://127.0.0.1:1")  # nothing listens here
-    with pytest.raises(ResumixError, match="cannot reach the resumix server"):
+    with pytest.raises(CVError, match="cannot reach the ats-strike server"):
         api.detect("x" * 1500)

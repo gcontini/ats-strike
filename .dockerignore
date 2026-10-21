@@ -19,7 +19,7 @@ examples
 **/__pycache__
 **/*.py[cod]
 **/*.egg-info
-resumix-data
+ats-strike-data
 build
 .claude
 .github

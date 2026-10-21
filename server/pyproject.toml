@@ -1,22 +1,22 @@
 [project]
-name = "resumix-server"
+name = "ats-strike-server"
 version = "0.5.0"
-description = "resumix HTTP API: turn a job description into tailored CV data and a compiled LaTeX PDF."
+description = "ats-strike HTTP API: turn a job description into tailored CV data and a compiled LaTeX PDF."
 requires-python = ">=3.12"
 license = "MIT"
 dependencies = [
-    "resumix-contracts",
+    "ats-strike-contracts",
     # Web layer. uvicorn plain, not [standard]: no uvloop/httptools/websockets.
     "fastapi>=0.115",
     "uvicorn>=0.30",
     # Required for File()/Form() parts — FastAPI raises without it.
     "python-multipart>=0.0.9",
-    # Every model call goes through LangChain (resumix_server/models): ChatOpenAI
+    # Every model call goes through LangChain (cv_server/models): ChatOpenAI
     # for any OpenAI-compatible endpoint, ChatDeepSeek for api.deepseek.com.
     "langchain-openai>=1.6",
     "langchain-deepseek>=1.1",
     # The CV pipeline's steps as a graph, with Send for the calls a step makes
-    # side by side (resumix_server/pipeline/cv_generator.py).
+    # side by side (cv_server/pipeline/cv_generator.py).
     "langgraph>=1.2",
     # Still imported directly: the API layer maps its errors to 502/504.
     "openai",
@@ -29,10 +29,10 @@ dependencies = [
 ]
 
 [project.scripts]
-resumix-api = "resumix_server.server:main"
+ats-strike = "cv_server.server:main"
 
 [tool.uv.sources]
-resumix-contracts = { workspace = true }
+ats-strike-contracts = { workspace = true }
 
 [build-system]
 requires = ["setuptools>=77"]
@@ -42,15 +42,15 @@ build-backend = "setuptools.build_meta"
 # package-dir entry and an explicit packages list (packages.find only scans
 # "where").
 [tool.setuptools]
-package-dir = { "" = "src", "resumix_server.resources" = "resources" }
+package-dir = { "" = "src", "cv_server.resources" = "resources" }
 packages = [
-    "resumix_server",
-    "resumix_server.api",
-    "resumix_server.api.routers",
-    "resumix_server.models",
-    "resumix_server.pipeline",
-    "resumix_server.resources",
+    "cv_server",
+    "cv_server.api",
+    "cv_server.api.routers",
+    "cv_server.models",
+    "cv_server.pipeline",
+    "cv_server.resources",
 ]
 
 [tool.setuptools.package-data]
-"resumix_server.resources" = ["*.txt", "*.json", "*.toml", "*.jinja", "*.png"]
+"cv_server.resources" = ["*.txt", "*.json", "*.toml", "*.jinja", "*.png"]

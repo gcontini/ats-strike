@@ -10,8 +10,8 @@ from dataclasses import replace
 
 import pytest
 
-from resumix_server.bundle import CandidateInputs
-from resumix_server.pipeline.cv_generator import (
+from cv_server.bundle import CandidateInputs
+from cv_server.pipeline.cv_generator import (
     ARTIFACTS,
     FORMATS,
     CVGenerator,
@@ -21,8 +21,8 @@ from resumix_server.pipeline.cv_generator import (
     scores_of,
     without_scores,
 )
-from resumix_server.pipeline.cv_renderer import CVRenderer, RenderResult
-from resumix_server.pipeline.errors import BudgetExceededError, ModelOutputError
+from cv_server.pipeline.cv_renderer import CVRenderer, RenderResult
+from cv_server.pipeline.errors import BudgetExceededError, ModelOutputError
 
 from server_helpers import (
     KEY_POINTS,

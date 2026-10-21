@@ -6,11 +6,11 @@ import json
 
 import pytest
 
-from resumix_client.stages.jobfolder import read_analysis
-from resumix_client.stages.terminal import TaggedLog
-from resumix_client.stages.working import WorkingProcessor
-from resumix_client.tracking import build_tracker
-from resumix_client.workspace import Artifacts, day
+from cv_client.stages.jobfolder import read_analysis
+from cv_client.stages.terminal import TaggedLog
+from cv_client.stages.working import WorkingProcessor
+from cv_client.tracking import build_tracker
+from cv_client.workspace import Artifacts, day
 
 from conftest import EXAMPLE_CANDIDATE, JD_TEXT, analysis, document, make_job
 

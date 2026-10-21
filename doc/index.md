@@ -1,9 +1,9 @@
-# resumix
+# ats-strike
 
 Turn a job description and your unstructured experiences into a tailored,
 two-page LaTeX CV and a cover letter, using any OpenAI-compatible model.
 
-resumix is two halves that never share a machine by necessity:
+ats-strike is two halves that never share a machine by necessity:
 
 - a **server** that holds the model API keys, the prompts and the LaTeX
   toolchain, shipped as a container image;
@@ -25,7 +25,7 @@ both sides import and neither owns.
 | Build or deploy the server | [Building the server](build-server.md) |
 | Build the client executable | [Building the client](build-client.md) |
 | Decide where each half runs | [Running the two halves apart](deployment.md) |
-| Work on resumix itself, in VS Code | [Developing locally in VS Code](development-setup.md) |
+| Work on ats-strike itself, in VS Code | [Developing locally in VS Code](development-setup.md) |
 
 ## The shape of a run
 

@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import pytest
 
-from resumix_client.stages.calls import Calls
-from resumix_client.stages.intake import Intake
-from resumix_client.stages.jobfolder import read_analysis
-from resumix_client.ui import Decision
-from resumix_client.workspace import day
+from cv_client.stages.calls import Calls
+from cv_client.stages.intake import Intake
+from cv_client.stages.jobfolder import read_analysis
+from cv_client.ui import Decision
+from cv_client.workspace import day
 
 from conftest import JD_TEXT, ScriptedConfirmer, analysis, make_job
 

@@ -2,7 +2,7 @@
 
 import pytest
 
-from resumix_server.pipeline.letter_generator import MAX_WORDS, MIN_WORDS, LetterGenerator
+from cv_server.pipeline.letter_generator import MAX_WORDS, MIN_WORDS, LetterGenerator
 
 from server_helpers import FakeLLM
 

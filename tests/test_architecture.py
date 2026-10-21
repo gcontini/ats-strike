@@ -13,9 +13,9 @@ from typing import Set
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = {
-    "contracts": REPO_ROOT / "contracts" / "src" / "resumix_contracts",
-    "server": REPO_ROOT / "server" / "src" / "resumix_server",
-    "client": REPO_ROOT / "client" / "src" / "resumix_client",
+    "contracts": REPO_ROOT / "contracts" / "src" / "cv_contracts",
+    "server": REPO_ROOT / "server" / "src" / "cv_server",
+    "client": REPO_ROOT / "client" / "src" / "cv_client",
 }
 
 
@@ -33,11 +33,11 @@ def imports_of(package: Path) -> Set[str]:
 
 
 def test_the_client_never_imports_the_server():
-    assert "resumix_server" not in imports_of(PACKAGES["client"])
+    assert "cv_server" not in imports_of(PACKAGES["client"])
 
 
 def test_the_server_never_imports_the_client():
-    assert "resumix_client" not in imports_of(PACKAGES["server"])
+    assert "cv_client" not in imports_of(PACKAGES["server"])
 
 
 def test_the_contracts_depend_on_pydantic_and_nothing_else():
@@ -66,7 +66,7 @@ def test_the_server_carries_no_client_side_dependency():
 
 
 def client_modules_used_by(subpackage: Path) -> Set[str]:
-    """Every ``resumix_client.<module>`` a client subpackage imports, however spelled."""
+    """Every ``cv_client.<module>`` a client subpackage imports, however spelled."""
     found: Set[str] = set()
     for path in subpackage.rglob("*.py"):
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
@@ -74,10 +74,10 @@ def client_modules_used_by(subpackage: Path) -> Set[str]:
             if isinstance(node, ast.Import):
                 names = [alias.name.split(".") for alias in node.names]
                 found.update(parts[1] for parts in names
-                             if parts[0] == "resumix_client" and len(parts) > 1)
+                             if parts[0] == "cv_client" and len(parts) > 1)
             elif isinstance(node, ast.ImportFrom):
                 parts = (node.module or "").split(".")
-                if node.level == 0 and parts[0] == "resumix_client" and len(parts) > 1:
+                if node.level == 0 and parts[0] == "cv_client" and len(parts) > 1:
                     found.add(parts[1])
                 elif node.level == 2 and node.module:  # from ..module import x
                     found.add(parts[0])

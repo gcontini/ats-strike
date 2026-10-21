@@ -5,10 +5,10 @@ from __future__ import annotations
 from dataclasses import replace
 
 import pytest
-from resumix_contracts import CVFailure, TokenUsage
+from cv_contracts import CVFailure, TokenUsage
 
-from resumix_client.api import ResumixError
-from resumix_client.cvjob import session_id, write_cv
+from cv_client.api import CVError
+from cv_client.cvjob import session_id, write_cv
 
 from conftest import JD_TEXT
 
@@ -54,7 +54,7 @@ def test_a_failed_job_is_acknowledged_then_raised_with_its_cause(api, config):
         http_status=504, error="budget_exceeded [cv.cv]: out of time",
         total=TokenUsage(calls=3)))]
     said = []
-    with pytest.raises(ResumixError) as failure:
+    with pytest.raises(CVError) as failure:
         write_cv(api, config, JD_TEXT, say=said.append, keep=lambda rendered: None)
     assert failure.value.status == 504
     assert "budget_exceeded" in str(failure.value)
@@ -77,7 +77,7 @@ def test_a_stream_that_never_reaches_the_end_gives_up_at_the_timeout(api, config
     """Without acknowledging: the job may still finish, and the next run of
     the same posting will find it."""
     api.session = api.session[:2]                     # never ends
-    with pytest.raises(ResumixError) as failure:
+    with pytest.raises(CVError) as failure:
         follow(api, replace(config, timeout=0))
     assert "run the same posting again" in str(failure.value)
     assert "acknowledge" not in api.calls
@@ -87,11 +87,11 @@ def test_a_session_the_server_has_lost_is_not_reconnected_to(api, config):
     class Gone(type(api)):
         def events(self, request_id, *, after=0):
             self._record("events")
-            raise ResumixError("unknown_request: no CV session", status=404)
+            raise CVError("unknown_request: no CV session", status=404)
             yield  # a generator, like the real one
 
     gone = Gone()
-    with pytest.raises(ResumixError) as failure:
+    with pytest.raises(CVError) as failure:
         follow(gone, config)
     assert failure.value.status == 404
     assert gone.calls.count("events") == 1
@@ -117,7 +117,7 @@ def test_new_with_nothing_on_the_server_just_starts(api, config):
 def test_new_while_the_old_run_is_still_being_written_is_refused(api, config):
     """Its worker is still writing the session a new run would have to use."""
     api.acknowledge_errors = [409]
-    with pytest.raises(ResumixError) as failure:
+    with pytest.raises(CVError) as failure:
         follow(api, config, new=True)
     assert failure.value.status == 409
     assert "still being written" in str(failure.value)

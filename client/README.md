@@ -1,11 +1,11 @@
-# resumix
+# ats-strike
 
 Copy a job posting. Get back a tailored two-page CV as a PDF, filed in a
 dated folder with the posting, the analysis, the LaTeX source and a log of
 what it cost.
 
-`resumix` is a single executable. It keeps your CV data on your machine and
-sends it, per request, to a [resumix server](../server/README.md) that holds
+`cv` is a single executable. It keeps your CV data on your machine and
+sends it, per request, to a [ats-strike server](../server/README.md) that holds
 the model API keys and the LaTeX toolchain. You need no Python, no API key of
 your own and no LaTeX install (for the client).
 
@@ -14,7 +14,7 @@ your own and no LaTeX install (for the client).
 ## Set it up
 
 1. **Download** the binary for your platform and put it wherever you like —
-   `~/bin/resumix`, `C:\Tools\resumix.exe`. On Linux: `chmod +x resumix`.
+   `~/bin/cv`, `C:\Tools\cv.exe`. On Linux: `chmod +x cv`.
 
 2. **Put your files next to it.** They are picked up by name:
 
@@ -36,10 +36,10 @@ your own and no LaTeX install (for the client).
    Start from the fictional set in [`examples/candidate/`](../examples/candidate)
    — copy them into your current folder and edit.
 
-3. **Point it at a server.** Either a `resumix.toml` in your current folder:
+3. **Point it at a server.** Either a `cv.toml` in your current folder:
 
    ```toml
-   server_url = "https://resumix.example.run.app"
+   server_url = "https://ats-strike.example.run.app"
    token      = "the-bearer-token"      # only if the server requires one
    cover_letter = "no"                  # no | yes | letter_only
    # verbose = true                     # same as -v on every run
@@ -51,19 +51,19 @@ your own and no LaTeX install (for the client).
    # temperature = 0.4
    ```
 
-   …or `--server`/`--token` on the command line, or `RESUMIX_API_URL` and
-   `RESUMIX_API_TOKEN` in the environment.
+   …or `--server`/`--token` on the command line, or `ATS_API_URL` and
+   `ATS_API_TOKEN` in the environment.
 
 4. **Check it works:**
 
    ```bash
    cd examples
-   resumix submit-raw posting.txt --server ... [--token ...]
+   cv submit-raw posting.txt --server ... [--token ...]
    ```
 
 Everything resolves in this order: **command line → environment →
-`resumix.toml` → file in the current folder → the server's default.** The
-`[files]` section of `resumix.toml` can point anywhere:
+`cv.toml` → file in the current folder → the server's default.** The
+`[files]` section of `cv.toml` can point anywhere:
 
 ---
 
@@ -72,7 +72,7 @@ Everything resolves in this order: **command line → environment →
 ### `clipboard` — copy a posting, get a CV
 
 ```bash
-resumix clipboard --out ~/applications
+cv clipboard --out ~/applications
 ```
 
 Watches the clipboard. When you copy something that looks like a posting it
@@ -94,7 +94,7 @@ On Linux the clipboard needs a helper: `apt install xclip` (X11) or
 ### `watch` — drop files into a folder
 
 ```bash
-resumix watch --in ~/Downloads/postings --out ~/applications
+cv watch --in ~/Downloads/postings --out ~/applications
 ```
 
 Every `.txt` dropped into `--in` is checked and analysed, then deleted from
@@ -113,7 +113,7 @@ without it. The full rules are in [`doc/client.md`](../doc/client.md).
 ### `submit` — one file, once
 
 ```bash
-resumix submit posting.txt --out ~/applications --yes
+cv submit posting.txt --out ~/applications --yes
 ```
 
 The same steps as `clipboard` for a single file — but the CV is written
@@ -123,8 +123,8 @@ you name is **read**, never moved — unlike `watch`, which empties the folder i
 ### `submit-raw` — just the CV, right here
 
 ```bash
-resumix submit-raw posting.txt
-resumix submit-raw posting.txt -o cv.pdf -o cv.json -o cv.tex
+cv submit-raw posting.txt
+cv submit-raw posting.txt -o cv.pdf -o cv.json -o cv.tex
 ```
 
 The CV and nothing else: no detection, no analysis, no question before
@@ -140,8 +140,8 @@ rather than replacing it.
 ### `analysis` — just the analysis
 
 ```bash
-resumix analysis --in posting.txt
-resumix analysis --in posting.txt --output-format folder
+cv analysis --in posting.txt
+cv analysis --in posting.txt --output-format folder
 ```
 
 The analysis and nothing else: no detection, no question, no CV. It needs
@@ -158,8 +158,8 @@ on it never picks up half a job. Failures go to stderr.
 ### `render` — compile an edited CV
 
 ```bash
-resumix render ~/applications/cv/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
-resumix render cv_jordan_rivera_head_of_it.tex
+cv render ~/applications/cv/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
+cv render cv_jordan_rivera_head_of_it.tex
 ```
 
 Give it the `.json` document to re-render from the content, or the `.tex` to
@@ -173,7 +173,7 @@ A failed render prints the end of the TeX log, which says where.
 ### `reset` — drop what the server keeps
 
 ```bash
-resumix reset
+cv reset
 ```
 
 Every CV is a session on the server, kept until the client has saved its
@@ -186,11 +186,11 @@ the CV again.
 ### `version` — which build is this
 
 ```bash
-resumix version
+cv version
 ```
 
 Prints `version x.y.z` and exits. No configuration, no server — it answers even
-when `resumix.toml` is wrong. Every `-v` run prints the same line at startup.
+when `cv.toml` is wrong. Every `-v` run prints the same line at startup.
 
 ### Switches
 
@@ -211,8 +211,8 @@ when `resumix.toml` is wrong. Every `-v` run prints the same line at startup.
 | `--config FILE`, `--data-dir DIR` | all | Use a specific config, or look for your files somewhere else. |
 | `-v`, `--verbose` | all | Print `version x.y.z` at startup; while a CV is being written, print what the server reports about each step it finishes — what it produced, tokens, thinking tokens, elapsed. |
 
-Both work on either side of the mode name: `resumix -v submit posting.txt
---out ~/applications` and `resumix submit -v …` do the same thing.
+Both work on either side of the mode name: `cv -v submit posting.txt
+--out ~/applications` and `cv submit -v …` do the same thing.
 
 ---
 
@@ -237,7 +237,7 @@ Both work on either side of the mode name: `resumix -v submit posting.txt
 └── applications.xlsx                    one row per delivered CV
 ```
 
-To revise a CV: edit `cv_jordan_rivera_head_of_it.json` and run `resumix render` on it.
+To revise a CV: edit `cv_jordan_rivera_head_of_it.json` and run `cv render` on it.
 That costs one LaTeX compile and no model calls. Editing the `.tex` and
 rendering that works too, if you would rather work in LaTeX.
 
@@ -266,8 +266,8 @@ failed attempts included.
 
 | What you see | What to do |
 |---|---|
-| `cannot reach the resumix server at …` | The server is down or the URL is wrong. `curl <url>/healthz` to check. |
-| `401` / `a valid bearer token is required` | The server wants a token: set `token` in `resumix.toml` or pass `--token`. |
+| `cannot reach the ats-strike server at …` | The server is down or the URL is wrong. `curl <url>/healthz` to check. |
+| `401` / `a valid bearer token is required` | The server wants a token: set `token` in `cv.toml` or pass `--token`. |
 | `candidate_profile.json is required but was not found` | Put it in the current folder, or name it under `[files]` in the config. |
 | `no clipboard here: neither DISPLAY nor WAYLAND_DISPLAY…` | Install `xclip` or `wl-clipboard`, or use `watch` instead — it needs no clipboard. |
 | `429` / `all job slots are busy` | The server is at capacity. Try again shortly. |

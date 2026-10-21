@@ -1,4 +1,4 @@
-"""resumix mark: two pages stitched together across a centre seam.
+"""ats-strike mark: two pages stitched together across a centre seam.
 
 The detailed icon carries the text lines (with two amber keyword highlights
 on the CV side); the favicon is the same composition with the lines dropped
@@ -146,12 +146,12 @@ def png(g, size):
 if __name__ == "__main__":
     import sys
     out = sys.argv[1].rstrip("/")
-    open(f"{out}/resumix-icon.svg", "w").write(svg(ICON, "resumix"))
-    open(f"{out}/resumix-favicon.svg", "w").write(svg(FAVICON, "resumix"))
-    png(ICON, 512).save(f"{out}/resumix-icon.png")
+    open(f"{out}/ats-strike-icon.svg", "w").write(svg(ICON, "ats-strike"))
+    open(f"{out}/ats-strike-favicon.svg", "w").write(svg(FAVICON, "ats-strike"))
+    png(ICON, 512).save(f"{out}/ats-strike-icon.png")
     for n in (512, 256, 128):
-        png(ICON, n).save(f"{out}/resumix-icon-{n}.png")
-    png(FAVICON, 32).save(f"{out}/resumix-favicon.png")
+        png(ICON, n).save(f"{out}/ats-strike-icon-{n}.png")
+    png(FAVICON, 32).save(f"{out}/ats-strike-favicon.png")
     for n in (16, 32, 48, 180):
-        png(FAVICON, n).save(f"{out}/resumix-favicon-{n}.png")
+        png(FAVICON, n).save(f"{out}/ats-strike-favicon-{n}.png")
     print("ok")

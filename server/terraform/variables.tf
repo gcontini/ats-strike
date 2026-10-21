@@ -13,7 +13,7 @@ variable "environment" {
 variable "function_name" {
   description = "Function Compute function name. Changing it replaces the function, and with it the trigger URL."
   type        = string
-  default     = "resumix"
+  default     = "ats-strike"
 }
 
 variable "image_tag" {
@@ -34,9 +34,9 @@ variable "log_project" {
 }
 
 variable "namespace" {
-  description = "Container Registry namespace that holds the resumix repository. It also names the sessions bucket and the function's role, so a second deployment in the account needs one of its own."
+  description = "Container Registry namespace that holds the ats-strike repository. It also names the sessions bucket and the function's role, so a second deployment in the account needs one of its own."
   type        = string
-  default     = "resumix"
+  default     = "ats-strike"
 }
 
 variable "region" {

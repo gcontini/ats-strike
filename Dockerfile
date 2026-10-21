@@ -1,11 +1,11 @@
 # Builds the server as a docker. it is here because some cloud build don't 
 # understand the build in a subfolder
 
-# The resumix API server: the LaTeX toolchain, the Python environment and
+# The ats-strike API server: the LaTeX toolchain, the Python environment and
 # uvicorn. Stateless — it mounts nothing and stores nothing.
 #
-#     docker build -t resumix-server .
-#     docker run --rm -p 8080:8080 --env-file .env resumix-server
+#     docker build -t ats-strike-server .
+#     docker run --rm -p 8080:8080 --env-file .env ats-strike-server
 #
 # Built from the repository root's contracts/ and server/ only; the client is
 # a separate artifact and shares nothing but the contracts package.
@@ -30,7 +30,7 @@ COPY pyproject.toml uv.lock README.md ./
 COPY contracts/pyproject.toml ./contracts/
 COPY server/pyproject.toml ./server/
 COPY client/pyproject.toml ./client/
-RUN uv sync --frozen --no-dev --package resumix-server --no-install-workspace
+RUN uv sync --frozen --no-dev --package ats-strike-server --no-install-workspace
 
 # Then the code, which changes on every commit. --no-editable copies the
 # packages into the venv instead of linking them back to /app/src, so the
@@ -38,7 +38,7 @@ RUN uv sync --frozen --no-dev --package resumix-server --no-install-workspace
 COPY contracts/src ./contracts/src
 COPY server/src ./server/src
 COPY server/resources ./server/resources
-RUN uv sync --frozen --no-dev --package resumix-server --no-editable
+RUN uv sync --frozen --no-dev --package ats-strike-server --no-editable
 
 
 # ---------------------------------------------------------------------------
@@ -77,14 +77,14 @@ RUN /tmp/install-fontawesome5.sh /tmp/fontawesome5.tar.xz \
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PORT=8080 \
-    RESUMIX_WORK_DIR=/tmp/resumix \
+    ATS_WORK_DIR=/tmp/ats-strike \
     HOME=/tmp \
     XDG_CACHE_HOME=/tmp/.cache \
     TEXMFVAR=/tmp/texmf-var
 
 COPY --from=build /app/.venv /app/.venv
 COPY server/docker/entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint.sh && mkdir -p /tmp/resumix
+RUN chmod +x /usr/local/bin/entrypoint.sh && mkdir -p /tmp/ats-strike
 
 EXPOSE 8080
 
@@ -95,4 +95,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 CMD \
 WORKDIR /tmp
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["resumix-api"]
+CMD ["ats-strike"]

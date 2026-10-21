@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from resumix_client.stages.jobfolder import (
+from cv_client.stages.jobfolder import (
     APPROVAL_FILENAME,
     classify,
     read_approval,
@@ -12,7 +12,7 @@ from resumix_client.stages.jobfolder import (
     route,
     write_approval,
 )
-from resumix_client.workspace import STEPS_DIRNAME
+from cv_client.workspace import STEPS_DIRNAME
 
 from conftest import analysis
 

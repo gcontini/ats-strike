@@ -9,8 +9,8 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from resumix_client import __version__
-from resumix_client.api import HttpApi, ResumixError, version_compat
+from cv_client import __version__
+from cv_client.api import HttpApi, CVError, version_compat
 
 
 @pytest.mark.parametrize("client_version, server_version, expected", [
@@ -58,7 +58,7 @@ def test_a_minor_mismatch_warns_and_continues(capsys):
 def test_a_major_mismatch_stops_before_the_first_call():
     api = HttpApi("http://server.invalid", client=_client_reporting(_bump(0)))
 
-    with pytest.raises(ResumixError, match="major versions differ"):
+    with pytest.raises(CVError, match="major versions differ"):
         api._ensure_healthy()
 
 
@@ -123,7 +123,7 @@ def test_a_reconnect_says_where_it_got_to():
 
 def test_a_stream_the_server_refuses_raises_with_its_status():
     api = HttpApi("http://server.invalid", client=_server([], status=404))
-    with pytest.raises(ResumixError) as failure:
+    with pytest.raises(CVError) as failure:
         list(api.events("abc"))
     assert failure.value.status == 404
     assert "unknown_request" in str(failure.value)
@@ -133,7 +133,7 @@ def test_a_broken_stream_raises_with_no_status_after_what_it_delivered():
     """No status: nothing answered, so there is something to reconnect to."""
     api = HttpApi("http://server.invalid", client=_server([], events=Broken()))
     delivered = []
-    with pytest.raises(ResumixError) as failure:
+    with pytest.raises(CVError) as failure:
         for event in api.events("abc"):
             delivered.append(event[0])
     assert failure.value.status == 0

@@ -1,7 +1,7 @@
 # A run, end to end
 
 One posting, from the moment you press Ctrl+C on a job ad to the folder that
-holds the PDF. This is `resumix clipboard`. `submit` runs the same steps once,
+holds the PDF. This is `cv clipboard`. `submit` runs the same steps once,
 for one file, and writes the CV on the main thread before it returns. `watch`
 reads postings from a folder and asks only about the CHECK ones — see
 [the client guide](client.md).
@@ -15,7 +15,7 @@ sequenceDiagram
     participant Lis as Listener
     participant In as Intake
     participant Api as HttpApi
-    participant Srv as resumix-server
+    participant Srv as ats-strike-server
     participant Wp as WorkingProcessor
     participant Gen as CV thread
 
@@ -175,15 +175,15 @@ paid for and stays delivered.
 
 | Step | Module |
 |---|---|
-| Reading the clipboard | `client/src/resumix_client/sources/clipboard.py` |
-| The loop: leftovers first, then the clipboard, `q` | `client/src/resumix_client/stages/listener.py` |
-| The free check, detection, analysis | `client/src/resumix_client/stages/analysis.py` |
-| The question | `client/src/resumix_client/stages/intake.py`, `client/src/resumix_client/ui.py` |
-| The duplicate check, every move, both queues | `client/src/resumix_client/stages/working.py` |
-| Where a folder goes next | `client/src/resumix_client/stages/jobfolder.py` |
-| Writing the CV, one at a time | `client/src/resumix_client/stages/generation.py`, `client/src/resumix_client/cvjob.py` |
-| The threads, `q` and Ctrl-C | `client/src/resumix_client/stages/watcher.py` |
-| Every HTTP call, and nothing else | `client/src/resumix_client/api.py` |
-| Paths, moves | `client/src/resumix_client/workspace.py` |
-| `log.log` | `client/src/resumix_client/joblog.py`, `client/src/resumix_client/stages/terminal.py` |
-| `applications.xlsx` | `client/src/resumix_client/tracking.py` |
+| Reading the clipboard | `client/src/cv_client/sources/clipboard.py` |
+| The loop: leftovers first, then the clipboard, `q` | `client/src/cv_client/stages/listener.py` |
+| The free check, detection, analysis | `client/src/cv_client/stages/analysis.py` |
+| The question | `client/src/cv_client/stages/intake.py`, `client/src/cv_client/ui.py` |
+| The duplicate check, every move, both queues | `client/src/cv_client/stages/working.py` |
+| Where a folder goes next | `client/src/cv_client/stages/jobfolder.py` |
+| Writing the CV, one at a time | `client/src/cv_client/stages/generation.py`, `client/src/cv_client/cvjob.py` |
+| The threads, `q` and Ctrl-C | `client/src/cv_client/stages/watcher.py` |
+| Every HTTP call, and nothing else | `client/src/cv_client/api.py` |
+| Paths, moves | `client/src/cv_client/workspace.py` |
+| `log.log` | `client/src/cv_client/joblog.py`, `client/src/cv_client/stages/terminal.py` |
+| `applications.xlsx` | `client/src/cv_client/tracking.py` |

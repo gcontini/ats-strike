@@ -6,7 +6,7 @@ import re
 
 import pytest
 
-from resumix_client.workspace import (
+from cv_client.workspace import (
     Artifacts,
     Workspace,
     day,

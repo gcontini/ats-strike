@@ -5,11 +5,11 @@ per request, to a server that holds the model API keys and the LaTeX
 toolchain. No Python, no API key and no LaTeX install of your own.
 
 ```text
-resumix [global options] MODE [mode options]
+cv [global options] MODE [mode options]
 ```
 
-Global options work on either side of the mode name: `resumix -v submit
-posting.txt --out ~/applications` and `resumix submit -v …` do the same
+Global options work on either side of the mode name: `cv -v submit
+posting.txt --out ~/applications` and `cv submit -v …` do the same
 thing.
 
 ## Which mode
@@ -42,7 +42,7 @@ flowchart TD
 ### `clipboard` — copy a posting, get a CV
 
 ```bash
-resumix clipboard --out ~/applications
+cv clipboard --out ~/applications
 ```
 
 Watches the clipboard. When you copy something that looks like a posting, it
@@ -86,7 +86,7 @@ use `watch`, which needs no clipboard at all.
 ### `watch` — drop files into a folder
 
 ```bash
-resumix watch --in ~/Downloads/postings --out ~/applications
+cv watch --in ~/Downloads/postings --out ~/applications
 ```
 
 Each posting goes through four stages, and the analysis decides the route:
@@ -178,7 +178,7 @@ folder as `--out`, and the watcher has to be allowed to delete from it.
 ### `submit` — one file, once
 
 ```bash
-resumix submit posting.txt --out ~/applications --yes
+cv submit posting.txt --out ~/applications --yes
 ```
 
 The same steps as `clipboard`, for a single file: analysed, asked about
@@ -190,7 +190,7 @@ posting in `working/` as `PENDING`, to be asked about at the next start of
 `clipboard` or `watch`.
 
 ```bash
-resumix submit posting.txt analysis.json --out ~/applications
+cv submit posting.txt analysis.json --out ~/applications
 ```
 
 With an `analysis.json` for the posting — from an earlier run's folder, say —
@@ -203,8 +203,8 @@ sent or written.
 ### `submit-raw` — just the CV, right here
 
 ```bash
-resumix submit-raw posting.txt
-resumix submit-raw posting.txt -o cv.pdf -o cv.json -o cv.tex
+cv submit-raw posting.txt
+cv submit-raw posting.txt -o cv.pdf -o cv.json -o cv.tex
 ```
 
 The CV and nothing else: no detection, no analysis, no question before
@@ -220,8 +220,8 @@ second run counts up to `posting_1.pdf` rather than replacing it.
 ### `analysis` — just the analysis
 
 ```bash
-resumix analysis --in posting.txt
-resumix analysis --in posting.txt --output-format folder
+cv analysis --in posting.txt
+cv analysis --in posting.txt --output-format folder
 ```
 
 The analysis and nothing else: no detection, no question, no CV. It needs
@@ -238,8 +238,8 @@ on it never picks up half a job. Failures go to stderr.
 ### `render` — compile an edited CV
 
 ```bash
-resumix render ~/applications/cv/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
-resumix render cv_jordan_rivera_head_of_it.tex --output /tmp/preview.pdf
+cv render ~/applications/cv/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
+cv render cv_jordan_rivera_head_of_it.tex --output /tmp/preview.pdf
 ```
 
 Give it the `.json` document to re-render from the content, or the `.tex` to
@@ -251,7 +251,7 @@ log, which says where the LaTeX breaks.
 ### `reset` — drop what the server keeps
 
 ```bash
-resumix reset
+cv reset
 ```
 
 Every CV is a session on the server, kept until the client has saved its
@@ -263,11 +263,11 @@ written from scratch.
 ### `version` — which build is this
 
 ```bash
-resumix version
+cv version
 ```
 
 Prints `version x.y.z` and exits. It reads no configuration and talks to no
-server, so it answers even when `resumix.toml` is wrong. Every `--verbose` run
+server, so it answers even when `cv.toml` is wrong. Every `--verbose` run
 prints the same line at startup, which is what you want in a bug report.
 
 The number comes from the package metadata bundled into the executable, so it
@@ -316,7 +316,7 @@ server, which deletes the session. Anything in between costs nothing:
   the posting's text. It is refused while the old run is still being written.
 
 A session nobody came back for is kept for a day (the server's
-`RESUMIX_SESSION_TTL_DAYS`), and `resumix reset` drops them all.
+`ATS_SESSION_TTL_DAYS`), and `cv reset` drops them all.
 
 ## Options
 
@@ -324,10 +324,10 @@ A session nobody came back for is kept for a day (the server's
 
 | Flag | What it does |
 |---|---|
-| `--server URL` | The resumix server. Default `http://localhost:8080`. |
+| `--server URL` | The ats-strike server. Default `http://localhost:8080`. |
 | `--token TOKEN` | Bearer token, if the server requires one. |
 | `--pages N` | Page limit the CV must fit. Default: the server's, which is 2. |
-| `--config FILE` | Use this `resumix.toml` instead of searching for one. |
+| `--config FILE` | Use this `cv.toml` instead of searching for one. |
 | `--data-dir DIR` | Look for your files here before the current folder. |
 | `-v`, `--verbose` | Print `version x.y.z` at startup, then what the server reports about each finished step — what it produced, tokens, thinking tokens, elapsed — plus the CV's session id and the `/healthz` attempts. |
 
@@ -356,16 +356,16 @@ Everything resolves in this order:
 
 ```mermaid
 flowchart LR
-    CLI["command line"] --> ENV["environment"] --> TOML["resumix.toml"] --> FOUND["a file in the<br/>current folder"] --> SRV["the server's default"]
+    CLI["command line"] --> ENV["environment"] --> TOML["cv.toml"] --> FOUND["a file in the<br/>current folder"] --> SRV["the server's default"]
 ```
 
-### `resumix.toml`
+### `cv.toml`
 
-Looked for as `--config`, then `$RESUMIX_CONFIG`, then `resumix.toml` in
+Looked for as `--config`, then `$ATS_CONFIG`, then `cv.toml` in
 the current folder.
 
 ```toml
-server_url   = "https://resumix.example.run.app"
+server_url   = "https://ats-strike.example.run.app"
 token        = "the-bearer-token"   # only if the server requires one
 cover_letter = "no"                 # no | yes | letter_only
 # pages       = 2                   # page limit the CV must fit
@@ -414,9 +414,9 @@ table sends an empty object: that role then runs with no settings at all.
 
 | Variable | What it does |
 |---|---|
-| `RESUMIX_API_URL` | The server URL. Beaten by `--server`. |
-| `RESUMIX_API_TOKEN` | The bearer token. Beaten by `--token`. |
-| `RESUMIX_CONFIG` | Path to `resumix.toml`. Beaten by `--config`. |
+| `ATS_API_URL` | The server URL. Beaten by `--server`. |
+| `ATS_API_TOKEN` | The bearer token. Beaten by `--token`. |
+| `ATS_CONFIG` | Path to `cv.toml`. Beaten by `--config`. |
 
 ### Your files
 
@@ -465,7 +465,7 @@ Start from the fictional set in the repository's `examples/candidate/`.
 
 File names come from your own `candidate_data.json`, not from the server.
 
-To revise a CV: edit `cv_jordan_rivera_head_of_it.json` and run `resumix render` on it —
+To revise a CV: edit `cv_jordan_rivera_head_of_it.json` and run `cv render` on it —
 one LaTeX compile, no model calls. Editing the `.tex` and rendering that works
 too. The spreadsheet's own header row is the schema: rename, reorder or add
 columns in your copy and the rows follow.
@@ -515,9 +515,9 @@ the client has saved the files, or for a day at most, and keeps nothing else.
 
 | What you see | What to do |
 |---|---|
-| `cannot reach the resumix server at …` | The server is down or the URL is wrong. `curl <url>/healthz` to check. |
+| `cannot reach the ats-strike server at …` | The server is down or the URL is wrong. `curl <url>/healthz` to check. |
 | `did not come up after 3 attempts` | The server was unreachable on three tries two seconds apart — a cold container may need longer; try again. |
-| `401` / `a valid bearer token is required` | The server wants a token: set `token` in `resumix.toml` or pass `--token`. |
+| `401` / `a valid bearer token is required` | The server wants a token: set `token` in `cv.toml` or pass `--token`. |
 | `candidate_profile.json is required but was not found` | Put it in the current folder, or name it under `[files]`. |
 | `no clipboard here: neither DISPLAY nor WAYLAND_DISPLAY…` | Install `xclip` or `wl-clipboard`, or use `watch`. |
 | `429` / `all job slots are busy` | The server is at capacity. Try again shortly. |

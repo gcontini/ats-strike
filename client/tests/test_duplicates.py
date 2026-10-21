@@ -6,7 +6,7 @@ import json
 
 import pytest
 
-from resumix_client.duplicates import (
+from cv_client.duplicates import (
     find_previous,
     normalize,
     posting_key,
