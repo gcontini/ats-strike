@@ -103,7 +103,7 @@ flowchart LR
     ASK -->|"y"| GEN
     ASK -->|"d"| DISC
     ASK -->|"s / n: later"| ASK
-    GEN -->|"written"| CV["cv/"]
+    GEN -->|"written"| CV["CV/"]
     GEN -->|"a call failed"| ERR
 ```
 
@@ -114,7 +114,7 @@ What you can drop:
   `error/` with a `.log` beside it. Once its analysis is filed, the file is
   deleted from `--in`. Any other file — a PDF, a `.docx` — goes to `error/`
   with nothing sent: paste its text into a `.txt`.
-- **A folder** holding `jd.txt` and a valid `analysis.json` — one from `cv/`,
+- **A folder** holding `jd.txt` and a valid `analysis.json` — one from `CV/`,
   `discarded/` or `error/`, for instance. Detection and analysis are skipped:
   it is copied into `working/` under its company and title, removed from
   `--in`, and goes where its own files say (the table under *Startup*). One
@@ -159,7 +159,7 @@ files say, before anything new is read. The rules are tried in this order:
 | The folder holds | It goes to |
 |---|---|
 | no `jd.txt`, or no valid `analysis.json` | `error/` |
-| its CV: `cv_<name>_<job_title>.json` or a `.tex` | re-rendered, then `cv/` |
+| its CV: `cv_<name>_<job_title>.json` or a `.tex` | re-rendered, then `CV/` |
 | no `approval_status.txt` | by `should_apply`: YES to the CV queue, CHECK to you, NO to `discarded/` |
 | `approval_status.txt` saying `APPROVED` | the CV queue |
 | `approval_status.txt` saying `DISCARDED` | `discarded/` |
@@ -238,7 +238,7 @@ on it never picks up half a job. Failures go to stderr.
 ### `render` — compile an edited CV
 
 ```bash
-cv render ~/applications/cv/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
+cv render ~/applications/CV/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
 cv render cv_jordan_rivera_head_of_it.tex --output /tmp/preview.pdf
 ```
 
@@ -266,9 +266,13 @@ written from scratch.
 cv version
 ```
 
-Prints `version x.y.z` and exits. It reads no configuration and talks to no
-server, so it answers even when `cv.toml` is wrong. Every `--verbose` run
-prints the same line at startup, which is what you want in a bug report.
+Prints `version x.y.z`, then asks the server for its own version and says
+whether the two can talk: the same, a different minor (works), or a different
+major (the client refuses to talk to it, and `cv version` exits 1). The client's
+line is printed first and never depends on the rest, so it answers even when
+`cv.toml` is wrong or the server is down; the server line then says it was not
+checked, and the exit code stays 0. Every `--verbose` run prints the first line
+at startup, which is what you want in a bug report.
 
 The number comes from the package metadata bundled into the executable, so it
 is the version the release workflow built — there is no string in the source to
@@ -276,7 +280,7 @@ forget to bump.
 
 ## Postings you have seen before
 
-Before anything is spent on a posting, every `analysis.json` under `cv/`,
+Before anything is spent on a posting, every `analysis.json` under `CV/`,
 `discarded/` and `working/` is read back. A posting is the same job when its URL matches, or
 when its company *and* title match — case, accents and spacing ignored. A side
 without a URL is compared by company and title only; one without a company or
@@ -293,7 +297,7 @@ anything is sent, LinkedIn ids included: one already known is deleted from the
 inbox with the same message, and costs no call at all.
 
 A posting that is dropped leaves nothing behind: the earlier copy already
-holds it. So to redo one, *move* the earlier folder out of `cv/` or
+holds it. So to redo one, *move* the earlier folder out of `CV/` or
 `discarded/` first — before you copy the posting again, and instead of
 copying a folder you drop back into `watch`.
 
@@ -335,7 +339,7 @@ A session nobody came back for is kept for a day (the server's
 
 | Flag | Modes | What it does |
 |---|---|---|
-| `--out DIR` | clipboard, watch, submit | The output folder (`working/`, `error/`, `discarded/`, `cv/`). Default: the current folder. |
+| `--out DIR` | clipboard, watch, submit | The output folder (`working/`, `error/`, `discarded/`, `CV/`). Default: the current folder. |
 | `--in DIR` | watch | The folder to watch. Default: `./incoming`, created if missing. |
 | `--in FILE` | analysis | The posting to analyse. Required. |
 | `--output-format json\|folder` | analysis | `json`: print the analysis on stdout. `folder`: write `<Company>_<Title>/` with `jd.txt` and `analysis.json` into `--out`, replacing one of the same name. Default `json`. |
@@ -445,7 +449,7 @@ Start from the fictional set in the repository's `examples/candidate/`.
 
 ```text
 ~/applications/
-├── cv/
+├── CV/
 │   └── 26-01-15/
 │       └── Acme_Corp_Head_of_IT/
 │           ├── cv_jordan_rivera_head_of_it.pdf     the CV

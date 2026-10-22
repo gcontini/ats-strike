@@ -178,7 +178,7 @@ def test_a_leftover_that_cannot_be_read_is_filed_with_why(api, config, processor
 
     assert intake.review(folder) is True
     assert confirmer.seen == []
-    [failed] = workspace.error.glob("*/*_Acme_Corp_Head_of_IT")
+    [failed] = workspace.error.glob("*/Acme_Corp_Head_of_IT")
     assert "cannot be shown any more" in (failed / "log.log").read_text()
 
 

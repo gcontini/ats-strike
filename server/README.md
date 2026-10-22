@@ -67,9 +67,9 @@ doesn't need to change.
 
 | Role | What it does | Shipped as |
 |---|---|---|
-| `detect` | JD detection, a one-word YES/NO | `deepseek-v4.1-flash`, thinking **off**, 1000 max output tokens |
-| `analysis` | JD analysis, with web search | `qwen3.8-flash`, thinking on, max effort |
-| `letter` | Cover letters, with web search | `qwen3.8-flash`, thinking on, max effort |
+| `detect` | JD detection, a one-word YES/NO | `deepseek-flash` (provider 2), thinking **off**, 1000 max output tokens |
+| `analysis` | JD analysis | `gpt-6-luna` (provider 3), Responses API, pro mode, `xhigh` effort |
+| `letter` | Cover letters | `gpt-6-luna` (provider 3), `xhigh` effort |
 | `jd_evaluation` | A CV's key points, from the posting | `deepseek-flash` (provider 2), medium effort |
 | `profile_scoring` | Your profile scored against them, one list at a time | the same, high effort |
 | `format_selection` | The CV format, the experiences and their duties | the same, medium effort |

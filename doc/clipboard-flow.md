@@ -72,7 +72,7 @@ sequenceDiagram
     end
 
     Gen->>Wp: deliver(folder)
-    Wp->>Wp: log.log, then move → cv/day/Company_Title/
+    Wp->>Wp: log.log, then move → CV/day/Company_Title/
     Wp->>Wp: one row in applications.xlsx
 ```
 
@@ -84,12 +84,12 @@ flowchart LR
     HELD -->|"y or URL"| QUEUED["working/…<br/>APPROVED, queued"]
     HELD -->|"q: asked again<br/>at the next start"| HELD
     HELD -->|"n or s"| DISC["discarded/26-01-15/…<br/><i>analysis kept</i>"]
-    QUEUED -->|"written"| CV["cv/26-01-15/Acme_Corp_Head_of_IT/"]
+    QUEUED -->|"written"| CV["CV/26-01-15/Acme_Corp_Head_of_IT/"]
     QUEUED -->|"a call failed"| ERR["error/26-01-15/26-01-15-09-30-00_…<br/><i>with its log.log</i>"]
 ```
 
 A job is assembled under `working/` and moved into place in one step when it
-is finished, so a folder under `cv/` is never half-written. `Workspace` owns
+is finished, so a folder under `CV/` is never half-written. `Workspace` owns
 every path and every move; `WorkingProcessor` is the only thing that asks it
 to make one.
 
@@ -115,7 +115,7 @@ grabbed only part of the page.
 **4 — Analysis creates the folder, unless the posting was seen before.** The
 company name and job title in the `JDAnalysis` are what the folder is named
 after, so the folder cannot exist before the analysis does. First every
-`analysis.json` under `cv/`, `discarded/` and `working/` is compared with the
+`analysis.json` under `CV/`, `discarded/` and `working/` is compared with the
 new one: a posting already applied to, discarded or still in flight is
 dropped with the earlier folder's path, and nothing is written. Otherwise
 `jd.txt`, `analysis.json` and `approval_status.txt` saying `PENDING` are

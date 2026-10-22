@@ -78,7 +78,7 @@ the fictional set in the download's `examples/candidate/`).
 
 Copy a job posting to your clipboard; ats-strike checks it, shows you the
 analysis, and on confirmation writes the CV into
-`~/applications/cv/<day>/<Company>_<Title>/`. `watch` and `submit` work the
+`~/applications/CV/<day>/<Company>_<Title>/`. `watch` and `submit` work the
 same way against files instead of the clipboard —
 [`client/README.md`](client/README.md) covers all three modes, configuration,
 and the output layout.

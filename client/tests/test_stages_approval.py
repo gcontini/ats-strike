@@ -103,7 +103,7 @@ def test_a_posting_broken_while_it_waited_is_filed_not_fatal(processor, console,
     assert loop(processor, console, reviewer).review_one(
         processor.approvals.get_nowait()) is True
     assert reviewer.shown == []
-    [filed] = workspace.error.glob("*/*_Acme_Corp_Head_of_IT")
+    [filed] = workspace.error.glob("*/Acme_Corp_Head_of_IT")
     assert "cannot be shown any more" in (filed / "log.log").read_text()
 
 

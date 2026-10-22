@@ -229,8 +229,9 @@ def test_recovery_follows_the_table(processor, workspace, api):
     assert queued(processor.approvals) == [check]
     assert sorted(p.name for p in workspace.discarded.glob("*/*")) == ["D_no", "F_discarded"]
     errors = [p.name for p in workspace.error.glob("*/*")]
-    assert sorted(n[len("26-09-28-16-13-16_"):] for n in errors) == [
-        "A_no_analysis", "G_odd", "jd.txt", "jd.txt.log"], errors
+    assert sorted(errors) == [
+        "26-09-28-16-13-16_jd.txt", "26-09-28-16-13-16_jd.txt.log",
+        "A_no_analysis", "G_odd"], errors
     assert "a loose file" in (workspace.error / day() / "26-09-28-16-13-16_jd.txt.log").read_text()
     assert api.calls == [], "nothing but a render ever costs a call at startup"
     assert processor.failures == 0, "rejections are not failures"
@@ -264,7 +265,7 @@ def test_a_failed_render_goes_to_error_with_its_cause(processor, workspace, api)
 
     processor.recover()
 
-    [failed] = workspace.error.glob("*/*_Acme_Corp_Head_of_IT")
+    [failed] = workspace.error.glob("*/Acme_Corp_Head_of_IT")
     log = (failed / "log.log").read_text()
     assert "model_output" in log
     assert "request id: failed-request" in log
@@ -290,7 +291,7 @@ def test_a_document_that_is_not_json_fails_without_a_call(processor, workspace, 
     make_job(workspace.working, **{f"{STEM}.json": "{not json"})
     processor.recover()
     assert api.calls == []
-    [failed] = workspace.error.glob("*/*_Acme_Corp_Head_of_IT")
+    [failed] = workspace.error.glob("*/Acme_Corp_Head_of_IT")
     assert "not valid JSON" in (failed / "log.log").read_text()
 
 
@@ -299,7 +300,7 @@ def test_a_tex_that_is_not_text_fails_without_a_call(processor, workspace, api):
     (job / f"{STEM}.tex").write_bytes(b"\xff\xfe\x00latex")
     processor.recover()
     assert api.calls == []
-    [failed] = workspace.error.glob("*/*_Acme_Corp_Head_of_IT")
+    [failed] = workspace.error.glob("*/Acme_Corp_Head_of_IT")
     assert "not valid UTF-8 text" in (failed / "log.log").read_text()
 
 

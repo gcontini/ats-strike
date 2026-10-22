@@ -129,6 +129,7 @@ the rows below are its JD-analysis runs. Settings named in the old keys:
 
 | Provider | Model | Settings | Status | Date | Notes |
 |---|---|---|---|---|---|
+| OpenAI (`use_alternate_provider = 3`) | `gpt-6-luna` | `api = responses`, `reasoning_effort = xhigh`, `thinking = auto`, `temperature = 1`; set in the `ats-strike` Terraform deploy by `ATS_LETTER_API = responses` | **unconfirmed** | 2026-10-22 | Not yet applied or run. `models.toml` ships Chat Completions for this role. A bare `/v1/responses` call with the deploy's provider-3 key on 2026-10-22 returned 200 `completed` (13 in / 5 out); it did not go through ats-strike. |
 | DashScope | `qwen3.8-flash` (shipped) | `thinking = on`, `reasoning_effort = max`, `temperature = 0.4`, `extra_body = { enable_search = true }` | **unconfirmed** | 2026-10-08 | Current `models.toml`; split out of `summary`. |
 
 ### The six CV steps (`jd_evaluation`, `profile_scoring`, `format_selection`, `cv`, `validation`, `highlight`)
@@ -183,10 +184,11 @@ pipeline's `validation` role replaces it.
 ### highlight (the `**bold**` pass)
 
 Since 2026-10-20 the highlight is the last of the six CV steps, with
-adapticv-ai's prompt; the row below is the old loop's.
+adapticv-ai's prompt; the last row below is the old loop's.
 
 | Provider | Model | Settings | Status | Date | Notes |
 |---|---|---|---|---|---|
+| OpenAI (`use_alternate_provider = 3`) | `gpt-6.1-sol` | `api = responses`, `reasoning_effort = medium`, `thinking = auto`, no temperature; set in the `ats-strike` Terraform deploy by `ATS_HIGHLIGHT_MODEL`, `ATS_HIGHLIGHT_MODEL_PROVIDER = standard`, `ATS_HIGHLIGHT_USE_ALTERNATE_PROVIDER = 3`, `ATS_HIGHLIGHT_API = responses` | **unconfirmed** | 2026-10-22 | Not yet applied or run. `models.toml` still ships `deepseek-flash` for this role. `gpt-6.1-sol` ran all six steps in adapticv-ai's bench, but on Chat Completions (see the six CV steps above). A bare `/v1/responses` call with the deploy's provider-3 key on 2026-10-22 returned 200 `completed` (`reasoning.effort = low`, 13 in / 5 out), so the 401 of 2026-10-09 (see *analysis*) is not reproduced; the call did not go through ats-strike. |
 | DashScope | `qwen3.8-flash` (shipped) | `thinking = off`, `temperature = 0.1`, `json_object` | **unconfirmed** | 2026-10-08 | Current `models.toml`. |
 
 ## Recording a result

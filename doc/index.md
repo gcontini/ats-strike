@@ -34,7 +34,7 @@ flowchart LR
     JD["a job posting<br/>(clipboard, folder or file)"] --> C["client<br/><i>your data, your files</i>"]
     C -->|HTTP| S["server<br/><i>models + pdflatex</i>"]
     S -->|"document · LaTeX · PDF · request ids"| C
-    C --> OUT["cv/26-01-15/Acme_Corp_Head_of_IT/<br/>cv_you_head_of_it.pdf · .tex · .json<br/>analysis.json · jd.txt · log.log"]
+    C --> OUT["CV/26-01-15/Acme_Corp_Head_of_IT/<br/>cv_you_head_of_it.pdf · .tex · .json<br/>analysis.json · jd.txt · log.log"]
 ```
 
 Your profile, your contact details and your images travel with each request

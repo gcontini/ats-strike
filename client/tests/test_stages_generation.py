@@ -122,7 +122,7 @@ def test_a_failed_job_is_kept_under_error_with_what_the_server_said(
 
     run_one(processor, writer, processor.generations.get_nowait())
 
-    [failed] = workspace.error.glob("*/*_Acme_Corp_Head_of_IT")
+    [failed] = workspace.error.glob("*/Acme_Corp_Head_of_IT")
     assert failed.parent.name == day()
     assert sorted(p.name for p in failed.iterdir()) == [
         "analysis.json", "approval_status.txt", "jd.txt", "log.log"]
@@ -139,7 +139,7 @@ def test_a_job_the_server_refused_is_kept_under_error(processor, writer, workspa
     api.fail_on = "create_cv"
     run_one(processor, writer, yes_posting(processor))
 
-    [failed] = workspace.error.glob("*/*_Acme_Corp_Head_of_IT")
+    [failed] = workspace.error.glob("*/Acme_Corp_Head_of_IT")
     log = (failed / "log.log").read_text()
     assert "create_cv failed" in log
     assert "request id: failed-request" in log

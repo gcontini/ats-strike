@@ -89,29 +89,32 @@ timeout_seconds = 600
 # errors one time in a few. No client can change it — /v1/jd/detect takes no
 # temperature; only ATS_DETECT_TEMPERATURE on the server does.
 [models.detect]
-model             = "deepseek-v4.1-flash"
-temperature       = 0.0
-max_output_tokens = 1000
-thinking          = "off"
+model                  = "deepseek-flash"
+model_provider         = "deepseek"
+use_alternate_provider = 2
+temperature            = 0.0
+max_output_tokens      = 1000
+thinking               = "off"
 
-# Mid-size: extracts the JD analysis, and researches the hiring company on the
-# web for its company evaluation.
+# Extracts the JD analysis, and researches the hiring company on the web for
+# its company evaluation. OpenAI (MODEL_API_KEY3 / MODEL_BASE_URL3) on the
+# Responses API, in pro mode.
 [models.analysis]
-model             = "qwen3.8-flash"
-structured_output = "json_mode"
-temperature       = 0.4
-thinking          = "on"
-reasoning_effort  = "max"
-extra_body        = { enable_search = true }
+model                  = "gpt-6-luna"
+use_alternate_provider = 3
+api                    = "responses"
+structured_output      = "json_schema"
+temperature            = 1
+extra_body             = { reasoning = { mode = "pro", effort = "xhigh" } }
 
-# Mid-size: writes the cover letter, and looks the employer up on the web for
-# its why-this-company paragraph.
+# Writes the cover letter, and looks the employer up on the web for its
+# why-this-company paragraph. OpenAI on Chat Completions.
 [models.letter]
-model             = "qwen3.8-flash"
-temperature       = 0.4
-thinking          = "on"
-reasoning_effort  = "max"
-extra_body        = { enable_search = true }
+model                  = "gpt-6-luna"
+use_alternate_provider = 3
+temperature            = 1
+thinking               = "auto"
+reasoning_effort       = "xhigh"
 
 # The six steps of a CV, as adapticv-ai ran them: DeepSeek V4.1 Flash on
 # DeepSeek's own API (MODEL_API_KEY2 / MODEL_BASE_URL2), reasoning effort as

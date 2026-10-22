@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import tomllib
 from pathlib import Path
 from typing import List, Optional
 
@@ -18,6 +19,7 @@ from .modes import analysis as analysis_mode
 from .modes import clipboard as clipboard_mode
 from .modes import render as render_mode
 from .modes import reset as reset_mode
+from .modes import version as version_mode
 from .modes import submit as submit_mode
 from .modes import submit_raw as submit_raw_mode
 from .modes import watch as watch_mode
@@ -42,7 +44,7 @@ examples:
   cv submit posting.txt analysis.json --out ~/applications
   cv submit-raw posting.txt -o cv.pdf -o cv.json
   cv analysis --in posting.txt --output-format folder
-  cv render ~/applications/cv/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
+  cv render ~/applications/CV/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
   cv reset
 
 a CV is a session on the server, kept until its files are saved: running the
@@ -93,7 +95,7 @@ def build_parser() -> argparse.ArgumentParser:
     def add_job_flags(sub: argparse.ArgumentParser, *,
                       yes_help: str = "Submit every valid posting without asking.") -> None:
         sub.add_argument("--out", type=Path,
-                         help="Output folder (working/, error/, discarded/, cv/). "
+                         help="Output folder (working/, error/, discarded/, CV/). "
                               "Default: the current folder.")
         sub.add_argument("--cover-letter", choices=COVER_LETTER_MODES,
                          help="Also write a cover letter (default: no).")
@@ -157,19 +159,12 @@ def build_parser() -> argparse.ArgumentParser:
     modes.add_parser("reset", help="Delete every CV session the server still keeps.",
                      parents=[common])
 
-    # No parents=[common]: it reads no configuration and takes no options.
-    modes.add_parser("version", help="Print the version and exit.")
+    modes.add_parser("version", help="Print the version, and the server's.", parents=[common])
     return parser
 
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = build_parser().parse_args(argv)
-    # Before load_config: which build you are holding is the one question a
-    # broken cv.toml must not stop you answering.
-    if args.mode == "version":
-        print(f"version {__version__}")
-        return 0
-
     flag = lambda name: getattr(args, name, None)  # noqa: E731 — SUPPRESS defaults
     try:
         config = load_config(
@@ -183,8 +178,15 @@ def main(argv: Optional[List[str]] = None) -> int:
                 "verbose": flag("verbose"),
             },
         )
-    except (ConfigError, FileNotFoundError) as exc:
+    except (ConfigError, FileNotFoundError, tomllib.TOMLDecodeError) as exc:
+        # Which build you are holding is the one question a broken cv.toml
+        # must not stop you answering.
+        if args.mode == "version":
+            return version_mode.run(None, str(exc))
         fail(str(exc))
+
+    if args.mode == "version":
+        return version_mode.run(config)
 
     if config.verbose:
         # stderr: analysis prints its JSON on stdout, and nothing else may.

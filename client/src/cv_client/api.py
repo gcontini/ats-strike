@@ -229,6 +229,10 @@ class HttpApi:
                           data={"jd_text": text, **_extra_bodies(extra_body)},
                           files=files)
 
+    def status(self) -> Envelope[ServerStatus]:
+        """What the server says about itself, once and without retries."""
+        return self._get("/healthz", ServerStatus)
+
     # --- plumbing -----------------------------------------------------------
     def _ensure_healthy(self) -> None:
         """Before the first real call: make sure the server is up and speaks
@@ -248,7 +252,7 @@ class HttpApi:
                 print(f"spinning up the server attempt {attempt}/{HEALTH_ATTEMPTS}",
                       file=sys.stderr)
             try:
-                envelope = self._get("/healthz", ServerStatus)
+                envelope = self.status()
             except CVError as exc:
                 last_error = exc
                 if attempt < HEALTH_ATTEMPTS:

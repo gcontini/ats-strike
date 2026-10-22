@@ -28,7 +28,7 @@ DISCARDED = "DISCARDED"
 #: Asked about and not answered yet: asked again, never decided by should_apply.
 PENDING = "PENDING"
 
-#: Where a folder goes next. ``render`` means "rendered now, then cv/".
+#: Where a folder goes next. ``render`` means "rendered now, then CV/".
 Route = Literal["error", "render", "generate", "approve", "discard"]
 
 #: A folder nobody has decided about yet goes where its analysis says.

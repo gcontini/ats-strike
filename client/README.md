@@ -102,7 +102,7 @@ Every `.txt` dropped into `--in` is checked and analysed, then deleted from
 without a question, CHECK is shown to you (`y` = write the CV, `d` = discard,
 `s`/`n` = ask again later), NO goes to `discarded/`. CVs are written in the
 background while you read the next posting. Anything that is not a posting
-goes to `error/` with a timestamp in the name. An analysed job folder can be
+goes to `error/<day>/`; a posting that fails again the same day replaces its earlier copy. An analysed job folder can be
 dropped in too, to retry one from `error/` for instance.
 
 `q` lets the running work finish, then quits; Ctrl-C stops at once. Whatever
@@ -158,7 +158,7 @@ on it never picks up half a job. Failures go to stderr.
 ### `render` — compile an edited CV
 
 ```bash
-cv render ~/applications/cv/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
+cv render ~/applications/CV/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
 cv render cv_jordan_rivera_head_of_it.tex
 ```
 
@@ -189,8 +189,10 @@ the CV again.
 cv version
 ```
 
-Prints `version x.y.z` and exits. No configuration, no server — it answers even
-when `cv.toml` is wrong. Every `-v` run prints the same line at startup.
+Prints `version x.y.z`, then the server's version and whether the two can talk
+(a different major makes it exit 1). It answers even when `cv.toml` is wrong or
+the server is down: the server line then says it was not checked. Every `-v`
+run prints the first line at startup.
 
 ### Switches
 
@@ -220,7 +222,7 @@ Both work on either side of the mode name: `cv -v submit posting.txt
 
 ```
 ~/applications/
-├── cv/
+├── CV/
 │   └── 26-01-15/
 │       └── Acme_Corp_Head_of_IT/
 │           ├── cv_jordan_rivera_head_of_it.pdf     the CV

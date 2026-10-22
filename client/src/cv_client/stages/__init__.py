@@ -4,7 +4,7 @@
     2. waiting for approval  working/       watch: should_apply CHECK, until you answer
                                             clipboard, submit: every posting (PENDING)
     3. waiting for the CV    working/       watch: should_apply YES; any mode: approved
-    4. done                  cv/            generated (or re-rendered)
+    4. done                  CV/            generated (or re-rendered)
                              discarded/     should_apply NO (watch), or you said no
                              error/         not a posting, or a call failed
 

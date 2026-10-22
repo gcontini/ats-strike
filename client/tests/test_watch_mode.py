@@ -110,7 +110,7 @@ def test_postings_flow_through_the_four_stages(config, workspace, inbox, typist)
     assert reviewer.shown == ["Check Corp"], "only CHECK asks"
     assert entries(workspace.cv) == ["Check_Corp_Head_of_IT", "Left_Over", "Yes_Corp_Head_of_IT"]
     assert entries(workspace.discarded) == ["No_Corp_Head_of_IT"]
-    assert [name[18:] for name in entries(workspace.error)] == ["d.txt", "d.txt.log"]
+    assert entries(workspace.error) == ["d.txt", "d.txt.log"]
     assert not any(workspace.working.iterdir())
     sheet = openpyxl.load_workbook(workspace.root / "applications.xlsx").active
     assert sheet.cell(row=4, column=1).value is not None, "one row per generated CV"

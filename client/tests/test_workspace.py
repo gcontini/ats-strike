@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import re
-
 import pytest
 
 from cv_client.workspace import (
@@ -27,7 +25,7 @@ def loose(ws, name="26-09-28-16-13-16_posting.txt", text="a posting"):
 
 
 def test_ensure_builds_the_four_folders(ws):
-    assert sorted(p.name for p in ws.root.iterdir()) == ["cv", "discarded", "error", "working"]
+    assert sorted(p.name for p in ws.root.iterdir()) == ["CV", "discarded", "error", "working"]
 
 
 def test_delivery_goes_into_a_daily_folder(ws):
@@ -73,11 +71,10 @@ def test_error_goes_into_a_daily_folder(ws):
     assert failed.parent.parent == ws.error
 
 
-def test_error_keeps_an_existing_timestamp(ws):
-    """A file dropped back from error/ keeps the time it first arrived."""
-    stamped = loose(ws)
-    failed = ws.to_error(stamped)
-    assert failed.name == stamped.name, "the arrival time is the useful one"
+def test_error_keeps_the_name_it_has(ws):
+    posting = loose(ws)
+    failed = ws.to_error(posting)
+    assert failed.name == posting.name
 
 
 def test_error_replaces_a_file_of_the_same_name(ws):
@@ -104,10 +101,10 @@ def test_error_replaces_a_folder_of_the_same_name(ws):
     assert sorted(p.name for p in failed.iterdir()) == ["jd.txt"], "not nested, not merged"
 
 
-def test_error_adds_a_timestamp_when_there_is_none(ws):
+def test_error_adds_no_timestamp(ws):
     job = ws.new_job("Acme", "Head of IT")
     failed = ws.to_error(job)
-    assert re.fullmatch(r"\d{2}(-\d{2}){5}_Acme_Head_of_IT", failed.name)
+    assert failed.name == "Acme_Head_of_IT"
 
 
 def test_pending_separates_loose_files_from_job_folders(ws):

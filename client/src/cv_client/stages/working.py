@@ -156,7 +156,7 @@ class WorkingProcessor:
 
     # --- from the CV worker -------------------------------------------------
     def deliver(self, folder: Path, log: TaggedLog, *, record_row: bool) -> Path:
-        """Finished: ``cv/<day>/``. Only a generated CV gets a spreadsheet row."""
+        """Finished: ``CV/<day>/``. Only a generated CV gets a spreadsheet row."""
         delivered = self._file(folder, log, self.workspace.deliver, "delivered")
         if record_row:
             pdf = self.writer.pdf_name(delivered)
@@ -177,7 +177,7 @@ class WorkingProcessor:
 
     # --- endings ------------------------------------------------------------
     def reject(self, entry: Path, log: TaggedLog, *, failed: bool = False) -> Path:
-        """``error/<day>/<timestamp>_<name>``, with why: inside a folder, beside a file."""
+        """``error/<day>/<name>``, with why: inside a folder, beside a file."""
         if entry.is_dir():
             log.append_to(entry / LOG_FILENAME)
         with self._lock:

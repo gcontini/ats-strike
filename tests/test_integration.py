@@ -115,7 +115,7 @@ class Submit:
         self.generation = GenerationWorker(self.working, writer, console)
 
     def __call__(self, text: str) -> Path:
-        """The posting's folder once it is filed: under cv/ or error/."""
+        """The posting's folder once it is filed: under CV/ or error/."""
         self.intake.take(text, "posting.txt")
         self.generation.drain()
         [filed] = [*self.workspace.cv.glob("*/*"), *self.workspace.error.glob("*/*")]

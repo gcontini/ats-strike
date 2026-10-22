@@ -7,7 +7,7 @@ flowchart TB
     subgraph your["your machine"]
         CLI["<b>cv</b> (client)<br/>single executable"]
         FILES["candidate_profile.json<br/>candidate_data.json<br/>candidate_preferences.md<br/>resume.tex.jinja · prompts · images"]
-        OUT["cv/ · discarded/ · error/ · working/<br/>applications.xlsx"]
+        OUT["CV/ · discarded/ · error/ · working/<br/>applications.xlsx"]
         FILES --> CLI
         CLI --> OUT
     end

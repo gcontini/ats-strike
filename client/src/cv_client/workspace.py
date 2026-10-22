@@ -4,13 +4,13 @@ One directory holds the whole workflow::
 
     <out>/
         working/      in flight, and nothing else
-        error/        rejected or failed, by day, timestamp-prefixed
+        error/        rejected or failed, by day
         discarded/    you said no, by day
-        cv/           delivered, by day
+        CV/           delivered, by day
         applications.xlsx
 
 A job is assembled under ``working/`` and moved into place in one step when it
-is finished, so a folder under ``cv/`` is never half-written. This module owns
+is finished, so a folder under ``CV/`` is never half-written. This module owns
 every path and every move; nothing else in the client builds a path by hand.
 """
 
@@ -23,12 +23,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-#: Prefix for an entry filed under error/ — sorts chronologically.
-TS_FORMAT = "%y-%m-%d-%H-%M-%S"
-#: Daily folders under cv/, discarded/ and error/.
+#: Daily folders under CV/, discarded/ and error/.
 DAY_FORMAT = "%y-%m-%d"
-
-_TS_PREFIX = re.compile(r"^\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}_")
 
 JD_FILENAME = "jd.txt"
 ANALYSIS_FILENAME = "analysis.json"
@@ -37,10 +33,6 @@ LETTER_FILENAME = "cover_letter.txt"
 #: Inside a job folder: each step's intermediate result, one JSON file each.
 #: A folder, so no file of it can be mistaken for the CV beside it.
 STEPS_DIRNAME = "steps"
-
-
-def timestamp(now: Optional[datetime] = None) -> str:
-    return (now or datetime.now()).strftime(TS_FORMAT)
 
 
 def day(now: Optional[datetime] = None) -> str:
@@ -119,7 +111,7 @@ class Workspace:
         self.working = self.root / "working"
         self.error = self.root / "error"
         self.discarded = self.root / "discarded"
-        self.cv = self.root / "cv"
+        self.cv = self.root / "CV"
 
     def ensure(self) -> "Workspace":
         for directory in (self.working, self.error, self.discarded, self.cv):
@@ -139,7 +131,7 @@ class Workspace:
 
     # --- outcomes -----------------------------------------------------------
     def deliver(self, job: Path) -> Path:
-        """Finished: ``cv/<day>/<Company>_<Title>``."""
+        """Finished: ``CV/<day>/<Company>_<Title>``."""
         return self._move_into(job, self.cv / day())
 
     def discard(self, job: Path) -> Path:
@@ -147,15 +139,13 @@ class Workspace:
         return self._move_into(job, self.discarded / day())
 
     def to_error(self, entry: Path) -> Path:
-        """Failed or not a job description: ``error/<day>/<timestamp>_<name>``.
+        """Failed or not a job description: ``error/<day>/<name>``.
 
-        A file that already carries a timestamp keeps it — the time it arrived
-        is more useful than the time it failed. The day folder is the day it
-        failed, like ``cv/`` and ``discarded/``. An entry of the same name is
-        the same posting failing again, and is replaced rather than numbered.
+        The day folder is the day it failed, like ``CV/`` and ``discarded/``.
+        An entry of the same name that day is the same posting failing again,
+        and is replaced rather than numbered.
         """
-        name = entry.name if _TS_PREFIX.match(entry.name) else f"{timestamp()}_{entry.name}"
-        target = self.error / day() / name
+        target = self.error / day() / entry.name
         target.parent.mkdir(parents=True, exist_ok=True)
         _clear(target)
         shutil.move(str(entry), str(target))
@@ -163,7 +153,7 @@ class Workspace:
 
     # --- history ------------------------------------------------------------
     def jobs_in(self, parent: Path) -> List[Path]:
-        """Every analysed job under ``cv/`` or ``discarded/`` (``<day>/<job>``)."""
+        """Every analysed job under ``CV/`` or ``discarded/`` (``<day>/<job>``)."""
         return sorted(p.parent for p in parent.glob(f"*/*/{ANALYSIS_FILENAME}"))
 
     def working_jobs(self) -> List[Path]:
@@ -215,6 +205,6 @@ class Workspace:
 
 __all__ = [
     "Workspace", "Artifacts", "sanitize_name", "job_name", "staged_job", "unstage",
-    "timestamp", "day",
+    "day",
     "JD_FILENAME", "ANALYSIS_FILENAME", "LOG_FILENAME", "LETTER_FILENAME", "STEPS_DIRNAME",
 ]

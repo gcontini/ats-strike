@@ -32,7 +32,7 @@ def scan(reader, stop=None):
 
 def filed(workspace, name):
     """The one entry under error/ that ends in ``name``."""
-    [entry] = workspace.error.glob(f"*/*_{name}")
+    [entry] = workspace.error.glob(f"*/{name}")
     assert entry.parent.name == day()
     return entry
 
