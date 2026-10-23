@@ -96,9 +96,9 @@ temperature            = 0.0
 max_output_tokens      = 1000
 thinking               = "off"
 
-# Extracts the JD analysis, and researches the hiring company on the web for
-# its company evaluation. OpenAI (MODEL_API_KEY3 / MODEL_BASE_URL3) on the
-# Responses API, in pro mode.
+# Extracts the JD analysis, and looks distances and company facts up on the web
+# when the preferences ask for them. OpenAI (MODEL_API_KEY3 / MODEL_BASE_URL3)
+# on the Responses API, in pro mode.
 [models.analysis]
 model                  = "gpt-6-luna"
 use_alternate_provider = 3

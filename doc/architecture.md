@@ -124,7 +124,7 @@ table of `resources/models.toml`. Every role calls it, except a role that sets
 | Role | Used for | Shipped as |
 |---|---|---|
 | `detect` | JD detection: a one-word YES/NO on text that passed the free checks | `deepseek-v4.1-flash`, thinking **off**, 1000 max output tokens, temperature 0 |
-| `analysis` | JD analysis; searches the web for the company evaluation | `qwen3.8-flash`, thinking on, max effort |
+| `analysis` | JD analysis; searches the web for distances and company facts | `qwen3.8-flash`, thinking on, max effort |
 | `letter` | Cover letters; searches the web for the employer | `qwen3.8-flash`, thinking on, max effort |
 | `jd_evaluation` | A CV's first step: the JD's key points, each with an importance | `deepseek-flash` on DeepSeek's API (provider 2), medium effort |
 | `profile_scoring` | Each list of the profile scored against the key points | the same, high effort |

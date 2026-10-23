@@ -79,14 +79,6 @@ class JDAnalysis(BaseModel):
         max_length=300,
         description="Why should_apply has that value, max 300 characters",
     )
-    company_evaluation: Optional[str] = Field(
-        None,
-        description=(
-            "Only when should_apply is CHECK: a short evaluation of the hiring "
-            "company from online reviews (e.g. trustpilot.com, glassdoor.it) and "
-            "the instruction in PERSONAL_PREFERENCES->company_evaluation if present; null otherwise"
-        ),
-    )
 
 
 class JDDetection(BaseModel):

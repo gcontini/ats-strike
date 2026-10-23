@@ -17,7 +17,7 @@ ANALYSIS = json.dumps({
     "max_salary": -1, "salary_match": None, "hard_skills": ["AWS"],
     "soft_skills": ["Communication"], "company_name": "Acme Corp", "posting_url": None,
     "gaps": "No SAP.", "pers_preferences": "Hybrid is fine.", "pers_preference_score": 1.5,
-    "should_apply": "YES", "should_apply_reason": "Strong match.", "company_evaluation": None,
+    "should_apply": "YES", "should_apply_reason": "Strong match.",
 })
 
 USER = [{"role": "user", "content": "go"}]

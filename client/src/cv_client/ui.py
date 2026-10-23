@@ -49,8 +49,6 @@ def print_analysis(analysis: JDAnalysis) -> None:
     print(f"Hard skills       : {', '.join(analysis.hard_skills) or 'n/a'}")
     print(f"Soft skills       : {', '.join(analysis.soft_skills) or 'n/a'}")
     print(f"Company           : {analysis.company_name}")
-    if analysis.company_evaluation:
-        print(f"Company eval      : {analysis.company_evaluation}")
     print(f"Posting URL       : {analysis.posting_url or 'not detected'}")
     print(f"Gaps              : {analysis.gaps}")
     print(f"Personal pref     : {analysis.pers_preference_score} — {analysis.pers_preferences}")

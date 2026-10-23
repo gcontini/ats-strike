@@ -61,7 +61,6 @@ def test_optional_fields_may_be_absent():
     analysis = JDAnalysis.model_validate(minimal)
     assert analysis.posting_url is None
     assert analysis.max_salary == -1
-    assert analysis.company_evaluation is None
 
 
 def test_retry_names_the_missing_field(candidate):

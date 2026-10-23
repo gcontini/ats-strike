@@ -22,8 +22,4 @@ Output:
 - pers_preference_score: The numeric (real) score obtained by summing the validated PERSONAL_PREFERENCES points against the JD (e.g. 2.5, 0.5); 0.0 if none apply. Output it as a JSON number, not a string.
 - should_apply: [NO|CHECK|YES] (NO = skip the job, CHECK = flag it for a human check, YES = apply automatically). Follow the should_apply rules in PERSONAL_PREFERENCES, which define the value; decide it after all the fields above, using them. If PERSONAL_PREFERENCES->should_apply is not specified return CHECK.
 - should_apply_reason: one sentence, about 150 characters, motivating the should_apply value (report which rule you applied).
-- company_evaluation: ONLY when should_apply is CHECK, otherwise null. 
-    1. determine the hiring company (the one where the candidate will go to work): if the poster of the job is a recruiting agency or headhunter (randstad, chatberton...) search in the JD for the real hiring company name. If the hiring company name is not specified do not proceed in further evaluations. Return company_evaluation="Hiring Company Unknown". 
-    2. if PERSONAL_PREFERENCES->company_evaluation is specifed use the rules in there. 
-    3. If PERSONAL_PREFERENCES->company_evaluation is NOT specified: search the web for reviews of the hiring company (e.g. trustpilot.com, glassdoor.it) and write a short evaluation the ratings you found with their source, and the recurring pros and cons. Do not invent evaluations. If you find nothing say so. 
 Answer with one JSON object;
