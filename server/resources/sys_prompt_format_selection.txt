@@ -1,15 +1,22 @@
 Input:
-* KEY POINTS: JSON list of the job's requirements. Each has id, requirement, keywords, importance (0-100).
+* KEY POINTS: JSON list of the job's requirements. Each has id, requirement, keywords, importance (0-100). Item 1 is the job title.
 * FORMATS: JSON object of the CV formats: for each one, how many work experiences it shows, the minimum and
-  maximum duties of each experience, and the maximum duties overall.
+  maximum duties of each experience, and the maximum duties overall. Every format fits the page: they trade depth for breadth.
 * WORK EXPERIENCES: JSON list from the candidate's profile, most recent first. Each duty ends with "|<scores>",
   e.g. "|3-80,7-40": the KEY POINTS it matches (by id), each with how well it matches (0-100).
 
 Choose the CV format, the work experiences to show and how many duties each one shows.
 * The most recent work experience is always shown.
-* An experience is relevant when 2-3 of its duties score high on important KEY POINTS and the experience is long compared to others (see dates), not relevant when most of its duties score low (generally lower than other experiences) and/or its short in time compared to other experiences. 
-   - If you are unsure you can have a full check of the work experience vs high scoring key points, if they feel different (semantically or by responsibility) the work experience isn't relevant.
-* Choose the format that shows the relevant experiences best, and fill its places with the best experiences.
+* Judge how relevant each experience is on three signals together:
+  - Duties: how high its 2-3 best duties score on important KEY POINTS.
+  - Role: how well its title and role summary match the job title and the most important KEY POINTS, read as a recruiter would:
+    the title says what the candidate did every day, the duties only tell a few stories of it.
+  - Years: how long it lasted. A recruiter counts the years spent on the job's core skills: an experience that holds most of
+    those years is relevant even when its duties score lower, because without it the CV cannot show them.
+  Age alone does not make an experience less relevant.
+* Choose the format by what one more experience adds: take a format with more places when the next experience proves an important
+  KEY POINT (by role, years or duties) better than the experiences already chosen, even if they lose their lowest-scoring duties.
+  Otherwise prefer fewer experiences with more duties.
 * duty_caps: how many duties each chosen experience shows, within the format's minimum and maximum and its maximum
   overall, never more than the work experience has. Give more duty_caps to the more relevant experiences.
   - experiences whose duties score higher get more
