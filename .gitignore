@@ -20,8 +20,7 @@ cv.toml
 /applications/
 /out/
 /examples/out
-/ats-strike-data/*
-!/ats-strike-data/.gitkeep
+ats-strike-data
 
 # --- Docs -------------------------------------------------------------------
 # The rendered site. doc/ is the source; mkdocs builds this.
