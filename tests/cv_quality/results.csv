@@ -5,3 +5,7 @@ version,date,set,temperature,judge,appeal,ai,readability
 adapticv-ai-0.1.0-gpt-6.1-sol,2026-10-19,quick,default,claude-sonnet-5-5,56.8,15.8,94.6
 adapticv-ai-0.1.0-deepseek-v4-pro,2026-10-19,quick,default,claude-sonnet-5-5,58.7,14.4,93.7
 adapticv-ai-0.1.0-deepseek-flash,2026-10-19,quick,default,claude-sonnet-5-5,60.8,13.6,97.4
+1.0.1-jd-eval-new,2026-11-06,quick,default,claude-opus-5-5,64.3,31.6,89.7
+1.0.1-jd-eval-old,2026-11-06,quick,default,claude-opus-5-5,64.0,30.6,88.5
+1.0.1-format-v1,2026-11-06,quick,default,claude-opus-5-5,62.4,27.1,87.4
+1.0.1-jd-eval-tree,2026-11-06,quick,default,claude-opus-5-5,65.1,30.6,90.8
