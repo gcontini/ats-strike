@@ -4,7 +4,7 @@ output "image" {
 }
 
 output "push_repository" {
-  description = "Where a deploy pushes its image from outside Alibaba's network: <this>:<commit hash>."
+  description = "Where the release workflow pushes the image, <this>:x.y.z: the ACR_REPOSITORY repository variable on GitHub."
   value       = "${alicloud_cr_repo.main.domain_list["public"]}/${alicloud_cr_repo.main.namespace}/${alicloud_cr_repo.main.name}"
 }
 

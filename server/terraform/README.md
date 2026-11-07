@@ -1,8 +1,8 @@
 # Alibaba Cloud deployment
 
 The server as a Function Compute 3.0 function, the Container Registry
-Personal Edition repository its image is pushed to, and the OSS bucket that
-holds its CV sessions.
+Personal Edition repository the release workflow pushes its image to, and the
+OSS bucket that holds its CV sessions.
 
 | Managed here | Console only — no API reaches it |
 |---|---|
@@ -21,35 +21,46 @@ terraform apply
 ```
 
 The first deploy goes as in *From scratch*, below. After that, a plan says
-*No changes* until a new image is pushed.
+*No changes* until a new version is released.
 
 ## Deploy
 
-A deploy is an image built from one commit and tagged with its short hash.
-Commit first — the tag names the commit, so `git status --short` must print
-nothing. Then, from the repository root:
+A deploy is a release. The release workflow ([doc/release.md](../../doc/release.md))
+pushes the server image to Docker Hub and to this repository as `x.y.z`.
+Function Compute can only run an image from Container Registry in its own
+account and region, so it cannot use the Docker Hub copy. Once the release
+is done:
 
 ```bash
-tag=$(git rev-parse --short HEAD) &&
-image=$(terraform -chdir=server/terraform output -raw push_repository):$tag && DOCKER_BUILDKIT=0 docker build -t "$image" . &&
-docker push "$image" && cd server/terraform &&
-echo "yes" | terraform apply
+cd server/terraform && terraform apply
 ```
 
-Then `terraform apply`. It deploys the newest image in the repository tagged
-with a commit hash — so every apply does, including one run only to change an
-environment variable — and the plan shows the function's image moving to it.
+It deploys the newest `x.y.z` image in the repository, so every apply does,
+including one run only to change an environment variable. The plan shows the
+function's image moving to it.
 
-To run an older build instead, `terraform apply -var image_tag=<its hash>`.
+To run an older version instead, `terraform apply -var image_tag=1.0.1`.
 The next apply without it goes back to the newest.
 
-Before the first push, `docker login` to the registry once, with the command
-the console's *Access Credentials* page shows.
+Before the first release, give the workflow the registry, under the GitHub
+repository's *Settings → Secrets and variables → Actions*:
+
+| Name | Kind | Value |
+|---|---|---|
+| `ACR_REPOSITORY` | variable | `terraform output -raw push_repository` |
+| `ACR_USERNAME` | secret | the registry username on the console's *Access Credentials* page |
+| `ACR_PASSWORD` | secret | the registry password set on that page |
+
+An AccessKey does not work here: Personal Edition takes only the fixed
+registry password at `docker login`. A RAM user of its own, with
+`cr:PullRepository` and `cr:PushRepository` on this repository, keeps the
+secret down to this one repository.
 
 Why not `latest`: Function Compute resolves the tag to a digest when the
 function is updated, and on Personal Edition every invocation fails once the
-tag points somewhere else. A tag that moves on every build takes the function
-down on every build. A digest (`@sha256:…`) in place of the tag is rejected.
+tag points somewhere else. A tag that moves on every release takes the
+function down on every release. A digest (`@sha256:…`) in place of the tag is
+rejected. The workflow pushes `latest` to Docker Hub only.
 
 ## Sessions
 
@@ -86,10 +97,9 @@ role, so they do not depend on it.
   `server_url` — changes with it.
 - **From scratch**, in an account with none of this: create the Personal
   Edition instance and its password in the console, run
-  `terraform apply -target=alicloud_cr_repo.main`, push an image as in
-  *Deploy*, then run `terraform apply`.
-- **A second deployment** in the same account, to try a branch: a checkout
-  and state of its own, deployed from scratch, with its own `function_name`
-  and `namespace` in `terraform.tfvars`. The namespace also names its bucket
-  and role. An image of uncommitted work gets a tag that is not a commit hash,
-  set as `image_tag`, so no deploy ever picks it as the newest build.
+  `terraform apply -target=alicloud_cr_repo.main`, set up the workflow and
+  cut a release as in *Deploy*, then run `terraform apply`.
+- **A second deployment** in the same account: a checkout and state of its
+  own, deployed from scratch, with its own `function_name` and `namespace` in
+  `terraform.tfvars`. The namespace also names its bucket, role and
+  repository. The workflow pushes to one repository only, `ACR_REPOSITORY`.

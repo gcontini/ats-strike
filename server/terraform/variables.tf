@@ -17,7 +17,7 @@ variable "function_name" {
 }
 
 variable "image_tag" {
-  description = "Commit-hash tag to run instead of the newest one in the repository: a rollback. Unset, every apply deploys the newest; see main.tf."
+  description = "Version (x.y.z) to run instead of the newest one in the repository: a rollback. Unset, every apply deploys the newest; see main.tf."
   type        = string
   default     = null
 }

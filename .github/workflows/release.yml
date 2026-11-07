@@ -117,7 +117,9 @@ jobs:
           if-no-files-found: error
 
   # The server image, from the same commit. Classic builder, linux/amd64,
-  # plain docker push — see AGENTS.md.
+  # plain docker push — see AGENTS.md. Docker Hub is the public copy; the
+  # Alibaba registry is the one Function Compute deploys, because it can pull
+  # from nowhere else (server/terraform/README.md).
   image:
     needs: tag
     runs-on: ubuntu-latest
@@ -159,12 +161,20 @@ jobs:
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          ACR_REPOSITORY: ${{ vars.ACR_REPOSITORY }}
+          ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+          ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
           VERSION: ${{ inputs.version }}
         run: |
           set -eu
           echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
           docker push "lmstch/ats-strike:$VERSION"
           docker push lmstch/ats-strike:latest
+          # The version tag only, never latest: Function Compute fails every
+          # invocation once the tag it runs points at another image.
+          docker tag "lmstch/ats-strike:$VERSION" "$ACR_REPOSITORY:$VERSION"
+          echo "$ACR_PASSWORD" | docker login -u "$ACR_USERNAME" --password-stdin "${ACR_REPOSITORY%%/*}"
+          docker push "$ACR_REPOSITORY:$VERSION"
 
   # The doc/ site, one build per release, kept on the gh-pages branch under a
   # version selector. mike owns that branch entirely — nothing else writes it.

@@ -8,8 +8,8 @@
 #     these resources land in whichever instance the account has in `region`.
 #   - The registry login password. The provider refuses to work without one.
 #
-# Nothing is built here: each deploy is an image pushed from a checkout,
-# tagged with its commit hash (README.md, "Deploy").
+# Nothing is built here: the release workflow pushes every version to this
+# repository, tagged x.y.z (README.md, "Deploy").
 #
 # Both resources, and the alicloud_cr_repos data source below, are deprecated
 # in favour of their alicloud_cr_ee_* versions, which only reach Enterprise
@@ -105,34 +105,35 @@ data "alicloud_cr_repos" "main" {
 
   lifecycle {
     postcondition {
-      condition     = var.image_tag != null || anytrue([for tag in self.repos[0].tags : can(regex(local.build_tag, tag.tag))])
-      error_message = "No image in the repository is tagged with a commit hash: push one first (README.md, \"Deploy\")."
+      condition     = var.image_tag != null || anytrue([for tag in self.repos[0].tags : can(regex(local.release_tag, tag.tag))])
+      error_message = "No x.y.z image in the repository: cut a release first (README.md, \"Deploy\")."
     }
   }
 }
 
 locals {
-  # The images a deploy pushed are tagged with a commit hash. `latest`,
-  # release tags and ACR's own build cache are not.
-  build_tag = "^[0-9a-f]{7,40}$"
-  builds    = [for tag in data.alicloud_cr_repos.main.repos[0].tags : tag if can(regex(local.build_tag, tag.tag))]
+  # The release workflow tags each image with its version. Anything else in
+  # the repository, such as the commit-hash builds of the old local deploys,
+  # is not a release.
+  release_tag = "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+  releases    = [for tag in data.alicloud_cr_repos.main.repos[0].tags : tag if can(regex(local.release_tag, tag.tag))]
 
   # The last one pushed. max() fails on an empty list even inside the `if`,
   # so the conditional has to stay outside it.
-  newest_build = length(local.builds) > 0 ? [
-    for tag in local.builds : tag.tag
-    if tag.image_create == max(local.builds[*].image_create...)
+  newest_release = length(local.releases) > 0 ? [
+    for tag in local.releases : tag.tag
+    if tag.image_create == max(local.releases[*].image_create...)
   ][0] : null
 
   # image_tag, when set, names another one instead: a rollback.
-  image_tag = coalesce(var.image_tag, local.newest_build)
+  image_tag = coalesce(var.image_tag, local.newest_release)
 
   # The VPC endpoint: the pull never leaves Alibaba's network.
   #
   # A tag, never a digest: FC rejects `@sha256:` for a Personal Edition image.
   # It resolves the tag to a digest when the function is updated, and once the
   # tag points elsewhere every invocation fails — so the tag must never move,
-  # which a commit hash does not and `latest` does on every build.
+  # which a version does not and `latest` would on every release.
   image = "${alicloud_cr_repo.main.domain_list["vpc"]}/${alicloud_cr_repo.main.namespace}/${alicloud_cr_repo.main.name}:${local.image_tag}"
 
   # Merging the sensitive map as a whole would hide every variable in a plan.

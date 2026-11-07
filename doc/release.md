@@ -11,17 +11,21 @@ the server image on Docker Hub, and this site under its own version.
 
 ## Before the first one
 
-Two repository secrets, set once under *Settings → Secrets and variables →
-Actions*:
+Four repository secrets and one variable, set once under *Settings → Secrets
+and variables → Actions*:
 
-| Secret | What it is |
-|---|---|
-| `DOCKERHUB_USERNAME` | The Docker Hub account that owns `lmstch/ats-strike`. |
-| `DOCKERHUB_TOKEN` | An access token for it, not the account password. |
+| Name | Kind | What it is |
+|---|---|---|
+| `DOCKERHUB_USERNAME` | secret | The Docker Hub account that owns `lmstch/ats-strike`. |
+| `DOCKERHUB_TOKEN` | secret | An access token for it, not the account password. |
+| `ACR_REPOSITORY` | variable | The Alibaba Container Registry repository Function Compute deploys from: `terraform output -raw push_repository` in `server/terraform`. |
+| `ACR_USERNAME` | secret | Its registry username, from the console's *Access Credentials* page. |
+| `ACR_PASSWORD` | secret | Its fixed registry password. An AccessKey does not work. |
 
 Without them the `image` job fails at `docker login`, after the image has been
 built and checked — and because `package` waits on every job, no release is
-published until they exist.
+published until they exist. `server/terraform/README.md` covers the Alibaba
+side.
 
 **GitHub Pages**, once, under *Settings → Pages*: source **GitHub Actions**.
 Not *Deploy from a branch* — `gh-pages` is still where every version is kept,
@@ -60,7 +64,7 @@ flowchart TB
     TAG["<b>tag</b><br/>validate · rewrite three pyprojects<br/>uv lock · commit · tag · push --atomic"]
     B1["<b>build</b> — ubuntu<br/>pyinstaller → cv<br/>assert <i>cv version</i>"]
     B2["<b>build</b> — windows<br/>pyinstaller → cv.exe<br/>assert <i>cv version</i>"]
-    IMG["<b>image</b><br/>DOCKER_BUILDKIT=0 docker build<br/>assert /healthz version<br/>docker push :x.y.z and :latest"]
+    IMG["<b>image</b><br/>DOCKER_BUILDKIT=0 docker build<br/>assert /healthz version<br/>docker push Docker Hub :x.y.z and :latest<br/>docker push Alibaba :x.y.z"]
     DOC["<b>docs</b><br/>mike deploy x.y.z latest<br/>mike set-default latest<br/>→ gh-pages → deploy-pages"]
     PKG["<b>package</b><br/>download both binaries<br/>assemble · tar.gz<br/>gh release create"]
     TAG --> B1 --> PKG
@@ -110,6 +114,7 @@ is published.
 |---|---|---|
 | both executables and the files beside them | the release page | `ats-strike-x.y.z.tar.gz` and `ats-strike-x.y.z.zip` |
 | the server image | Docker Hub | `lmstch/ats-strike:x.y.z` and `:latest` |
+| the same image, for Function Compute | Alibaba Container Registry | `<ACR_REPOSITORY>:x.y.z`, deployed by `terraform apply` |
 | this site | GitHub Pages, from `gh-pages` | `/x.y.z/`, and `/latest/` which `/` redirects to |
 
 The archive is flat on purpose:
