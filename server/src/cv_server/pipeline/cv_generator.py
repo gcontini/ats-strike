@@ -64,9 +64,9 @@ logger = logging.getLogger(f"{LOGGER_ROOT}.cv")
 #: The CV formats format_selection chooses from; the render keeps at least
 #: min_duties per experience. Shown to the model as they are.
 FORMATS = {
-    "A": {"experiences": 3, "min_duties": 3, "max_duties": 8, "max_total_duties": 22},
-    "B": {"experiences": 4, "min_duties": 2, "max_duties": 6, "max_total_duties": 17},
-    "C": {"experiences": 5, "min_duties": 1, "max_duties": 4, "max_total_duties": 13},
+    "A": {"experiences": 3, "min_duties": 3, "max_duties": 8, "max_total_duties": 23},
+    "B": {"experiences": 4, "min_duties": 2, "max_duties": 6, "max_total_duties": 18},
+    "C": {"experiences": 5, "min_duties": 1, "max_duties": 4, "max_total_duties": 14},
 }
 #: The "|3-80,7-40" suffix of a scored text: key point id - score.
 SCORES = re.compile(r"\|((?:\d+-\d+,?)*)$")
@@ -200,10 +200,15 @@ def key_points_and_style(state: Mapping[str, Any]) -> str:
     return f"KEY POINTS:\n{dumps(state['key_points'])}\n\n" + (f"WRITING STYLE:\n{style}\n\n" if style else "")
 
 
-def style_and_attempt(profile: Mapping[str, Any], attempt: int) -> str:
-    """The input both validation prompts start with: WRITING STYLE when the profile has one, and ATTEMPT."""
+def writing_style(profile: Mapping[str, Any]) -> str:
+    """The input both validation prompts start with: WRITING STYLE when the profile has one.
+
+    What stays the same from round to round (WRITING STYLE, then what the
+    document is checked against) goes first and what changes (ATTEMPT, the
+    document) last, so the provider's prompt cache can reuse the start.
+    """
     style = profile.get("writing_style")
-    return (f"WRITING STYLE:\n{style}\n\n" if style else "") + f"ATTEMPT: {attempt}\n\n"
+    return f"WRITING STYLE:\n{style}\n\n" if style else ""
 
 
 def in_order(answers: List[Tuple[int, Any]]) -> List[Any]:
@@ -446,8 +451,8 @@ class CVGenerator:
         profile = {k: v for k, v in self.candidate.profile.items() if k != "writing_style"}
 
         def text_for(doc: dict, attempt: int) -> str:
-            return (style_and_attempt(self.candidate.profile, attempt)
-                    + f"MASTER PROFILE:\n{dumps(profile)}\n\nGENERATED CV BODY:\n{dumps(doc)}")
+            return (writing_style(self.candidate.profile) + f"MASTER PROFILE:\n{dumps(profile)}\n\n"
+                    + f"ATTEMPT: {attempt}\n\nGENERATED CV BODY:\n{dumps(doc)}")
 
         with stage("cv.validation"):
             doc = review(self.llm, ReplaceInBody, apply_body, self.bundle.sys_prompt_validation_body,
@@ -461,8 +466,8 @@ class CVGenerator:
         source = next(e for e in self.candidate.profile["experiences"] if e["id"] == exp_id)
 
         def text_for(doc: dict, attempt: int) -> str:
-            return (style_and_attempt(self.candidate.profile, attempt)
-                    + f"EXPERIENCE:\n{dumps(source)}\n\nGENERATED EXPERIENCE:\n{dumps(doc)}")
+            return (writing_style(self.candidate.profile) + f"EXPERIENCE:\n{dumps(source)}\n\n"
+                    + f"ATTEMPT: {attempt}\n\nGENERATED EXPERIENCE:\n{dumps(doc)}")
 
         doc = copy.deepcopy(task["cv_experiences"][n])
         with stage("cv.validation"):

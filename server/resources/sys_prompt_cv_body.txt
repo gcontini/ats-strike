@@ -18,21 +18,31 @@ Follow these strict rules:
     * A MASTER PROFILE field with the same name: copy it as it is, if it respects the length limit.
     * A MASTER PROFILE list for a single text field (job_title -> job_title, summaries -> summary): take the item
       scored higher. You can merge in content from other high scoring items, as long as you respect the length limit
-      and the WRITING STYLE.
+      and the WRITING STYLE. 
     * Fixed items (skills, certifications): if the MASTER PROFILE list is longer than the limit, select the items
       scored higher. Copy them exactly as they are: never merge or reword them.
+    * If a field has specific rules (2. FIELD RULES) they take precedence on the generic rules above.
     * Leave out the "|<scores>" suffixes and the "score" fields.
 
 2. FIELD RULES
-    * summary: one paragraph of about 700 characters about what the candidate can do, as in the summaries items: the role,
-      the years of experience, the kind of projects and clients, the areas of expertise and the strengths.
-      Start from the summaries item scored higher and align it with the KEY POINTS, using the whole MASTER PROFILE
-      (experiences with their duties, skills, certifications) to choose the capabilities to name and to back them.
-      Name capabilities, not single duties or projects: the work experiences are written separately.
-      Keep it grounded in MASTER PROFILE: do not invent.
-      Replace <<job_title>> with your job_title: keep job_title and the beginning of the summary consistent.
+    * summary: one paragraph of 3 to 5 sentences, maximum 600 characters, that tells a recruiter why this candidate
+      fits this job. Start from the summaries item scored higher:
+      - first sentence: the role, the years of experience, the kind of projects and clients, if it fits the most matching KEY POINT;
+      - then what the candidate does that matches the most important KEY POINTS, backed by
+        the technologies, scale or context of the MASTER PROFILE experiences;
+      - Pick the important KEY POINTS the MASTER PROFILE backs, it must make the recruiter interested by matching
+        what he is searching: prefer abstract capabilities and technologies over specific duties. 
+      - It is the first thing that a recruiter reads, invest extra effort in polishing it. 
+      - summary style:
+        Write it as connected prose that reads well aloud. Keep the sentences simple, but vary how they start and how they
+        are built: at most two sentences start with "I", never two in a row. Join related capabilities in one sentence
+        rather than writing a short sentence for each.
+        The recruiter has no prior knowledge of the candidate, if you refer to a specific experience/technology/duty check that he has enough context to understand.
+        Give each item a bit of context: Do not make plain lists of unrelated capabilities (you can list similar capabilities as reinforcement). 
+        Keep it grounded in MASTER PROFILE: DO NOT FABRICATE responsibilities.
+        Replace <<job_title>> with your job_title: keep job_title and the beginning of the summary consistent.
     * certifications: break ties in favor of the most recent. Do not invent certifications.
-      Preserve each selected certification's date and name exactly as given, sort most recent first.
+      - Preserve each selected certification's date and name exactly as given, sort most recent first.
 
 3. TONE & LANGUAGE
    * Tone: Natural, grounded, professional, and hyper-concrete. No fabrications or exaggerations.

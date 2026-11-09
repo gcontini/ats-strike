@@ -1,0 +1,27 @@
+Senior Site Reliability Engineer
+
+🚀 The Adventure Ahead
+
+As our Senior Site Reliability Engineer II, you’ll step up as the ultimate guardian of reliability across our critical product domains and services. You will architect high-performing platforms, turn complex systems into resilient superpowers, and collaborate directly with engineering leaders to set bulletproof standards. By keeping our systems seamlessly scalable, you directly power the AI-driven learning experiences used by millions around the globe.
+
+⚡ The Day-to-Day
+
+Master the Domain: Partner with engineering teams to set crystal-clear reliability objectives (SLIs/SLOs) and build long-term reliability roadmaps for core services.
+Tackle High-Stakes Incidents: Lead cross-service incident responses during critical outages, guiding teams with confidence and translating chaos into clear, durable solutions.
+Architect Resilient Futures: Drive the company-wide adoption of cutting-edge reliability patterns, deployment safety capabilities, and infrastructure scalability.
+Elevate Observability: Build and refine advanced observability tools to catch issues before they reach production.
+Champion Engineering Balance: Influence product design and system architecture to maintain the ultimate equilibrium between feature velocity and rock-solid reliability.
+Empower the Team: Mentor senior engineers, elevate best practices, and play a pivotal role in recruiting top-tier talent to the SRE organization.
+
+🧠 Your Superpowers
+
+Battle-Tested Expertise: Bring 6–10 years of SRE, DevOps, or production engineering experience with hands-on mastery of complex distributed systems.
+Cloud Architecture Wizardry: Command cloud infrastructure (AWS preferred), container orchestration, and Infrastructure as Code to keep modern platforms humming.
+Engineering Precision: Craft clean, high-performing code in at least one major language alongside a knack for automating away repetitive tasks.
+Incident Command Ready: Show a proven track record of steering large-scale incident management and driving high-impact reliability programs.
+Cross-Functional Influence: Communicate effortlessly across engineering, product, and customer-facing teams to align tech goals with business impact.
+
+🎁 Bonus Points
+
+Next-Gen Automation: Advanced experience designing self-healing infrastructure patterns and zero-downtime deployment pipelines.
+Mass-Scale Experience: Prior history scaling multi-tenant SaaS environments in rapid-growth markets.

@@ -1,0 +1,37 @@
+GCP Cloud Data Engineer
+
+Per l’accrescimento della practice Insights & Data, parte integrante della unit Digital Service che unisce Eccellenza Tecnologica, Data Science e Competenze di Business cross mercato per aiutare le organizzazioni a ottenere insights di valore attraverso le potenzialità della Data Driven View, siamo alla ricerca di GCP Cloud Data Engineers e GCP Cloud Data Architects.
+
+La risorsa si occuperà di supporterare i clienti nella progettazione e realizzazione di Modern Data Platforms e architetture Big Data su Google Cloud Platform, contribuendo alla definizione dell'architettura dati, allo sviluppo di pipeline di ingestion e trasformazione tramite Python e PySpark, all'implementazione di modelli dati secondo i principi della Medallion Architecture, e all'adozione di pratiche di Data Governance, Data Quality e Cloud Automation attraverso strumenti di Infrastructure as Code quali Terraform.
+
+Le tue Caratteristiche
+
+Laurea in discipline tecnico-scientifiche.
+Esperienza comprovata nella progettazione e implementazione di soluzioni di Data Engineering e Data Analytics su Google Cloud Platform.
+Competenze avanzate nei principali servizi GCP quali Google Cloud Storage, Dataflow, BigQuery, Dataproc, Composer, Pub/Sub, Airflow, Cloud Functions, Deployment Manager.
+Solida esperienza nello sviluppo di pipeline dati tramite Python e PySpark.
+Conoscenza approfondita dei principi di progettazione delle moderne Data Platform e delle architetture Big Data in cloud.
+Esperienza nella progettazione e implementazione di architetture dati basate sul paradigma Medallion Architecture (Bronze, Silver, Gold).
+Ottima conoscenza del linguaggio SQL e capacità di scrivere query avanzate e ottimizzate.
+Capacità di modellazione dati su database relazionali, NoSQL e Data Warehouse.
+Conoscenza dei principali framework Big Data (Spark, Hadoop, Hive).
+Conoscenza dei principi di Data Governance, Data Quality e Metadata Management.
+Conoscenza delle best practice di sicurezza, protezione e gestione dei dati.
+Gradita conoscenza di linguaggi di programmazione aggiuntivi quali Scala e Java.
+Gradita conoscenza dei principi e delle metodologie DevOps.
+Buona conoscenza della lingua inglese.
+
+Titoli preferenziali
+
+Conoscenza di framework e metodologie di Infrastructure as Code (IaC).
+Conoscenza di Terraform per l'automazione e il provisioning di infrastrutture cloud.
+Possesso di certificazioni Google Cloud, Databricks o ambito Data Engineering.
+
+Soft Skills
+
+Mentalità analitica, strutturata e orientata al problem solving.
+Attitudine alla comunicazione e al lavoro in team multidisciplinari.
+Proattività e orientamento alla gestione della relazione con il cliente.
+Leadership e capacità di guidare discussioni architetturali e decisioni tecniche.
+Passione per l'innovazione, il Cloud e le moderne Data Platform.
+Orientamento al risultato e capacità di operare in contesti dinamici e complessi.

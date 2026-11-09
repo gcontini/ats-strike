@@ -1,0 +1,30 @@
+Cloud Infrastructure Engineer
+
+La nostra proposta:
+
+siamo alla ricerca di un Cloud Infrastructure Engineer con consolidata esperienza nella gestione e nell'implementazione di infrastrutture cloud a supporto di reti core 5G.
+
+La persona contribuirà alle attività di implementazione dei nuovi nodi della rete Core Network 5G, occupandosi della predisposizione e configurazione del layer infrastrutturale necessario all'onboarding delle Network Functions.
+
+ Responsabilità:
+
+Implementare e configurare il layer infrastrutturale a supporto della Core Network 5G
+Gestire le attività propedeutiche all'onboarding delle Network Functions 5G
+Analizzare requisiti tecnici, documentazione di progetto e specifiche fornite dai vendor
+Redigere documentazione tecnica e Low Level Design (LLD)
+Effettuare attività di configurazione, setup e validazione dell'infrastruttura
+Collaborare con team di progetto e stakeholder tecnici per garantire la corretta implementazione delle soluzioni
+
+Requisiti mandatori:
+
+Almeno 5 anni di esperienza in ruoli di Cloud Infrastructure Engineer, Infrastructure Engineer o equivalenti
+Esperienza nell'implementazione e gestione di infrastrutture cloud enterprise
+Conoscenza delle architetture infrastrutturali a supporto di ambienti telco e/o reti di nuova generazione
+Esperienza nella stesura di Low Level Design (LLD)
+Capacità di analisi di documentazione tecnica, requisiti funzionali e specifiche di fornitore
+Competenze operative di configurazione, setup e deployment infrastrutturale
+Buona autonomia operativa e capacità di interfacciarsi con team multidisciplinari
+
+Requisiti preferenziali:
+
+Esperienza su tecnologia Dell Cloud Platform

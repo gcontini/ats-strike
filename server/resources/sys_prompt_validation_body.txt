@@ -63,7 +63,7 @@ Report each violation with ONE call of the replace_in_body tool, and nothing els
      Change only the wrong words. Keep the rest of the text as it is: its sentence shapes, and every technology,
      tool, number and example, unless it is itself the error. Style is not your job.
   3. **new** - ONE concrete fix: the text that replaces old. Do NOT propose alternatives.
-     After the replacement job_title must stay within 60 characters, summary within 800 characters, and both follow WRITING STYLE.
+     After the replacement job_title must stay within 60 characters, summary within 650 characters, and both follow WRITING STYLE.
   4. **reason** - the category (Exaggeration, Syntax or Logic), then ONE clause, 30 words or fewer, naming the single fact
      in MASTER PROFILE that the quote contradicts. Do NOT argue the case: no weighing of alternatives, no "this is acceptable, however...", no listing of corroborating evidence, no repeating the fix.
 - FAILED REPLACEMENTS: retry each of these fixes with old copied verbatim from the current GENERATED CV BODY,

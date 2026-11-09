@@ -1,0 +1,32 @@
+Posizione:
+
+Software Architect
+
+In Acme Data progettiamo ecosistemi Data, Analytics e AI che aiutano le aziende a trasformare i dati in valore. Per rafforzare il nostro team cerchiamo un/a Software Architect capace di definire l'architettura delle soluzioni, stimare e pianificare le attività e guidare il team di sviluppo attraverso supervisione tecnica e code review, intervenendo in prima persona sugli aspetti più critici.
+
+Il profilo si occuperà di:
+
+ Disegnere architetture software per applicazioni web enterprise, definendo standard, pattern e linee guida.
+ Guidere le scelte tecnologiche e supportere i team di sviluppo nelle attività di delivery.
+ Collaborare con Data Engineer, AI Engineer e Cloud Architect per realizzare soluzioni integrate.
+ Definire API, modelli dati e strategie di integrazione tra sistemi.
+ Progettazione funzionale delle interfacce: capacità di disegnare UI chiare e usabili con attenzione a UX e responsive design.
+ Affiancare clienti e stakeholder nella definizione delle soluzioni più adatte alle esigenze di business.
+ Promuovere qualità del software, best practice e crescita tecnica del team.
+
+Requisiti:
+
+Chi cerchiamo
+
+ Esperienza nel ruolo di almeno due anni nella progettazione di architetture software enterprise e nella gestione team/progetto
+ Competenze in Java e Spring Boot, Angular e TypeScript
+ Progettazione funzionale delle interfacce: capacità di disegnare UI chiare e usabili con attenzione a UX e responsive design.
+ Conoscenza di API REST, sistemi distribuiti e architetture a servizi.
+ Familiarità con pratiche DevOps, CI/CD, containerizzazione e cloud (Azure, AWS o GCP).
+ Ottima conoscenza di database relazionali e SQL.
+ Capacità di tradurre requisiti complessi in soluzioni concrete e sostenibili.
+ Attitudine al confronto con team multidisciplinari e stakeholder business.
+
+Saranno considerati plus
+
+Microservizi, integrazione di servizi AI e Generative AI, esperienza in progetti Data & Analytics

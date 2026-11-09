@@ -68,10 +68,17 @@ def test_readability_counts_each_flagged_unit_once():
     assert cv_eval.readability(flags, unit_list) == 100 * (1 - 1 / 5)
 
 
+def test_cosine_is_the_angle_not_the_length():
+    assert cv_eval.cosine([1.0, 2.0], [1.0, 2.0]) == 1.0
+    assert cv_eval.cosine([1.0, 0.0], [0.0, 3.0]) == 0.0
+    assert round(cv_eval.cosine([1.0, 1.0], [5.0, 5.0]), 12) == 1.0
+    assert round(cv_eval.cosine([1.0, 0.0], [1.0, 1.0]), 12) == round(0.5 ** 0.5, 12)
+
+
 def test_results_get_a_header_once_and_a_row_per_run(tmp_path):
     path = tmp_path / "results.csv"
-    cv_eval.append_result(path, ["0.5.0", "2026-10-15", "quick", "default", "claude-opus-5-5", 70.0, 40.0, 90.0])
-    cv_eval.append_result(path, ["0.5.0", "2026-10-16", "quick", 0.4, "claude-sonnet-5-5", 72.0, 35.0, 91.0])
+    cv_eval.append_result(path, ["0.5.0", "2026-10-15", "quick", "default", "claude-opus-5-5", 70.0, 40.0, 90.0, 61.2])
+    cv_eval.append_result(path, ["0.5.0", "2026-10-16", "quick", 0.4, "claude-sonnet-5-5", 72.0, 35.0, 91.0, 63.0])
     rows = list(csv.reader(path.open()))
     assert rows[0] == cv_eval.HEADER
     assert [r[1] for r in rows[1:]] == ["2026-10-15", "2026-10-16"]

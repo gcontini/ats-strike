@@ -1,0 +1,25 @@
+Product Delivery Manager - Partner Scale
+
+Your impact
+
+Wingtip helps businesses across Europe get paid, manage money and grow. In Person Payments is a core part of that mission, and every customer who activates it will touch the Partner Scale team's solution in one way or another.
+
+Partner Scale is one of four core teams within In Person Payments, and its focus is device fleet management at scale. You'll build the tools and APIs that let partners and large multi-store merchants manage hundreds or thousands of devices programmatically, cutting operational overhead and letting customers scale with us without friction.
+
+This is a green field for Wingtip, so you'll have the rare chance to build this space from scratch and shape the future of the solution. You'll own the end to end commercial relationship with Wingtip's key partners and customers, and work with your own dedicated engineering team to build a product that delights them and saves our internal teams the operational hassle.
+
+What You'll Ship
+
+Own the end to end product and roadmap of the Partner Scale team, staying close to key partners and customers.
+Take our device management solution from proof of concept to General Availability.
+Define your own KPIs for performance and reliability metrics.
+Automate manual processes across the device lifecycle, from ordering to deployment, configuration and customization.
+Put partners and merchants in control of their fleet.
+
+What You'll Bring
+
+A proven track record of building products from scratch and/or scaling them.
+Experience running a team of developers, this role calls for hands on ownership, not a process focused PM.
+Strong commercial affinity, with genuine customer empathy built from working closely with users and customers.
+Some form of technical background.
+The ability to work independently, represent your domain in senior forums, and drive cross functional alignment without needing heavy management support.

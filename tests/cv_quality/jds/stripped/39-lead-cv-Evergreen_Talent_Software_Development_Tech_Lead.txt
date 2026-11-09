@@ -1,0 +1,34 @@
+Software Development Tech Lead
+
+La risorsa, inserita nella direzione Business Line Software, riportando al Director a capo della stessa, avrà la responsabilità di coordinare e supervisionare le attività di sviluppo, aggiornamento e manutenzione dei sistemi gestionali assicurandone l’allineamento alle esigenze di business.
+
+nel dettaglio:
+
+    Coordinare e supportare un team di circa 10 risorse, promuovendo la diffusione delle best practice di sviluppo e assicurando l'efficace organizzazione delle attività;
+    Guidare le attività di analisi tecnica, sviluppo, manutenzione evolutiva e correttiva delle soluzioni software della Business Line;
+    Collaborare con i referenti di business e con gli altri dipartimenti aziendali per la definizione delle priorità progettuali e delle roadmap evolutive;
+    Garantire il costante adeguamento normativo dei prodotti software;
+    Supervisionare l'intero ciclo di sviluppo applicativo, assicurando elevati standard di qualità, affidabilità e performance;
+    Promuovere l'adozione delle metodologie DevOps e delle pratiche CI/CD, contribuendo al miglioramento continuo dei processi di sviluppo;
+    Monitorare l'avanzamento delle attività e il corretto impiego delle risorse assegnate;
+    Assicurare il rispetto dei requisiti di sicurezza applicativa, protezione dei dati e conformità alle normative vigenti;
+    Gestire le relazioni tecniche con eventuali fornitori e partner esterni;
+    Favorire la crescita professionale delle persone del team attraverso attività di mentoring, coaching e supporto tecnico.
+
+La risorsa ideale è in possesso dei seguenti requisiti:
+
+    Titolo di studi: Laurea in discipline tecnico – scientifiche;
+    Esperienze professionali: precedente esperienza almeno quinquennale in ruoli analoghi;
+
+    Competenze d’area tecnica:
+
+    Ottima conoscenza di Java (8+) e framework Spring;
+    Esperienza con Git, Jira, PostgreSQL;
+    Conoscenza pratiche DevOps (CI/CD) e principi di sicurezza applicativa.
+
+    Competenze linguistiche: buona conoscenza della lingua inglese.
+
+Completano il profilo:
+
+    Leadership e capacità di gestione di team eterogenei;
+    Forte interesse per il ruolo che andrà espresso in una realtà in continua evoluzione.

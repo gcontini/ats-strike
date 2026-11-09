@@ -1,0 +1,48 @@
+Cloud Solution Architect
+
+MISSION
+
+The Solution Architect team at Relecloud supports the Sales function by structuring value-driven solutions for our customers and prospects, as well as responding to RFPs, RFQs, and tenders. On a daily basis, requirements must be analyzed and understood to structure the best solution to propose. The team is responsible for defining and drafting technical offers, supported by Operations teams, determining the effort required from involved departments and the costs of proposed solutions.
+
+RESPONSIBILITIES AND ACTIVITIES
+
+Analyze customer business objectives, technical requirements and pain points
+Collaborate with cross-functional internal teams on strategic projects
+Supporting the design of technical solutions tailored to customer requirements according to Relecloud's methodology and service positioning
+Supporting Sales and Channel Partner teams throughout all phases of the sales process and customer management
+Proactively proposing new solutions consistent with the evolution of Cloud services to be included in Relecloud's service portfolio
+Collaborating with Project, Service Delivery, and Operations teams during service implementation phases, as well as gathering requirements for upselling opportunities with existing customers
+Drafting technical offer documents and presentations for Relecloud services
+
+EXPERIENCE AND EDUCATIONAL QUALIFICATION
+
+At least 2 years of experience in pre-sales or similar roles
+High School Diploma or Scientific Degree
+
+SKILLS AND KNOWLEDGE
+
+Knowledge of VMware and KVM virtualization architectures and products
+Knowledge of IBM Power ecosystem architectures (IBM i, AIX)
+Knowledge of Windows and Linux server operating systems
+Knowledge of major IaaS and PaaS services on Public Cloud platforms (Azure, AWS, Google Cloud)
+Understanding of Disaster Recovery processes and Business Continuity mechanisms (RPO, RTO, SLA, etc.)
+Knowledge of industry-standard strategies and tools for server and system migrations.
+Knowledge in preparing and presenting economic P&L related to an offer
+Professional proficiency in English, both written and spoken
+Strong proficiency in Microsoft Office suite (Excel, Word, PowerPoint)
+Preferred: Skills in Cybersecurity Managed Services
+Preferred: Knowledge of AI platforms
+Preferred: Recognized industry certifications in Cloud Architecture, Enterprise Solutions or Security Management.
+
+ATTITUDES AND SKILLS
+
+Capability to assimilate and process information from various sources
+Rapid learning ability and curiosity for emerging technologies
+Goal-oriented mindset with strong focus on deliverables and deadlines
+Collaborative approach in working with multiple internal stakeholders
+Excellent communication skills, with a talent for explaining complex technical topics to business buyers.
+Strategic thinking to understand business applications of new technologies
+Strong analytical and problem-solving capabilities with creative approach to solution design
+Business acumen to understand and articulate revenue and cost implications
+
+Location: Milan (6 days of remote working per month) – FREQUENT VISITS TO CLIENTS REQUIRED

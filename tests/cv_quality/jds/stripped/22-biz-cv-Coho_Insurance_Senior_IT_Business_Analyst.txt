@@ -1,0 +1,55 @@
+Senior IT Business Analyst
+
+For the Central Team of Coho Insurance Global Corporate & Commercial (GC&C), we are looking for a Senior IT Business Analyst to join our Core Platforms Team.
+
+The role reports directly to the GC&C Head of Core Platforms. This is an opportunity to join a global corporate insurance company in a high‑impact team. We seek a senior Business Analyst who combines hands‑on project management skills, strategic thinking, and strong business acumen to actively drive and support initiatives that are critical to our growth and transformation.
+
+The ideal candidate can manage implementations, initiatives, and projects; collect and interpret business needs; and collaborate closely with local and central IT Business Analysts, developers, and testers across roadmapping, requirements definition, solution design, and configuration/coding. The person will oversee project delivery on Microsoft Dynamics and the Power Platform, bringing fresh ideas, proposing solutions, ensuring internal client and Line of Business satisfaction, and contributing to delivery‑led growth across functions.
+
+Main responsibilities:
+
+Demand management and BA:
+
+Evaluating and prioritizing incoming requests based on business value and strategic alignment. Assess business objectives, identify areas for improvement, and provide recommendations for solutions that align with company goals.
+Working autonomously with internal and external stakeholders to define project scope and objectives.
+Managing the initial intake process and ensuring a smooth transition to the delivery phase.
+
+Requirements and process analysis:
+
+Gather business requirements, analyse and optimize business processes, and translate them into functional specifications, with a strong focus on Dynamics 365 technologies and AI technologies.
+Work with technical teams to design solutions, including functional design and Business Requirements collection.
+
+Project leadership and execution:
+
+Lead projects and initiatives from start to finish, overseeing project phases, creating comprehensive project plans, timelines, and workstreams.
+Proactively identifying and mitigating project risks, dependencies, and issues.
+
+Team and stakeholder management:
+
+Coordinating and monitoring technical delivery teams.
+Facilitating seamless communication and alignment between Business and IT.
+Managing relationships with stakeholders and providing regular progress reports.
+Assist with troubleshooting issues related to internal platforms, work with technical support to resolve problems, and help maintain a knowledge base.
+
+Requirements
+
+5+ years of professional experience, with a previous Dynamics 365 experience strongly preferred.
+Strong knowledge of AI and Generative AI concepts and technologies.
+Strong analytical and problem-solving skills.
+Previous experience in Insurance Projects is preferrable.
+Proficiency in a variety of business analysis techniques, such as process mapping, user stories, and workshops.
+Excellent communication, presentation, and interpersonal skills.
+Experience in leading projects and collaborating with cross-functional teams.
+Ability to create and maintain detailed documentation and reports.
+Familiarity with AGILE methodologies.
+
+Key Competencies
+
+Strong interpersonal and stakeholder management skills.
+High emotional intelligence and ability to influence without authority.
+Excellent written and verbal communication skills.
+Strategic thinker with hands-on execution capability.
+Comfortable navigating ambiguity and driving clarity in complex environments.
+Proven ability to engage and coordinate stakeholders, ensuring alignment and smooth collaboration.
+Fluent in English (C1).
+Strong communication and public speaking.

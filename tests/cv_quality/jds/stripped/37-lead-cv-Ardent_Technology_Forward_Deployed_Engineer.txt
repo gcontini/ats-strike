@@ -1,0 +1,23 @@
+Forward Deployed Engineer_D-3219
+
+About The Job
+
+As a Forward Deployed Engineer (FDE), you are the technical core of a squad that brings AI into real business processes. You, partner directly with Ardent Operating Entities (OEs) and ecosystem, building production-ready solutions ideally by readapting existing Minimum Viable Solutions (MVS) and AI Building Blocks or by creating custom components and solutions for the OE’s. Together with the AI Engagement Manager you form a team with local IT team or global vertical team for their know-how of core systems and customer pain-points – to move from discovery to deployment at speed.
+
+What You Do
+
+Be integrated with local and global domain experts to understand problems and translate them into production AI solutions
+Reuse and extend MVS/AI Building Blocks to design and implement custom services, integrations, and agents when necessary
+Ship solutions across different stacks (backend, frontend, data/ML, ops), landscapes and setups, owning the path from development to production
+Ensure security, compliance, and reliability; set up CI/CD, containerization, and IaaC as needed.
+Document, operationalize, and scale by contributing new patterns back to the central building-block catalogue to one solution powers the next!
+
+What You Bring
+
+Hands-on software engineer with a track record of shipping production code across a big stack- backend, frontend, data, and ops.
+Comfortable operating in unfamiliar codebases, domains, and partner environments; identifying issues and delivering value.
+Practical experience with cloud-native stacks and DevOps (CI/CD, containers, Kubernetes), testing/observability, and secure coding in regulated settings.
+Working knowledge of the modern data/AI stack (e.g., Python, APIs, vector databases) and integrating LLM/agent frameworks; prompt-first mindset.
+Strong collaboration and communication skills; pairs effectively with an AI Engagement Manager and executes with thorough documentation.
+Bachelor’s degree in Computer Science/Engineering or equivalent professional experience
+Fluency in English

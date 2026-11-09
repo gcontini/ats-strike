@@ -7,7 +7,8 @@
 and writes one CV per job description in jds/ through the ats-strike client, the
 same way ``cv submit-raw`` does, into a new folder under runs/. The cv-judge agent (.claude/agents/cv-judge.md) then reads each CV and
 writes <stem>.judge.json next to it. ``score`` turns those judgements into
-three numbers per CV and appends their averages to results.csv.
+three numbers per CV, adds the embedding similarity of CV and job description,
+and appends their averages to results.csv.
 
 Not a pytest test: it needs a model, pdflatex and minutes per CV. The pure
 functions it scores with are tested in test_cv_eval.py.
@@ -18,6 +19,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 import os
 import re
 import socket
@@ -34,9 +36,16 @@ import httpx
 from cv_client.api import HttpApi, CVError
 from cv_client.config import load_config
 from cv_client.cvjob import session_id, write_cv
+from dotenv import dotenv_values
+from openai import OpenAI
 
 HERE = Path(__file__).resolve().parent
 JDS = HERE / "jds"
+#: Each JD without its company header and footer, read only by the cosine.
+#: Cut once by hand and frozen: the job title and the role-specific part, without
+#: the company blurb, the offer and the legal footer. A subfolder, so generate's
+#: jds/*.txt never picks them up.
+STRIPPED = JDS / "stripped"
 RUNS = HERE / "runs"
 RESULTS = HERE / "results.csv"
 REPO = HERE.parents[1]
@@ -59,7 +68,10 @@ SERVER_START = 120
 WEIGHTS = {"S": 1.0, "M": 0.5, "W": 0.25}
 #: Weight of a requirement in the appeal score.
 IMPORTANCE = {"must": 2, "nice": 1}
-HEADER = ["version", "date", "set", "temperature", "judge", "appeal", "ai", "readability"]
+#: The cosine's embedding model, on the default provider (MODEL_API_KEY /
+#: MODEL_BASE_URL). Changing it makes the cosine incomparable with earlier runs.
+EMBEDDING_MODEL = "text-embedding-v4"
+HEADER = ["version", "date", "set", "temperature", "judge", "appeal", "ai", "readability", "cosine"]
 
 
 def plain(text: str) -> str:
@@ -133,6 +145,18 @@ def readability(flags: list[dict], unit_list: list[tuple[str, str]]) -> float:
     """Share of units that read without stumbling."""
     hard = {u for f in verified(flags, unit_list) for u in f["units"]}
     return 100 * (1 - len(hard) / len(unit_list))
+
+
+def cosine(a: list[float], b: list[float]) -> float:
+    """Cosine of the angle between two vectors."""
+    return sum(x * y for x, y in zip(a, b)) / math.sqrt(sum(x * x for x in a) * sum(y * y for y in b))
+
+
+def similarity(jd: str, cv: dict, client: OpenAI) -> float:
+    """Cosine x 100 between the stripped JD and the CV's units, embedded in one call."""
+    reply = client.embeddings.create(model=EMBEDDING_MODEL,
+                                     input=[jd, "\n".join(text for _, text in units(cv))])
+    return 100 * cosine(*(d.embedding for d in reply.data))
 
 
 def append_result(path: Path, row: list) -> None:
@@ -226,8 +250,10 @@ def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
 
 
 def score(run: Path) -> None:
-    """The three numbers per judged CV, their averages, and one more row in results.csv."""
+    """The four numbers per judged CV, their averages, and one more row in results.csv."""
     meta = json.loads((run / "run.json").read_text(encoding="utf-8"))
+    env = {**dotenv_values(REPO / ".env"), **os.environ}
+    embedder = OpenAI(api_key=env["MODEL_API_KEY"], base_url=env["MODEL_BASE_URL"], timeout=60)
     rows, judges = [], set()
     for stem in meta["jds"]:
         cv_file, judge_file = run / f"{stem}.cv.json", run / f"{stem}.judge.json"
@@ -239,17 +265,19 @@ def score(run: Path) -> None:
         requirements = json.loads((JDS / f"{stem}.requirements.json").read_text(encoding="utf-8"))
         unit_list = units(cv)
         judges.add(judge["model"])
+        stripped = (STRIPPED / f"{stem}.txt").read_text(encoding="utf-8")
         rows.append((stem, appeal(requirements, judge["experience"], cv),
                      ai_score(judge["ai_tells"], unit_list),
-                     readability(judge["hard_to_read"], unit_list)))
+                     readability(judge["hard_to_read"], unit_list),
+                     similarity(stripped, cv, embedder)))
 
-    print(f"{'CV':52} {'appeal':>7} {'ai':>7} {'read':>7}")
+    print(f"{'CV':52} {'appeal':>7} {'ai':>7} {'read':>7} {'cosine':>7}")
     for stem, *values in rows:
         print(f"{stem[:52]:52} " + " ".join(f"{v:7.1f}" for v in values))
-    averages = [round(sum(r[i] for r in rows) / len(rows), 1) for i in (1, 2, 3)]
+    averages = [round(sum(r[i] for r in rows) / len(rows), 1) for i in (1, 2, 3, 4)]
     print(f"{f'average, {len(rows)} of {len(meta['jds'])} CVs':52} "
           + " ".join(f"{v:7.1f}" for v in averages))
-    print(f"judged by {', '.join(sorted(judges))}")
+    print(f"judged by {', '.join(sorted(judges))}, embedded with {EMBEDDING_MODEL}")
     temperature = "default" if meta["temperature"] is None else meta["temperature"]
     append_result(RESULTS, [meta["version"], meta["date"], meta["set"], temperature,
                             "+".join(sorted(judges)), *averages])

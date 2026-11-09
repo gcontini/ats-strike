@@ -1,0 +1,47 @@
+TELCO CLOUD ENGINEER
+
+CHI STIAMO CERCANDO
+
+In Velocom stiamo cercando un Telco Cloud Engineer per il Team di Telco Cloud – Technology & Security
+
+Il tuo obiettivo è il coordinamento tecnico delle attività di ingegneria e design delle piattaforme Telco Cloud, assicurando la corretta definizione architetturale, l’integrazione con le infrastrutture di rete e IT esistenti e l’aderenza ai requisiti di performance, sicurezza e affidabilità tipici dei contesti Telco.
+
+Il ruolo prevede un forte coinvolgimento nelle scelte tecnologiche e architetturali, fungendo da riferimento tecnico per i team di ingegneria.
+
+DESCRIZIONE DEL RUOLO
+
+In qualità di Telco Cloud Engineer le tue attività e responsabilità saranno le seguenti:
+
+    Coordinare il design tecnico e l’ingegnerizzazione di architetture Telco Cloud (public, private, hybrid, distributed/edge)
+    Definire e validare architetture Cloud per servizi Telco (Core Network, OSS/BSS, piattaforme di servizio, 5G VNF/CNF)
+    Supervisionare l’integrazione tra piattaforme Cloud e infrastrutture di rete (IP, SDN/NFV)
+    Garantire il rispetto dei requisiti di scalabilità, alta affidabilità, bassa latenza e resilienza
+    Collaborare alla definizione di modelli di deployment (HA, geo-redundancy, multi-region)
+    Coordinare attività di build, capacity planning, performance tuning e fault tolerance
+    Governare l’adozione di pratiche DevOps e CI/CD per ambienti Cloud Telco
+    Supportare l’introduzione di tecnologie di containerizzazione e orchestrazione
+    Coordinare attività atte ad assicurare la compliance alle policy di sicurezza, networking e identity management
+    Guidare l’adozione dell’intelligenza artificiale nei processi tipici di ingegneria (dimensioning, capacity planning)
+
+I Principali Interlocutori Saranno
+
+    Cloud Engineer e Cloud Architect
+    Network Engineer e Network Architect Telco
+    Team DevOps, SRE e Platform Engineering
+    Cyber Security e Infrastructure Operations
+    Product Owner e Technical Product Manager
+    Vendor tecnologici e fornitori di soluzioni Cloud/NFV
+    System Integrator e partner tecnologici
+
+REQUISITI ESSENZIALI
+
+    Laurea in Informatica, Ingegneria Informatica, Telecomunicazioni o discipline affini.
+    Esperienza di almeno 3–5 anni in ambito Cloud Engineering / Cloud Architecture
+    Solida conoscenza di NFV, SDN, virtualizzazione e containerizzazione
+    Esperienza con i principali modelli IaaS/CaaS e piattaforme Cloud (AWS, Openstack, Openshift, VMware).
+    Esperienza con Kubernetes e orchestrazione di microservizi
+    Familiarità con ambienti Linux e automazione (Infrastructure as Code – es. Terraform, Ansible)
+    Buona conoscenza dei contesti telco e delle relative architetture di rete e servizi
+    Solida conoscenza delle tematiche di sicurezza, resilienza e continuità operativa in ambienti Cloud
+    Solida conoscenza della lingua inglese
+    Capacità di interazione con stakeholder tecnici e non tecnici

@@ -1,0 +1,37 @@
+C/C++ Embedded Software Engineer | Industrial Automation | Bologna
+
+Vuoi iniziare una nuova avventura professionale come C/C++ Embedded Software Engineer in una delle nostre opportunità nel settore Automazione Industriale a Bologna?
+
+👉 Cosa farai?
+
+• Sviluppo di software e firmware in C/C++ per dispositivi embedded dedicati alla logistica e all’automazione industriale.
+
+• Progettazione e integrazione di componenti firmware con interfacce hardware (camere, dimensionatori, controller e dispositivi di automazione).
+
+• Sviluppo su microcontrollori e sistemi embedded Linux, con particolare attenzione alla comunicazione Ethernet.
+
+• Allestimento, esecuzione e manutenzione di test funzionali e di integrazione su dispositivi embedded.
+
+• Attività di debug su sistemi embedded, analisi delle anomalie e implementazione delle soluzioni correttive.
+
+• Collaborazione quotidiana con il team hardware per la definizione dei requisiti e la risoluzione di problematiche di integrazione.
+
+• Supporto alla documentazione tecnica del software/firmware sviluppato e delle attività di test.
+
+• Partecipazione a trasferte occasionali presso il cliente o siti produttivi per attività di test, integrazione e supporto tecnico.
+
+✍️ Cosa Richiediamo?
+
+• Laurea in Ingegneria (Informatica, Elettronica, Telecomunicazioni, Automazione o affini) o esperienza equivalente.
+
+• Esperienza di almeno 3 anni nello sviluppo embedded su microcontrollori con linguaggi C/C++ e sistemi Linux.
+
+• Conoscenza di sistemi embedded, microcontrollori, Linux embedded e protocolli di comunicazione (es. Ethernet).
+
+• Conoscenza della lingua italiana a livello madrelingua o equivalente e della lingua inglese a livello minimo B2.
+
+• Capacità di lavorare in team multidisciplinari, adattarsi a un ambiente dinamico e disponibilità a lavorare in modalità ibrida (3 giorni on-site, 2 giorni smart working) con auto propria.
+
+Nice to have:
+
+• Gradita esperienza in attività di debug avanzato su sistemi embedded, strumenti di analisi e testing per dispositivi di automazione industriale.

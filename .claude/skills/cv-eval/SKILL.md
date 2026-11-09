@@ -1,6 +1,6 @@
 ---
 name: cv-eval
-description: Evaluate ats-strike CV quality on the fixed test set. It generates the CVs (quick = 10, thorough = 50), has the cv-judge agent score each one for ATS appeal, AI-written style and readability, and appends the averages to tests/cv_quality/results.csv. Use after a serious prompt or architecture change, or when asked to evaluate, benchmark or score CV quality. Arguments - quick|thorough [temperature].
+description: Evaluate ats-strike CV quality on the fixed test set. It generates the CVs (quick = 10, thorough = 50), has the cv-judge agent score each one for ATS appeal, AI-written style and readability, measures its embedding similarity to the job description, and appends the averages to tests/cv_quality/results.csv. Use after a serious prompt or architecture change, or when asked to evaluate, benchmark or score CV quality. Arguments - quick|thorough [temperature].
 ---
 
 # Evaluate CV quality
@@ -37,7 +37,8 @@ from the repository root.
    uv run python tests/cv_quality/cv_eval.py score <run>
    ```
 
-   - **Report:** give the per-CV table, the averages, the judge model it names, and the row appended to `tests/cv_quality/results.csv`.
+   - **Cosine:** it embeds each CV with `text-embedding-v4` on the default provider, so it needs `.env` (`MODEL_API_KEY`, `MODEL_BASE_URL`) and the network. It compares the CV with `tests/cv_quality/jds/stripped/<stem>.txt`, the JD cut once by hand to its title and role-specific part, without the company blurb, the offer and the legal footer. Never rewrite a stripped file: like the requirements, it is the yardstick earlier runs were scored with. Nothing else reads them; generate and the judge use the full JD.
+   - **Report:** give the per-CV table, the averages, the judge and embedding models it names, and the row appended to `tests/cv_quality/results.csv`.
    - **Errors:** if it stops on a malformed judge file, run cv-judge again for that CV only, then score again.
 
 Reading the scores:
@@ -45,7 +46,8 @@ Reading the scores:
 - **appeal:** half ATS keyword coverage, half experience shown, weighted must = 2, nice = 1.
 - **ai:** the share of CV sentences that carry AI tells.
 - **readability:** the share of sentences that read without stumbling.
+- **cosine:** the cosine similarity x 100 between the CV's summary, role summaries and duties and the stripped JD, as a semantic ATS matcher would compare them. Compare runs on the same JDs, not JDs with each other: the level depends on each JD's wording. On 2026-11-09 the 9 CVs of `1.0.2-summary-v2-terra` scored 39.6 to 56.6, average 45.1. The same pair embedded three times gave the same value, so unlike the judge it carries no noise.
 
-Higher appeal and readability are better, and lower ai is better. With ten CVs, small differences are noise, so decide on thorough runs.
+Higher appeal, readability and cosine are better, and lower ai is better. With ten CVs, small differences are noise, so decide on thorough runs.
 
 The judge is noisy. On 2026-10-16 the same 3 CVs were judged twice, and per-CV scores moved by up to 3 points for appeal, 4 for ai and 12 for readability. Readability is the noisiest because its flags are few.

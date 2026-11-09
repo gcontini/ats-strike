@@ -1,0 +1,47 @@
+Product Owner expert Business Processing ambito Pagamenti
+
+Compiti e Responsabilità
+
+La persona selezionata, adeguatamente introdotta e formata sui prodotti Paymora, avrà le seguenti responsabilità:
+
+Contribuire a garantire lo sviluppo tecnologico della Business Line e la diffusione del know how all’interna della stessa
+Mantenersi costantemente aggiornata su evoluzioni tecnologiche e/o funzionali e di mercato per la Business Line Digital Payments
+Supportare le funzioni operative o di business nell’identificazione di nuovi servizi/prodotti e nell’evoluzione di quelli esistenti
+Collaborare con il team architecture e con quello funzionale per la definizione delle architetture di nuovi prodotti e/o alle modifiche delle architetture di prodotti esistenti
+Assicurare la visibilità di Paymora come leader di soluzioni tecnologiche
+Fornire consulenza interna ed esterna (ai clienti) nel proprio ambito di conoscenza
+Collaborare con i/le manager delle varie aree per la definizione delle necessità formative e partecipare direttamente alla realizzazione di iniziative di formazione.
+
+Requisiti professionali
+
+Almeno 10 anni di esperienza nel ruolo, preferibilmente in realtà complesse e/o aziende multinazionali
+Conoscenza professionale della lingua Inglese – livello minimo richiesto: B2
+
+Competenze di Dominio:
+
+Pagamenti SEPA SCT, SEPA SDD, SEPA SCTInst, ESTERO, Corporate Banking (CBI e SCORE), CIT
+Normativa PSD2, GDPR
+Protocolli di rete Bancarie EBICS, SwiftNet, SiaNet
+Formati Bancari (RNI, FIN, ISO20022, EDIFACT)
+Procedure Bancarie come Anagrafiche Clienti, Condizioniere, Conti Correnti
+Segnalazioni Bancarie come Centrale Rischi, Anacredit
+Soluzioni di Payment HUB per il mercato SEPA e Internazionale in ambito
+Soluzioni di pagamento nell'ambito mobile Payment/Commerce e e-Payment/Commerce
+
+Competenze tecnologiche:
+
+J2EE
+Micro Service
+API Management
+BlockChain
+Big Data
+Cybersecurity
+
+Principali attitudini e abilità
+
+Capacità di confronto continuo ed efficace con gli stakeholder interni ed esterni
+Ottime doti di leadership e capacità di gestione di team multilocati
+Capacità analitiche, precisione e affidabilità
+Proattività, problem solving e orientamento agli obiettivi
+
+Titolo di studio: Laurea in Ingegneria Informatica, Scienze Informatiche o equivalenti; apprezzabile Master o formazione ad hoc post-universitaria

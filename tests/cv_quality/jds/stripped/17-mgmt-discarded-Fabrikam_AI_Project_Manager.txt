@@ -1,0 +1,16 @@
+AI Project Manager
+
+Are you a Project Manager expert in getting specified use cases delivered — on scope, on date, with no late surprises?
+
+WHAT YOU WILL FIND
+
+Core activities. Once a use case is specified, you make sure it gets delivered — on scope, on date, with the client knowing where it stands throughout. You will hold the client interface from the specification sprint to the final handover: domain-expert workshops, C-level steering meetings, status and bad news early. You will plan the delivery phases — data, adaptation, eval, deployment — and close each one on an explicit exit criterion. And you will keep allocation, effort and timeline against plan, putting every scope change through formal change control.
+Tech & tools stack.. Delivery may be a custom model built end to end, a distilled or optimised version of an existing one, an agentic system tuned for cost and latency, a platform rollout on the client's side, or a broader AI programme spanning several of these. You will work with project and portfolio tooling and read — not write — what the engineering team produces: eval reports, GPU-hour and token estimates, and the traceability of runs, datasets and models.
+Mentoring, collaboration, and continuous growth. You are the single counterpart for the client and the connective tissue inside: model design engineers upstream, research and platform engineers building, security and legal on the data dependencies (DPAs, licensing, anonymisation, client samples). Clients are large enterprises and public institutions, typically with a C-level sponsor and a technical team of their own.
+
+WHAT WE NEED
+
+Academic background. Degree in Engineering Management Engineering, Economics or a related field. A technical or quantitative background will help you hold your own with the engineering team.
+Technical & strategic skills. 3-8 years of professional experience. A proven delivery track record in MLOps, AI products and/or Generative models, with clients as your direct counterpart rather than through an account layer, and real planning, budgeting and change-control discipline on projects with hard external dependencies. You don't need to train models or build agents, but you do need to read an eval report, sanity-check a GPU-hour or token estimate, and know why a failed run costs both budget and calendar. You can plan around a scarce shared resource — queued compute, a benchmark window, a client data handover — where the constraint sets the schedule, not headcount. The position is open to varying levels of expertise and seniority.
+Soft skills. Strong facilitation, synthesis and executive communication, ownership without needing formal authority, and fluent English.
+Nice to have. PMP, PRINCE2 or Agile certification; delivery experience on AI/ML, MLOps or data-platform programmes; regulated or public-sector programmes; pre-sales and proposal work; multi-vendor or EU-funded programme management.

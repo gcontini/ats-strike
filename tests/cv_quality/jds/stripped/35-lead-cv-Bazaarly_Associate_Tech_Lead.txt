@@ -1,0 +1,30 @@
+Associate Tech Lead
+
+About The Team And The Role
+
+Genuina, an Bazaarly company, empowers brands and consumers through trusted product authentication and brand engagement solutions. The Brand Success squad onboards new brands, integrates brand data, creates demo connectors for business development and marketing teams, and provides first-line support for brand and consumer issues.
+
+In this role, you will lead the squad’s technical direction and help scale these capabilities while improving reliability, standardization, and operational efficiency. You will work in a collaborative, client-facing environment where diverse perspectives are valued and technical challenges are approached as opportunities for shared learning and growth.
+
+This is a full-time position based in Milan, with a hybrid work model (3 days per week in the office) and flexibility to support work-life balance.
+
+What you will accomplish
+
+Lead the technical direction of the Brand Success squad, making architecture and delivery decisions that align with the broader platform strategy.
+Deliver high-quality solutions across design, implementation, testing, deployment, and observability, with a focus on customer and business outcomes.
+Balance short-term delivery priorities with longer-term scalability, automation, reliability, and operational improvements.
+Raise engineering quality through code reviews, development practices, testing, CI/CD, monitoring, and observability.
+Streamline and automate repeatable processes, including brand onboarding and connector creation, to help the squad scale effectively.
+Support operational readiness and incident response in a fast-paced, client-facing environment.
+Help engineers develop their skills through technical guidance, collaboration, and shared problem-solving.
+
+What you will bring
+
+6+ years of experience building large-scale distributed web platforms or APIs, including 1–2 years in a technical lead, mentoring, or delivery ownership role.
+Strong software architecture and engineering fundamentals, including design patterns and modern development practices.
+Hands-on experience with Java/Spring, JavaScript frameworks, and GraphQL or REST APIs.
+Broad system design knowledge across frontend and backend systems, including messaging, databases, and cloud infrastructure.
+Experience improving software quality through testing, CI/CD, containerization, observability, and operational practices.
+Strong communication and judgment, with the ability to make practical technical trade-offs and collaborate effectively across teams in a client-facing environment.
+Fluency in English. Italian language skills are a plus.
+Ability to work full-time in a hybrid model based in Milan (3 days in the office per week).

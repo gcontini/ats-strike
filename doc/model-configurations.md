@@ -54,6 +54,11 @@ Endpoint: `https://api.deepseek.com`.
   `deepseek-v4-flash` is still accepted but is a retired name served by
   V4.1-Flash ([pricing page](https://api-docs.deepseek.com/quick_start/pricing),
   checked 2026-10-08).
+- `deepseek-v4-pro` is still a model of its own, whatever
+  [press reports](https://thenextweb.com/news/deepseek-v4-1-flash-launch-v4-pro-retired-price-cut)
+  say about it being routed to V4.1-Flash: on 2026-11-08 `/models` listed it,
+  and a call answered `model = deepseek-v4-pro` with a `system_fingerprint`
+  different from `deepseek-flash`'s. It is also four to six times slower.
 - **fails:** web search. The endpoint accepts a `web_search` tool and runs no
   search; its docs list every built-in tool as ignored (2026-09-27). Search
   needs DashScope-hosted DeepSeek instead.
@@ -75,6 +80,12 @@ Endpoint: `https://api.deepseek.com`.
 
 Endpoint: `https://api.openai.com/v1`.
 
+- `gpt-6.1-terra` is a valid API id: listed by `/models` on 2026-11-08, beside
+  `gpt-6-luna`, `gpt-6-sol` and `gpt-6.1-sol`.
+- **fails:** `gpt-6.1-terra` with `reasoning_effort = max` (2026-11-09, Chat
+  Completions): 400 `Unsupported value: 'reasoning_effort' does not support
+  'max' with this model. Supported values are: 'none', 'low', 'medium',
+  'high', and 'xhigh'.` Its highest is `xhigh`.
 - `gpt-6-luna` is a valid API id (released 2026-09-22) and takes
   `reasoning_effort` from `none` to `max`
   ([OpenRouter listing](https://openrouter.ai/openai/gpt-6-luna)).
@@ -98,6 +109,23 @@ Endpoint: `https://api.openai.com/v1`.
   validators made their `replace_in_*` tool calls with `medium` (2026-10-19).
   The `validation` role sends tools; if a model refuses them while
   reasoning, set its `reasoning_effort` to `none`.
+
+### xAI (Grok)
+
+Endpoint: `https://api.x.ai/v1`, OpenAI-compatible Chat Completions. Not
+declared in `.env` or the deploy; the replays of 2026-11-09 passed it as
+provider 5 (`MODEL_API_KEY5` / `MODEL_BASE_URL5`).
+
+- Text models listed by `/v1/models` on 2026-11-09: `grok-4.7`, `grok-4.6`,
+  `grok-4.5`, `grok-4.3`, `grok-build-0.1` (alias `grok-code-fast-1`) and
+  `grok-4.20-0309-reasoning` / `-non-reasoning` / `multi-agent-0309`.
+  `/v1/language-models` prices, read as 1/10000 USD per M tokens:
+  `grok-4.5` to `grok-4.7` $2 in / $6 out; `grok-4.3` and `grok-4.20` $1.25 /
+  $2.50.
+- **Usage is miscounted:** xAI's `completion_tokens` leaves the reasoning
+  tokens out, and ats-strike subtracts them again, so the log shows a negative
+  output (`output=-28495` for 28,827 thinking tokens). A cost total for a
+  Grok role is wrong until that is handled.
 
 ## Roles
 
@@ -152,11 +180,25 @@ for `profile_scoring` and medium for the other five, no temperature.
 
 Until 2026-10-20 this role wrote the whole CV in one call, to the
 `TailoredCVData` schema, in the generate → review → condense loop. It now
-writes the body and each experience in the six-step pipeline above; the rows
-below are the old loop's.
+writes the body and each experience in the six-step pipeline above. The
+2026-11-08 rows are the body prompt alone, replayed on the frozen step
+artifacts of five ats-strike-data CVs (Hitachi, Klarna, Nysa, T.A.I., Abbott),
+then validated with the shipped `validation` role. Each model ran with the old
+summary rule (600–800 characters) and the new one (3–4 sentences, 350–550
+characters). The other rows are the old loop's.
 
 | Provider | Model | Settings | Status | Date | Notes |
 |---|---|---|---|---|---|
+| OpenAI (`use_alternate_provider = 3`) | `gpt-6.1-terra` (`models.toml`, uncommitted) | `use_alternate_provider = 3`, `reasoning_effort = medium`, Chat Completions, `json_mode`; other steps on `deepseek-flash` | **works** | 2026-11-08 | cv-eval quick with the new summary prompt: 9 of 10 CVs. CV 02 failed in `profile_scoring` on `deepseek-flash`: a list came back with fewer scores than items, and `_merge_scores` raised `zip()` length `ValueError`. On the same 9 CVs against `deepseek-flash`: appeal 56.4 vs 59.5, ai 28.4 vs 28.5, readability 93.0 vs 85.8. The `cv` step averaged 10 s and 454 thinking tokens against 55 s and 11.2k; the whole CV used about 188k tokens against 250k. |
+| OpenAI (`use_alternate_provider = 3`) | `gpt-6.1-terra` | body and duties, Chat Completions, `reasoning_effort = medium` from `models.toml`; set in the `ats-strike` Terraform deploy by `ATS_CV_MODEL`, `ATS_CV_MODEL_PROVIDER = standard`, `ATS_CV_USE_ALTERNATE_PROVIDER = 3` | **unconfirmed** | 2026-11-08 | Applied to the deployed function (image 1.0.2), then removed on 2026-11-09 with no CV run on it: `cv` stays on `deepseek-flash`, whose summaries target the job better (see the body-only rows). The duties on Terra were tried only in the cv-eval run above. |
+| OpenAI (`use_alternate_provider = 3`) | `gpt-6.1-terra` | `model_provider = standard`, `reasoning_effort = medium`, `json_mode`, Chat Completions (body only) | **works** | 2026-11-08 | 7 s a body, about 1k thinking tokens. Validation changed none of its 10 summaries; it changed every DeepSeek summary. With the new rule: 424 characters, one sentence in "I", the most fluent of the three, but the thinnest on JD keywords. With the old rule it writes "Experienced in… Skilled in…" lists with no subject. |
+| OpenAI (`use_alternate_provider = 3`) | `gpt-6.1-terra` | `model_provider = standard`, `reasoning_effort = xhigh`, `json_mode`, Chat Completions (body only) | **works** | 2026-11-09 | 28–38 s a body, about 2k thinking tokens (`max` is refused, see *Providers*). On five postings, against `medium` with the same prompt: the same length (515 characters, under the 600 asked), the same four-sentence shape and the same opening sentence. Validation changed none. More effort did not make it abstract or target the job the way `deepseek-flash` does. |
+| OpenAI (`use_alternate_provider = 3`) | `gpt-6.1-sol` | `model_provider = standard`, `reasoning_effort = medium`, `json_mode`, Chat Completions (body only) | **works** | 2026-11-09 | 8–13 s a body, about 1.4k thinking tokens. On five postings: 517 characters, four sentences, validation changed one. Close to Terra, a little more abstract ("Work on Alibaba Cloud and GCP combines…"), but it does not name the KEY POINTS the way `deepseek-flash` does. |
+| DashScope | `qwen3.8-max` | `thinking = on`, `extra_body = { thinking_budget = 7500 }`, no `reasoning_effort`, `json_mode` (body only) | **works** | 2026-11-09 | 104–149 s a body, about 9k thinking tokens. On five postings: 578 characters, targeted and fluent, but validation changed all five and it still claims work the profile does not show ("partner implementations end to end… to go-live"). Writes `--` as a dash. |
+| xAI (provider 5, replay only) | `grok-4.7` | `model_provider = standard`, no `reasoning_effort`, `json_mode`, Chat Completions (body only) | **works** | 2026-11-09 | 149–463 s a body, 18k–32k thinking tokens. On five postings: 592 characters, five sentences, validation changed one. Rich in context, but with abstract subjects ("A customs programme turned a machine learning model…") and an "I am a…" opener. Too slow for the pipeline. Token counts are wrong, see *Providers*. |
+| xAI (provider 5, replay only) | `grok-4.3` | `model_provider = standard`, no `reasoning_effort`, `json_mode`, Chat Completions (body only) | **works** | 2026-11-09 | 10–18 s a body, 1.5k–4k thinking tokens. On five postings: 540 characters, validation changed four. Ignores "never two in a row": up to four sentences in a row start with "I". Writes "10 years" for "10+", adds "under high pressure", and claimed "managed scoping, delivery and go live" for a partner-integration job. |
+| DeepSeek (`use_alternate_provider = 2`) | `deepseek-v4-pro` | `model_provider = deepseek`, `reasoning_effort = medium` (body only) | **works** | 2026-11-08 | 119–226 s a body (about 13k thinking tokens), four to six times slower than Flash, and no better: it copies the profile's "Results-driven" and "Proven expertise" word for word. Validation changed 9 of its 10 summaries. |
+| DeepSeek (`use_alternate_provider = 2`) | `deepseek-flash` (shipped) | as shipped (body only) | **works** | 2026-11-08 | About 35 s a body. With the new rule: 521 characters, 3.6 sentences, one in "I" (the old rule gave 734 characters and 2.8). It claims more than the profile backs (AWS, MLOps, "Delivery Manager"), so validation edits every summary. |
 | OpenAI (`use_alternate_provider = 3`) | `gpt-6-sol` | Chat Completions, `json_schema`, `reasoning_effort = xhigh`, `thinking = auto`, `extra_body = {}`, `max_output_tokens = 24500` | **unconfirmed** | 2026-10-16 | Set after the failure below. |
 | OpenAI (`use_alternate_provider = 3`) | `gpt-6-sol` | Chat Completions, `json_schema`, `thinking = auto`, `extra_body = { reasoning = { mode = "pro", effort = "xhigh" } }`, `max_output_tokens = 24500` | **fails** | 2026-10-16 | 400 `Unknown parameter: 'reasoning'`. The `reasoning` object is the Responses API's; Chat Completions takes only a top-level `reasoning_effort`, and pro mode (`reasoning.mode = "pro"`) is documented for Responses only ([OpenAI reasoning guide](https://developers.openai.com/api/docs/guides/reasoning)). |
 | DashScope | `qwen3.8-max-0902` (shipped) | `json_schema` (strict), `thinking = on`, `extra_body = { thinking_budget = 7500 }`, `max_output_tokens = 24500` | **unconfirmed** | 2026-10-08 | Same room for the reply as the `max_tokens = 17000` before it: the new cap counts the thinking. |
@@ -188,8 +230,19 @@ adapticv-ai's prompt; the last row below is the old loop's.
 
 | Provider | Model | Settings | Status | Date | Notes |
 |---|---|---|---|---|---|
+| OpenAI (`use_alternate_provider = 3`) | `gpt-6.1-terra` | `api = responses`, otherwise as the `gpt-6.1-sol` row below; `ATS_HIGHLIGHT_MODEL = gpt-6.1-terra` in the `ats-strike` Terraform deploy | **unconfirmed** | 2026-11-08 | Applied to the deployed function with the `cv` change. Until then the live function still ran `gpt-6.1-sol`, though `terraform.tfvars` already named Terra. |
 | OpenAI (`use_alternate_provider = 3`) | `gpt-6.1-sol` | `api = responses`, `reasoning_effort = medium`, `thinking = auto`, no temperature; set in the `ats-strike` Terraform deploy by `ATS_HIGHLIGHT_MODEL`, `ATS_HIGHLIGHT_MODEL_PROVIDER = standard`, `ATS_HIGHLIGHT_USE_ALTERNATE_PROVIDER = 3`, `ATS_HIGHLIGHT_API = responses` | **unconfirmed** | 2026-10-22 | Not yet applied or run. `models.toml` still ships `deepseek-flash` for this role. `gpt-6.1-sol` ran all six steps in adapticv-ai's bench, but on Chat Completions (see the six CV steps above). A bare `/v1/responses` call with the deploy's provider-3 key on 2026-10-22 returned 200 `completed` (`reasoning.effort = low`, 13 in / 5 out), so the 401 of 2026-10-09 (see *analysis*) is not reproduced; the call did not go through ats-strike. |
 | DashScope | `qwen3.8-flash` (shipped) | `thinking = off`, `temperature = 0.1`, `json_object` | **unconfirmed** | 2026-10-08 | Current `models.toml`. |
+
+### cv-eval (`tests/cv_quality`, not a server role)
+
+Called by the evaluation scripts directly with the `openai` client, not through
+`models.toml`.
+
+| Provider | Model | Settings | Status | Date | Notes |
+|---|---|---|---|---|---|
+| OpenAI (provider 3 keys) | `gpt-6-luna` | Chat Completions, `reasoning_effort = none`, strict `json_schema`, no temperature | **fails** (for this use) | 2026-11-09 | Tried to strip the company header and footer of the 50 test JDs into `jds/stripped/` by returning the first and last line of the role. The call itself is fine (strict `json_schema`, no thinking, 0.5–2.6k tokens in, 15 out), but a single line range cannot skip a company paragraph that sits between the title and the role: it kept "ABOUT THE COMPANY" and similar blocks in many JDs, and kept a values block or a benefits list at the end of others. All 50 were redone by hand. |
+| DashScope (provider 1) | `text-embedding-v4` | OpenAI-compatible `/embeddings`, default 1024 dimensions | **works** | 2026-11-09 | The cosine of `cv_eval.py score`, on the Singapore workspace host. The same pair embedded three times gave the identical cosine to six decimals. |
 
 ## Recording a result
 

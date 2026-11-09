@@ -1,0 +1,65 @@
+Lead AI Tech Architect - Milan | Trey Platform
+
+What You'll Do
+
+As a Lead IT Architect, you will work closely with clients to understand their issues, define IT strategies, architecture solutions, win buy-in for your recommendations, and collaborate with fellow Treyers to transform client potential into performance. You will be given end-to-end responsibility for larger, highly technical and more complex “modules” within a project, and begin to develop specialized knowledge to help you solve clients’ problems. You will start to take on team lead responsibilities and demonstrate intellectual leadership.
+
+Main responsibilities will include:
+
+Building community
+
+    Advising internal colleagues on core technical concepts and frameworks
+
+    Advising fellow architects on areas relevant to an area you have depth in
+
+    Developing a network in the Trey technical community and leveraging it for our clients
+
+Developing & Designing
+
+    Analysing complex IT application landscapes
+
+    Analysing the status quo and optimization of IT architectures
+
+    Identifying non-trivial technology decisions facing a client
+
+    Storytelling about architectural building blocks and their importance
+
+    Roadmapping and business case development
+
+Controlling & Managing
+
+    Reviewing vendor proposals and/or in-flight technical work
+
+    IT project management and quality assurance
+
+    Optimizing application development processes
+
+What You'll Bring
+
+    You have from 10 to 15 years’ experience in software development, technical project management, digital delivery or technology consulting
+
+    You show ability to bring unique tech perspectives from outside the consulting industry into Trey's typical engagements, requiring:
+
+        Consulting experience required
+
+        Strategic mindset (hypothesis driven, 80:20 mindset, iterative approach, activist stance)
+
+        Self-managed
+
+    You have leadership potential to transform the consulting industry in particular around interaction with designers, engineers and POs
+
+    Progressing thought leadership in deep tech
+
+    New (but proven) methodologies or ways of working
+
+    You have a clear overview of common development methods and tools DevOps practices and Continuous Improvement
+
+    You are able to balance dogmatism and pragmatism to guide decision making. Articulate trade-offs and drive high-impact technology decisions on topics including (but not limited to) IaaS/PaaS providers, container orchestration, service mesh, API gateways, and commercial vs. open source software.
+
+    You have experience with, and understand how to lead, legacy integration and remediation (facades, strangler approaches, et. al.)
+
+    You have a deep understanding of different integration patterns and best practices such as events, synchronous vs. asynchronous
+
+    You have an university degree with above-average academic performance in a mathematical-scientific field, information technology, or business administration
+
+    You are fluent in English and Italian

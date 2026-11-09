@@ -1,0 +1,101 @@
+Solution Designer
+
+The Solution Designer / IT Integrator is responsible for translating business objectives, functional requirements and non-functional requirements into scalable, secure and maintainable end-to-end technical solutions.
+
+The role acts as the bridge between Business, Architecture and Engineering, ensuring technical coherence across systems, applications, integrations and data flows while supporting successful delivery outcomes.
+
+The Solution Designer / IT Integrator drives solution feasibility, end-to-end design, technical alignment and implementation governance throughout the initiative lifecycle.
+
+Key Responsibilities
+
+Business & Solution Analysis
+
+    Analyse business requirements, Epics and User Stories.
+    Support shaping and feasibility activities.
+    Perform impact assessments across applications, services and business processes.
+    Ensure traceability between requirements and technical implementation.
+
+Solution Design
+
+    Design end-to-end technical solutions aligned with enterprise architecture principles.
+    Define integration patterns, APIs, events, data flows and system interactions.
+    Produce solution documentation and technical specifications.
+    Ensure compliance with security, resilience and operational requirements.
+
+Delivery Support
+
+    Support backlog refinement and User Story decomposition.
+    Collaborate with development teams during implementation.
+    Drive technical decision-making and design reviews.
+    Support testing, deployment and production readiness activities.
+
+Stakeholder Management
+
+    Collaborate with Product Owners, Architects, Engineers and Business stakeholders.
+    Manage technical dependencies across squads and domains.
+    Facilitate workshops and solution alignment sessions.
+    Communicate risks, assumptions and constraints.
+
+Quality & Governance
+
+    Promote engineering excellence and best practices.
+    Ensure alignment with architecture, security and compliance standards.
+    Contribute to continuous improvement initiatives.
+    Support operational stability and problem resolution activities.
+
+Core Competencies
+
+Technical Competencies
+
+    Solution Design
+    Enterprise Integration
+    API Design
+    Event-Driven Architecture
+    Microservices Architecture
+    Data Modelling
+    Cloud & Platform Architecture
+    Security by Design
+    DevSecOps
+    Observability & Monitoring
+    Systems Integration
+    Agile Delivery
+    Technical Documentation
+
+Leadership Competencies
+
+    Stakeholder Management
+    Facilitation
+    Influencing Skills
+    Decision Making
+    Strategic Thinking
+    Coaching & Mentoring
+    Change Leadership
+
+Education & General Requirements
+
+    Degree in Information Technology, Engineering, Computer Science or equivalent experience.
+    Strong analytical and problem-solving skills.
+    At least 6 years of experience in the role
+    Excellent communication and stakeholder management capabilities.
+    Strong customer-centric mindset.
+    Fluent English (written and spoken).
+
+Preferred Technologies
+
+The specific technology stack may vary by domain. Knowledge in the following areas is considered beneficial:
+
+    Java
+    Spring Boot
+    REST APIs
+    OpenAPI / Swagger
+    Kafka
+    Event Streaming Platforms
+    Oracle / SQL
+    Azure DevOps
+    Git
+    CI/CD Pipelines
+    Grafana
+    Dynatrace
+    Splunk
+    Kubernetes
+    Cloud Platforms
