@@ -29,7 +29,7 @@ Follow these strict rules:
          that add nothing. Pick first the duties that add the most points to key points not full yet; then fill the
          remaining places with the best of the others. The experience must show the important sides of the job, not
          only one.
-       - You can merge two duties or split a long duty in two, as long as you respect DUTY CAP in the final output. Each duty develops one clear idea.
+       - You can merge two incoming duties or split a long duty in two, as long as you respect DUTY CAP in the final output. Each duty develops one clear idea.
        - Keep the scores at the end of each duty ("|<scores>") as they are written: a split duty keeps them, a merged duty
          takes both lists (for a key point in both, the higher score).
        - When rewriting a duty you must keep the part that matches KEY POINTS: its EVIDENCE. The facts and keywords of the
@@ -39,7 +39,7 @@ Follow these strict rules:
          - If the match is an abstract concept and it has a concrete example try to mention it.
        - Before writing, decide which evidence each selected duty keeps. When the evidence of a duty does not fit in the
          length limit, drop the evidence of the least important KEY POINT, preferring one that another selected duty
-         already covers. Split a duty only when its second half is worth more than your weakest selected duty, which
+         already covers. Split a duty when its second half is worth more than your weakest selected duty, which
          then goes out (DUTY CAP).
        - After writing, check that each evidence you decided to keep is still in its duty.
        - All the duties tell the candidate story: check them in the context of the experience for consistency and flow

@@ -64,7 +64,7 @@ logger = logging.getLogger(f"{LOGGER_ROOT}.cv")
 #: The CV formats format_selection chooses from; the render keeps at least
 #: min_duties per experience. Shown to the model as they are.
 FORMATS = {
-    "A": {"experiences": 3, "min_duties": 3, "max_duties": 8, "max_total_duties": 23},
+    "A": {"experiences": 3, "min_duties": 3, "max_duties": 9, "max_total_duties": 23},
     "B": {"experiences": 4, "min_duties": 2, "max_duties": 6, "max_total_duties": 18},
     "C": {"experiences": 5, "min_duties": 1, "max_duties": 4, "max_total_duties": 14},
 }

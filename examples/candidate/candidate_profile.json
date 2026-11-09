@@ -2,32 +2,32 @@
   "job_title": [ "Service digitalization specialist", "IT Technical Manager", "Solution Architect", "Infrastructure Solution Architect", "Cloud Engineer", "Cloud Architect", "Lead Engineer", "Distributed Systems & Cloud Architect" ],
   "writing_style": "C1 English: very direct, highly structured. Slight italian inflections. Keep the structure of the sentences simple and clear. Keep the tone extremely concrete. Avoid: abstract role descriptions, long sentences, complex structures, buzzwords and excessive use of adjectives.",
   "summaries": [
-    "Results-driven <<job_title>> with 10+ years of experience designing and delivering complex IT infrastructure solutions for large international events and institutional projects. Proven expertise in requirements gathering, vendor management, cloud and on-premise solution design, and in acting as the technical bridge between business stakeholders and development teams. Strong architectural skills to deliver compliant, scalable and high-value solutions. Recognized for problem solving under pressure and for delivering critical systems in multi-stakeholder, multicultural environments.",
+    "<<job_title>> with 10+ years of experience designing and delivering complex IT infrastructure solutions for large international events and institutional projects. Proven expertise in requirements gathering, vendor management, cloud and on-premise solution design, and in acting as the technical bridge between business stakeholders and development teams. Strong architectural skills to deliver compliant, scalable and high-value solutions. Recognized for problem solving under pressure and for delivering critical systems in multi-stakeholder, multicultural environments.",
     "Experienced <<job_title>> with broad competences in cloud and system integration. Strong problem solving skills make the profile very versatile. Works with project management to shape the right solution: advises on options, risks, costs and impact on other business processes. Used to multicultural environments under high pressure."
   ],
   "skills": [
+    "AI solutions",
+    "Alibaba Cloud",
+    "C++",
     "Chinese speaker",
-    "Huawei Cloud",
-    "Working with Chinese teams and technologies",
-    "Requirements Gathering",
-    "Vendor Management",
-    "Stakeholder Management",
-    "Solution Architecture",
-    "Problem Solving under Pressure",
+    "Cloud Ops",
+    "Helm",
+    "IaC(Terraform)",
+    "Java",
+    "Jenkins",
+    "Kubernetes",
+    "LLM design (personal interest)",
     "Microservices architectures",
     "Performance measurement and optimization",
-    "Cloud Ops (Terraform)",
-    "Kubernetes",
-    "Helm",
-    "Jenkins",
-    "Technical presentation",
+    "Problem Solving under Pressure",
     "Python",
-    "Java",
-    "C++",
-    "AI solutions",
-    "LLM design (personal interest)",
+    "Requirements Gathering",
+    "Solution Architecture",
+    "Stakeholder Management",
     "Team leader",
-    "Problem solving"
+    "Technical presentation",
+    "Vendor Management",
+    "Working with Chinese teams and technologies"
   ],
   "certifications": [
     {
@@ -36,7 +36,7 @@
     },
     {
       "date": "September 2023",
-      "name": "Huawei Cloud Certified Professional ACP"
+      "name": "Alibaba Cloud Certified Professional ACP"
     },
     {
       "date": "January 2023",
@@ -48,7 +48,7 @@
     },
     {
       "date": "June 2019",
-      "name": "HSK 5 (Chinese language proficiency exam)"
+      "name": "HSK 4 (Chinese language proficiency exam)"
     },
     {
       "date": "April 2017 - March 2018",
@@ -59,78 +59,84 @@
   "experiences": [
     {
       "id": 0,
-      "title": "Infrastructure Solution Architect",
+      "title": "IT Infrastructure Solution Architect",
       "company": "Alpine Winter Games 2026 Organizing Committee",
       "location": "Turin, Italy",
       "dates": "January 2024 -- April 2026",
       "context": "International Winter Games -- Organizing Committee",
       "role_summary": "In the Organizing Committee I was part of the Infrastructure team (5 people). We provided the hardware for the Games (PCs, printers, phones, servers) and the services built on it (Office, MDM, mail, printing), and we oversaw the cloud infrastructure on GCP and Alibaba Cloud for the applications delivered in IaaS mode.",
       "duties": [
-        "Solution Architect and Product Owner for two Games projects delivered in IaaS mode: 'File Transfer', a web application to move files in and out of a protected network, and 'File Sharing', a high performance SMB file repository built for a specific need of the Venue Design team.",
+        "Solution Architect and Product Owner for two Games projects delivered in IaaS mode: 'File Transfer', a web application to move files in and out of a protected network, and 'File Sharing', a high performance SMB file repository built for the Venue Design team: they needed a place to share the venue designs, but AutoCAD did not cope well with the company's SharePoint.",
         "Owned the printing solution for the Games, as both Product Owner and Solution Architect: collected the requirements, got approvals from the Cybersecurity team, designed the solution and kept the documentation up to date. Followed up with the hardware vendor until the solution was installed.",
         "Gathered requirements, wrote RFQs and validated vendor proposals for the cloud projects above, balancing mandatory delivery time, required SLAs, costs and effort, with the 'Business Impact Assessment' as reference.",
         "Ensured technical compliance with company policies and guided solution providers through the internal approval process.",
         "Defined, documented and tested operational procedures (installation, configuration) for about 1,100 printers across 9 main use cases, some of them critical for the Games.",
         "Worked shifts in the Technical Operations Center, troubleshooting issues from device logistics to compliance; solved critical problems on my own, also at night.",
-        "Worked with the Applications Team on the technical side of contracts for cloud resources of applications delivered in IaaS mode: wrote the infrastructure part of the RFQs, defined RACI matrices, validated proposals, architecture and costs.",
+        "Worked with the Applications Team on the technical side of contracts (cloud resources, backup, disaster recovery) for applications delivered in IaaS mode: wrote the infrastructure part of the RFQs, defined RACI matrices, validated proposals, architecture and costs.",
         "Supported the Applications Team in managing the Chinese cloud vendor (Alibaba).",
-        "Validated the design of the common Google Cloud infrastructure shared by all projects in IaaS mode, checking log routing and the site-to-site VPN with the cloud provider."
+        "Validated the design of the common Google Cloud infrastructure shared by all projects in IaaS mode, checking the log routing, and followed the implementation of the site-to-site VPN with the cloud provider."
       ]
     },
     {
       "id": 1,
-      "title": "Technical Solution Architect",
+      "title": "Solution Architect",
       "company": "Lumen Digital Services",
       "location": "Shenzhen, China",
       "dates": "June 2021 -- October 2023",
       "context": "Continental Multi-Sport Games 2022 -- Results Distribution System",
-      "role_summary": "My team supported the delivery of the 'Games Results' system, a mission critical software for the Games: it keeps the scores and generates the official web site. The software was developed in Europe; my team adapted it to the client's environment and to the requests of the system integrator.",
+      "role_summary": "My team supported the delivery of the 'Games Results' system, a mission critical software for the Games: it keeps the scores and generates the official web site. The software was developed in Europe; my team adapted it to the client's cloud environment (Alibaba Cloud) and to the requests of the system integrator.",
       "duties": [
-        "Technical bridge between the European development team and the Chinese system integrator (Huawei). Mapped the system integrator's requirements onto the software architecture provided by the European team and adapted it to the client's needs.",
-        "Presented and discussed the system architecture with the client, in Chinese, in a difficult environment, while gathering non-functional requirements (high availability, performance, scalability).",
-        "Designed and implemented solutions to the customer's requests locally where possible; coordinated code changes with the European team.",
-        "Prepared environments for application deployment: configured DNS and Kubernetes, optimized Helm packages, solved deployment specific issues (e.g. Redis instability when master nodes restarted).",
+        "Technical bridge between the European development team and the Chinese system integrator (Alibaba). Designed and implemented solutions to the customer's requests locally where possible; coordinated code changes with the European team.",
+        "Adapted the software architecture provided by the European team to the client's requirements and to the specifics of Alibaba Cloud, proposing, designing and implementing the necessary changes. For example, the high availability setup of the MSSQL database proposed by the European team was not feasible in that environment, so I placed an SLB in front of it to point to the master instance.",
+        "Presented and discussed the system architecture with the client, in Chinese, in a challenging environment (demanding customer, software half legacy and half microservices, limited support from the remote team).",
+        "Gathered non-functional requirements from the client (high availability, performance, scalability).",
+        "Managed and documented the required firewall openings between the components of the system, coordinating with Cybersecurity team the validation and the implementation.",
+        "Prepared environments for application deployment: configured DNS and Kubernetes, and operated the clusters during deployments and version upgrades.",
+        "Solved Redis deployment specific issues: AOF rewrite queue accumulation and instability when the master node was restarted.",
         "Solved synchronization issues between two isolated platforms owned by two different companies with rsync and inotify: designed the fix, presented it, got it approved and implemented it.",
         "Team leader and mentor of a small team of 3 people.",
-        "Defined and documented backup/restore procedures able to meet the strict SLA of the Games.",
-        "The Results Distribution System was a core system with a strict SLA: recovery (RTO) within 2 hours in case of disaster. I guided my team through the Technical Rehearsals (full scale test events before the Games), where the Disaster Recovery (DR) procedures of the Results system were tested successfully against the SLA. (Note: the rehearsals were a very large event covering all Games systems: software, hardware, venue security, not only Results. I guided my team, NOT the rehearsals).",
+        "The Results Distribution System was a core system with a strict SLA: recovery (RTO) within 2 hours in case of disaster. Defined and documented the backup and restore procedures and the disaster recovery plan able to meet the SLA of the Games.",
+        "I guided my team through the Technical Rehearsals (full scale test events before the Games), where the Disaster Recovery (DR) procedures of the Results system were tested successfully against the SLA. (Note: the rehearsals were a very large event covering all Games systems: software, hardware, venue security, not only Results. I guided my team, NOT the rehearsals).",
         "My team received the company's yearly excellence award, a monetary prize for outstanding performance, and informal compliments from the client's managers at the end of the Games."
       ]
     },
     {
       "id": 2,
-      "title": "Software Engineer -- IT Consultant",
+      "title": "Full Stack Engineer -- Consultant",
       "company": "Lumen Consulting",
       "location": "Shanghai, China",
       "dates": "March 2016 -- May 2021",
       "context": "Tax & Customs programme",
       "role_summary": "IT consultant on a 'Tax & Customs' programme: ML services, cloud IAM, microservice modernization of a Java monolith, and production troubleshooting abroad.",
       "duties": [
-        "Turned a Machine Learning model from a Python notebook into a full microservice, improving the model's performance on the way. The service detected anomalies in customs declarations (imported goods) from X-Ray scans of cargo containers (VGG16 - Model Fine Tuning - Python - Image Processing - Softmax).",
+        "Turned a Machine Learning study from a Python notebook (coming from a student's thesis) into a full microservice. The service detected anomalies in customs declarations (imported goods) from X-Ray scans of cargo containers.",
+        "In the implementation above, improved the detection from 10 to 50 items by optimizing the cropping strategy and fine tuning the model (VGG16 - Model Fine Tuning - Python - Image Processing - Softmax).",
         "On a separate project, designed the IAM solution for least access privilege in a large system on Alibaba Cloud: separated the privileges for production and testing environments across several user groups (developers, database specialists) and isolated the production environment (Alibaba Cloud, IAM, Terraform).",
-        "R&D: worked with Business Analysts to define the new technology stack of the customs application. Documented and presented the solutions to the stakeholders and led a small team to implement them. The design followed reactive principles and patterns such as CQRS and saga, on Kubernetes on GCP. Designed and implemented the CI/CD pipelines on 'Jenkins X' and the observability layer on the LGTM stack (Grafana).",
-        "Following the point above, ported the 'Tax & Customs' application (a large Java/J2EE monolith) to microservices on Kubernetes together with a junior developer, up to a live demo with potential customers. The team worked with Agile methodologies and ceremonies.",
+        "R&D: worked with Business Analysts to define the new technology stack of the 'Tax & Customs' application. Documented and presented the solutions to the stakeholders and led a small team to implement them. The design followed reactive principles and patterns such as CQRS and saga, on Kubernetes on GCP. Designed and implemented the CI/CD pipelines on 'Jenkins X' and the observability layer on the LGTM stack (Grafana).",
+        "Ported the 'Tax & Customs' application above (a large Java/J2EE monolith) to microservices on Kubernetes together with a junior developer, up to a live demo with potential customers. The team worked with Agile methodologies and ceremonies.",
         "Legacy application troubleshooting: often called in for critical production issues or performance bottlenecks. Once, on site at a customer in East Africa, I found serious stability and performance issues: the web server process died without leaving traces. In 10 days I found and fixed a memory leak (from post-mortem Java logs) and three critical infrastructure problems (unpatched WebLogic application server causing thread issues, database drivers, a failing database network card).",
-        "Impact in international contexts: in the case above the customer's team knew about problems that had been open for months but were not solving them. By talking to the right stakeholders I got them fixed. I also had the local team install monitoring (Zabbix), adding a layer of observability. By the end of my stay the customer's attitude toward the project had clearly improved, and they explicitly asked for me to come back."
+        "Impact in international contexts: in East Africa, the customer's team knew about problems that had been open for months but were not solving them. By talking to the right stakeholders I got them fixed. I also had the local team install monitoring (Zabbix), adding a layer of observability. By the end of my stay the customer's attitude toward the project had clearly improved, and they explicitly asked for me to come back."
       ]
     },
     {
       "id": 3,
-      "title": "Software Engineer & Network Administrator",
+      "title": "Full Stack Engineer & Network Consultant",
       "company": "Vectris Engineering SAS",
       "location": "Lyon, France",
       "dates": "October 2011 -- June 2015",
       "context": "",
-      "role_summary": "Software engineer and network administrator for a small technical consultancy serving large institutional companies (e.g. a national energy utility) with numerical simulation and HPC: C++ and Python simulation software plus Linux network administration.",
+      "role_summary": "Full stack engineer and network consultant for a small technical consultancy serving large institutional companies (e.g. a national energy utility) with numerical simulation and HPC: C++ and Python simulation software plus Linux network administration.",
       "duties": [
-        "Developed C++ and Python software for numerical simulations and finite element analysis.",
+        "Developed a translator for numerical simulation and structural analysis software that saved licensing costs, converting studies from a licensed software (Nastran) to an open source format (Code Aster).",
         "Mixed OS (Linux/Windows) network administration: implemented LDAP authentication and shared disk access for the consultancy.",
-        "The company open-sourced a C++ project I was responsible for. I still maintain it and it has an active user community on GitHub."
+        "Wrote Python software to automate the generation of predefined studies for structural analysis.",
+        "Responsible for the company's website updates and maintenance (Drupal).",
+        "The company open-sourced a C++ project I was responsible for. I still maintain it and it has about 1.2k stars on GitHub."
       ]
     },
     {
       "id": 4,
-      "title": "Software Developer",
+      "title": "Senior Software Developer",
       "company": "Signa Systems S.p.A.",
       "location": "Modena, Italy",
       "dates": "November 2004 -- September 2011",
@@ -138,7 +144,7 @@
       "role_summary": "Signa Systems S.p.A. specializes in digital signature, document preservation and services for banks and Public Administration. I was software developer and architect of a core component: the digital signature library.",
       "duties": [
         "Designed, developed and maintained the Java digital signature library, a foundation component of the company's document management and preservation solution. It integrated with the browser through an applet and read smart cards through JNI.",
-        "Contributed to a software (named PayDesk) that let Public Administration send digitally signed payment orders to banks.",
+        "Contributed to a software (named PayDesk) that let Public Administration send digitally signed payment orders to banks. I was responsible for the module that received data from the Public Administration and implemented the State design pattern to handle the document lifecycle.",
         "Promoted emerging technologies, including presenting AWS Cloud Computing to company management as early as 2009.",
         "Introduced a code generation framework that generates code from annotated UML diagrams (AndroMDA). It sped up development by generating the structure of the code (about 60% of it)."
       ]
