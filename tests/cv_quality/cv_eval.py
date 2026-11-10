@@ -28,13 +28,12 @@ import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
-from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
 
 import httpx
 from cv_client.api import HttpApi, CVError
-from cv_client.config import load_config
+from cv_client.config import Config
 from cv_client.cvjob import session_id, write_cv
 from dotenv import dotenv_values
 from openai import OpenAI
@@ -49,7 +48,6 @@ STRIPPED = JDS / "stripped"
 RUNS = HERE / "runs"
 RESULTS = HERE / "results.csv"
 REPO = HERE.parents[1]
-DATA_DIR = REPO / "ats-strike-data" / "gab"
 #: Where candidate_profile.json and candidate_data.json come from: the
 #: fictional candidate in the repository, so every run writes for the same person.
 CANDIDATE = REPO / "examples" / "candidate"
@@ -59,6 +57,8 @@ CANDIDATE_FILES = ("candidate_profile.json", "candidate_data.json")
 QUICK = 10
 #: CV jobs in flight at once. The server has 10 job slots.
 PARALLEL = 4
+#: The CVs that failed are written again once, at most this share of the set.
+RETRY_SHARE = 0.5
 #: Seconds to follow one CV: above the server's own 1200 s budget, so a job
 #: that runs out of time fails with the server's cause, not with ours.
 CV_TIMEOUT = 1500
@@ -203,48 +203,63 @@ def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
     """One CV per job description of the set, written into a new run folder.
 
     A temperature goes to the cv step as its extra_body, which replaces every
-    other setting models.toml gives that step."""
-    config = load_config(config_file=DATA_DIR / "cv.toml", data_dir=DATA_DIR)
-    if temperature is not None:
-        config = replace(config, extra_body={**config.extra_body, "cv": {"temperature": temperature}})
-    config = replace(config, files={**config.files,
-                                    **{name: candidate / name for name in CANDIDATE_FILES}})
+    other setting models.toml gives that step.
+
+    The client sends only the candidate's two files: no cv.toml, no prompt,
+    template or image, so every prompt is the server's own, from this
+    checkout's server/resources.
+
+    The CVs that failed are written once more, at most RETRY_SHARE of the set;
+    the line before the run folder says how many failed."""
     jds = sorted(JDS.glob("*.txt"))[: QUICK if set_name == "quick" else None]
     now = datetime.now()
     run = RUNS / f"{now:%Y-%m-%d_%H%M}-{set_name}"
     run.mkdir(parents=True)
     with local_server(run / "server.log") as url:
-        config = replace(config, server_url=url, token=None, timeout=CV_TIMEOUT, verbose=False)
+        config = Config(
+            server_url=url, timeout=CV_TIMEOUT,
+            extra_body={} if temperature is None else {"cv": {"temperature": temperature}},
+            files={name: candidate / name for name in CANDIDATE_FILES})
         health = httpx.get(url + "/healthz", timeout=60).json()["data"]
         (run / "run.json").write_text(json.dumps({
             "version": health["version"], "models": health["models"], "server": url,
             "date": f"{now:%Y-%m-%d}", "set": set_name,
-            "temperature": config.extra_body.get("cv", {}).get("temperature"),
+            "temperature": temperature,
             "candidate": str(candidate),
             "jds": [jd.stem for jd in jds],
         }, indent=2), encoding="utf-8")
         print(f"ats-strike {health['version']} at {url}, {len(jds)} CVs into {run}", flush=True)
         api = HttpApi(url)
 
-        def one(jd: Path) -> None:
+        def one(jd: Path) -> bool:
             say = lambda message: print(f"{jd.stem[:2]} {message.strip()}", flush=True)  # noqa: E731
             text, kept = jd.read_text(encoding="utf-8"), []
             try:
-                write_cv(api, config, text, say=say, keep=kept.append)
+                # new: a session another run left behind is dropped, not replayed.
+                write_cv(api, config, text, say=say, keep=kept.append, new=True)
             except CVError as exc:
                 (run / f"{jd.stem}.error.txt").write_text(
                     f"{exc} (request {exc.request_id})\n", encoding="utf-8")
                 say(f"FAILED: {exc}")
-                return
+                return False
+            (run / f"{jd.stem}.error.txt").unlink(missing_ok=True)
             [rendered] = kept
             (run / f"{jd.stem}.cv.json").write_text(
                 json.dumps(rendered.document, indent=2, ensure_ascii=False), encoding="utf-8")
             (run / f"{jd.stem}.pdf").write_bytes(rendered.pdf_bytes())
             (run / f"{jd.stem}.units.txt").write_text(units_text(rendered.document), encoding="utf-8")
             say(f"done (request {session_id(text)})")
+            return True
 
         with ThreadPoolExecutor(PARALLEL) as pool:
-            list(pool.map(one, jds))
+            failed = [jd for jd, ok in zip(jds, pool.map(one, jds)) if not ok]
+            first = len(failed)
+            retry, rest = failed[: int(len(jds) * RETRY_SHARE)], failed[int(len(jds) * RETRY_SHARE):]
+            if retry:
+                print(f"retrying {len(retry)} of the {first} failed CV(s)", flush=True)
+                failed = [jd for jd, ok in zip(retry, pool.map(one, retry)) if not ok] + rest
+    print(f"{len(failed)} of {len(jds)} CVs failed"
+          + (f", {first} before retrying {len(retry)}" if first else ""), flush=True)
     print(run, flush=True)
     return run
 

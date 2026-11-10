@@ -62,9 +62,9 @@ uses the same rule.
 
 | Format | Experiences | Duties each | Duties in all |
 |---|---|---|---|
-| A | 3 | 3–8 | 22 |
-| B | 4 | 2–6 | 17 |
-| C | 5 | 1–4 | 13 |
+| A | 3 | 3–9 | 23 |
+| B | 4 | 2–6 | 18 |
+| C | 5 | 1–4 | 14 |
 
 The code assumes nothing about the CV or the profile beyond the work
 experiences (each with an `id` and its `duties`), their duties and the

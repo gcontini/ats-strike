@@ -68,10 +68,10 @@
       "duties": [
         "Solution Architect and Product Owner for two Games projects delivered in IaaS mode: 'File Transfer', a web application to move files in and out of a protected network, and 'File Sharing', a high performance SMB file repository built for the Venue Design team: they needed a place to share the venue designs, but AutoCAD did not cope well with the company's SharePoint.",
         "Owned the printing solution for the Games, as both Product Owner and Solution Architect: collected the requirements, got approvals from the Cybersecurity team, designed the solution and kept the documentation up to date. Followed up with the hardware vendor until the solution was installed.",
-        "Gathered requirements, wrote RFQs and validated vendor proposals for the cloud projects above, balancing mandatory delivery time, required SLAs, costs and effort, with the 'Business Impact Assessment' as reference.",
+        "Gathered requirements and validated vendor proposals for the cloud projects above, balancing mandatory delivery time, required SLAs, costs and effort, with the 'Business Impact Assessment' as reference.",
         "Ensured technical compliance with company policies and guided solution providers through the internal approval process.",
         "Defined, documented and tested operational procedures (installation, configuration) for about 1,100 printers across 9 main use cases, some of them critical for the Games.",
-        "Worked shifts in the Technical Operations Center, troubleshooting issues from device logistics to compliance; solved critical problems on my own, also at night.",
+        "Worked shifts in the Technical Operations Center, troubleshooting issues such as device logistics, vendor compliance and emergency deployment of security measures; solved critical problems on my own, also at night.",
         "Worked with the Applications Team on the technical side of contracts (cloud resources, backup, disaster recovery) for applications delivered in IaaS mode: wrote the infrastructure part of the RFQs, defined RACI matrices, validated proposals, architecture and costs.",
         "Supported the Applications Team in managing the Chinese cloud vendor (Alibaba).",
         "Validated the design of the common Google Cloud infrastructure shared by all projects in IaaS mode, checking the log routing, and followed the implementation of the site-to-site VPN with the cloud provider."

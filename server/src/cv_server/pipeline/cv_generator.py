@@ -65,7 +65,7 @@ logger = logging.getLogger(f"{LOGGER_ROOT}.cv")
 #: min_duties per experience. Shown to the model as they are.
 FORMATS = {
     "A": {"experiences": 3, "min_duties": 3, "max_duties": 9, "max_total_duties": 23},
-    "B": {"experiences": 4, "min_duties": 2, "max_duties": 6, "max_total_duties": 18},
+    "B": {"experiences": 4, "min_duties": 2, "max_duties": 7, "max_total_duties": 19},
     "C": {"experiences": 5, "min_duties": 1, "max_duties": 4, "max_total_duties": 14},
 }
 #: The "|3-80,7-40" suffix of a scored text: key point id - score.

@@ -18,8 +18,9 @@ from the repository root.
 
    - **Server:** it starts this checkout's own `ats-strike` on a free local port, uncommitted changes included, and stops it at the end. It needs `.env` with the model keys and `pdflatex` on the host. Its log is `<run>/server.log`.
    - **Candidate:** `candidate_profile.json` and `candidate_data.json` come from `examples/candidate/`, the fictional candidate in the repository, so runs stay comparable. `--candidate <folder>` writes for someone else; the folder is recorded in `run.json`.
-   - **Prompts:** the client still uploads the prompts and template it finds in `ats-strike-data/gab`, as in real use, and those win over `server/resources`. A prompt edited only in `server/resources` is not tested while a copy sits in `ats-strike-data/gab`.
+   - **Prompts:** the client sends no prompt, schema, template, image or `cv.toml`, so every one is the server's own, from this checkout's `server/resources`. Nothing is read from `ats-strike-data/`.
    - **Run folder:** the last line printed is the run folder. A failed CV leaves a `<stem>.error.txt` there instead of a CV.
+   - **Failures:** the CVs that failed are written once more, automatically, at most half the set. The line before the run folder says how many failed in the end. Score the CVs there are.
 
 2. **Requirements.** Every JD of the set needs `tests/cv_quality/jds/<stem>.requirements.json`. The first ten JDs are the quick set. For each missing file, run the cv-judge agent with this message:
 
@@ -38,7 +39,7 @@ from the repository root.
    ```
 
    - **Cosine:** it embeds each CV with `text-embedding-v4` on the default provider, so it needs `.env` (`MODEL_API_KEY`, `MODEL_BASE_URL`) and the network. It compares the CV with `tests/cv_quality/jds/stripped/<stem>.txt`, the JD cut once by hand to its title and role-specific part, without the company blurb, the offer and the legal footer. Never rewrite a stripped file: like the requirements, it is the yardstick earlier runs were scored with. Nothing else reads them; generate and the judge use the full JD.
-   - **Report:** give the per-CV table, the averages, the judge and embedding models it names, and the row appended to `tests/cv_quality/results.csv`.
+   - **Report:** give the per-CV table, the averages, the judge and embedding models it names, and the row appended to `tests/cv_quality/results.csv`. End with how many CVs failed, first and after the retry, and the cause in each `<stem>.error.txt`.
    - **Errors:** if it stops on a malformed judge file, run cv-judge again for that CV only, then score again.
 
 Reading the scores:
