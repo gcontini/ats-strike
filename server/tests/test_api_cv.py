@@ -173,16 +173,17 @@ def test_the_session_hands_over_each_intermediate_result_and_only_the_last_pdf(
 @needs_latex
 def test_an_extra_body_is_all_its_step_sends_and_no_other_step_changes(client, fake_llm, parts):
     a_good_run(fake_llm)
-    for role in ("cv", "validation"):
+    for role in ("cv", "duties", "validation"):
         fake_llm._chat[role].temperature = 0.4
         fake_llm._chat[role].reasoning_effort = "high"
     run_cv(client, parts, cv_extra_body=json.dumps({"top_p": 0.9}))
     for call in fake_llm["cv"].calls:
         assert call["top_p"] == 0.9
         assert "temperature" not in call and "reasoning_effort" not in call
-    for call in fake_llm["validation"].calls:
-        assert (call["temperature"], call["reasoning_effort"]) == (0.4, "high")
-        assert "top_p" not in call
+    for role in ("duties", "validation"):
+        for call in fake_llm[role].calls:
+            assert (call["temperature"], call["reasoning_effort"]) == (0.4, "high")
+            assert "top_p" not in call
 
 
 @pytest.mark.parametrize("sent", ["not json", "[0.9]"])
@@ -236,7 +237,7 @@ def test_every_model_call_is_reported_and_added_up(client, fake_llm, parts):
     calls = of_type(events, "usage")
     total = result_of(events).total
 
-    assert {call["role"] for call in calls} == set(STEPS)
+    assert {call["role"] for call in calls} == {*STEPS, "duties"}   # the writing step has two roles
     assert all((c["input_tokens"], c["thinking_tokens"], c["output_tokens"]) == (11, 2, 20)
                for c in calls)
     assert total.calls == len(calls)
@@ -256,14 +257,14 @@ def test_an_unknown_session_is_a_404(client):
 def test_the_same_id_again_replays_the_session_and_starts_nothing(client, fake_llm, parts):
     a_good_run(fake_llm)
     first = read_events(client, start_cv(client, parts, request_id="posting-1"))
-    paid = len(fake_llm["cv"].calls)
+    paid = len(fake_llm["cv"].calls) + len(fake_llm["duties"].calls)
 
     again = client.post("/v1/cv", data={"jd_text": "x" * 1200}, files=parts,
                         headers={"X-Request-Id": "posting-1"})
     assert again.status_code == 202
     assert again.json()["data"] == {"reattached": True}
     assert read_events(client, "posting-1") == first
-    assert len(fake_llm["cv"].calls) == paid
+    assert len(fake_llm["cv"].calls) + len(fake_llm["duties"].calls) == paid
 
 
 @needs_latex
@@ -399,9 +400,9 @@ def test_an_uploaded_prompt_is_the_one_used(client, fake_llm, parts):
     files = {**parts, "sys_prompt_cv_body": ("sys_prompt_cv_body.txt", "MY OWN PROMPT", "text/plain")}
     run_cv(client, files)
 
-    body = next(c for c in fake_llm["cv"].calls if "DUTY CAP:" not in user_text(c))
+    body = fake_llm["cv"].calls[0]
     assert body["messages"][0]["content"] == "MY OWN PROMPT"
-    duties = [c for c in fake_llm["cv"].calls if "DUTY CAP:" in user_text(c)]
+    duties = fake_llm["duties"].calls
     assert all(c["messages"][0]["content"] != "MY OWN PROMPT" for c in duties)
 
 
@@ -411,7 +412,7 @@ def test_an_uploaded_schema_is_the_one_the_writer_is_shown(client, fake_llm, par
     files = {**parts, "cv_duties_schema": ("cv_duties_schema.json", '{"MY": "SCHEMA"}', "application/json")}
     run_cv(client, files)
 
-    duties = [c for c in fake_llm["cv"].calls if "DUTY CAP:" in user_text(c)]
+    duties = fake_llm["duties"].calls
     assert duties and all('SCHEMA:\n{"MY": "SCHEMA"}' in user_text(c) for c in duties)
 
 

@@ -22,10 +22,11 @@ from ..defaults import default_path
 MODELS_FILE = "models.toml"
 
 #: The jobs ats-strike has a model for, in the order a run uses them: the JD
-#: check, its analysis and the letter, then the six steps of a CV.
+#: check, its analysis and the letter, then the six steps of a CV; the
+#: writing step has two roles, ``cv`` for the body and ``duties`` for the experiences.
 MODEL_ROLES = (
     "detect", "analysis", "letter",
-    "jd_evaluation", "profile_scoring", "format_selection", "cv", "validation", "highlight",
+    "jd_evaluation", "profile_scoring", "format_selection", "cv", "duties", "validation", "highlight",
 )
 
 

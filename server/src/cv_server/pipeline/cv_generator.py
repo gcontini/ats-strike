@@ -433,7 +433,7 @@ class CVGenerator:
             f"DUTY CAP: {task['cap']}\n\nEXPERIENCE:\n{dumps(experience)}\n\nEVIDENCE:\n{dumps(evidence)}"
         )
         with stage("cv.cv"):
-            written = self._ask("cv", dict, self.bundle.sys_prompt_cv_duties, text)
+            written = self._ask("duties", dict, self.bundle.sys_prompt_cv_duties, text)
         return {"written": [(task["position"], written)]}
 
     def _collect_cv(self, state: CVState) -> dict:

@@ -7,7 +7,7 @@
 and writes one CV per job description in jds/ through the ats-strike client, the
 same way ``cv submit-raw`` does, into a new folder under runs/. The cv-judge agent (.claude/agents/cv-judge.md) then reads each CV and
 writes <stem>.judge.json next to it. ``score`` turns those judgements into
-three numbers per CV, adds the embedding similarity of CV and job description,
+four numbers per CV, adds the embedding similarity of CV and job description,
 and appends their averages to results.csv.
 
 Not a pytest test: it needs a model, pdflatex and minutes per CV. The pure
@@ -68,10 +68,13 @@ SERVER_START = 120
 WEIGHTS = {"S": 1.0, "M": 0.5, "W": 0.25}
 #: Weight of a requirement in the appeal score.
 IMPORTANCE = {"must": 2, "nice": 1}
+#: Points of a claim the profile does not back, by the level the judge gives it.
+LEVELS = {"invented": 1.0, "defensible": 0.5}
 #: The cosine's embedding model, on the default provider (MODEL_API_KEY /
 #: MODEL_BASE_URL). Changing it makes the cosine incomparable with earlier runs.
 EMBEDDING_MODEL = "text-embedding-v4"
-HEADER = ["version", "date", "set", "temperature", "judge", "appeal", "ai", "readability", "cosine"]
+HEADER = ["version", "date", "set", "temperature", "judge", "appeal", "ai", "readability", "cosine",
+          "invented"]
 
 
 def plain(text: str) -> str:
@@ -147,6 +150,11 @@ def readability(flags: list[dict], unit_list: list[tuple[str, str]]) -> float:
     return 100 * (1 - len(hard) / len(unit_list))
 
 
+def invented(claims: list[dict], unit_list: list[tuple[str, str]]) -> float:
+    """Points for the claims the profile does not back: 1 if invented, 0.5 if defensible."""
+    return sum(LEVELS[c["level"]] for c in verified(claims, unit_list))
+
+
 def cosine(a: list[float], b: list[float]) -> float:
     """Cosine of the angle between two vectors."""
     return sum(x * y for x, y in zip(a, b)) / math.sqrt(sum(x * x for x in a) * sum(y * y for y in b))
@@ -218,7 +226,7 @@ def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
     with local_server(run / "server.log") as url:
         config = Config(
             server_url=url, timeout=CV_TIMEOUT,
-            extra_body={} if temperature is None else {"cv": {"temperature": temperature}},
+            extra_body={} if temperature is None else {role: {"temperature": temperature} for role in ("cv", "duties")},
             files={name: candidate / name for name in CANDIDATE_FILES})
         health = httpx.get(url + "/healthz", timeout=60).json()["data"]
         (run / "run.json").write_text(json.dumps({
@@ -265,7 +273,7 @@ def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
 
 
 def score(run: Path) -> None:
-    """The four numbers per judged CV, their averages, and one more row in results.csv."""
+    """The five numbers per judged CV, their averages, and one more row in results.csv."""
     meta = json.loads((run / "run.json").read_text(encoding="utf-8"))
     env = {**dotenv_values(REPO / ".env"), **os.environ}
     embedder = OpenAI(api_key=env["MODEL_API_KEY"], base_url=env["MODEL_BASE_URL"], timeout=60)
@@ -284,12 +292,13 @@ def score(run: Path) -> None:
         rows.append((stem, appeal(requirements, judge["experience"], cv),
                      ai_score(judge["ai_tells"], unit_list),
                      readability(judge["hard_to_read"], unit_list),
-                     similarity(stripped, cv, embedder)))
+                     similarity(stripped, cv, embedder),
+                     invented(judge["unsupported"], unit_list)))
 
-    print(f"{'CV':52} {'appeal':>7} {'ai':>7} {'read':>7} {'cosine':>7}")
+    print(f"{'CV':52} {'appeal':>7} {'ai':>7} {'read':>7} {'cosine':>7} {'invent':>7}")
     for stem, *values in rows:
         print(f"{stem[:52]:52} " + " ".join(f"{v:7.1f}" for v in values))
-    averages = [round(sum(r[i] for r in rows) / len(rows), 1) for i in (1, 2, 3, 4)]
+    averages = [round(sum(r[i] for r in rows) / len(rows), 1) for i in (1, 2, 3, 4, 5)]
     print(f"{f'average, {len(rows)} of {len(meta['jds'])} CVs':52} "
           + " ".join(f"{v:7.1f}" for v in averages))
     print(f"judged by {', '.join(sorted(judges))}, embedded with {EMBEDDING_MODEL}")

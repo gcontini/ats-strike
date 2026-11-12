@@ -112,7 +112,10 @@ async def create_cv(
         None, description="JSON object: the format_selection model's settings, instead of models.toml's"
     ),
     cv_extra_body: Optional[str] = Form(
-        None, description="JSON object: the cv model's settings, instead of models.toml's"
+        None, description="JSON object: the cv (body and summary) model's settings, instead of models.toml's"
+    ),
+    duties_extra_body: Optional[str] = Form(
+        None, description="JSON object: the duties model's settings, instead of models.toml's"
     ),
     validation_extra_body: Optional[str] = Form(
         None, description="JSON object: the validation model's settings, instead of models.toml's"
@@ -160,6 +163,7 @@ async def create_cv(
         "profile_scoring": profile_scoring_extra_body,
         "format_selection": format_selection_extra_body,
         "cv": cv_extra_body,
+        "duties": duties_extra_body,
         "validation": validation_extra_body,
         "highlight": highlight_extra_body,
     }, max_bytes=limit))

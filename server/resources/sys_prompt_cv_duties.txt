@@ -46,6 +46,10 @@ Follow these strict rules:
          (the order in which they are presented, no repeated concepts...)
        - STAR STORIES: when a duty tells a longer story, you can tell it with the STAR method
          (Situation, Task, Action, Result). The story can be split over 2 duties. Remember to link the duties by referencing the first in the second ("... in the situation above...").
+       - ORDER: a recruiter reads the duties top to bottom, so no duty may need a later one to make sense. A duty that
+         refers to another ("the situation above", "those faults", "the same customer") comes after the duty it refers
+         to, and the second half of a STAR story comes right after the first. Introduce a system, a problem or a team
+         before any duty refers to it. This also applies to all pronouns and references in a duty. The thing they refer to needs to be explained first.
 
 2. LENGTH
    * DUTY CAP is an absolute limit: never exceed it.

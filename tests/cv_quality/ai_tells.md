@@ -12,7 +12,7 @@ The first letter of an id sets its weight in the score:
 
 ## How to judge
 
-- Judge the words, not the facts. Whether a claim is true is the reviewer's job, not yours.
+- Judge the words, not the facts. Whether a claim is true belongs to the judge's `unsupported` list, not to this catalog.
 - A pattern that is a habit across the CV is one tell that cites every unit showing it. Examples are the same sentence frame on most duties, or a triad in every sentence. Quote the shared words from any one of those units.
 - Do not flag:
   - technical terms used literally, such as "robust error handling", "real-time data", "end-to-end tests" or "mission-critical system".
@@ -122,6 +122,15 @@ The same duty or claim appears twice: word for word, or a role summary restated 
 A percentage or round number with nothing to check it against: the measured thing is vague ("efficiency", "productivity", "engagement", "performance"), or there is no baseline or named system. Examples are "improved efficiency by 30%", "reduced costs by 25%" and "10x faster".
 
 Do not flag a number that names what was measured and from what to what ("cut deploy time from 45 to 12 minutes"), or a plain fact of scale ("team of 5", "12 services"). Judge whether the number is anchored, not whether it is true.
+
+### M10 Same sentence start
+
+The sentences open the same way again and again, so the text reads like a list in disguise. This count especially if the repetitions are near each others.
+
+- in the summary or a role summary: three or more sentences that open with the same word or the same subject and verb shape, such as "I lead ... I gather ... I manage ... I combine ...";
+- in the duties of one experience: more than half open with the same word, such as "I" or "My".
+
+Duties that each open with a different past-tense verb ("Designed ...", "Migrated ...") are the usual CV form, not a tell. Flag the pattern once per paragraph or experience, citing every unit that opens that way, and quote the opening of one of them, for example "I lead".
 
 ## W - weak
 

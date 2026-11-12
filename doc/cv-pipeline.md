@@ -17,7 +17,7 @@ flowchart TD
     SC --> MS["the scores into the profile<br/>text|3-80,7-40"]
     MS --> FS["<b>format_selection</b><br/>a format, the experiences, their duty caps"]
     FS -->|"Send"| WB["<b>cv</b><br/>the body"]
-    FS -->|"Send, one per experience"| WD["<b>cv</b><br/>one experience"]
+    FS -->|"Send, one per experience"| WD["<b>cv</b> (model <b>duties</b>)<br/>one experience"]
     WB --> CC["back in order"]
     WD --> CC
     CC -->|"Send"| VB["<b>validation</b><br/>the body, up to 5 rounds"]
@@ -35,7 +35,7 @@ flowchart TD
 | `jd_evaluation` | 1 | the JD | `key_points`: 6 to 15 requirements, each with keywords and an importance from 0 to 100 |
 | `profile_scoring` | one per list of the profile — 9 for the example candidate | the key points, one list, and its experience when the list is inside one | `scored_profile`, `score_reasons` |
 | `format_selection` | 1 | the key points, the formats, the scored experiences | `format_selection`: the format, the experiences shown, the duties of each, and why |
-| `cv` | 1 for the body, 1 per experience shown | the key points, the writing style, the schema, the scored profile or experience, its duty cap and its evidence | `cv_body`, `cv_experiences` |
+| `cv` | 1 for the body (model role `cv`), 1 per experience shown (model role `duties`) | the key points, the writing style, the schema, the scored profile or experience, its duty cap and its evidence | `cv_body`, `cv_experiences` |
 | `validation` | 1 to 5 per document | the writing style, the round, the profile or the experience without scores, the generated text, the replacements that failed | `checked_body`, `checked_experiences` |
 | `highlight` | 1 | the key points, the CV the models wrote, the evidence | `highlighted_resume` |
 

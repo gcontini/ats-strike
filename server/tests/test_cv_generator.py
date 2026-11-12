@@ -193,9 +193,8 @@ def test_the_writer_gets_the_body_and_each_chosen_experience_with_its_evidence(
     bundle, candidate, tmp_path, renders
 ):
     *_, llm = run(bundle, candidate, tmp_path)
-    calls = [user_text(call) for call in llm["cv"].calls]
-    body = [text for text in calls if "DUTY CAP:" not in text]
-    duties = sorted((text for text in calls if "DUTY CAP:" in text),
+    body = [user_text(call) for call in llm["cv"].calls]
+    duties = sorted((user_text(call) for call in llm["duties"].calls),
                     key=lambda text: section({"messages": [{"role": "user", "content": text}]},
                                              "EXPERIENCE")["id"])
     assert len(body) == 1 and "MASTER PROFILE:" in body[0] and "WRITING STYLE:" in body[0]
@@ -208,10 +207,10 @@ def test_the_writer_gets_the_body_and_each_chosen_experience_with_its_evidence(
 def test_an_overridden_prompt_and_schema_are_what_the_writer_sees(bundle, candidate, tmp_path, renders):
     own = replace(bundle, sys_prompt_cv_duties="MY DUTIES PROMPT", cv_duties_schema="MY SCHEMA")
     *_, llm = run(own, candidate, tmp_path)
-    duties = [call for call in llm["cv"].calls if "DUTY CAP:" in user_text(call)]
+    duties = llm["duties"].calls
     assert all(call["messages"][0]["content"] == "MY DUTIES PROMPT" for call in duties)
     assert all("SCHEMA:\nMY SCHEMA" in user_text(call) for call in duties)
-    body = next(call for call in llm["cv"].calls if "DUTY CAP:" not in user_text(call))
+    body = llm["cv"].calls[0]
     assert body["messages"][0]["content"] == bundle.sys_prompt_cv_body
 
 

@@ -31,6 +31,8 @@ model = "format-selection-1"
 model = "cv-1"
 structured_output = "json_schema"
 extra_body = { thinking_budget = 6000 }
+[models.duties]
+model = "duties-1"
 [models.validation]
 model = "validation-1"
 use_alternate_provider = 2

@@ -4,10 +4,16 @@ If needed you can use search  to search the web for distance or company profile.
 Output:
 - job_title: copy it from the JD - if none write NA
 - work_location: extract the location from the JD. If full_remote or not stated NA.
-- match_percentage: int[0-100] - how well the CANDIDATE_PROFILE fits the JD. First find the CORE of the role: what the technical work is about (e.g. energy storage, Azure, embedded firmware) and the hard skills and degree the JD requires for it (requirements are usually in a bulleted list sort by importance, core requirements are the first two-three), what the candidate is required to do in its day to day (his responsibilities). A generic job_title (Solution Manager, Project Manager, Product Manager, Product Owner, Business Analyst...) takes its meaning from the field. 
+- match_percentage: int[0-100] - how well the CANDIDATE_PROFILE fits the JD. Think it through in these steps before scoring:
+   1. Find the CORE of the role: picture the candidate's normal working week in this job. What is the work about (e.g. energy storage, Azure, embedded firmware), what does the person really do every day (the responsibilities), and which skills, platform, domain and degree that work cannot be done without. The job_title and the first two-three requirements and responsibilities usually define it. A generic job_title (Solution Manager, Project Manager, Product Manager, Product Owner, Business Analyst...) takes its meaning from the field.
+   2. Text describing the company (its business, clients, partners, the technologies it sells) is about the company, not a requirement for the candidate: context only, never a gap by itself.
+   3. Sort every requirement the candidate misses. BLOCKER only if the role cannot be done without it AND the candidate has neither it nor a close equivalent: the platform, domain or activity named in the job_title or filling most of the working week (e.g. SAP for an "SAP consultant", Azure for an "Azure architect", P&L ownership for a role whose main duty is the P&L). MINOR in every other case: a tool, product, cloud or language when the candidate has a close equivalent (AWS vs GCP, Kubernetes on another platform, Java vs Go); a requirement the profile shows in part (a smaller team, fewer years, an adjacent domain); anything preferred or nice to have; anything a course or a few weeks on the job would fill. A MINOR gap costs a few points at most; only BLOCKER gaps pull the score down hard.
+   4. Write the gaps first, then apply every CAP below: match_percentage can never exceed what the BLOCKER gaps imply.
    * weigh in order the CORE of the job against the experiences in CANDIDATE_PROFILE: hard-skill overlap, job_title match, domain and industry relevance, seniority, soft skills.
-   * CAP: if the CORE field, industry or platform of the JD (e.g. SAP, Salesforce, insurance, payments, automotive, energy) is absent from the CANDIDATE_PROFILE, match_percentage is at most 65, whatever the soft-skill overlap (stakeholder management, requirements gathering, project management).
+   * CAP: if the CORE field, industry or platform of the JD (e.g. SAP, Salesforce, insurance, payments, automotive, energy) is absent from the CANDIDATE_PROFILE, match_percentage is at most 65, whatever the soft-skill overlap (stakeholder management, requirements gathering, project management). This is the field of the work itself, not the employer's industry: an infrastructure role at an insurer is not an insurance role.
+   * CAP: if the role requires owning an IT department, a budget or managing a team of 5+ people, match_percentage is at most 70.
    * CAP: if the JD asks for entry-level experience (about 0-3 years; junior, graduate, associate or intern level) and the candidate has 10+ years of experience, match_percentage is at most 50.
+   * 80 or more only if gaps lists no BLOCKER.
 - match_rationale: Criteria and evaluations that brought to the match_percentage above. Max 90 characters.
 - work_mode: [full_remote|hybrid|on_site|not_specified] take it from JD.
 - expected_salary: the salary range as stated in the JD, else null.
@@ -16,10 +22,10 @@ Output:
 - hard_skills: at most 4 hard/technical skills required by the JD.
 - soft_skills: at most 4 soft skills required by the JD.
 - company_name: the hiring company if known, else the headhunter name. 
-- posting_url: copy EXACTLY the URL of the job posting (JOB_POSTING if present) if present in the JD, else null.
-- gaps: Describe the gaps between the candidate and the job description.
+- posting_url: copy EXACTLY the URL of the job posting (POSTING_URL if present) if present in the JD, else null.
+- gaps: Describe the gaps between the candidate and the job description, marking each one BLOCKER or MINOR (see match_percentage).
 - pers_preferences: Describe the gaps between the JD and the PERSONAL_PREFERENCES as text only — no score in this field.
 - pers_preference_score: The numeric (real) score obtained by summing the validated PERSONAL_PREFERENCES points against the JD (e.g. 2.5, 0.5); 0.0 if none apply. Output it as a JSON number, not a string.
 - should_apply: [NO|CHECK|YES] (NO = skip the job, CHECK = flag it for a human check, YES = apply automatically). Follow the should_apply rules in PERSONAL_PREFERENCES, which define the value; decide it after all the fields above, using them. If PERSONAL_PREFERENCES->should_apply is not specified return CHECK.
 - should_apply_reason: one sentence, about 150 characters, motivating the should_apply value (report which rule you applied).
-Answer with one JSON object;
+Answer with one JSON object; 

@@ -68,6 +68,16 @@ def test_readability_counts_each_flagged_unit_once():
     assert cv_eval.readability(flags, unit_list) == 100 * (1 - 1 / 5)
 
 
+def test_invented_adds_a_point_per_invented_claim_and_half_per_defensible_one():
+    unit_list = cv_eval.units(CV)
+    claims = [
+        {"units": [2], "level": "invented", "reason": "no Kubernetes", "quote": "Kubernetes platforms"},
+        {"units": [1, 4], "level": "defensible", "reason": "8 years", "quote": "10+ years"},  # one claim, counted once
+        {"units": [3], "level": "invented", "reason": "team of two", "quote": "not in this unit"},  # dropped
+    ]
+    assert cv_eval.invented(claims, unit_list) == 1.5
+
+
 def test_cosine_is_the_angle_not_the_length():
     assert cv_eval.cosine([1.0, 2.0], [1.0, 2.0]) == 1.0
     assert cv_eval.cosine([1.0, 0.0], [0.0, 3.0]) == 0.0
@@ -77,8 +87,8 @@ def test_cosine_is_the_angle_not_the_length():
 
 def test_results_get_a_header_once_and_a_row_per_run(tmp_path):
     path = tmp_path / "results.csv"
-    cv_eval.append_result(path, ["0.5.0", "2026-10-15", "quick", "default", "claude-opus-5-5", 70.0, 40.0, 90.0, 61.2])
-    cv_eval.append_result(path, ["0.5.0", "2026-10-16", "quick", 0.4, "claude-sonnet-5-5", 72.0, 35.0, 91.0, 63.0])
+    cv_eval.append_result(path, ["0.5.0", "2026-10-15", "quick", "default", "claude-opus-5-5", 70.0, 40.0, 90.0, 61.2, 1.5])
+    cv_eval.append_result(path, ["0.5.0", "2026-10-16", "quick", 0.4, "claude-sonnet-5-5", 72.0, 35.0, 91.0, 63.0, 0.0])
     rows = list(csv.reader(path.open()))
     assert rows[0] == cv_eval.HEADER
     assert [r[1] for r in rows[1:]] == ["2026-10-15", "2026-10-16"]

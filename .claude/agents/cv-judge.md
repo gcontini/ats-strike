@@ -43,6 +43,7 @@ Inputs:
 - the CV as JSON
 - the CV's units file, one line per unit: `U<n> [label] text`
 - `tests/cv_quality/ai_tells.md`
+- the candidate profile the CV was written from: what the candidate really did
 
 Output: `<stem>.judge.json` in the run folder:
 
@@ -51,7 +52,8 @@ Output: `<stem>.judge.json` in the run folder:
   "model": "<your exact model id>",
   "experience": [{"id": 1, "match": 2}],
   "ai_tells": [{"pattern": "M4", "units": [5, 7, 9], "quote": "To balance"}],
-  "hard_to_read": [{"units": [12], "reason": "noun stack", "quote": "requirements-to-delivery cycles"}]
+  "hard_to_read": [{"units": [12], "reason": "noun stack", "quote": "requirements-to-delivery cycles"}],
+  "unsupported": [{"units": [3, 14], "level": "invented", "reason": "no Kafka anywhere in the profile", "quote": "Kafka"}]
 }
 ```
 
@@ -74,8 +76,22 @@ Read the CV JSON, not only the units: skills, certifications, education and lang
 
 ### `hard_to_read`
 
-- Flag the units a recruiter would have to read twice. The reason is one of: "noun stack", "too many clauses", "unclear reference", "grammar error", "wrong word".
+- Flag the units a recruiter would have to read twice. The reason is one of: "noun stack", "too many clauses", "unclear reference", "broken reference", "grammar error", "wrong word".
+- Read the units in order, top to bottom, as a recruiter does. 
+  - **"broken reference":** the unit points to something no earlier unit has given ("those faults", "the procedures above", "in that case"), or it only makes sense after a later unit.
+  - **"unclear reference":** the unit leaves a pronoun or a term ambiguous wherever it stands.
 - Flag a real stumble only, not wording you would merely write differently.
 - Quote the words that cause it.
+
+### `unsupported`
+
+The claims about the candidate that the profile does not back, checked as an examiner would before an interview.
+
+- Compare every unit with the whole profile: experiences, duties, role summaries, summaries, skills, certifications, education and languages. A fact stated anywhere in it is backed.
+- Backed, so not flagged: a rewording, a sum of several profile facts, a general term for a specific one ("cloud platforms" for two named clouds), a trait the profile's own summaries claim.
+- Each claim gets a level:
+  - **"invented":** the profile gives nothing to build it on, such as a tool, domain, role, responsibility, team, number or result the candidate never had. One interview question would expose it.
+  - **"defensible":** a stretch of something the profile does show, which the candidate could still back in an interview: a wider scope, a stronger verb ("led" for "took part in"), a bigger or rounder number, one case told as a habit.
+- Judge the units only. Report each claim once, citing every unit that makes it, with the reason and a quote of the words that make it.
 
 Write the file with the Write tool. Reply with one line that gives the counts.

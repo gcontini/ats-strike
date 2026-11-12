@@ -102,8 +102,8 @@ one (OpenAI's reasoning models). Nothing checks that a combination suits your
 endpoint; the comments in `models.toml` list the known traps.
 
 The pattern is `ATS_<ROLE>_<FIELD>` for `DETECT`, `ANALYSIS`, `LETTER`,
-`JD_EVALUATION`, `PROFILE_SCORING`, `FORMAT_SELECTION`, `CV`, `VALIDATION` and
-`HIGHLIGHT`; see `.env.example`. A request can do the same for one call with
+`JD_EVALUATION`, `PROFILE_SCORING`, `FORMAT_SELECTION`, `CV` (the body), `DUTIES` (the
+experiences), `VALIDATION` and `HIGHLIGHT`; see `.env.example`. A request can do the same for one call with
 `<role>_extra_body`, which replaces every setting of that role.
 
 Model calls go through LangChain. Setting `LANGSMITH_TRACING` sends every

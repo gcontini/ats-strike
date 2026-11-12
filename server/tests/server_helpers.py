@@ -189,7 +189,7 @@ def score_items(body: dict) -> str:
 
 
 def write_part(body: dict, written_body: dict | None = None) -> str:
-    """cv: the body for the body prompt; for an experience, its first DUTY CAP
+    """cv and duties: the body for the body prompt; for an experience, its first DUTY CAP
     duties, their scores kept."""
     text = user_text(body)
     if "DUTY CAP:" not in text:
@@ -219,6 +219,7 @@ def script_cv(llm, *, ids=(0, 1, 2), caps=(2, 2, 2), fmt="A", body=None):
     llm["profile_scoring"].replies = [score_items]
     llm["format_selection"].replies = [json.dumps(choice)]
     llm["cv"].replies = [lambda request: write_part(request, body)]
+    llm["duties"].replies = [lambda request: write_part(request, body)]
     llm["validation"].replies = ["OK"]
     llm["highlight"].replies = [bold_summary]
     return llm

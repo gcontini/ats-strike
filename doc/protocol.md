@@ -76,7 +76,8 @@ No auth. What this server is and whether it can do its job.
   "models": {"detect": "deepseek-v4.1-flash", "analysis": "qwen3.8-flash",
              "letter": "qwen3.8-flash", "jd_evaluation": "deepseek-flash",
              "profile_scoring": "deepseek-flash", "format_selection": "deepseek-flash",
-             "cv": "deepseek-flash", "validation": "deepseek-flash",
+             "cv": "gpt-6.1-terra", "duties": "deepseek-flash",
+             "validation": "deepseek-flash",
              "highlight": "deepseek-flash"},
   "auth_required": false
 }}
@@ -184,7 +185,7 @@ curl -s -X DELETE localhost:8080/v1/cv/$ID    # once the CV is saved
 | `cv_body_schema`, `cv_duties_schema` | optional | Replace the JSON schema the writer is shown for the body, or for an experience |
 | `template` | optional | Replace `resume.tex.jinja`, page counts included |
 | `images` | optional | Repeatable, ≤10. Each part's file name is the name the template includes it under. |
-| `jd_evaluation_extra_body`, `profile_scoring_extra_body`, `format_selection_extra_body`, `cv_extra_body`, `validation_extra_body`, `highlight_extra_body` | optional | JSON object: that step's model settings for this request (see below) |
+| `jd_evaluation_extra_body`, `profile_scoring_extra_body`, `format_selection_extra_body`, `cv_extra_body` (body), `duties_extra_body`, `validation_extra_body`, `highlight_extra_body` | optional | JSON object: that step's model settings for this request (see below) |
 | `pages` | optional | Page limit the CV must fit. Default 2, minimum 1. |
 
 **`<role>_extra_body`** is a form field holding a JSON object, sent into the

@@ -14,7 +14,8 @@
 #   jd_evaluation     the JD's key points, each with its importance
 #   profile_scoring   every item of the profile scored against them
 #   format_selection  the CV format, the experiences and their duty caps
-#   cv                the CV body and each experience, written separately
+#   cv                the CV body, summary included
+#   duties            each experience, written separately
 #   validation        the body and each experience checked against the profile
 #   highlight         the **bold**/*italic* keyword pass
 #
@@ -27,7 +28,7 @@
 # var, without touching this file — ATS_<ROLE>_<FIELD>, e.g.
 # ATS_CV_MODEL, ATS_CV_TEMPERATURE, ATS_PROFILE_SCORING_API (roles:
 # DETECT, ANALYSIS, LETTER, JD_EVALUATION, PROFILE_SCORING, FORMAT_SELECTION,
-# CV, VALIDATION, HIGHLIGHT). An empty value drops the key, as if it were not
+# CV, DUTIES, VALIDATION, HIGHLIGHT). An empty value drops the key, as if it were not
 # declared here; ATS_<ROLE>_EXTRA_BODY is JSON and replaces the whole table.
 # See .env.example.
 #
@@ -118,11 +119,12 @@ reasoning_effort       = "xhigh"
 
 # The six steps of a CV, as adapticv-ai ran them: DeepSeek V4.1 Flash on
 # DeepSeek's own API (MODEL_API_KEY2 / MODEL_BASE_URL2), reasoning effort as
-# in its bench of 2026-10-19 — 3.5 to 5.9 minutes and about 230k tokens a CV.
-# No temperature: DeepSeek ignores it while thinking. The cv and validation
-# roles each serve two prompts, the body's and the experiences'. Every reply
-# is JSON asked for by its prompt (structured_output does not apply), except
-# validation's, which are calls of a replace_in_* tool.
+# in its bench of 2026-10-19 — 3.5 to 5.9 minutes and about 230k tokens a CV —
+# except the CV body, which is OpenAI's gpt-6.1-terra (provider 3). The
+# validation role serves two prompts, the body's and the experiences'. Every
+# reply is JSON asked for by its prompt (structured_output does not apply),
+# except validation's, which are calls of a replace_in_* tool.
+# No temperature on DeepSeek: it ignores it while thinking.
 [models.jd_evaluation]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
@@ -142,8 +144,15 @@ model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "medium"
 
-# The body, and one call per experience shown, all at once.
+# The body, summary included. OpenAI on Chat Completions (MODEL_API_KEY3 /
+# MODEL_BASE_URL3). It runs beside the duties, below.
 [models.cv]
+model                  = "gpt-6.1-sol"
+use_alternate_provider = 3
+reasoning_effort       = "high"
+
+# One call per experience shown, all at once, beside the body.
+[models.duties]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2

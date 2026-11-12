@@ -182,13 +182,13 @@ def test_a_posting_the_server_already_wrote_is_replayed_not_paid_for_twice(run, 
                   candidate_data=(EXAMPLE / "candidate_data.json").read_bytes())
     *_, (_, last, _) = api.events(request_id)       # followed to the end, never acknowledged
     assert last == "result"
-    written = len(models["cv"].calls)
+    written = len(models["cv"].calls) + len(models["duties"].calls)
 
     folder = run(JD_TEXT)
 
     assert folder.parent.parent == run.workspace.cv
     assert "replaying it" in (folder / "log.log").read_text()
-    assert len(models["cv"].calls) == written
+    assert len(models["cv"].calls) + len(models["duties"].calls) == written
 
 
 @needs_latex

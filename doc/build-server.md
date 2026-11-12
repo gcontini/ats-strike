@@ -111,7 +111,7 @@ every role at startup and does not start without those two.
 
 Per-role overrides need no rebuild either — `ATS_<ROLE>_<FIELD>`, for any
 key of a role, for `DETECT`, `ANALYSIS`, `LETTER`, `JD_EVALUATION`,
-`PROFILE_SCORING`, `FORMAT_SELECTION`, `CV`, `VALIDATION` and `HIGHLIGHT`:
+`PROFILE_SCORING`, `FORMAT_SELECTION`, `CV` (the body), `DUTIES` (the experiences), `VALIDATION` and `HIGHLIGHT`:
 
 ```bash
 ATS_CV_MODEL=qwen-max
