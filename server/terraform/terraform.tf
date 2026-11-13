@@ -1,6 +1,6 @@
-# The resumix server on Alibaba Cloud: a Container Registry Personal Edition
-# repository the image is built into, and a Function Compute 3.0 function that
-# runs it behind an HTTP trigger. See README.md in this folder.
+# The resumix 0.5.x server on Alibaba Cloud: a Function Compute 3.0 function
+# that runs the image the release workflow pushed, behind an HTTP trigger, and
+# the OSS bucket that holds its sessions. See README.md in this folder.
 
 terraform {
   # 1.6 for import blocks whose id is an expression.

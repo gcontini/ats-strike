@@ -39,8 +39,10 @@ jobs:
           VERSION: ${{ inputs.version }}
         run: |
           set -eu
-          echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
-            || { echo "version must be MAJOR.MINOR.PATCH, got '$VERSION'"; exit 1; }
+          # 0.5.N only: the image shares its repository with the 1.x releases,
+          # and anything else would be tagged 0.5-latest, or deployed as a 1.x.
+          echo "$VERSION" | grep -Eq '^0\.5\.[0-9]+$' \
+            || { echo "version must be 0.5.PATCH on this branch, got '$VERSION'"; exit 1; }
           [ "$GITHUB_REF" = refs/heads/fix-0.5.x ] \
             || { echo "release from fix-0.5.x only, dispatched from $GITHUB_REF"; exit 1; }
           if git ls-remote --exit-code --tags origin "refs/tags/v$VERSION" >/dev/null; then
@@ -119,7 +121,10 @@ jobs:
   # The server image, from the same commit. Classic builder, linux/amd64,
   # plain docker push — see AGENTS.md. Only the Alibaba registry, the one
   # Function Compute deploys from: this is the 0.5.x line, not the public
-  # image, so nothing goes to Docker Hub and nothing is tagged latest.
+  # image, so nothing goes to Docker Hub and nothing is tagged latest. It is
+  # tagged 0.5.N and 0.5-latest, one image under two names: server/terraform
+  # follows 0.5-latest to its digest and deploys the 0.5.N that shares it,
+  # because Function Compute must never be given a tag that moves.
   image:
     needs: tag
     runs-on: ubuntu-latest
@@ -133,7 +138,7 @@ jobs:
           ACR_REPOSITORY: ${{ vars.ACR_REPOSITORY }}
           VERSION: ${{ inputs.version }}
         run: DOCKER_BUILDKIT=0 docker build
-             -t "$ACR_REPOSITORY:$VERSION" .
+             -t "$ACR_REPOSITORY:$VERSION" -t "$ACR_REPOSITORY:0.5-latest" .
 
       # CI's healthz check, plus the version: the image installs from the lock
       # with --no-editable, so this is what proves the lock was regenerated.
@@ -165,7 +170,10 @@ jobs:
         run: |
           set -eu
           echo "$ACR_PASSWORD" | docker login -u "$ACR_USERNAME" --password-stdin "${ACR_REPOSITORY%%/*}"
+          # The version first: 0.5-latest must never name an image that has no
+          # 0.5.N in the registry yet.
           docker push "$ACR_REPOSITORY:$VERSION"
+          docker push "$ACR_REPOSITORY:0.5-latest"
 
   # The doc/ site, one build per release, kept on the gh-pages branch under a
   # version selector. mike owns that branch entirely — nothing else writes it.

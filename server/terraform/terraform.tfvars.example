@@ -1,13 +1,16 @@
 # Copy to terraform.tfvars (gitignored) and fill in.
 
-function_name = "resumix"
+# Beside the 1.x function, in the same account: its own name, and with it its
+# own URL, bucket, role and policy. Same registry namespace as the 1.x one.
+function_name = "ats-strike-v05"
+namespace     = "ats-strike"
 log_project   = "serverless-eu-central-1-<uuid>"
 
 environment = {
   MODEL_BASE_URL = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
   TZ             = "Europe/Rome"
   # The sessions bucket, where main.tf mounts it.
-  RESUMIX_WORK_DIR = "/mnt/resumix"
+  RESUMIX_WORK_DIR = "/mnt/ats-strike"
   # RESUMIX_CV_MODEL = "qwen-max"
   # Days a CV session nobody acknowledged stays in the bucket.
   # RESUMIX_SESSION_TTL_DAYS = "1"

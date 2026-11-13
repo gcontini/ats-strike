@@ -1,34 +1,15 @@
 # ---------------------------------------------------------------------------
-# Registry — Container Registry Personal Edition.
+# Registry — not managed here.
 #
-# Two things about Personal Edition stay in the console, because neither the
-# API nor the provider reaches them:
+# The 0.5.x line shares the repository of the current release: the release
+# workflow pushes every version, 0.5.x and 1.x alike, to ACR_REPOSITORY, and
+# the main branch's terraform owns that repository. This one only reads it
+# (README.md, "Deploy").
 #
-#   - The instance itself (crpi-...). It is created by hand, once per account;
-#     these resources land in whichever instance the account has in `region`.
-#   - The registry login password. The provider refuses to work without one.
-#
-# Nothing is built here: each deploy is an image pushed from a checkout,
-# tagged with its commit hash (README.md, "Deploy").
-#
-# Both resources, and the alicloud_cr_repos data source below, are deprecated
-# in favour of their alicloud_cr_ee_* versions, which only reach Enterprise
-# Edition instances; the plan warns about it. For Personal Edition they are
-# the only ones there are.
+# The alicloud_cr_repos data source below is deprecated in favour of
+# alicloud_cr_ee_repos, which only reaches Enterprise Edition instances; the
+# plan warns about it. For Personal Edition it is the only one there is.
 # ---------------------------------------------------------------------------
-
-resource "alicloud_cr_namespace" "main" {
-  name               = var.namespace
-  auto_create        = true
-  default_visibility = "PRIVATE"
-}
-
-resource "alicloud_cr_repo" "main" {
-  namespace = alicloud_cr_namespace.main.name
-  name      = "resumix"
-  summary   = "resumix_images"
-  repo_type = "PRIVATE"
-}
 
 
 # ---------------------------------------------------------------------------
@@ -42,14 +23,14 @@ resource "alicloud_cr_repo" "main" {
 
 resource "alicloud_oss_bucket" "sessions" {
   # Names are global across every account. New buckets are private.
-  bucket = "resumix-${data.alicloud_account.current.id}-${var.region}"
+  bucket = "${var.function_name}-${data.alicloud_account.current.id}-${var.region}"
 }
 
 # The function's own role. The mount is all it is used for: FC delivers the
 # logs and pulls the image with its service-linked role, AliyunServiceRoleForFC.
 resource "alicloud_ram_role" "function" {
-  role_name   = "resumix-fc"
-  description = "resumix function: its sessions bucket"
+  role_name   = "${var.function_name}-fc"
+  description = "${var.function_name} function: its sessions bucket"
   assume_role_policy_document = jsonencode({
     Version = "1"
     Statement = [{
@@ -62,8 +43,8 @@ resource "alicloud_ram_role" "function" {
 
 # What an OSS mount needs to read and write, and nothing else.
 resource "alicloud_ram_policy" "sessions" {
-  policy_name = "resumix-fc-sessions"
-  description = "Read and write the resumix sessions bucket"
+  policy_name = "${var.function_name}-fc-sessions"
+  description = "Read and write the ${var.function_name} sessions bucket"
   policy_document = jsonencode({
     Version = "1"
     Statement = [
@@ -97,43 +78,46 @@ resource "alicloud_ram_role_policy_attachment" "sessions" {
 
 data "alicloud_account" "current" {}
 
-# Every tag in the repository, with the time it was pushed.
+# Every tag in the repository, with the digest of the image it names.
 data "alicloud_cr_repos" "main" {
-  namespace      = alicloud_cr_repo.main.namespace
-  name_regex     = "^${alicloud_cr_repo.main.name}$"
+  namespace      = var.namespace
+  name_regex     = "^ats-strike$"
   enable_details = true
 
   lifecycle {
     postcondition {
-      condition     = var.image_tag != null || anytrue([for tag in self.repos[0].tags : can(regex(local.build_tag, tag.tag))])
-      error_message = "No image in the repository is tagged with a commit hash: push one first (README.md, \"Deploy\")."
+      condition = var.image_tag != null || length([
+        for tag in self.repos[0].tags : tag.tag
+        if can(regex(local.release_tag, tag.tag)) && contains([for l in self.repos[0].tags : l.digest if l.tag == local.latest_tag], tag.digest)
+      ]) == 1
+      error_message = "0.5-latest is missing, or no 0.5.N names the same image: release one from fix-0.5.x first (README.md, \"Deploy\")."
     }
   }
 }
 
 locals {
-  # The images a deploy pushed are tagged with a commit hash. `latest`,
-  # release tags and ACR's own build cache are not.
-  build_tag = "^[0-9a-f]{7,40}$"
-  builds    = [for tag in data.alicloud_cr_repos.main.repos[0].tags : tag if can(regex(local.build_tag, tag.tag))]
+  # The release workflow pushes each 0.5.x image twice: as its version, and
+  # as 0.5-latest, which moves to it. The repository also holds the 1.x
+  # releases and the old commit-hash builds; neither is either of these.
+  latest_tag  = "0.5-latest"
+  release_tag = "^0\\.5\\.[0-9]+$"
+  tags        = data.alicloud_cr_repos.main.repos[0].tags
 
-  # The last one pushed. max() fails on an empty list even inside the `if`,
-  # so the conditional has to stay outside it.
-  newest_build = length(local.builds) > 0 ? [
-    for tag in local.builds : tag.tag
-    if tag.image_create == max(local.builds[*].image_create...)
-  ][0] : null
+  # 0.5-latest says which release is current; the 0.5.N with the same digest
+  # is the name the function is given, because it never moves (see `image`).
+  latest_digest  = [for tag in local.tags : tag.digest if tag.tag == local.latest_tag]
+  newest_release = one([for tag in local.tags : tag.tag if can(regex(local.release_tag, tag.tag)) && contains(local.latest_digest, tag.digest)])
 
   # image_tag, when set, names another one instead: a rollback.
-  image_tag = coalesce(var.image_tag, local.newest_build)
+  image_tag = coalesce(var.image_tag, local.newest_release)
 
   # The VPC endpoint: the pull never leaves Alibaba's network.
   #
   # A tag, never a digest: FC rejects `@sha256:` for a Personal Edition image.
   # It resolves the tag to a digest when the function is updated, and once the
   # tag points elsewhere every invocation fails — so the tag must never move,
-  # which a commit hash does not and `latest` does on every build.
-  image = "${alicloud_cr_repo.main.domain_list["vpc"]}/${alicloud_cr_repo.main.namespace}/${alicloud_cr_repo.main.name}:${local.image_tag}"
+  # which a version does not and 0.5-latest does on every release.
+  image = "${data.alicloud_cr_repos.main.repos[0].domain_list["vpc"]}/${var.namespace}/ats-strike:${local.image_tag}"
 
   # Merging the sensitive map as a whole would hide every variable in a plan.
   # Marking each secret on its own keeps a model override visible as it changes.
@@ -214,7 +198,7 @@ resource "alicloud_fcv3_function" "main" {
       bucket_name = alicloud_oss_bucket.sessions.bucket
       bucket_path = "/"
       endpoint    = "https://oss-${var.region}-internal.aliyuncs.com"
-      mount_dir   = "/mnt/resumix"
+      mount_dir   = "/mnt/ats-strike"
       read_only   = false
     }
   }

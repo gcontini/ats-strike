@@ -1,14 +1,14 @@
 # Alibaba Cloud deployment
 
-The server as a Function Compute 3.0 function, the Container Registry
-Personal Edition repository its image is pushed to, and the OSS bucket that
-holds its CV sessions.
+The 0.5.x server as a Function Compute 3.0 function, beside the 1.x one in
+the same account, and the OSS bucket that holds its CV sessions. It has its
+own function name, and with it its own trigger URL, token, bucket and role.
 
-| Managed here | Console only — no API reaches it |
+| Managed here | Elsewhere |
 |---|---|
-| namespace and repository | the Personal Edition instance (`crpi-…`) |
-| function, alias, HTTP trigger, reserved concurrency | the registry login password |
-| sessions bucket, the function's role and its policy | rotating the trigger token |
+| function, alias, HTTP trigger, reserved concurrency | the registry namespace and repository: the main branch's terraform |
+| sessions bucket, the function's role and its policy | the images: the release workflow |
+| | rotating the trigger token: the console |
 
 ## Run it
 
@@ -16,55 +16,45 @@ holds its CV sessions.
 export ALIBABA_CLOUD_ACCESS_KEY_ID=... ALIBABA_CLOUD_ACCESS_KEY_SECRET=...
 cp terraform.tfvars.example terraform.tfvars   # then fill it in
 terraform init
-terraform plan
-terraform apply
+terraform plan -out=v05.tfplan
+terraform apply v05.tfplan
 ```
 
-The first plan adopts the resources made by hand in the console
-(`imports.tf`): **6 to import, 1 to change**. The change only records which
-environment variables are secret; the values are unchanged and nothing is sent
-to the function. After that, a plan says *No changes* until a new image is
-pushed.
+At least one 0.5.x image must be in the repository first; see *Deploy*.
 
 ## Deploy
 
-A deploy is an image built from one commit and tagged with its short hash.
-Commit first — the tag names the commit, so `git status --short` must print
-nothing. Then, from the repository root:
+A deploy is a release. The release workflow, dispatched from `fix-0.5.x`,
+pushes the image to the same ACR repository the 1.x releases go to
+(`ACR_REPOSITORY`) under two tags: its version, `0.5.N`, and `0.5-latest`,
+which moves to it (see doc/release.md). Nothing is built or pushed from here.
 
-```bash
-tag=$(git rev-parse --short HEAD) &&
-image=$(terraform -chdir=server/terraform output -raw push_repository):$tag && DOCKER_BUILDKIT=0 docker build -t "$image" . &&
-docker push "$image" && cd server/terraform &&
-echo "yes" | terraform apply
-```
+Then plan and apply. It looks up the image `0.5-latest` names and deploys the
+`0.5.N` tag of that same image — so every apply does, including one run only
+to change an environment variable — and the plan shows the function's image
+moving to it. 1.x tags and the old commit-hash builds in the same repository
+are ignored.
 
-Then `terraform apply`. It deploys the newest image in the repository tagged
-with a commit hash — so every apply does, including one run only to change an
-environment variable — and the plan shows the function's image moving to it.
+To run an older patch instead, `terraform apply -var image_tag=0.5.<N>`. The
+next apply without it goes back to the one `0.5-latest` names.
 
-To run an older build instead, `terraform apply -var image_tag=<its hash>`.
-The next apply without it goes back to the newest.
-
-Before the first push, `docker login` to the registry once, with the command
-the console's *Access Credentials* page shows.
-
-Why not `latest`: Function Compute resolves the tag to a digest when the
-function is updated, and on Personal Edition every invocation fails once the
-tag points somewhere else. A tag that moves on every build takes the function
-down on every build. A digest (`@sha256:…`) in place of the tag is rejected.
+Why the function is given `0.5.N` and never `0.5-latest`: Function Compute
+resolves the tag to a digest when the function is updated, and on Personal
+Edition every invocation fails once the tag points somewhere else. A tag that
+moves on every release takes the function down on every release. A digest
+(`@sha256:…`) in place of the tag is rejected.
 
 ## Sessions
 
 Every CV the server writes is a session: a folder of event files in the
 bucket `terraform output -raw sessions_bucket` names, which the function
-mounts at `/mnt/resumix`. The session outlives the instance that wrote it, so
+mounts at `/mnt/ats-strike`. The session outlives the instance that wrote it, so
 a client that lost its connection, or comes back later, replays it from the
 start. The client deletes a session once it has saved the CV. Sessions nobody
 deleted are pruned after `RESUMIX_SESSION_TTL_DAYS` days (1 unless set in
 `environment`).
 
-`RESUMIX_WORK_DIR = "/mnt/resumix"` in `environment` is what points the
+`RESUMIX_WORK_DIR = "/mnt/ats-strike"` in `environment` is what points the
 server at the mount. Without it, sessions stay on the instance's own disk and
 are gone with the instance.
 
@@ -74,14 +64,14 @@ To look at what is there:
 aliyun ossutil ls oss://$(terraform output -raw sessions_bucket)/
 ```
 
-The function's role, `resumix-fc`, can do nothing but read and write that
+The function's role, `<function_name>-fc`, can do nothing but read and write that
 bucket. FC delivers the logs and pulls the image with its own service-linked
 role, so they do not depend on it.
 
 ## What to know
 
 - **`terraform.tfvars` and the state hold the provider keys and the trigger
-  token in clear text.** Both are gitignored; treat them like `.env`. The import
+  token in clear text.** Both are gitignored; treat them like `.env`. The first
   plan prints the trigger token once, because the provider does not mark that
   field sensitive.
 - **The trigger token is set once, when the trigger is created.** FC stamps
@@ -89,7 +79,3 @@ role, so they do not depend on it.
   configuration after that. Rotate the token in the console.
 - **Renaming the function replaces it**, and the trigger URL — the clients'
   `server_url` — changes with it.
-- **From scratch**, in an account with none of this: create the Personal
-  Edition instance and its password in the console, delete `imports.tf`, run
-  `terraform apply -target=alicloud_cr_repo.main`, push an image as in
-  *Deploy*, then run `terraform apply`.

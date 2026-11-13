@@ -22,7 +22,7 @@ and variables → Actions*:
 
 | Name | Kind | What it is |
 |---|---|---|
-| `ACR_REPOSITORY` | variable | The Alibaba Container Registry repository Function Compute deploys from: `terraform output -raw push_repository` in `server/terraform`. |
+| `ACR_REPOSITORY` | variable | The Alibaba Container Registry repository Function Compute deploys from, shared with the 1.x releases: `terraform output -raw push_repository` in `server/terraform` on `main`. |
 | `ACR_USERNAME` | secret | Its registry username, from the console's *Access Credentials* page. |
 | `ACR_PASSWORD` | secret | Its fixed registry password. An AccessKey does not work. |
 
@@ -116,7 +116,7 @@ is published.
 | Artifact | Where | Name |
 |---|---|---|
 | both executables and the files beside them | the release page | `resumix-x.y.z.tar.gz` and `resumix-x.y.z.zip` |
-| the server image | Alibaba Container Registry | `<ACR_REPOSITORY>:x.y.z`, deployed by `terraform apply` |
+| the server image | Alibaba Container Registry, the same repository as the 1.x releases | `<ACR_REPOSITORY>:0.5.N` and `<ACR_REPOSITORY>:0.5-latest`; `terraform apply` deploys the `0.5.N` that `0.5-latest` points to |
 | this site | GitHub Pages, from `gh-pages` | `/x.y.z/` only; `/latest/` and `/` are left as `main` set them |
 
 The archive is flat on purpose:

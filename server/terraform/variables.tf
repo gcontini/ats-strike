@@ -11,13 +11,13 @@ variable "environment" {
 }
 
 variable "function_name" {
-  description = "Function Compute function name. Changing it replaces the function, and with it the trigger URL."
+  description = "Function Compute function name, and the prefix of its bucket, role and policy. Changing it replaces the function, and with it the trigger URL."
   type        = string
-  default     = "resumix"
+  default     = "ats-strike-v05"
 }
 
 variable "image_tag" {
-  description = "Commit-hash tag to run instead of the newest one in the repository: a rollback. Unset, every apply deploys the newest; see main.tf."
+  description = "0.5.x version to run instead of the highest one in the repository: a rollback. Unset, every apply deploys the highest; see main.tf."
   type        = string
   default     = null
 }
@@ -34,9 +34,9 @@ variable "log_project" {
 }
 
 variable "namespace" {
-  description = "Container Registry namespace that holds the resumix repository."
+  description = "Container Registry namespace of the ats-strike repository the release workflow pushes to. Owned by the main branch's terraform; only read here."
   type        = string
-  default     = "resumix"
+  default     = "ats-strike"
 }
 
 variable "region" {
