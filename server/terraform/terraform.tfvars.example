@@ -10,10 +10,10 @@ environment = {
   MODEL_BASE_URL = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
   TZ             = "Europe/Rome"
   # The sessions bucket, where main.tf mounts it.
-  RESUMIX_WORK_DIR = "/mnt/ats-strike"
+  ATS_WORK_DIR = "/mnt/ats-strike"
   # RESUMIX_CV_MODEL = "qwen-max"
   # Days a CV session nobody acknowledged stays in the bucket.
-  # RESUMIX_SESSION_TTL_DAYS = "1"
+  # ATS_SESSION_TTL_DAYS = "1"
 }
 
 secrets = {
@@ -21,5 +21,5 @@ secrets = {
 }
 
 # 32–128 characters from A-Z a-z 0-9 + / = - ~ .  The client sends it as
-# `token` in resumix.toml.
+# `token` in its server.toml.
 api_token = "<random token>"

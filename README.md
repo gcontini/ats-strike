@@ -62,22 +62,11 @@ Any OpenAI-compatible provider works — see
 [`server/README.md`](server/README.md) for the other providers and the full
 environment table. `curl localhost:8080/healthz` should report `pdflatex: true`.
 
-**2. Download the client** — a single executable, no Python required, from the
-[releases page](https://github.com/gcontini/resumix/releases): pick
-`resumix-linux-x86_64` or `resumix-windows-x86_64`, unpack it, and put your
-own `candidate_profile.json` and `candidate_data.json` beside it (start from
-the fictional set in the download's `examples/candidate/`).
-
-```bash
-./resumix --server http://localhost:8080 clipboard --out ~/applications
-```
-
-Copy a job posting to your clipboard; resumix checks it, shows you the
-analysis, and on confirmation writes the CV into
-`~/applications/cv/<day>/<Company>_<Title>/`. `watch` and `submit` work the
-same way against files instead of the clipboard —
-[`client/README.md`](client/README.md) covers all three modes, configuration,
-and the output layout.
+**2. Get the client** — it is released from main, and the same client talks
+to this 0.5 server and to a 1.x one, side by side: give this server a folder
+of its own next to the others. Its
+[`client/README.md`](https://github.com/gcontini/ats-strike/blob/main/client/README.md)
+covers the modes, the configuration and the output layout.
 
 ## Architecture
 
@@ -110,9 +99,8 @@ Package boundaries, what crosses the wire, and the async job model are in
 
 ```bash
 uv sync
-uv run pytest                   # all four suites; no API key, no network
-uv run resumix-api            # the server, from source
-uv run resumix --help         # the client, from source
+uv run pytest                   # all three suites; no API key, no network
+uv run ats-strike               # the server, from source
 uv run --group docs mkdocs serve  # the documentation site, on :8000
 ```
 

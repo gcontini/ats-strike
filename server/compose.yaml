@@ -21,12 +21,12 @@ services:
       PORT: "8080"
       # Set a token to close the server; unset means anyone who can reach it
       # can spend your tokens, which is only safe on a private network.
-      RESUMIX_API_TOKEN: "${RESUMIX_API_TOKEN:-}"
-      RESUMIX_MAX_CONCURRENT_JOBS: "${RESUMIX_MAX_CONCURRENT_JOBS:-10}"
+      ATS_API_TOKEN: "${ATS_API_TOKEN:-}"
+      ATS_MAX_CONCURRENT_JOBS: "${ATS_MAX_CONCURRENT_JOBS:-10}"
       # CV sessions, kept until the client has saved its CV. This is the
       # tmpfs below, so a restart loses them; mount a volume here instead
       # if you want a session to outlive the container that wrote it.
-      RESUMIX_WORK_DIR: /tmp/resumix
+      ATS_WORK_DIR: /tmp/resumix
 
     ports:
       - "${RESUMIX_PORT:-8080}:8080"

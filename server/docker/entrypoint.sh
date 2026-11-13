@@ -2,7 +2,7 @@
 # Container entrypoint for the resumix API server.
 #
 # The server seeds nothing and keeps nothing but its CV sessions, under
-# RESUMIX_WORK_DIR — local, or a volume or bucket mounted there; LaTeX's
+# ATS_WORK_DIR — local, or a volume or bucket mounted there; LaTeX's
 # scratch space is the system temp dir. This script only makes sure the
 # sessions directory exists and is writable before handing over to the command.
 #
@@ -11,11 +11,11 @@
 # into the image.
 set -eu
 
-WORK="${RESUMIX_WORK_DIR:-/tmp/resumix}"
+WORK="${ATS_WORK_DIR:-/tmp/resumix}"
 
 if ! mkdir -p "$WORK" 2>/dev/null; then
     echo "✗ cannot create the sessions directory $WORK as uid $(id -u):$(id -g)." >&2
-    echo "  Set RESUMIX_WORK_DIR to a writable path." >&2
+    echo "  Set ATS_WORK_DIR to a writable path." >&2
     exit 1
 fi
 

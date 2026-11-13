@@ -17,7 +17,6 @@ resumix.toml
 
 # --- Output -----------------------------------------------------------------
 # Anything a run produced: CVs, spreadsheets, scratch folders.
-/applications/
 /out/
 /examples/out
 /resumix-data/*

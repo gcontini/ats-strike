@@ -19,11 +19,8 @@ both sides import and neither owns.
 |---|---|
 | Understand how the pieces fit | [Architecture](architecture.md) |
 | Know how a CV is actually written | [The CV pipeline](cv-pipeline.md) |
-| Follow one real run call by call | [A run, end to end](clipboard-flow.md) |
-| Use the client | [The client](client.md) |
 | Call the server yourself | [The HTTP API](protocol.md) |
 | Build or deploy the server | [Building the server](build-server.md) |
-| Build the client executable | [Building the client](build-client.md) |
 | Decide where each half runs | [Running the two halves apart](deployment.md) |
 | Work on resumix itself, in VS Code | [Developing locally in VS Code](development-setup.md) |
 

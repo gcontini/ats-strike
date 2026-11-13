@@ -51,10 +51,10 @@ bucket `terraform output -raw sessions_bucket` names, which the function
 mounts at `/mnt/ats-strike`. The session outlives the instance that wrote it, so
 a client that lost its connection, or comes back later, replays it from the
 start. The client deletes a session once it has saved the CV. Sessions nobody
-deleted are pruned after `RESUMIX_SESSION_TTL_DAYS` days (1 unless set in
+deleted are pruned after `ATS_SESSION_TTL_DAYS` days (1 unless set in
 `environment`).
 
-`RESUMIX_WORK_DIR = "/mnt/ats-strike"` in `environment` is what points the
+`ATS_WORK_DIR = "/mnt/ats-strike"` in `environment` is what points the
 server at the mount. Without it, sessions stay on the instance's own disk and
 are gone with the instance.
 

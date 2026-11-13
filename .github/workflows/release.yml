@@ -1,8 +1,8 @@
 name: Release
 
 # One version for the whole repository. You type it here; this writes it into
-# the three pyprojects and the lock, tags it, and builds both halves from that
-# tag. See doc/release.md.
+# the three pyprojects and the lock, tags it, and builds the server image from
+# that tag. The client is released from main, and talks to this server too.
 on:
   workflow_dispatch:
     inputs:
@@ -22,7 +22,7 @@ concurrency: release
 
 jobs:
   # The version becomes a commit and a tag. Everything after this builds from
-  # that tag, so a binary cannot claim a version it was not built at.
+  # that tag, so an image cannot claim a version it was not built at.
   tag:
     runs-on: ubuntu-latest
     outputs:
@@ -60,13 +60,13 @@ jobs:
         run: |
           set -eux
           sed -i "s/^version = \".*\"$/version = \"$VERSION\"/" \
-            contracts/pyproject.toml server/pyproject.toml client/pyproject.toml
+            contracts/pyproject.toml pipeline/pyproject.toml server/pyproject.toml
           # uv.lock records each member's version too. Leaving it stale would
           # commit a lock that disagrees with the manifests, and `uv lock
           # --check` and `uv sync --locked` both refuse that.
           uv lock
           grep -H '^version = ' \
-            contracts/pyproject.toml server/pyproject.toml client/pyproject.toml
+            contracts/pyproject.toml pipeline/pyproject.toml server/pyproject.toml
 
       - name: Commit, tag and push
         id: push
@@ -76,47 +76,12 @@ jobs:
           set -eux
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add contracts/pyproject.toml server/pyproject.toml client/pyproject.toml uv.lock
+          git add contracts/pyproject.toml pipeline/pyproject.toml server/pyproject.toml uv.lock
           git commit -m "release v$VERSION"
           git tag "v$VERSION"
           # --atomic: the branch and the tag land together, or neither does.
           git push --atomic origin HEAD:fix-0.5.x "refs/tags/v$VERSION"
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-  # PyInstaller does not cross-compile: one runner per OS. Both check out the
-  # tagged commit by sha — main would give a binary one version behind.
-  build:
-    needs: tag
-    strategy:
-      # Unlike CI, a release stops at the first failure: there is nothing to
-      # learn from the second binary once the first one is wrong.
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ needs.tag.outputs.sha }}
-      - uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
-      - run: uv sync --frozen
-      - run: uv run --with pyinstaller pyinstaller --noconfirm client/packaging/resumix.spec
-
-      # The one thing this job exists to prove. -F because Windows prints CRLF
-      # and because a version string is not a regex.
-      - name: Check it reports the version being released
-        env:
-          VERSION: ${{ inputs.version }}
-        shell: bash
-        run: ./dist/resumix version | grep -qF "version $VERSION"
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: binary-${{ matrix.os }}
-          path: dist/resumix*
-          if-no-files-found: error
 
   # The server image, from the same commit. Classic builder, linux/amd64,
   # plain docker push — see AGENTS.md. Only the Alibaba registry, the one
@@ -174,62 +139,3 @@ jobs:
           # 0.5.N in the registry yet.
           docker push "$ACR_REPOSITORY:$VERSION"
           docker push "$ACR_REPOSITORY:0.5-latest"
-
-  # One archive, both binaries, everything flat: the client finds its files by
-  # name in the folder you run it in, so extract, cd in, and it works. Last,
-  # and behind the image, so the release never announces a server version that
-  # is not in the Alibaba registry.
-  package:
-    needs: [tag, build, image]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ needs.tag.outputs.sha }}
-
-      - uses: actions/download-artifact@v8
-        with:
-          pattern: binary-*
-          merge-multiple: true
-          path: package
-
-      - name: Assemble the download
-        env:
-          VERSION: ${{ inputs.version }}
-        run: |
-          set -eux
-          cp client/README.md package/
-          cp client/resumix.toml.example package/resumix.toml
-          cp examples/candidate/* package/
-          cp examples/posting.txt package/
-          # The README is written for the repository. Here there is no server/,
-          # and the fictional candidate set is already in this folder.
-          sed -i 's|(\.\./server/README\.md)|(https://github.com/${{ github.repository }}/blob/main/server/README.md)|' package/README.md
-          sed -i 's|Start from the fictional set in \[`examples/candidate/`\](\.\./examples/candidate)|The fictional set is already in this folder — edit it in place.|' package/README.md
-          sed -i '/^   — copy them into your current folder and edit\.$/d' package/README.md
-          sed -i '/^   cd examples$/d' package/README.md
-          # The artifact service hands every file back as 644; tar stores the
-          # mode it is given and tar xzf restores it.
-          chmod +x package/resumix
-          # An explicit list, so a missing file fails the step instead of
-          # silently shipping a smaller archive.
-          tar -czf "resumix-$VERSION.tar.gz" -C package \
-            resumix resumix.exe README.md resumix.toml \
-            candidate_profile.json candidate_data.json candidate_preferences.md \
-            candidate_signature.png posting.txt
-          tar -tzvf "resumix-$VERSION.tar.gz"
-          # Also create a zip archive for Windows users.
-          zip -q -j "resumix-$VERSION.zip" \
-            package/resumix package/resumix.exe package/README.md package/resumix.toml \
-            package/candidate_profile.json package/candidate_data.json package/candidate_preferences.md \
-            package/candidate_signature.png package/posting.txt
-          unzip -l "resumix-$VERSION.zip"
-
-      - name: Publish the release
-        env:
-          GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ inputs.version }}
-        # --verify-tag: without it, gh would happily invent the tag from the
-        # default branch tip if the tag job had not made one.
-        run: gh release create "v$VERSION" "resumix-$VERSION.tar.gz" "resumix-$VERSION.zip"
-             --verify-tag --generate-notes

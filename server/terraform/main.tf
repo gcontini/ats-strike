@@ -191,7 +191,7 @@ resource "alicloud_fcv3_function" "main" {
   # The internal endpoint: bucket and function are in the same region, and
   # the traffic never leaves Alibaba's network. A URL, scheme included (FC
   # rejects a bare host), and HTTPS: a session holds your CV and contact details.
-  # The server writes here only when RESUMIX_WORK_DIR in terraform.tfvars
+  # The server writes here only when ATS_WORK_DIR in terraform.tfvars
   # names mount_dir.
   oss_mount_config {
     mount_points {

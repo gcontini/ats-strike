@@ -1,23 +1,25 @@
-# resumix — a uv workspace with three members.
+# ats-strike 0.5 — a uv workspace with three members.
 #
-#   contracts/  the wire format both sides agree on (pydantic only)
-#   server/     the HTTP API: LLM calls + pdflatex, deployed as a container
-#   client/     the CLI, shipped as a single-file executable
+#   contracts/  the wire format a client and the server agree on (pydantic only)
+#   pipeline/   everything that makes a CV: LLM calls + pdflatex; no HTTP
+#   server/     the HTTP API in front of the pipeline, deployed as a container
 #
-# Dependency direction is one-way: client -> contracts <- server. Neither side
-# imports the other; tests/test_architecture.py enforces it.
+# Dependency direction is one-way: contracts <- server -> pipeline. The
+# pipeline imports none of the others; tests/test_architecture.py enforces it.
+# contracts/ and server/ are copied from main byte for byte: the client lives
+# there, and talks to this server and to a 1.x one alike.
 #
 #     uv sync                 install every member into one .venv
 #     uv run pytest           run all three test suites
-#     uv run resumix-api    start the server
-#     uv run resumix --help the client
+#     uv run ats-strike       start the server
 #     uv run --group docs mkdocs serve   the doc/ site, on localhost:8000
 
 [tool.uv.workspace]
-members = ["contracts", "server", "client"]
+members = ["contracts", "pipeline", "server"]
 
 [tool.uv.sources]
-resumix-contracts = { workspace = true }
+ats-strike-contracts = { workspace = true }
+ats-strike-pipeline = { workspace = true }
 
 [dependency-groups]
 dev = ["pytest>=8", "pytest-cov>=5"]
@@ -28,10 +30,10 @@ dev = ["pytest>=8", "pytest-cov>=5"]
 docs = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5,<10", "mike>=2.1,<3"]
 
 [tool.pytest.ini_options]
-testpaths = ["contracts/tests", "server/tests", "client/tests", "tests"]
+testpaths = ["contracts/tests", "pipeline/tests", "server/tests", "tests"]
 markers = ["latex: needs a pdflatex binary on PATH"]
 
 # Scoped to the three src/ packages, so coverage is measured on library code
 # only — no test file ever counts towards its own coverage.
 [tool.coverage.run]
-source = ["contracts/src", "server/src", "client/src"]
+source = ["contracts/src", "pipeline/src", "server/src"]
