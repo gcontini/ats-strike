@@ -1,6 +1,6 @@
 [project]
 name = "resumix-client"
-version = "0.5.4"
+version = "0.5.2"
 description = "resumix CLI: clipboard/watch/submit/render against a resumix server."
 requires-python = ">=3.12"
 license = "MIT"

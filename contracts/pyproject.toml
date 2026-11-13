@@ -1,6 +1,6 @@
 [project]
 name = "resumix-contracts"
-version = "0.5.4"
+version = "0.5.2"
 description = "Wire format shared by the resumix server and client: CV/JD models and the response envelope."
 requires-python = ">=3.12"
 license = "MIT"
