@@ -76,9 +76,10 @@ Read the CV JSON, not only the units: skills, certifications, education and lang
 
 ### `hard_to_read`
 
-- Flag the units a recruiter would have to read twice. The reason is one of: "noun stack", "too many clauses", "unclear reference", "broken reference", "grammar error", "wrong word".
+- Flag the units a recruiter would have to read twice. The reason is one of: "noun stack", "too many clauses", "unclear reference", "broken reference", "repeated characterization", "grammar error", "wrong word".
 - Read the units in order, top to bottom, as a recruiter does. 
-  - **"broken reference":** the unit points to something no earlier unit has given ("those faults", "the procedures above", "in that case"), or it only makes sense after a later unit.
+  - **"broken reference":** the unit points to something no earlier unit has given: a "the" before a specific thing never introduced ("Solved 'the' Redis instability" where nothing before names it), "those faults", "the procedures above", "in that case". Or it only makes sense after a later unit.
+  - **"repeated characterization":** the unit introduces again, as if new, something an earlier unit already gave, so the reader reads its description twice ("the Games Results system, a critical system in the Asian Games,..." if repeated is an error). Flag it only when the repeat is a mistake. Pointing back to it by name ("the Games Results system") is not one.
   - **"unclear reference":** the unit leaves a pronoun or a term ambiguous wherever it stands.
 - Flag a real stumble only, not wording you would merely write differently.
 - Quote the words that cause it.

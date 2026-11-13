@@ -113,17 +113,20 @@ data "alicloud_cr_repos" "main" {
 
 locals {
   # The release workflow tags each image with its version. Anything else in
-  # the repository, such as the commit-hash builds of the old local deploys,
-  # is not a release.
-  release_tag = "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-  releases    = [for tag in data.alicloud_cr_repos.main.repos[0].tags : tag if can(regex(local.release_tag, tag.tag))]
+  # the repository, such as the commit-hash builds of the old local deploys
+  # or the 0.5-latest tag, is not a release.
+  release_tag = "^([0-9]+)\\.([0-9]+)\\.([0-9]+)$"
 
-  # The last one pushed. max() fails on an empty list even inside the `if`,
-  # so the conditional has to stay outside it.
-  newest_release = length(local.releases) > 0 ? [
-    for tag in local.releases : tag.tag
-    if tag.image_create == max(local.releases[*].image_create...)
-  ][0] : null
+  # The highest version, not the last push: the fix-0.5.x line releases into
+  # this repository too, and a 0.5.N pushed after 1.0.3 must not replace it.
+  # Each release becomes "MMMMM.mmmmm.ppppp|x.y.z", so a plain string sort
+  # orders them by version; the last one is the highest.
+  by_version = sort([
+    for tag in data.alicloud_cr_repos.main.repos[0].tags :
+    "${format("%05d.%05d.%05d", regex(local.release_tag, tag.tag)...)}|${tag.tag}"
+    if can(regex(local.release_tag, tag.tag))
+  ])
+  newest_release = length(local.by_version) > 0 ? split("|", local.by_version[length(local.by_version) - 1])[1] : null
 
   # image_tag, when set, names another one instead: a rollback.
   image_tag = coalesce(var.image_tag, local.newest_release)

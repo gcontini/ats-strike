@@ -35,12 +35,14 @@ is done:
 cd server/terraform && terraform apply
 ```
 
-It deploys the newest `x.y.z` image in the repository, so every apply does,
-including one run only to change an environment variable. The plan shows the
-function's image moving to it.
+It deploys the highest `x.y.z` image in the repository, by version and not by
+push time, so every apply does, including one run only to change an
+environment variable. The plan shows the function's image moving to it. The
+`fix-0.5.x` line releases into the same repository (`0.5.N` and
+`0.5-latest`); a 0.5.N pushed after a 1.x is lower, so it is never picked here.
 
 To run an older version instead, `terraform apply -var image_tag=1.0.1`.
-The next apply without it goes back to the newest.
+The next apply without it goes back to the highest.
 
 Before the first release, give the workflow the registry, under the GitHub
 repository's *Settings → Secrets and variables → Actions*:
