@@ -7,17 +7,24 @@ machine.
 `.github/workflows/release.yml` writes that number into the three
 `pyproject.toml` files and `uv.lock`, commits it, tags `v0.3.0`, and builds
 everything from that tag: `.tar.gz` and `.zip` archives on the release page,
-the server image on Docker Hub, and this site under its own version.
+the server image in the Alibaba registry, and this site under its own version.
+
+**This is the `fix-0.5.x` copy.** It releases the 0.5.x line from that branch
+only, and differs from the one on `main` in three ways: it pushes the bump to
+`fix-0.5.x`, it publishes the image to the Alibaba registry and nowhere else
+(no Docker Hub, no `:latest`), and it never moves the docs' `latest` alias or
+the `/` redirect — those belong to the release on `main`.
 
 ## Before the first one
 
-Two repository secrets, set once under *Settings → Secrets and variables →
-Actions*:
+One repository variable and two secrets, set once under *Settings → Secrets
+and variables → Actions*:
 
-| Secret | What it is |
-|---|---|
-| `DOCKERHUB_USERNAME` | The Docker Hub account that owns `lmstch/resumix`. |
-| `DOCKERHUB_TOKEN` | An access token for it, not the account password. |
+| Name | Kind | What it is |
+|---|---|---|
+| `ACR_REPOSITORY` | variable | The Alibaba Container Registry repository Function Compute deploys from: `terraform output -raw push_repository` in `server/terraform`. |
+| `ACR_USERNAME` | secret | Its registry username, from the console's *Access Credentials* page. |
+| `ACR_PASSWORD` | secret | Its fixed registry password. An AccessKey does not work. |
 
 Without them the `image` job fails at `docker login`, after the image has been
 built and checked — and because `package` waits on every job, no release is
@@ -50,7 +57,7 @@ It refuses, before writing anything, when:
 | Refusal | Why |
 |---|---|
 | the version is not `MAJOR.MINOR.PATCH` | the tag, the archive name and the image tag are all built from it |
-| you dispatched from a branch other than `main` | a release that is not on the main line is a release nobody can reconstruct |
+| you dispatched from a branch other than `fix-0.5.x` | this copy of the workflow pushes to that branch; a release from anywhere else is a release nobody can reconstruct |
 | `v<version>` is already on the remote | re-releasing a version silently is how two different binaries end up with one number |
 
 ## What happens
@@ -60,8 +67,8 @@ flowchart TB
     TAG["<b>tag</b><br/>validate · rewrite three pyprojects<br/>uv lock · commit · tag · push --atomic"]
     B1["<b>build</b> — ubuntu<br/>pyinstaller → resumix<br/>assert <i>resumix version</i>"]
     B2["<b>build</b> — windows<br/>pyinstaller → resumix.exe<br/>assert <i>resumix version</i>"]
-    IMG["<b>image</b><br/>DOCKER_BUILDKIT=0 docker build<br/>assert /healthz version<br/>docker push :x.y.z and :latest"]
-    DOC["<b>docs</b><br/>mike deploy x.y.z latest<br/>mike set-default latest<br/>→ gh-pages → deploy-pages"]
+    IMG["<b>image</b><br/>DOCKER_BUILDKIT=0 docker build<br/>assert /healthz version<br/>docker push Alibaba :x.y.z"]
+    DOC["<b>docs</b><br/>mike deploy x.y.z<br/>→ gh-pages → deploy-pages"]
     PKG["<b>package</b><br/>download both binaries<br/>assemble · tar.gz<br/>gh release create"]
     TAG --> B1 --> PKG
     TAG --> B2 --> PKG
@@ -76,7 +83,7 @@ and the build jobs can only check out a commit that exists on the remote. Every
 in three jobs — more moving parts for the same result.
 
 `package` waits for every other job, so the release page never announces a
-version whose server image is not on Docker Hub or whose docs are not up. The
+version whose server image is not in the Alibaba registry or whose docs are not up. The
 image job logs in to the registry *after* the build and the health check, so a
 broken image never gets as far as authenticating.
 
@@ -109,8 +116,8 @@ is published.
 | Artifact | Where | Name |
 |---|---|---|
 | both executables and the files beside them | the release page | `resumix-x.y.z.tar.gz` and `resumix-x.y.z.zip` |
-| the server image | Docker Hub | `lmstch/resumix:x.y.z` and `:latest` |
-| this site | GitHub Pages, from `gh-pages` | `/x.y.z/`, and `/latest/` which `/` redirects to |
+| the server image | Alibaba Container Registry | `<ACR_REPOSITORY>:x.y.z`, deployed by `terraform apply` |
+| this site | GitHub Pages, from `gh-pages` | `/x.y.z/` only; `/latest/` and `/` are left as `main` set them |
 
 The archive is flat on purpose:
 
@@ -148,7 +155,7 @@ plus a `versions.json` that the selector in the header reads:
 gh-pages/
 ├── 0.2.0/           one full site per release
 ├── 0.3.0/
-├── latest/          an alias, moved by --update-aliases
+├── latest/          an alias, moved only by releases from main
 ├── versions.json    what the selector offers
 └── index.html       redirects / to latest/
 ```
@@ -159,9 +166,8 @@ number for the whole repository is worth more here than a shorter selector: a
 tag, an archive, an image tag and a docs URL that all read `0.3.0` need no
 explaining.
 
-`mike set-default --push latest` runs on every release. It is idempotent, and
-doing it every time is what lets the first release set the redirect up with no
-manual step.
+This copy runs neither `--update-aliases … latest` nor `mike set-default`: a
+0.5.x patch must not become the version `/` sends readers to.
 
 Locally, `mkdocs serve` and `mkdocs build` are unchanged and unversioned. The
 selector is built at runtime from a `versions.json` that only the published
@@ -174,7 +180,7 @@ misconfiguration.
 |---|---|---|
 | `tag` | nothing — the branch and the tag are pushed with `--atomic`, so they land together or not at all | fix it and dispatch again |
 | a later job, transiently — a runner flake, a registry 5xx | the bump commit and the tag, no release | **Re-run failed jobs**. `tag` is skipped and its `sha` output carries over, so the re-run builds the same commit. |
-| a later job, for a real reason — the Windows build broke, the image fails its health check, a doc link is dead | the same | the release was never valid. Fix it on `main` and release the next patch number. |
+| a later job, for a real reason — the Windows build broke, the image fails its health check, a doc link is dead | the same | the release was never valid. Fix it on `fix-0.5.x` and release the next patch number. |
 
 `docs` and `image` both publish before `package` does, so a failure after them
 can leave a site and an image for a version that has no release page. Both are
@@ -188,6 +194,8 @@ a good release.
 
 One thing worth knowing: **the release commit does not run CI.** Pushes made
 with `GITHUB_TOKEN` do not trigger further workflow runs. Its only difference
-from `main` is three version strings and the lock, and both `uv sync --frozen`
+from `fix-0.5.x` is three version strings and the lock, and both `uv sync --frozen`
 and the Docker build fail loudly on a broken lock — but the rule that follows
-from it is: **release only from a green `main`.**
+from it is: **release only from a green `fix-0.5.x`.** CI runs on pull requests
+and on pushes to `main`, not on pushes to this branch, so run the tests
+yourself, or open a pull request into the branch, before dispatching.

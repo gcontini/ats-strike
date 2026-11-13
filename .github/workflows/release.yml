@@ -41,8 +41,8 @@ jobs:
           set -eu
           echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' \
             || { echo "version must be MAJOR.MINOR.PATCH, got '$VERSION'"; exit 1; }
-          [ "$GITHUB_REF" = refs/heads/main ] \
-            || { echo "release from main only, dispatched from $GITHUB_REF"; exit 1; }
+          [ "$GITHUB_REF" = refs/heads/fix-0.5.x ] \
+            || { echo "release from fix-0.5.x only, dispatched from $GITHUB_REF"; exit 1; }
           if git ls-remote --exit-code --tags origin "refs/tags/v$VERSION" >/dev/null; then
             echo "v$VERSION already exists"; exit 1
           fi
@@ -78,7 +78,7 @@ jobs:
           git commit -m "release v$VERSION"
           git tag "v$VERSION"
           # --atomic: the branch and the tag land together, or neither does.
-          git push --atomic origin HEAD:main "refs/tags/v$VERSION"
+          git push --atomic origin HEAD:fix-0.5.x "refs/tags/v$VERSION"
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
   # PyInstaller does not cross-compile: one runner per OS. Both check out the
@@ -117,7 +117,9 @@ jobs:
           if-no-files-found: error
 
   # The server image, from the same commit. Classic builder, linux/amd64,
-  # plain docker push — see AGENTS.md.
+  # plain docker push — see AGENTS.md. Only the Alibaba registry, the one
+  # Function Compute deploys from: this is the 0.5.x line, not the public
+  # image, so nothing goes to Docker Hub and nothing is tagged latest.
   image:
     needs: tag
     runs-on: ubuntu-latest
@@ -128,21 +130,22 @@ jobs:
 
       - name: Build it
         env:
+          ACR_REPOSITORY: ${{ vars.ACR_REPOSITORY }}
           VERSION: ${{ inputs.version }}
         run: DOCKER_BUILDKIT=0 docker build
-             -t "lmstch/resumix:$VERSION"
-             -t lmstch/resumix:latest .
+             -t "$ACR_REPOSITORY:$VERSION" .
 
       # CI's healthz check, plus the version: the image installs from the lock
       # with --no-editable, so this is what proves the lock was regenerated.
       - name: Start it and check what it reports
         env:
+          ACR_REPOSITORY: ${{ vars.ACR_REPOSITORY }}
           VERSION: ${{ inputs.version }}
         run: |
           set -eux
           docker run -d --name api -p 8080:8080 \
             -e MODEL_API_KEY=ci -e MODEL_BASE_URL=http://invalid/v1 \
-            "lmstch/resumix:$VERSION"
+            "$ACR_REPOSITORY:$VERSION"
           for i in $(seq 1 30); do
             curl -fsS localhost:8080/healthz && break || sleep 2
           done
@@ -155,14 +158,14 @@ jobs:
       # credentials are not sitting on the runner during the long build.
       - name: Push it
         env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          ACR_REPOSITORY: ${{ vars.ACR_REPOSITORY }}
+          ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+          ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
           VERSION: ${{ inputs.version }}
         run: |
           set -eu
-          echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-          docker push "lmstch/resumix:$VERSION"
-          docker push lmstch/resumix:latest
+          echo "$ACR_PASSWORD" | docker login -u "$ACR_USERNAME" --password-stdin "${ACR_REPOSITORY%%/*}"
+          docker push "$ACR_REPOSITORY:$VERSION"
 
   # The doc/ site, one build per release, kept on the gh-pages branch under a
   # version selector. mike owns that branch entirely — nothing else writes it.
@@ -201,11 +204,9 @@ jobs:
           set -eux
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # --update-aliases moves `latest` off whatever held it before.
-          uv run --group docs mike deploy --push --update-aliases "$VERSION" latest
-          # Idempotent, and it is what makes / redirect to latest. Running it
-          # every time means the first release needs no manual setup.
-          uv run --group docs mike set-default --push latest
+          # No `latest` alias and no set-default: this is the 0.5.x line, and
+          # `latest` and the / redirect belong to the current release on main.
+          uv run --group docs mike deploy --push "$VERSION"
 
       # A deployment replaces the whole site, so it has to carry every version
       # and not just this one — that is the branch, exactly as mike left it.
@@ -229,7 +230,7 @@ jobs:
   # One archive, both binaries, everything flat: the client finds its files by
   # name in the folder you run it in, so extract, cd in, and it works. Last,
   # and behind the image, so the release never announces a server version that
-  # is not on Docker Hub.
+  # is not in the Alibaba registry.
   package:
     needs: [tag, build, image, docs]
     runs-on: ubuntu-latest
