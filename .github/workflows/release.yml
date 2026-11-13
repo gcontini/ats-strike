@@ -175,72 +175,12 @@ jobs:
           docker push "$ACR_REPOSITORY:$VERSION"
           docker push "$ACR_REPOSITORY:0.5-latest"
 
-  # The doc/ site, one build per release, kept on the gh-pages branch under a
-  # version selector. mike owns that branch entirely — nothing else writes it.
-  #
-  # The branch is the store; publishing is the Pages deployment at the end of
-  # this job, not the build Pages runs on a push. mike pushes as
-  # github-actions[bot], and GitHub starts no workflow run from a GITHUB_TOKEN
-  # push — that branch build included. It never fired, so the site sat on
-  # whatever a human had last pushed while the branch moved on without it.
-  docs:
-    needs: tag
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write   # mike pushes gh-pages
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ needs.tag.outputs.sha }}
-          # mike commits onto gh-pages and needs the real history of it, not
-          # the single commit a shallow clone would give it.
-          fetch-depth: 0
-      - uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
-
-      - name: Write this version onto the branch
-        env:
-          VERSION: ${{ inputs.version }}
-        run: |
-          set -eux
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # No `latest` alias and no set-default: this is the 0.5.x line, and
-          # `latest` and the / redirect belong to the current release on main.
-          uv run --group docs mike deploy --push "$VERSION"
-
-      # A deployment replaces the whole site, so it has to carry every version
-      # and not just this one — that is the branch, exactly as mike left it.
-      - name: Take the branch as mike left it
-        # From the remote, not a local ref: checkout never made a local
-        # gh-pages, and this is exactly what the push above landed.
-        run: |
-          set -eux
-          git fetch origin gh-pages
-          git worktree add ../site FETCH_HEAD
-
-      # This archives with `tar --dereference`, so the `latest` symlink mike
-      # writes ships as a real directory. It drops .git and .github too.
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: ../site
-
-      - uses: actions/deploy-pages@v5
-        id: deploy
-
   # One archive, both binaries, everything flat: the client finds its files by
   # name in the folder you run it in, so extract, cd in, and it works. Last,
   # and behind the image, so the release never announces a server version that
   # is not in the Alibaba registry.
   package:
-    needs: [tag, build, image, docs]
+    needs: [tag, build, image]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
