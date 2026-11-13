@@ -52,9 +52,9 @@ from typing import Annotated, Any, Callable, Dict, List, Mapping, Optional, Tupl
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
 
-from ..bundle import CandidateInputs, ResourceBundle
-from ..models import ModelSelector, Usage
-from ..observability import LOGGER_ROOT, stage
+from .bundle import CandidateInputs, ResourceBundle
+from .models import ModelSelector, Usage
+from .observability import LOGGER_ROOT, stage
 from .cv_renderer import CVRenderer, RenderResult
 from .cv_review import ReplaceInBody, ReplaceInDuties, apply_body, apply_duties, review
 from .errors import BudgetExceededError, ModelOutputError

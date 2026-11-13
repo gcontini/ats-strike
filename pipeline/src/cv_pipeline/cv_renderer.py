@@ -26,7 +26,7 @@ from typing import Any, Dict, Mapping, Optional
 from jinja2 import DictLoader, Environment, TemplateError
 from pypdf import PdfReader
 
-from ..observability import LOGGER_ROOT
+from .observability import LOGGER_ROOT
 from .errors import LatexCompileError, LatexTimeoutError
 
 logger = logging.getLogger(f"{LOGGER_ROOT}.render")

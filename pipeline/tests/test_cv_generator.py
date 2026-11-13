@@ -11,8 +11,8 @@ from dataclasses import replace
 
 import pytest
 
-from cv_server.bundle import CandidateInputs
-from cv_server.pipeline.cv_generator import (
+from cv_pipeline.bundle import CandidateInputs
+from cv_pipeline.cv_generator import (
     ARTIFACTS,
     FORMATS,
     CVGenerator,
@@ -22,10 +22,10 @@ from cv_server.pipeline.cv_generator import (
     scores_of,
     without_scores,
 )
-from cv_server.pipeline.cv_renderer import CVRenderer, RenderResult
-from cv_server.pipeline.errors import BudgetExceededError, ModelOutputError
+from cv_pipeline.cv_renderer import CVRenderer, RenderResult
+from cv_pipeline.errors import BudgetExceededError, ModelOutputError
 
-from server_helpers import (
+from pipeline_helpers import (
     KEY_POINTS,
     SAMPLE_BODY,
     FakeLLM,

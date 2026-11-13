@@ -117,32 +117,35 @@ is published.
 | the same image, for Function Compute | Alibaba Container Registry | `<ACR_REPOSITORY>:x.y.z`, deployed by `terraform apply` |
 | this site | GitHub Pages, from `gh-pages` | `/x.y.z/`, and `/latest/` which `/` redirects to |
 
-The archive is flat on purpose:
+The archive is a data folder, ready to run:
 
 ```text
 cv                           the Linux executable, already +x
 cv.exe                       the Windows executable
 README.md                    the client README, links rewritten for this layout
-cv.toml                 points at http://localhost:8080; edit it
-candidate_profile.json       the fictional set, ready to edit
-candidate_data.json
-candidate_preferences.md
-candidate_signature.png
+cv.toml                      servers = ["v11"]
 posting.txt                  something to try it on
+v11/                         a server folder
+  server.toml                points at http://localhost:8080; edit it
+  candidate_profile.json     the fictional set, ready to edit
+  candidate_data.json
+  candidate_preferences.md
+  candidate_signature.png
 ```
 
-The client looks for its files **by name in the folder you run it in** — see
-`discovery.py` — so a flat archive is a working folder as soon as it is
-extracted. There is nothing to move and no config to rename:
+`cv.toml` lists `v11/`, and the client sends that folder's files to the server
+its `server.toml` names, so the archive works as soon as it is extracted and
+`url` points at your server:
 
 ```bash
-mkdir ats-strike && tar xzf ats-strike-0.3.0.tar.gz -C ats-strike
+mkdir ats-strike && tar xzf ats-strike-1.1.0.tar.gz -C ats-strike
 cd ats-strike
-./cv submit-raw posting.txt --server https://your-server
+$EDITOR v11/server.toml      # url, and token if the server wants one
+./cv submit-raw posting.txt
 ```
 
-Extract it into a folder of its own, as above. A flat archive unpacks nine
-files wherever you stand.
+Extract it into a folder of its own, as above: it unpacks five files and a
+folder wherever you stand.
 
 ## The site's own versions
 

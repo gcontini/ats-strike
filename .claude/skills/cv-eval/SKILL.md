@@ -6,8 +6,9 @@ description: Evaluate ats-strike CV quality on the fixed test set. It generates 
 # Evaluate CV quality
 
 Arguments are the set, `quick` (default) or `thorough`, and an optional
-temperature for the `cv` step. It is sent as that step's whole `extra_body`, so
-the step's other `models.toml` settings are dropped for the run. Run everything
+temperature for the `cv` and `duties` steps. It is sent in the request's
+`settings` as each step's whole `extra_body`, so the steps' other
+`models.toml` settings are dropped for the run. Run everything
 from the repository root.
 
 1. **Generate.** Each CV takes minutes, so run this in the background and wait for it to exit:
@@ -18,7 +19,7 @@ from the repository root.
 
    - **Server:** it starts this checkout's own `ats-strike` on a free local port, uncommitted changes included, and stops it at the end. It needs `.env` with the model keys and `pdflatex` on the host. Its log is `<run>/server.log`.
    - **Candidate:** `candidate_profile.json` and `candidate_data.json` come from `examples/candidate/`, the fictional candidate in the repository, so runs stay comparable. `--candidate <folder>` writes for someone else; the folder is recorded in `run.json`.
-   - **Prompts:** the client sends no prompt, schema, template, image or `cv.toml`, so every one is the server's own, from this checkout's `server/resources`. Nothing is read from `ats-strike-data/`.
+   - **Prompts:** the client is handed a temporary server folder holding only the candidate's two files — no prompt, schema, template or image — so every one is the server's own, from this checkout's `pipeline/resources`. Nothing is read from `ats-strike-data/`.
    - **Run folder:** the last line printed is the run folder. A failed CV leaves a `<stem>.error.txt` there instead of a CV.
    - **Failures:** the CVs that failed are written once more, automatically, at most half the set. The line before the run folder says how many failed in the end. Score the CVs there are.
 

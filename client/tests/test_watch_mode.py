@@ -12,7 +12,6 @@ import openpyxl
 import pytest
 
 from cv_client.stages.approval import Answer, HumanApproval
-from cv_client.stages.calls import Calls
 from cv_client.stages.generation import CvWriter, GenerationWorker
 from cv_client.stages.inbox import InputProcessor
 from cv_client.stages.terminal import Console, Keyboard
@@ -20,7 +19,9 @@ from cv_client.stages.watcher import Watcher
 from cv_client.stages.working import WorkingProcessor
 from cv_client.tracking import build_tracker
 
-from conftest import JD_TEXT, FakeApi, analysis, envelope, make_job
+from cv_contracts import Analysed
+
+from conftest import JD_TEXT, FakeApi, analysis, calls_for, envelope, make_job
 
 DEADLINE = 10.0
 
@@ -28,10 +29,11 @@ DEADLINE = 10.0
 class ByFirstLine(FakeApi):
     """Analyses each posting by its first line: ``<company>|<should_apply>``."""
 
-    def analyze(self, text, *, profile, preferences, prompt=None, extra_body=None):
+    def analyze(self, pack, job, settings):
         self._record("analyze")
-        company, should_apply = text.split("\n", 1)[0].split("|")
-        return envelope(analysis(company_name=company, should_apply=should_apply))
+        company, should_apply = job["jd.txt"].decode().split("\n", 1)[0].split("|")
+        return envelope(Analysed(analysis=analysis(company_name=company,
+                                                   should_apply=should_apply).model_dump()))
 
 
 class Approves:
@@ -51,14 +53,15 @@ def posting(company, should_apply):
 
 def build(api, config, workspace, inbox, keyboard, reviewer):
     console = Console()
-    writer = CvWriter(Calls(api), config)
+    calls = calls_for(config, {"v11": api})
+    writer = CvWriter(calls, config)
     working = WorkingProcessor(workspace, writer, build_tracker(workspace.root, True), console)
     return Watcher(
         working,
         HumanApproval(working, reviewer, keyboard, console, poll_seconds=0.01).run,
-        {"inbox": InputProcessor(inbox, Calls(api), config, working, console,
+        {"inbox": InputProcessor(inbox, calls["v11"], working, console,
                                  poll_seconds=0.01, settle_seconds=0),
-         "cv": GenerationWorker(working, writer, console, poll_seconds=0.01)},
+         "cv": GenerationWorker(working, writer, console, config.default, poll_seconds=0.01)},
         keyboard,
         console,
         join_seconds=0.01,
@@ -124,7 +127,7 @@ def test_q_lets_the_generation_in_hand_finish(config, workspace, inbox, typist):
             self.writing = threading.Event()
             self.release = threading.Event()
 
-        def events(self, request_id, *, after=0):
+        def events(self, request_id, after=0):
             self.writing.set()
             assert self.release.wait(DEADLINE), "never released"
             yield from super().events(request_id, after=after)

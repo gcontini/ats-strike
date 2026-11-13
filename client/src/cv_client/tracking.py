@@ -17,7 +17,8 @@ from pathlib import Path
 from typing import Optional, Protocol
 
 import openpyxl
-from cv_contracts import JDAnalysis
+
+from .jdanalysis import JDAnalysis
 
 #: The empty spreadsheet shipped with the client, copied on first use.
 TEMPLATE_NAME = "applications.xlsx"

@@ -2,9 +2,9 @@
 
 import pytest
 
-from cv_server.pipeline.letter_generator import MAX_WORDS, MIN_WORDS, LetterGenerator
+from cv_pipeline.letter_generator import MAX_WORDS, MIN_WORDS, LetterGenerator
 
-from server_helpers import FakeLLM
+from pipeline_helpers import FakeLLM
 
 
 def letter(words):

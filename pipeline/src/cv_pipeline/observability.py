@@ -27,19 +27,50 @@ import os
 import sys
 from contextlib import contextmanager
 from contextvars import ContextVar
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from threading import Lock
-from typing import Any, Callable, Iterator, Optional
+from typing import Any, Callable, Iterator, Optional, Set
 
-from pydantic import BaseModel
-from cv_contracts import LogEntry, ModelCall, TokenUsage
-
-#: Root logger name; everything in the server logs under it.
-LOGGER_ROOT = "cv_server"
+#: Root logger name; everything in the pipeline logs under it.
+LOGGER_ROOT = "cv_pipeline"
 
 #: Bounds, so one pathological run cannot produce an unbounded session.
 MAX_LOG_ENTRIES = 2000
 MAX_MESSAGE_CHARS = 4000
+
+
+@dataclass
+class LogEntry:
+    """One line of a run's log: what ``sink`` is handed as a ``log``."""
+
+    ts: datetime
+    level: str
+    stage: str
+    message: str
+
+
+@dataclass
+class ModelCall:
+    """One model call: what ``sink`` is handed as a ``usage``."""
+
+    role: str
+    model: str
+    seconds: float
+    input_tokens: int
+    thinking_tokens: int
+    output_tokens: int
+
+
+@dataclass
+class TokenUsage:
+    """What a run's model calls cost, added up."""
+
+    calls: int = 0
+    seconds: float = 0.0
+    input_tokens: int = 0
+    thinking_tokens: int = 0
+    output_tokens: int = 0
 
 
 class Run:
@@ -86,9 +117,9 @@ class Run:
             self.total.output_tokens += call.output_tokens
         self._emit("usage", call)
 
-    def _emit(self, kind: str, payload: BaseModel) -> None:
+    def _emit(self, kind: str, payload: Any) -> None:
         if self.sink is not None:
-            self.sink(kind, payload.model_dump(mode="json"))
+            self.sink(kind, payload)
 
     @staticmethod
     def _entry(level: str, stage: str, message: str) -> LogEntry:
@@ -148,35 +179,39 @@ class _RequestIdFilter(logging.Filter):
         return True
 
 
-_configured = False
+_configured: Set[str] = set()
 
 
-def configure_logging(level: Optional[str] = None) -> None:
-    """Install stdout logging + the run collector. Idempotent.
+def configure_logging(*roots: str, level: Optional[str] = None) -> None:
+    """Install stdout logging + the run collector on each logger root given
+    (default: this package's). Idempotent per root.
 
     Called by the API's lifespan and by the ``ats-strike`` entry point;
     importing the package installs nothing.
     """
-    global _configured
-    if _configured:
-        return
-    _configured = True
+    for root in roots or (LOGGER_ROOT,):
+        if root in _configured:
+            continue
+        _configured.add(root)
 
-    logger = logging.getLogger(LOGGER_ROOT)
-    logger.setLevel(level or os.getenv("ATS_LOG_LEVEL", "INFO").upper())
-    logger.propagate = False
+        logger = logging.getLogger(root)
+        logger.setLevel(level or os.getenv("ATS_LOG_LEVEL", "INFO").upper())
+        logger.propagate = False
 
-    stream = logging.StreamHandler(sys.stdout)
-    stream.setFormatter(
-        logging.Formatter("%(asctime)s %(levelname)-7s [%(request_id)s] %(name)s: %(message)s")
-    )
-    stream.addFilter(_RequestIdFilter())
-    logger.addHandler(stream)
-    logger.addHandler(RunCollectingHandler())
+        stream = logging.StreamHandler(sys.stdout)
+        stream.setFormatter(
+            logging.Formatter("%(asctime)s %(levelname)-7s [%(request_id)s] %(name)s: %(message)s")
+        )
+        stream.addFilter(_RequestIdFilter())
+        logger.addHandler(stream)
+        logger.addHandler(RunCollectingHandler())
 
 
 __all__ = [
     "LOGGER_ROOT",
+    "LogEntry",
+    "ModelCall",
+    "TokenUsage",
     "Run",
     "configure_logging",
     "current_run",

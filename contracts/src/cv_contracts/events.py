@@ -8,77 +8,74 @@ type, and one of the payloads below as JSON:
 ============ ============== ==============================================
 type         payload        when
 ============ ============== ==============================================
-``status``   CVStatus       each step: jd_evaluation, profile_scoring, ...
-``artifact`` CVArtifact     each intermediate result, as a step finishes
-``log``      LogEntry       every line the server logged for the job
-``usage``    ModelCall      after every model call, failed ones included
-``result``   CVResult       the job is done — the last event
-``error``    CVFailure      the job failed — the last event
+``status``   Status         shown to a person, never stored
+``store``    StoreItem      a thing to store: a step, a log line, the CV
+``done``     Done           the job is done — the last event
+``error``    Failure        the job failed — the last event
 ============ ============== ==============================================
 
-The server keeps the events until the client acknowledges the session with
-``DELETE /v1/cv/{id}``, so a client that lost its connection, or comes back
-later, replays them from the start.
+A client skips an event type it does not know. The server keeps the events
+until the client acknowledges the session with ``DELETE /v1/cv/{id}``, so a
+client that lost its connection, or comes back later, replays them from the
+start.
 """
 
 from __future__ import annotations
 
-from typing import Any, Dict, Type
+import base64
+from typing import Dict, Optional, Type, Union
 
 from pydantic import BaseModel, Field
 
-from .envelope import LogEntry
-from .payloads import CVStatus, RenderedCV
 
+class StoreItem(BaseModel):
+    """A thing to store: the ``store`` event, and each item of a REST reply.
 
-class TokenUsage(BaseModel):
-    """What a run's model calls cost, added up."""
-
-    calls: int = Field(0, description="Model calls made, failed attempts included")
-    seconds: float = Field(0.0, description="Time spent waiting on them")
-    input_tokens: int = Field(0, description="Prompt tokens")
-    thinking_tokens: int = Field(0, description="Reasoning tokens")
-    output_tokens: int = Field(0, description="Reply tokens, thinking excluded")
-
-
-class ModelCall(BaseModel):
-    """One model call: the ``usage`` event."""
-
-    role: str = Field(description="Which model role made it: jd_evaluation, cv, validation, ...")
-    model: str = Field(description="The model name the provider was asked for")
-    seconds: float = Field(description="How long the call took")
-    input_tokens: int = Field(description="Prompt tokens")
-    thinking_tokens: int = Field(description="Reasoning tokens")
-    output_tokens: int = Field(description="Reply tokens, thinking excluded")
-
-
-class CVArtifact(BaseModel):
-    """One intermediate result of a CV job: the ``artifact`` event.
-
-    What each step hands the next one — the job description's key points, the
-    scored profile, the chosen format, the CV before and after validation, the
-    highlighted CV — as the JSON it is. Only the final PDF is ever sent: it is
-    in the result.
+    ``location`` and ``type`` are plain strings: a client skips a value it
+    does not know, so a server can add one without breaking an older client.
     """
 
-    name: str = Field(description="What it is, e.g. key_points or checked_body: a file name")
-    data: Any = Field(description="The result itself, as JSON")
+    location: str = Field(description="CV (the job folder) | CACHE (<server folder>/cache)")
+    type: str = Field(description="log (append a line) | step (write a file) | cv (the final PDF)")
+    name: str = Field("", description="Relative path, '/'-separated; empty for a log")
+    text: Optional[str] = Field(None, description="The content, when it is UTF-8 text")
+    base64: Optional[str] = Field(None, description="The content, when it is binary")
+
+    @classmethod
+    def from_content(
+        cls, location: str, type: str, name: str, content: Union[str, bytes]
+    ) -> "StoreItem":
+        """Text as ``text``, bytes as ``base64``."""
+        if isinstance(content, str):
+            return cls(location=location, type=type, name=name, text=content)
+        return cls(location=location, type=type, name=name,
+                   base64=base64.b64encode(content).decode("ascii"))
+
+    def content(self) -> bytes:
+        """The bytes to write, whichever way they travelled."""
+        if self.base64 is not None:
+            return base64.b64decode(self.base64)
+        return (self.text or "").encode("utf-8")
 
 
-class CVResult(BaseModel):
-    """The finished CV: the ``result`` event."""
+class Status(BaseModel):
+    """Where a job is: the ``status`` event. Shown, never stored."""
 
-    cv: RenderedCV = Field(description="The merged document, its LaTeX and its PDF")
+    status: str = Field(description="What runs now, in the server's own words")
+    detail: str = Field("", description="One line about what just finished; may span lines")
+
+
+class Done(BaseModel):
+    """The job is done: the ``done`` event, always the last."""
+
     detail: str = Field(description="One line about the whole run, for a person")
-    total: TokenUsage = Field(description="Every model call of the run, added up")
 
 
-class CVFailure(BaseModel):
-    """Why the job failed: the ``error`` event."""
+class Failure(BaseModel):
+    """Why the job failed: the ``error`` event, always the last."""
 
-    http_status: int = Field(description="The status the failure maps to: 422, 502, 504, ...")
+    http_status: int = Field(description="The status the failure maps to: 400, 422, 502, 504, ...")
     error: str = Field(description="What went wrong, its kind and its stage")
-    total: TokenUsage = Field(description="Every model call of the run, added up")
 
 
 class CVSession(BaseModel):
@@ -99,24 +96,21 @@ class Cleanup(BaseModel):
 
 #: Each event type, and the payload its ``data`` holds.
 EVENT_PAYLOADS: Dict[str, Type[BaseModel]] = {
-    "status": CVStatus,
-    "artifact": CVArtifact,
-    "log": LogEntry,
-    "usage": ModelCall,
-    "result": CVResult,
-    "error": CVFailure,
+    "status": Status,
+    "store": StoreItem,
+    "done": Done,
+    "error": Failure,
 }
 
 #: The types that end a session's stream: nothing comes after them.
-TERMINAL_EVENTS = ("result", "error")
+TERMINAL_EVENTS = ("done", "error")
 
 
 __all__ = [
-    "TokenUsage",
-    "ModelCall",
-    "CVArtifact",
-    "CVResult",
-    "CVFailure",
+    "StoreItem",
+    "Status",
+    "Done",
+    "Failure",
     "CVSession",
     "Cleanup",
     "EVENT_PAYLOADS",

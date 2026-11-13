@@ -3,11 +3,11 @@
 import json
 
 import pytest
-from cv_contracts import JDAnalysis
+from cv_pipeline.schemas import JDAnalysis
 
-from cv_server.models import Usage
+from cv_pipeline.models import Usage
 
-from server_helpers import FakeLLM, completion
+from pipeline_helpers import FakeLLM, completion
 
 #: A reply the analysis model may give, every key present as a strict
 #: json_schema requires: valid, so a structured call succeeds.
@@ -121,7 +121,7 @@ def test_deepseek_thinking_switch():
 
 
 def test_deepseek_function_calling_reads_the_tool_call():
-    from cv_contracts import JDDetection
+    from cv_pipeline.schemas import JDDetection
 
     llm = FakeLLM(detect=dict(
         model_provider="deepseek", thinking="off", structured_output="function_calling",

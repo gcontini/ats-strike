@@ -1,0 +1,41 @@
+[project]
+name = "ats-strike-pipeline"
+version = "1.0.4"
+description = "ats-strike CV pipeline: a job description and a pack of files in, tailored CV data and a compiled LaTeX PDF out. No HTTP."
+requires-python = ">=3.12"
+license = "MIT"
+dependencies = [
+    # Every model call goes through LangChain (cv_pipeline/models): ChatOpenAI
+    # for any OpenAI-compatible endpoint, ChatDeepSeek for api.deepseek.com.
+    "langchain-openai>=1.6",
+    "langchain-deepseek>=1.1",
+    # The CV pipeline's steps as a graph, with Send for the calls a step makes
+    # side by side (cv_pipeline/cv_generator.py).
+    "langgraph>=1.2",
+    # Still imported directly: the facade turns its errors into kinds.
+    "openai",
+    # Templating the LaTeX CV.
+    "Jinja2",
+    # Page counting on the compiled PDF.
+    "pypdf",
+    # .env secrets for local runs.
+    "python-dotenv",
+]
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+# resources/ lives next to src/, not inside it, so it needs its own
+# package-dir entry and an explicit packages list (packages.find only scans
+# "where").
+[tool.setuptools]
+package-dir = { "" = "src", "cv_pipeline.resources" = "resources" }
+packages = [
+    "cv_pipeline",
+    "cv_pipeline.models",
+    "cv_pipeline.resources",
+]
+
+[tool.setuptools.package-data]
+"cv_pipeline.resources" = ["*.txt", "*.json", "*.toml", "*.jinja", "*.png"]

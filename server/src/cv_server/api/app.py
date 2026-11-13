@@ -2,8 +2,8 @@
 
 Assembled in one place: logging, the request context, the shared state, the
 routers and the single exception handler. Everything expensive happens once in
-the lifespan — three model clients and the default resource bundle — because a
-request must not pay for startup.
+the lifespan — the pipeline, with its model clients and its defaults — because
+a request must not pay for startup.
 """
 
 from __future__ import annotations
@@ -13,22 +13,22 @@ from contextlib import asynccontextmanager
 from typing import Optional
 from uuid import uuid4
 
+from cv_contracts import Failure
+from cv_pipeline import PipelineError, Run, configure_logging, use_run
 from fastapi import Depends, FastAPI
-from openai import APIError
 from pydantic import ValidationError
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from cv_contracts import CVFailure, TokenUsage
-
 from ..jobstore import SAFE_ID
-from ..observability import LOGGER_ROOT, Run, configure_logging, use_run
-from ..pipeline.errors import PipelineError
 from .deps import AppState, require_token
 from .errors import ApiError, handle_exception
 from .routers import cv, health, jd, letter
 from .settings import Settings
 
-logger = logging.getLogger(f"{LOGGER_ROOT}.api")
+logger = logging.getLogger("cv_server.api")
+
+#: The logger roots whose lines reach stdout and the request's run.
+LOGGER_ROOTS = ("cv_pipeline", "cv_server")
 
 API_PREFIX = "/v1"
 
@@ -74,22 +74,22 @@ def create_app(
 ) -> FastAPI:
     """Build the application.
 
-    ``state`` is the injection point: pass one built with fake models and
-    the whole API can be exercised with no provider key and no network.
+    ``state`` is the injection point: pass one built with a stand-in pipeline
+    and the whole API can be exercised with no provider key and no network.
     Left out, it is built from the environment at startup.
     """
     settings = settings or (state.settings if state else Settings.from_env())
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        configure_logging()
+        configure_logging(*LOGGER_ROOTS)
         app.state.cv = state or AppState.build(settings)
         _fail_orphans(app.state.cv)
         logger.info(
             "  \U0001f680 ats-strike-server ready (jobs<=%d, auth %s, pdflatex %s)",
             settings.max_concurrent_jobs,
             "on" if settings.api_token else "off",
-            "yes" if app.state.cv.pdflatex else "NO",
+            "yes" if app.state.cv.pipeline.info()["pdflatex"] else "NO",
         )
         yield
 
@@ -110,7 +110,7 @@ def create_app(
     # Expected failures are registered by type so Starlette treats them as
     # answers, not crashes; only a genuine bug reaches the catch-all (which
     # answers and then re-raises, so it is still logged as one).
-    for failure in (ApiError, PipelineError, ValidationError, APIError):
+    for failure in (ApiError, PipelineError, ValidationError):
         app.add_exception_handler(failure, handle_exception)
     app.add_exception_handler(Exception, handle_exception)
 
@@ -130,14 +130,13 @@ def _fail_orphans(state: AppState) -> None:
     released mid-job, none of which a shutdown hook would have caught. It
     ends with an error, so a client following it stops waiting. Run one
     instance per work root: the semaphore and the workers are per-process, so
-    a second one would declare a live job dead. What the job had spent is not
-    known any more; the total says nothing.
+    a second one would declare a live job dead.
     """
     for job in state.jobs.all():
         if not job.running:
             continue
-        job.append("error", CVFailure(
-            http_status=503, total=TokenUsage(),
+        job.append("error", Failure(
+            http_status=503,
             error="unavailable: the server restarted while this job was running",
         ).model_dump(mode="json"))
         logger.warning("  ⚠ job %s was left running by a previous process", job.request_id)
@@ -145,4 +144,4 @@ def _fail_orphans(state: AppState) -> None:
 
 app = create_app()
 
-__all__ = ["create_app", "app", "API_PREFIX"]
+__all__ = ["create_app", "app", "API_PREFIX", "LOGGER_ROOTS"]

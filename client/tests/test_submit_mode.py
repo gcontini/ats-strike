@@ -5,20 +5,28 @@ from __future__ import annotations
 import threading
 import time
 
-import pytest
-from cv_contracts import JDAnalysis
+from dataclasses import replace
 
+import pytest
+
+from cv_client.jdanalysis import JDAnalysis
 from cv_client.modes import submit
 
-from conftest import JD_TEXT, analysis, make_job
+from conftest import JD_TEXT, FakeApi, analysis, make_job, make_server
 
 DEADLINE = 10.0
 
 
 @pytest.fixture
-def served(api, monkeypatch):
-    """The mode's own HttpApi, replaced by the fake at the boundary."""
-    monkeypatch.setattr(submit, "HttpApi", lambda *args, **kwargs: api)
+def apis(api, monkeypatch):
+    """Each server's fake, by its URL: the mode's own HttpApi, replaced."""
+    by_url = {"http://v11.invalid": api, "http://v05.invalid": FakeApi()}
+    monkeypatch.setattr("cv_client.modes.HttpApi", lambda url, **kw: by_url[url])
+    return by_url
+
+
+@pytest.fixture
+def served(api, apis):
     return api
 
 
@@ -80,6 +88,29 @@ def test_a_failed_cv_makes_the_exit_code_1(served, config, jd, workspace):
     served.fail_on = "create_cv"
     assert submit.run(config, jd, workspace.root, assume_yes=True) == 1
     assert len(entries(workspace.error)) == 1
+
+
+def test_two_servers_write_one_after_the_other_and_one_analysis_is_made(
+        served, apis, config, servers_dir, jd, workspace):
+    v05 = make_server(servers_dir, "v05")
+    config = replace(config, targets=(config.default, v05))
+
+    assert submit.run(config, jd, workspace.root, assume_yes=True) == 0
+
+    assert served.calls == ["detect", "analyze", "create_cv", "events", "acknowledge"]
+    assert apis["http://v05.invalid"].calls == ["create_cv", "events", "acknowledge"]
+    [delivered] = workspace.cv.glob("*/Acme_Corp_Head_of_IT")
+    assert len(list(delivered.glob("cv_*.pdf"))) == 2
+
+
+def test_one_server_failing_still_delivers_and_exits_1(served, apis, config, servers_dir, jd,
+                                                       workspace):
+    v05 = make_server(servers_dir, "v05")
+    apis["http://v05.invalid"].fail_on = "create_cv"
+    config = replace(config, targets=(config.default, v05))
+
+    assert submit.run(config, jd, workspace.root, assume_yes=True) == 1
+    assert entries(workspace.cv) == ["Acme_Corp_Head_of_IT"]
 
 
 def test_leftovers_are_left_alone(served, config, jd, workspace):

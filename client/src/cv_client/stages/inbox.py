@@ -22,7 +22,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Tuple
 
 from ..api import CVError
-from ..config import Config
 from ..duplicates import posting_url_in
 from .analysis import analyse
 from .calls import Calls
@@ -44,7 +43,6 @@ class InputProcessor:
         self,
         inbox: Path,
         calls: Calls,
-        config: Config,
         working: "WorkingProcessor",
         console: Console,
         *,
@@ -53,7 +51,6 @@ class InputProcessor:
     ) -> None:
         self.inbox = Path(inbox)
         self.calls = calls
-        self.config = config
         self.working = working
         self.console = console
         self.poll_seconds = poll_seconds
@@ -109,7 +106,7 @@ class InputProcessor:
             log.step("🗑 dropped from the inbox, nothing sent")
             entry.unlink()
             return
-        analysis = analyse(self.calls, self.config, text, log)
+        analysis = analyse(self.calls, text, log)
         if analysis is None:
             self.working.reject(entry, log)
             return

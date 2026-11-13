@@ -10,6 +10,10 @@ you decided about a posting that needed you — or ``PENDING``, for one that
 ``clipboard`` or ``submit`` is asking you about and nobody has answered yet.
 Everything else — ``jd.txt``, ``analysis.json``, the CV files, ``log.log`` —
 is what the rest of the client already writes.
+
+A folder that already holds its CV is written like any other: each server is
+sent what it stored there, and decides itself to render it rather than write
+it again (see :class:`~cv_client.workspace.JobFiles`).
 """
 
 from __future__ import annotations
@@ -17,8 +21,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Collection, Literal, Optional, Tuple
 
-from cv_contracts import JDAnalysis
-
+from ..jdanalysis import JDAnalysis
 from ..workspace import ANALYSIS_FILENAME, JD_FILENAME
 
 #: What you decided about a posting that needed you, kept in its folder.
@@ -28,18 +31,11 @@ DISCARDED = "DISCARDED"
 #: Asked about and not answered yet: asked again, never decided by should_apply.
 PENDING = "PENDING"
 
-#: Where a folder goes next. ``render`` means "rendered now, then CV/".
-Route = Literal["error", "render", "generate", "approve", "discard"]
+#: Where a folder goes next.
+Route = Literal["error", "generate", "approve", "discard"]
 
 #: A folder nobody has decided about yet goes where its analysis says.
 _BY_SHOULD_APPLY: dict[str, Route] = {"YES": "generate", "CHECK": "approve", "NO": "discard"}
-
-
-def is_cv_source(name: str) -> bool:
-    """A file the CV can be re-rendered from: ``.tex``, or a ``.json`` that is
-    not the analysis (the CV document)."""
-    lower = name.lower()
-    return lower.endswith(".tex") or (lower.endswith(".json") and name != ANALYSIS_FILENAME)
 
 
 def route(
@@ -56,8 +52,6 @@ def route(
         return "error", f"no {JD_FILENAME}"
     if analysis is None:
         return "error", f"no valid {ANALYSIS_FILENAME}"
-    if any(is_cv_source(name) for name in names):
-        return "render", "it already holds its CV"
     if approval is None:
         return _BY_SHOULD_APPLY[analysis.should_apply], f"should_apply is {analysis.should_apply}"
     decision = approval.strip().upper()
@@ -82,13 +76,6 @@ def classify(folder: Path) -> Tuple[Route, str]:
     return route(names, analysis, read_approval(folder))
 
 
-def render_source(folder: Path) -> Optional[Path]:
-    """What to re-render from: the CV document if there is one, else a ``.tex``."""
-    sources = sorted(p for p in folder.iterdir() if p.is_file() and is_cv_source(p.name))
-    documents = [p for p in sources if p.suffix.lower() == ".json"]
-    return (documents or sources or [None])[0]
-
-
 # --- the files themselves --------------------------------------------------
 def read_jd(folder: Path) -> str:
     """The posting, whatever bytes it arrived as."""
@@ -100,7 +87,10 @@ def read_analysis(folder: Path) -> JDAnalysis:
 
 
 def write_analysis(folder: Path, analysis: JDAnalysis) -> None:
-    (folder / ANALYSIS_FILENAME).write_text(analysis.model_dump_json(indent=2), encoding="utf-8")
+    """What the server wrote, and what you changed since: no default the
+    client filled in is added."""
+    (folder / ANALYSIS_FILENAME).write_text(
+        analysis.model_dump_json(indent=2, exclude_unset=True), encoding="utf-8")
 
 
 def read_approval(folder: Path) -> Optional[str]:
@@ -114,6 +104,6 @@ def write_approval(folder: Path, decision: str) -> None:
 
 __all__ = [
     "APPROVAL_FILENAME", "APPROVED", "DISCARDED", "PENDING", "Route",
-    "route", "classify", "render_source", "is_cv_source",
+    "route", "classify",
     "read_jd", "read_analysis", "write_analysis", "read_approval", "write_approval",
 ]

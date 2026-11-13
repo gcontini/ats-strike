@@ -29,11 +29,10 @@ from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.utils.json import parse_json_markdown
 from openai import LengthFinishReasonError
 from pydantic import BaseModel, ValidationError
-from cv_contracts import ModelCall
 
-from ..observability import LOGGER_ROOT, current_run, current_stage
-from ..pipeline.errors import ModelOutputError
-from ..pipeline.parsing import raw_excerpt
+from ..observability import LOGGER_ROOT, ModelCall, current_run, current_stage
+from ..errors import ModelOutputError
+from ..parsing import raw_excerpt
 from .base import Provider
 from .config import ModelConfig, load_model_config
 from .deepseek import DeepSeekProvider

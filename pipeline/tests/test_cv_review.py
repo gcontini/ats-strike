@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from cv_server.models import Usage
-from cv_server.pipeline.cv_review import (
+from cv_pipeline.models import Usage
+from cv_pipeline.cv_review import (
     MAX_VALIDATIONS,
     ReplaceInBody,
     ReplaceInDuties,
@@ -12,7 +12,7 @@ from cv_server.pipeline.cv_review import (
     review,
 )
 
-from server_helpers import FakeLLM, tool_completion, user_text
+from pipeline_helpers import FakeLLM, tool_completion, user_text
 
 
 def experience() -> dict:

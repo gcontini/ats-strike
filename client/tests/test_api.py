@@ -1,82 +1,57 @@
-"""HttpApi's own plumbing: the health check and the version compatibility it
-now carries. ``version_compat`` is pure, so most of this needs no transport;
-the two behavioural tests fake ``/healthz`` with an ``httpx.MockTransport``
-rather than a real server, per AGENTS.md — fake at the boundary, not above it.
+"""HttpApi's own plumbing: the protocol check, the three parts, the stream.
+
+The server is faked with an ``httpx.MockTransport`` rather than a real one,
+per AGENTS.md — fake at the boundary, not above it.
 """
 
 from __future__ import annotations
 
+import json
+
 import httpx
 import pytest
 
-from cv_client import __version__
-from cv_client.api import HttpApi, CVError, version_compat
+from cv_client.api import CVError, HttpApi
 
 
-@pytest.mark.parametrize("client_version, server_version, expected", [
-    ("1.2.3", "1.2.9", "ok"),
-    ("1.2.3", "1.2.3", "ok"),
-    ("1.2.3", "1.3.0", "warn"),
-    ("1.2.3", "1.1.0", "warn"),
-    ("1.2.3", "2.0.0", "stop"),
-    ("2.0.0", "1.9.9", "stop"),
-    ("1.2.3", "unknown", "ok"),
-    ("unknown", "1.2.3", "ok"),
-    ("1.2.3", "1", "ok"),
-])
-def test_version_compat(client_version, server_version, expected):
-    assert version_compat(client_version, server_version) == expected
+def _health(protocol=None) -> httpx.Response:
+    data = {"status": "ok", "version": "1.0.4", "pdflatex": True, "models": {},
+            "auth_required": False}
+    if protocol is not None:
+        data["protocol"] = protocol
+    return httpx.Response(200, json={"request_id": "r1", "ok": True, "data": data})
 
 
-def _health(version: str) -> httpx.Response:
-    return httpx.Response(200, json={
-        "request_id": "r1", "ok": True,
-        "data": {"status": "ok", "version": version, "pdflatex": True,
-                 "models": {}, "auth_required": False},
-    })
-
-
-def _client_reporting(version: str) -> httpx.Client:
-    return httpx.Client(transport=httpx.MockTransport(lambda request: _health(version)),
+def _client_reporting(protocol) -> httpx.Client:
+    return httpx.Client(transport=httpx.MockTransport(lambda request: _health(protocol)),
                         base_url="http://server.invalid")
 
 
-def _bump(part: int, by: int = 1) -> str:
-    pieces = __version__.split(".")
-    pieces[part] = str(int(pieces[part]) + by)
-    return ".".join(pieces)
-
-
-def test_a_minor_mismatch_warns_and_continues(capsys):
-    api = HttpApi("http://server.invalid", client=_client_reporting(_bump(1)))
-
-    api._ensure_healthy()  # does not raise
-
-    assert "minor versions differ" in capsys.readouterr().err
-
-
-def test_a_major_mismatch_stops_before_the_first_call():
-    api = HttpApi("http://server.invalid", client=_client_reporting(_bump(0)))
-
-    with pytest.raises(CVError, match="major versions differ"):
+def test_another_protocol_stops_before_the_first_call():
+    api = HttpApi("http://server.invalid", client=_client_reporting(3))
+    with pytest.raises(CVError, match="speaks protocol 3, this client speaks protocol 2"):
         api._ensure_healthy()
 
 
-def test_a_matching_version_is_quiet(capsys):
-    api = HttpApi("http://server.invalid", client=_client_reporting(__version__))
+def test_a_server_that_does_not_say_is_protocol_1_and_refused():
+    api = HttpApi("http://server.invalid", client=_client_reporting(None))
+    with pytest.raises(CVError, match="speaks protocol 1"):
+        api._ensure_healthy()
 
+
+def test_the_same_protocol_is_quiet(capsys):
+    api = HttpApi("http://server.invalid", client=_client_reporting(2))
     api._ensure_healthy()
-
     assert capsys.readouterr().err == ""
 
 
-# --- a CV session over HTTP -------------------------------------------------------
+# --- requests and the CV session over HTTP ---------------------------------------
 STREAM = (
-    b'id: 1\nevent: status\ndata: {"status": "jd_evaluation", "detail": ""}\n\n'
+    b'id: 1\nevent: status\ndata: {"status": "started", "detail": ""}\n\n'
     b": ping\n\n"
     b'id: 2\nevent: something-newer\ndata: {"x": 1}\n\n'
-    b'id: 3\nevent: usage\ndata: {"role": "cv", "model": "m", "seconds": 1.5, '
-    b'"input_tokens": 1, "thinking_tokens": 2, "output_tokens": 3}\n\n'
+    b'id: 3\nevent: store\ndata: {"location": "CV", "type": "cv", "name": "cv.pdf", '
+    b'"base64": "JVBERg=="}\n\n'
 )
 
 
@@ -89,10 +64,10 @@ class Broken(httpx.SyncByteStream):
 
 
 def _server(seen: list, *, events=None, status: int = 200) -> httpx.Client:
-    """/healthz at this client's version; everything else recorded and answered."""
+    """/healthz on protocol 2; everything else recorded and answered."""
     def handler(request: httpx.Request) -> httpx.Response:
         if request.url.path == "/healthz":
-            return _health(__version__)
+            return _health(2)
         seen.append(request)
         if request.url.path.endswith("/events"):
             if status != 200:
@@ -110,14 +85,14 @@ def _server(seen: list, *, events=None, status: int = 200) -> httpx.Client:
 def test_a_stream_is_read_as_typed_events_skipping_pings_and_unknown_types():
     api = HttpApi("http://server.invalid", client=_server([]))
     events = list(api.events("abc"))
-    assert [(number, kind) for number, kind, _ in events] == [(1, "status"), (3, "usage")]
-    assert events[1][2].thinking_tokens == 2
+    assert [(number, kind) for number, kind, _ in events] == [(1, "status"), (3, "store")]
+    assert events[1][2].content() == b"%PDF"
 
 
 def test_a_reconnect_says_where_it_got_to():
     seen: list = []
     api = HttpApi("http://server.invalid", client=_server(seen))
-    list(api.events("abc", after=7))
+    list(api.events("abc", 7))
     assert seen[0].headers["last-event-id"] == "7"
 
 
@@ -143,18 +118,29 @@ def test_a_broken_stream_raises_with_no_status_after_what_it_delivered():
 def test_a_cv_job_is_sent_under_its_session_id():
     seen: list = []
     api = HttpApi("http://server.invalid", client=_server(seen))
-    api.create_cv("posting", request_id="abc123", profile=b"{}", candidate_data=b"{}")
+    api.create_cv({}, {"jd.txt": b"posting"}, {}, "abc123")
     assert seen[0].headers["x-request-id"] == "abc123"
 
 
-def test_every_extra_body_goes_as_a_json_field_named_for_its_role():
-    """All of them, with every request: each endpoint reads the roles it has."""
+def test_every_file_is_a_part_named_by_its_path_and_settings_go_as_json():
     seen: list = []
     api = HttpApi("http://server.invalid", client=_server(seen))
-    api.create_cv("posting", request_id="abc123", profile=b"{}", candidate_data=b"{}",
-                  extra_body={"cv": {"temperature": 0.7}, "analysis": {"top_p": 0.5}})
-    assert b'name="cv_extra_body"\r\n\r\n{"temperature": 0.7}' in seen[0].content
-    assert b'name="analysis_extra_body"\r\n\r\n{"top_p": 0.5}' in seen[0].content
+    api.create_cv({"candidate_profile.json": b"{}", "cache/steps/pool.json": b"[]"},
+                  {"jd.txt": b"posting", "steps/key_points.json": b"[]"},
+                  {"pages": 2, "extra_body": {"cv": {"temperature": 0.4}}}, "abc123")
+    body = seen[0].content
+    for part, name in (("pack", "candidate_profile.json"), ("pack", "cache/steps/pool.json"),
+                       ("job", "jd.txt"), ("job", "steps/key_points.json")):
+        assert f'name="{part}"; filename="{name}"'.encode() in body, name
+    settings = body.split(b'name="settings"\r\n\r\n', 1)[1].split(b"\r\n", 1)[0]
+    assert json.loads(settings) == {"pages": 2, "extra_body": {"cv": {"temperature": 0.4}}}
+
+
+def test_no_settings_means_no_settings_part():
+    seen: list = []
+    api = HttpApi("http://server.invalid", client=_server(seen))
+    api.create_cv({}, {"jd.txt": b"posting"}, {}, "abc123")
+    assert b'name="settings"' not in seen[0].content
 
 
 def test_a_reset_has_to_say_all():

@@ -1,105 +1,50 @@
 """Fixtures shared by the server tests.
 
-Nothing here needs an API key, a network or a real model: the pipeline talks
-to a :class:`FakeLLM` — a real selector over a fake transport — that replays
-canned replies and records what it was asked, which is how the prompt-assembly assertions stay honest.
+The server is the protocol and nothing else, so it is tested against a
+:class:`StubPipeline` that records what it was handed and answers with canned
+values: no key, no network, no model, no LaTeX. The real pipeline is tested
+in ``pipeline/tests``, and the two together in ``tests/test_integration.py``.
 """
 
 from __future__ import annotations
 
-import json
-import shutil
+from threading import BoundedSemaphore
 
 import pytest
 
-from cv_server.bundle import CandidateInputs, ResourceBundle, default_bundle
+from cv_server.api.deps import AppState
+from cv_server.api.settings import Settings
 
-from server_helpers import FakeLLM, sample_cv
-
-from server_helpers import EXAMPLE_CANDIDATE, GOLDEN
-
-
-@pytest.fixture(scope="session")
-def bundle() -> ResourceBundle:
-    """The server's own shipped defaults."""
-    return default_bundle()
-
-
-@pytest.fixture(scope="session")
-def candidate_data() -> dict:
-    """The example candidate's contact details: what the template prints."""
-    return json.loads((EXAMPLE_CANDIDATE / "candidate_data.json").read_text())
-
-
-@pytest.fixture(scope="session")
-def candidate(candidate_data) -> CandidateInputs:
-    """The fictional example candidate's set, as a client would post it."""
-    return CandidateInputs(
-        profile=json.loads((EXAMPLE_CANDIDATE / "candidate_profile.json").read_text()),
-        preferences=(EXAMPLE_CANDIDATE / "candidate_preferences.md").read_text(),
-        data=candidate_data,
-    )
-
-
-@pytest.fixture(scope="session")
-def fixture_document() -> dict:
-    """A document whose strings exercise every escaping rule."""
-    raw = json.loads((GOLDEN / "cv_fixture.json").read_text())
-    return {**raw["cv"], **raw["candidate"]}
+from server_helpers import StubPipeline
 
 
 @pytest.fixture
-def sample_document(candidate_data) -> dict:
-    """One flat namespace: what the model wrote, your own data over the top."""
-    return {**sample_cv(), **dict(candidate_data)}
+def stub() -> StubPipeline:
+    return StubPipeline()
 
 
 @pytest.fixture
-def fake_llm() -> FakeLLM:
-    """Every role, fake. Set ``fake_llm[role].replies`` per test."""
-    return FakeLLM()
-
-
-@pytest.fixture
-def app_state(fake_llm, tmp_path, bundle):
-    from threading import BoundedSemaphore
-
-    from cv_server.api.deps import AppState
-    from cv_server.api.settings import Settings
-
-    settings = Settings(work_root=tmp_path, request_budget_seconds=60.0)
+def app_state(stub, tmp_path) -> AppState:
+    settings = Settings(work_root=tmp_path)
     return AppState(
         settings=settings,
-        llm=fake_llm,
-        bundle=bundle,
+        pipeline=stub,
         job_slots=BoundedSemaphore(settings.max_concurrent_jobs),
-        pdflatex=shutil.which("pdflatex") is not None,
     )
 
 
 @pytest.fixture(autouse=True)
 def fast_streams(monkeypatch):
-    """A stream looks for new events every second; the fakes answer at once."""
+    """A stream looks for new events every second; the stub answers at once."""
     monkeypatch.setattr("cv_server.api.routers.cv.FOLLOW_SECONDS", 0.01)
 
 
 @pytest.fixture
 def client(app_state):
-    """A TestClient over the real app, wired to fake models."""
+    """A TestClient over the real app, wired to the stub."""
     from fastapi.testclient import TestClient
 
     from cv_server.api.app import create_app
 
     with TestClient(create_app(state=app_state)) as test_client:
         yield test_client
-
-
-@pytest.fixture
-def parts(candidate, candidate_data) -> dict:
-    """The multipart parts a client always sends, as httpx files."""
-    return {
-        "candidate_profile": ("candidate_profile.json", json.dumps(dict(candidate.profile)),
-                              "application/json"),
-        "candidate_data": ("candidate_data.json", json.dumps(dict(candidate_data)),
-                           "application/json"),
-    }

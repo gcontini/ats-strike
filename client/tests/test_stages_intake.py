@@ -13,9 +13,9 @@ from cv_client.workspace import day
 from conftest import JD_TEXT, ScriptedConfirmer, analysis, make_job
 
 
-def build(api, config, processor, *decisions):
+def build(api, server, processor, *decisions):
     confirmer = ScriptedConfirmer(*decisions)
-    intake = Intake(Calls(api), config, processor, confirmer, processor.console)
+    intake = Intake(Calls(server, api), processor, confirmer, processor.console)
     return intake, confirmer
 
 
@@ -24,8 +24,8 @@ def approval(folder):
 
 
 # --- before a folder exists ---------------------------------------------------------
-def test_junk_never_reaches_the_server(api, config, processor, workspace):
-    intake, confirmer = build(api, config, processor)
+def test_junk_never_reaches_the_server(api, server, processor, workspace):
+    intake, confirmer = build(api, server, processor)
 
     assert intake.take("too short to be a posting", "clipboard") is True
     assert api.calls == [], "the free check has to come first"
@@ -33,10 +33,10 @@ def test_junk_never_reaches_the_server(api, config, processor, workspace):
     assert not any(workspace.working.iterdir())
 
 
-def test_a_posting_the_server_says_no_to_is_not_asked_about(api, config, processor, workspace,
+def test_a_posting_the_server_says_no_to_is_not_asked_about(api, server, processor, workspace,
                                                             capsys):
     api.is_jd = False
-    intake, confirmer = build(api, config, processor)
+    intake, confirmer = build(api, server, processor)
 
     assert intake.take(JD_TEXT, "clipboard") is True
     assert api.calls == ["detect"]
@@ -46,10 +46,10 @@ def test_a_posting_the_server_says_no_to_is_not_asked_about(api, config, process
     assert "[clipboard] ✗ not a job description" in capsys.readouterr().out
 
 
-def test_a_failed_analysis_counts_and_says_which_request(api, config, processor, workspace,
+def test_a_failed_analysis_counts_and_says_which_request(api, server, processor, workspace,
                                                          capsys):
     api.fail_on = "analyze"
-    intake, confirmer = build(api, config, processor)
+    intake, confirmer = build(api, server, processor)
 
     assert intake.take(JD_TEXT, "clipboard") is True
     assert processor.failures == 1, "the exit code says so"
@@ -61,10 +61,10 @@ def test_a_failed_analysis_counts_and_says_which_request(api, config, processor,
 
 
 @pytest.mark.parametrize("where", ["cv", "discarded"])
-def test_a_posting_seen_before_is_not_asked_about(api, config, processor, workspace, capsys,
+def test_a_posting_seen_before_is_not_asked_about(api, server, processor, workspace, capsys,
                                                   where):
     earlier = make_job(getattr(workspace, where) / day())
-    intake, confirmer = build(api, config, processor)
+    intake, confirmer = build(api, server, processor)
 
     assert intake.take(JD_TEXT, "clipboard") is True
     assert confirmer.seen == []
@@ -72,9 +72,9 @@ def test_a_posting_seen_before_is_not_asked_about(api, config, processor, worksp
     assert str(earlier) in capsys.readouterr().out
 
 
-def test_a_posting_whose_cv_is_being_written_is_not_asked_about_twice(api, config, processor,
+def test_a_posting_whose_cv_is_being_written_is_not_asked_about_twice(api, server, processor,
                                                                       capsys):
-    intake, confirmer = build(api, config, processor, Decision(submit=True))
+    intake, confirmer = build(api, server, processor, Decision(submit=True))
     intake.take(JD_TEXT, "clipboard")
     intake.take(JD_TEXT, "clipboard")
 
@@ -84,56 +84,56 @@ def test_a_posting_whose_cv_is_being_written_is_not_asked_about_twice(api, confi
 
 # --- the question -------------------------------------------------------------------
 @pytest.mark.parametrize("should_apply", ["YES", "CHECK", "NO"])
-def test_you_are_asked_whatever_should_apply_says(api, config, processor, should_apply):
+def test_you_are_asked_whatever_should_apply_says(api, server, processor, should_apply):
     api.analysis = analysis(should_apply=should_apply)
-    intake, confirmer = build(api, config, processor, Decision(submit=False))
+    intake, confirmer = build(api, server, processor, Decision(submit=False))
     intake.take(JD_TEXT, "clipboard")
     assert [a.should_apply for a in confirmer.seen] == [should_apply]
 
 
-def test_yes_queues_its_cv_and_keeps_your_answer(api, config, processor, workspace):
-    intake, _ = build(api, config, processor, Decision(submit=True))
+def test_yes_queues_its_cv_and_keeps_your_answer(api, server, processor, workspace):
+    intake, _ = build(api, server, processor, Decision(submit=True))
 
     assert intake.take(JD_TEXT, "clipboard") is True
     [folder] = workspace.working_jobs()
     assert approval(folder) == "APPROVED"
     assert (folder / "jd.txt").read_text() == JD_TEXT
-    assert processor.generations.get_nowait() == folder
+    assert processor.generations["v11"].get_nowait() == folder
     assert api.calls == ["detect", "analyze"], "the CV is the CV writer's to write"
     log = (folder / "log.log").read_text()
     assert "analyzing the posting" in log and "queued for its CV" in log
 
 
-def test_a_pasted_url_is_stored_in_the_analysis(api, config, processor, workspace):
-    intake, _ = build(api, config, processor,
+def test_a_pasted_url_is_stored_in_the_analysis(api, server, processor, workspace):
+    intake, _ = build(api, server, processor,
                       Decision(submit=True, url="https://jobs.example/42"))
     intake.take(JD_TEXT, "clipboard")
     [folder] = workspace.working_jobs()
     assert read_analysis(folder).posting_url == "https://jobs.example/42"
 
 
-def test_saying_no_files_it_under_discarded(api, config, processor, workspace):
-    intake, _ = build(api, config, processor, Decision(submit=False))
+def test_saying_no_files_it_under_discarded(api, server, processor, workspace):
+    intake, _ = build(api, server, processor, Decision(submit=False))
 
     assert intake.take(JD_TEXT, "clipboard") is True
     [folder] = workspace.discarded.glob("*/Acme_Corp_Head_of_IT")
     assert (folder / "analysis.json").is_file(), "the analysis is kept, it was paid for"
     assert approval(folder) == "DISCARDED"
-    assert processor.generations.empty()
+    assert processor.generations["v11"].empty()
     assert api.calls == ["detect", "analyze"], "nothing expensive ran"
 
 
-def test_quitting_leaves_it_waiting_for_the_next_start(api, config, processor, workspace):
-    intake, _ = build(api, config, processor, Decision(submit=False, quit=True))
+def test_quitting_leaves_it_waiting_for_the_next_start(api, server, processor, workspace):
+    intake, _ = build(api, server, processor, Decision(submit=False, quit=True))
 
     assert intake.take(JD_TEXT, "clipboard") is False
     [folder] = workspace.working_jobs()
     assert approval(folder) == "PENDING"
-    assert processor.generations.empty()
+    assert processor.generations["v11"].empty()
     assert not any(workspace.discarded.iterdir()), "quitting is not a no"
 
 
-def test_the_question_holds_back_the_background_lines(api, config, processor, console, capsys):
+def test_the_question_holds_back_the_background_lines(api, server, processor, console, capsys):
     """A line from the CV thread must not scroll the analysis off the screen."""
 
     class Interrupted:
@@ -142,15 +142,15 @@ def test_the_question_holds_back_the_background_lines(api, config, processor, co
             print("the question")
             return Decision(submit=False)
 
-    Intake(Calls(api), config, processor, Interrupted(), console).take(JD_TEXT, "clipboard")
+    Intake(Calls(server, api), processor, Interrupted(), console).take(JD_TEXT, "clipboard")
 
     out = capsys.readouterr().out
     assert out.index("the question") < out.index("a line from the CV thread")
 
 
 # --- an analysis you already have ------------------------------------------------------
-def test_a_given_analysis_skips_detection_and_analysis(api, config, processor, workspace):
-    intake, confirmer = build(api, config, processor, Decision(submit=True))
+def test_a_given_analysis_skips_detection_and_analysis(api, server, processor, workspace):
+    intake, confirmer = build(api, server, processor, Decision(submit=True))
 
     intake.take(JD_TEXT, "posting.txt", analysis=analysis(match_percentage=64))
 
@@ -161,20 +161,20 @@ def test_a_given_analysis_skips_detection_and_analysis(api, config, processor, w
 
 
 # --- a leftover ------------------------------------------------------------------------
-def test_a_leftover_is_asked_about_like_a_new_posting(api, config, processor, workspace):
+def test_a_leftover_is_asked_about_like_a_new_posting(api, server, processor, workspace):
     folder = make_job(workspace.working, approval="PENDING")
-    intake, confirmer = build(api, config, processor, Decision(submit=True))
+    intake, confirmer = build(api, server, processor, Decision(submit=True))
 
     assert intake.review(folder) is True
     assert len(confirmer.seen) == 1
-    assert processor.generations.get_nowait() == folder
+    assert processor.generations["v11"].get_nowait() == folder
     assert api.calls == []
 
 
-def test_a_leftover_that_cannot_be_read_is_filed_with_why(api, config, processor, workspace):
+def test_a_leftover_that_cannot_be_read_is_filed_with_why(api, server, processor, workspace):
     folder = make_job(workspace.working, approval="PENDING")
     (folder / "analysis.json").write_text("{}")
-    intake, confirmer = build(api, config, processor)
+    intake, confirmer = build(api, server, processor)
 
     assert intake.review(folder) is True
     assert confirmer.seen == []
@@ -182,7 +182,7 @@ def test_a_leftover_that_cannot_be_read_is_filed_with_why(api, config, processor
     assert "cannot be shown any more" in (failed / "log.log").read_text()
 
 
-def test_a_leftover_gone_meanwhile_is_skipped(api, config, processor, workspace):
-    intake, confirmer = build(api, config, processor)
+def test_a_leftover_gone_meanwhile_is_skipped(api, server, processor, workspace):
+    intake, confirmer = build(api, server, processor)
     assert intake.review(workspace.working / "gone") is True
     assert confirmer.seen == []

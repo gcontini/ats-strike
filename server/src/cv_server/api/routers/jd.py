@@ -2,82 +2,63 @@
 
 from __future__ import annotations
 
-from typing import Optional
+import logging
+from typing import List, Optional
 
-from fastapi import APIRouter, File, Form, Request, UploadFile
-from cv_contracts import Envelope, JDAnalysis, JDDetection
+from cv_contracts import Analysed, Detection, Envelope, static_jd_guess
+from fastapi import APIRouter, Request, UploadFile
 
-from ...bundle import CandidateInputs
-from ...pipeline.jd_validator import JDValidator
 from ..deps import envelope_of, execute, get_state
-from ..multipart import extra_bodies, json_part, text_part
+from ..errors import MissingPart
+from ..multipart import JOB, PACK, SETTINGS, read_request
+
+logger = logging.getLogger("cv_server.jd")
 
 router = APIRouter()
 
 
-@router.post("/jd/detect", response_model=Envelope[JDDetection], response_model_exclude_none=True)
+@router.post("/jd/detect", response_model=Envelope[Detection], response_model_exclude_none=True)
 async def detect_jd(
     request: Request,
-    jd: Optional[UploadFile] = File(None, description="The text to check, as a file"),
-    jd_text: Optional[str] = Form(None, description="The text to check, as a field"),
+    pack: List[UploadFile] = PACK,
+    job: List[UploadFile] = JOB,
+    settings: Optional[str] = SETTINGS,
 ) -> dict:
-    """Is this text a job posting? Static checks first, one model call second."""
+    """Is the job's ``jd.txt`` a job posting? Static checks first, one model call second.
+
+    The caller gets a yes or a no; why is in this request's log, which also
+    records whether the model was asked at all (it is not, when the structural
+    checks already say no — that is the point of having them).
+    """
     state = get_state(request)
-    text = await text_part(
-        jd, jd_text, name="jd", max_bytes=state.settings.max_part_bytes, required=True
-    )
-    validator = JDValidator(
-        state.llm,
-        min_chars=state.settings.jd_min_chars,
-        max_chars=state.settings.jd_max_chars,
-    )
+    parts = await read_request(pack, job, settings, max_bytes=state.settings.max_part_bytes)
+    if "jd.txt" not in parts.job:
+        raise MissingPart("job file 'jd.txt' is required")
+    text = parts.job["jd.txt"].decode("utf-8", errors="replace")
 
-    def job() -> JDDetection:
-        return validator.detect(text)
+    if not static_jd_guess(
+        text, min_chars=state.settings.jd_min_chars, max_chars=state.settings.jd_max_chars
+    ):
+        logger.info("  ✗ not a job description (%d chars, no model call)", len(text))
+        return envelope_of(Detection(is_job_description=False))
 
-    return envelope_of(await execute(state, job))
+    verdict, _ = await execute(state, lambda sink: state.pipeline.detect(text))
+    return envelope_of(Detection(is_job_description=verdict))
 
 
-@router.post("/jd/analysis", response_model=Envelope[JDAnalysis], response_model_exclude_none=True)
+@router.post("/jd/analysis", response_model=Envelope[Analysed], response_model_exclude_none=True)
 async def analyze_jd(
     request: Request,
-    jd: Optional[UploadFile] = File(None, description="The job description, as a file"),
-    jd_text: Optional[str] = Form(None, description="The job description, as a field"),
-    candidate_profile: Optional[UploadFile] = File(
-        None, description="candidate_profile.json — the match score is against this"
-    ),
-    pers_preferences: Optional[UploadFile] = File(
-        None, description="candidate_preferences.md — scored into pers_preference_score"
-    ),
-    pers_preferences_text: Optional[str] = Form(None, description="…or the same as a field"),
-    sys_prompt_analysis: Optional[UploadFile] = File(
-        None, description="Override the analysis prompt"
-    ),
-    analysis_extra_body: Optional[str] = Form(
-        None, description="JSON object: the analysis model's settings, instead of models.toml's"
-    ),
+    pack: List[UploadFile] = PACK,
+    job: List[UploadFile] = JOB,
+    settings: Optional[str] = SETTINGS,
 ) -> dict:
     """Score a posting against the profile and extract its facts."""
     state = get_state(request)
-    limit = state.settings.max_part_bytes
+    parts = await read_request(pack, job, settings, max_bytes=state.settings.max_part_bytes)
 
-    text = await text_part(jd, jd_text, name="jd", max_bytes=limit, required=True)
-    profile = await json_part(
-        candidate_profile, name="candidate_profile", max_bytes=limit, required=True
-    )
-    preferences = await text_part(
-        pers_preferences, pers_preferences_text, name="pers_preferences",
-        max_bytes=limit, required=True,
-    )
-    candidate = CandidateInputs(profile=profile, preferences=preferences)
-    prompt = await text_part(sys_prompt_analysis, name="sys_prompt_analysis", max_bytes=limit)
-    llm = state.llm.with_extra_body(
-        await extra_bodies({"analysis": analysis_extra_body}, max_bytes=limit)
-    )
+    def analyze(sink) -> dict:
+        return state.pipeline.analyze(parts.pack, parts.job, parts.settings)
 
-    validator = JDValidator(llm)
-
-    def job() -> JDAnalysis:
-        return validator.analyze(text, candidate, prompt)
-
-    return envelope_of(await execute(state, job))
+    analysis, items = await execute(state, analyze)
+    return envelope_of(Analysed(analysis=analysis, items=items))

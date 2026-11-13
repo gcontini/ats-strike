@@ -138,11 +138,15 @@ jobs:
           printf '%s\n' \
             '\documentclass{article}' \
             '\begin{document}Hello from CI.\end{document}' > smoke.tex
+          # A data folder holding one server folder, the default.
+          mkdir -p smoke/local
+          printf 'servers = ["local"]\n' > smoke/cv.toml
+          printf 'url = "http://localhost:8080"\n' > smoke/local/server.toml
           # No model is reachable here, and render needs none: this is
           # multipart in, envelope out, pdflatex, base64 back, PDF on disk.
-          ./dist/cv -v --server http://localhost:8080 render smoke.tex
+          ./dist/cv -v --data-dir smoke render smoke.tex
           head -c 4 smoke.pdf | grep -q '%PDF'
-          rm -f smoke.tex smoke.pdf
+          rm -rf smoke smoke.tex smoke.pdf
         shell: bash
 
       - uses: actions/upload-artifact@v7

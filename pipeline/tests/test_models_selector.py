@@ -3,14 +3,14 @@
 import httpx
 import openai
 import pytest
-from cv_contracts import JDAnalysis, JDDetection
+from cv_pipeline.schemas import JDAnalysis, JDDetection
 
-from cv_server.models import ATTEMPTS, Usage
-from cv_server.observability import stage
-from cv_server.pipeline.cv_review import ReplaceInDuties
-from cv_server.pipeline.errors import ModelOutputError
+from cv_pipeline.models import ATTEMPTS, Usage
+from cv_pipeline.observability import stage
+from cv_pipeline.cv_review import ReplaceInDuties
+from cv_pipeline.errors import ModelOutputError
 
-from server_helpers import FakeLLM, tool_completion
+from pipeline_helpers import FakeLLM, tool_completion
 
 USER = [{"role": "user", "content": "the text"}]
 

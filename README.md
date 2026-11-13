@@ -68,20 +68,28 @@ environment table. `curl localhost:8080/healthz` should report `pdflatex: true`.
 
 **2. Download the client** — a single executable, no Python required, from the
 [releases page](https://github.com/gcontini/ats-strike/releases): pick
-`ats-strike-linux-x86_64` or `ats-strike-windows-x86_64`, unpack it, and put your
-own `candidate_profile.json` and `candidate_data.json` beside it (start from
-the fictional set in the download's `examples/candidate/`).
+`ats-strike-linux-x86_64` or `ats-strike-windows-x86_64` and unpack it. Your
+files live in a *server folder* beside it — `v11/`, say — holding your
+`candidate_profile.json`, `candidate_data.json` and `candidate_preferences.md`
+(start from the fictional set in `examples/candidate/`) and a `server.toml`
+saying where that server is; a `cv.toml` lists the folder:
+
+```toml
+# cv.toml                      # v11/server.toml
+servers = ["v11"]              url = "http://localhost:8080"
+```
 
 ```bash
-./cv --server http://localhost:8080 clipboard --out ~/applications
+./cv clipboard --out ~/applications
 ```
 
 Copy a job posting to your clipboard; ats-strike checks it, shows you the
 analysis, and on confirmation writes the CV into
 `~/applications/CV/<day>/<Company>_<Title>/`. `watch` and `submit` work the
-same way against files instead of the clipboard —
-[`client/README.md`](client/README.md) covers all three modes, configuration,
-and the output layout.
+same way against files instead of the clipboard. List a second server folder
+and `--server_ver v11 --server_ver v05` writes one CV with each, side by side,
+into the same job folder — [`client/README.md`](client/README.md) covers the
+modes, configuration, and the output layout.
 
 ## Architecture
 
@@ -105,7 +113,7 @@ flowchart LR
     class LLM,JE,LATEX,DOC code;
 ```
 
-You can download `"tailored CV data.json"` and `cv.tex` toghether with the final pdf, in case you want to modify something manually and resubmit them for rendering via the client.
+You get `cv.json` (the "tailored CV data") and `cv.tex` together with the final pdf, in the server's subfolder of the job folder, in case you want to modify something manually and resubmit them for rendering via the client.
 
 Package boundaries, what crosses the wire, and the async job model are in
 [doc/architecture.md](doc/architecture.md).

@@ -19,7 +19,11 @@ from cv_client.stages.working import WorkingProcessor
 from cv_client.tracking import build_tracker
 from cv_client.ui import Decision
 
-from conftest import JD_TEXT, FakeApi, ScriptedConfirmer, analysis, envelope, make_job, typed
+from cv_contracts import Analysed
+
+from conftest import (
+    JD_TEXT, FakeApi, ScriptedConfirmer, analysis, calls_for, envelope, make_job, typed,
+)
 
 DEADLINE = 10.0
 
@@ -44,9 +48,11 @@ class ByFirstLine(FakeApi):
     """Analyses each posting by its first line: the company. Always YES —
     which clipboard asks about anyway."""
 
-    def analyze(self, text, *, profile, preferences, prompt=None, extra_body=None):
+    def analyze(self, pack, job, settings):
         self._record("analyze")
-        return envelope(analysis(company_name=text.split("\n", 1)[0], should_apply="YES"))
+        company = job["jd.txt"].decode().split("\n", 1)[0]
+        return envelope(Analysed(analysis=analysis(company_name=company,
+                                                   should_apply="YES").model_dump()))
 
 
 class Slow(ByFirstLine):
@@ -57,7 +63,7 @@ class Slow(ByFirstLine):
         self.writing = threading.Event()
         self.release = threading.Event()
 
-    def events(self, request_id, *, after=0):
+    def events(self, request_id, after=0):
         self.writing.set()
         assert self.release.wait(DEADLINE), "never released"
         yield from super().events(request_id, after=after)
@@ -69,13 +75,14 @@ def posting(company):
 
 def build(api, config, workspace, keyboard, confirmer, clipboard):
     console = Console()
-    calls = Calls(api)
+    calls = calls_for(config, {"v11": api})
     writer = CvWriter(calls, config)
     working = WorkingProcessor(workspace, writer, build_tracker(workspace.root, True), console)
-    listener = Listener(clipboard, Intake(calls, config, working, confirmer, console),
+    listener = Listener(clipboard, Intake(calls["v11"], working, confirmer, console),
                         working, keyboard, console, poll_seconds=0.01)
     return Watcher(working, listener.run,
-                   {"cv": GenerationWorker(working, writer, console, poll_seconds=0.01)},
+                   {"cv": GenerationWorker(working, writer, console, config.default,
+                                           poll_seconds=0.01)},
                    keyboard, console, join_seconds=0.01)
 
 
@@ -203,26 +210,26 @@ def test_a_failed_analysis_makes_the_exit_code_1(config, workspace, typist):
 
 
 # --- the listener on its own ---------------------------------------------------------
-def listener(workspace, keyboard, *, assume_yes=False):
+def listener(workspace, keyboard, server, *, assume_yes=False):
     console = Console()
     working = WorkingProcessor(workspace, None, build_tracker(workspace.root, False), console)
-    intake = Intake(Calls(FakeApi()), None, working, ScriptedConfirmer(), console)
+    intake = Intake(Calls(server, FakeApi()), working, ScriptedConfirmer(), console)
     return Listener(Clipboard(), intake, working, keyboard, console, assume_yes=assume_yes,
                     poll_seconds=0.01)
 
 
-def test_the_end_of_input_stops_it(workspace):
-    done = threading.Thread(target=listener(workspace, typed()).run, args=(threading.Event(),),
-                            daemon=True)
+def test_the_end_of_input_stops_it(workspace, server):
+    done = threading.Thread(target=listener(workspace, typed(), server).run,
+                            args=(threading.Event(),), daemon=True)
     done.start()
     done.join(DEADLINE)
     assert not done.is_alive(), "nobody is left to answer"
 
 
-def test_with_yes_the_end_of_input_does_not(workspace):
+def test_with_yes_the_end_of_input_does_not(workspace, server):
     """An unattended run may have no keyboard at all."""
     stop = threading.Event()
-    running = threading.Thread(target=listener(workspace, typed(), assume_yes=True).run,
+    running = threading.Thread(target=listener(workspace, typed(), server, assume_yes=True).run,
                                args=(stop,), daemon=True)
     running.start()
     time.sleep(0.1)
@@ -232,6 +239,6 @@ def test_with_yes_the_end_of_input_does_not(workspace):
     assert not running.is_alive()
 
 
-def test_anything_but_q_gets_a_hint(workspace, capsys):
-    listener(workspace, typed("hello", "q")).run(threading.Event())
+def test_anything_but_q_gets_a_hint(workspace, server, capsys):
+    listener(workspace, typed("hello", "q"), server).run(threading.Event())
     assert IDLE_HINT in capsys.readouterr().out

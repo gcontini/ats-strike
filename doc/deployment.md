@@ -24,8 +24,12 @@ Splitting along that line is what makes each half simple:
   live in one image you did not have to reproduce on Windows.
 - **Each half changes on its own.** The wire format is a third package both
   import; `tests/test_architecture.py` fails the build if either side imports
-  the other. A new client mode touches no server code, and a new model role
-  touches no client code.
+  the other. A new client mode touches no server code, and a new model role,
+  prompt, step or setting touches no client code: the client sends a server
+  folder's files and its `[settings]` without reading them.
+- **One client, several servers.** The protocol knows no pipeline, so the same
+  client talks to a 0.5, a 1.x and a 2.0 server — side by side on one posting,
+  each from its own server folder.
 
 ```mermaid
 flowchart LR
@@ -33,12 +37,12 @@ flowchart LR
         D["your data<br/><i>never uploaded, only sent</i>"]
     end
     subgraph w["contracts"]
-        P["Envelope · CVStatus · RenderedCV<br/>JDAnalysis · static_jd_guess"]
+        P["Envelope · StoreItem · Status · Done<br/>ServerStatus · Analysed · static_jd_guess"]
     end
     subgraph s["server — a container"]
         K["MODEL_API_KEY<br/>prompts · template · pdflatex"]
     end
-    c -->|"multipart"| s
+    c -->|"multipart: pack · job · settings"| s
     s -->|"JSON"| c
     c -.->|imports| w
     s -.->|imports| w
@@ -60,14 +64,14 @@ flowchart TB
 ```
 
 **1 — Both local.** The default. `docker run -p 8080:8080` and
-`server_url = "http://localhost:8080"`. No token needed: nothing but your own
+`url = "http://localhost:8080"` in the server folder's `server.toml`. No token needed: nothing but your own
 machine can reach it. This is also the cheapest way to try a different model —
 the container restarts in a second.
 
 **2 — Server on a machine you own.** A NAS, a home server, a spare box. Set
 `ATS_API_TOKEN` even here: without it, anyone on the network can spend
-your provider credit. Point every client at it with `server_url` in
-`cv.toml`.
+your provider credit. Point every client at it with `url` in its server
+folder's `server.toml`.
 
 **3 — Server on a cloud platform.** Works as-is: the image runs as any uid,
 needs no volume, tolerates a read-only root filesystem, and answers `/healthz`
@@ -92,30 +96,39 @@ for the platform probe without a token. Three things to get right:
 
 ## What the client needs to know
 
-Exactly three things, and only the first is required:
+A server folder's `server.toml` says it, and only `url` is required:
 
 ```toml
-server_url = "https://ats-strike.example.run.app"
-token      = "the-bearer-token"
-timeout    = 1800          # how long to follow one CV job
+url     = "https://ats-strike.example.run.app"
+token   = "the-bearer-token"
+timeout = 1800             # how long to follow one CV job
+
+[settings]                 # forwarded untouched; its meaning is the server's
+pages = 2
 ```
 
-or `--server`/`--token`, or `ATS_API_URL`/`ATS_API_TOKEN`. That is
-the entire coupling. Everything else the client sends is content.
+That, and the protocol number `/healthz` reports, is the entire coupling.
+Everything else the client sends is content. To run a second server version
+beside the first, give it a folder of its own and list both in `cv.toml`
+(see [the client guide](client.md#several-servers)).
 
 ## Keeping the boundary honest
 
 If you change either half, these are the rules that keep them separable — they
 are also what the test suite checks:
 
-- `client → contracts ← server`. Neither side imports the other.
+- `client → contracts ← server → pipeline`. The client and the server never
+  import each other; the pipeline imports none of the others, and the server
+  only its top level.
 - The contracts package imports pydantic and nothing else. It is loaded by a
   web server *and* by a frozen executable, and has to stay cheap in both.
 - No server-side dependency reaches the client: no `openai`, no `jinja2`, no
   `pypdf`, no `fastapi`. `subprocess` is allowed in exactly one file — the
   clipboard helper probe.
 - Anything new on the wire goes in `contracts/`, not in a client-side model
-  that happens to match.
+  that happens to match — and nothing pipeline-specific goes on the wire at
+  all: a new step, artifact or setting is a file to store or a key in
+  `[settings]`.
 
 ## Should the repository be split too?
 
@@ -130,7 +143,7 @@ Keeping one repository is the better trade today:
   buy nothing a directory boundary does not already give.
 - A wire change currently lands as one commit that updates both sides and one
   test run that proves they still agree — `tests/test_integration.py` drives
-  the real client against the real server app in-process. Split, that becomes
+  the real client against two real server apps in-process. Split, that becomes
   a release dance across three repositories.
 - Both halves are small. The reason to split a repository is that two teams
   keep colliding in it; nothing here collides.

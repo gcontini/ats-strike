@@ -33,7 +33,7 @@ a = Analysis(
     # and excluding them keeps the binary small if one is ever pulled in
     # transitively.
     excludes=["fastapi", "uvicorn", "starlette", "openai", "jinja2", "pypdf",
-              "cv_server", "tkinter", "pytest"],
+              "cv_server", "cv_pipeline", "tkinter", "pytest"],
     noarchive=False,
 )
 pyz = PYZ(a.pure)

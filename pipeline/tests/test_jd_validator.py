@@ -5,9 +5,9 @@ import json
 import pytest
 from pydantic import ValidationError
 
-from cv_contracts import JDAnalysis
-from cv_server.pipeline.jd_validator import JDValidator
-from server_helpers import FakeLLM
+from cv_pipeline.schemas import JDAnalysis
+from cv_pipeline.jd_validator import JDValidator
+from pipeline_helpers import FakeLLM
 
 VALID = {
     "match_percentage": 82,

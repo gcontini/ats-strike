@@ -6,11 +6,10 @@ import threading
 
 import pytest
 
-from cv_client.stages.calls import Calls
 from cv_client.stages.inbox import InputProcessor
 from cv_client.workspace import day
 
-from conftest import JD_TEXT, analysis, make_job
+from conftest import JD_TEXT, LOG_LINE, analysis, make_job
 
 
 @pytest.fixture
@@ -21,9 +20,8 @@ def inbox(tmp_path):
 
 
 @pytest.fixture
-def reader(inbox, api, config, processor, console):
-    return InputProcessor(inbox, Calls(api), config, processor, console,
-                          poll_seconds=0, settle_seconds=0)
+def reader(inbox, calls, processor, console):
+    return InputProcessor(inbox, calls, processor, console, poll_seconds=0, settle_seconds=0)
 
 
 def scan(reader, stop=None):
@@ -43,9 +41,12 @@ def test_a_posting_is_analysed_handed_over_then_deleted(reader, inbox, workspace
     scan(reader)
 
     assert api.calls == ["detect", "analyze"]
+    assert api.seen_job == {"jd.txt": JD_TEXT.encode()}
+    assert "candidate_preferences.md" in api.seen_pack
     [folder] = workspace.working_jobs()
     assert (folder / "jd.txt").read_text() == JD_TEXT
     assert processor.approvals.get_nowait() == folder, "the fake's analysis says CHECK"
+    assert f"  v11 {LOG_LINE}" in (folder / "log.log").read_text(), "the analysis' own log"
     assert not any(inbox.iterdir())
 
 
@@ -157,7 +158,7 @@ def test_an_analysed_folder_is_handed_over_whole_then_removed(reader, inbox, wor
 
     assert api.calls == [], "already analysed"
     [folder] = workspace.working_jobs()
-    assert processor.generations.get_nowait() == folder
+    assert processor.generations["v11"].get_nowait() == folder
     assert (folder / "log.log").read_text().startswith("an earlier run")
     assert not any(inbox.iterdir())
 

@@ -2,17 +2,19 @@
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 from cv_client.stages.jobfolder import (
     APPROVAL_FILENAME,
     classify,
+    read_analysis,
     read_approval,
-    render_source,
     route,
+    write_analysis,
     write_approval,
 )
-from cv_client.workspace import STEPS_DIRNAME
 
 from conftest import analysis
 
@@ -26,23 +28,19 @@ JOB = {"jd.txt", "analysis.json", "log.log"}
         ({"analysis.json"}, "YES", None, "error"),
         ({"jd.txt"}, None, None, "error"),
         ({"analysis.json", "cv_Jordan_Rivera.json"}, "YES", "APPROVED", "error"),
-        # 2. a CV to re-render wins over everything below it
-        (JOB | {"cv_Jordan_Rivera.json"}, "CHECK", None, "render"),
-        (JOB | {"cv_Jordan_Rivera.tex"}, "NO", None, "render"),
-        (JOB | {"cv_Jordan_Rivera.json"}, "CHECK", "DISCARDED", "render"),
-        (JOB | {"notes.JSON"}, "CHECK", None, "render"),
-        # 3. nobody has decided yet: should_apply decides
+        # 2. nobody has decided yet: should_apply decides, whatever CV it holds
         (JOB, "YES", None, "generate"),
         (JOB, "CHECK", None, "approve"),
         (JOB, "NO", None, "discard"),
-        # 4-5. you decided
+        (JOB | {"cv_jordan_rivera_head_of_it.pdf"}, "YES", None, "generate"),
+        # 3-4. you decided
         (JOB | {APPROVAL_FILENAME}, "CHECK", "APPROVED", "generate"),
         (JOB | {APPROVAL_FILENAME}, "CHECK", "DISCARDED", "discard"),
         (JOB | {APPROVAL_FILENAME}, "CHECK", " approved\n", "generate"),
-        # 6. asked and not answered yet: asked again, whatever should_apply says
+        # 5. asked and not answered yet: asked again, whatever should_apply says
         (JOB | {APPROVAL_FILENAME}, "YES", "PENDING\n", "approve"),
         (JOB | {APPROVAL_FILENAME}, "NO", "PENDING", "approve"),
-        # 7. anything else in approval_status.txt
+        # 6. anything else in approval_status.txt
         (JOB | {APPROVAL_FILENAME}, "YES", "maybe", "error"),
         (JOB | {APPROVAL_FILENAME}, "YES", "", "error"),
     ],
@@ -52,10 +50,6 @@ def test_the_routing_table(names, should_apply, approval, expected):
     where, why = route(names, parsed, approval)
     assert where == expected, why
     assert why, "every route says why"
-
-
-def test_analysis_json_alone_is_not_a_cv_to_render():
-    assert route(JOB, analysis(should_apply="YES"), None)[0] == "generate"
 
 
 def job_folder(tmp_path, **files):
@@ -82,14 +76,13 @@ def test_an_analysis_that_does_not_validate_is_an_error_that_says_so(tmp_path):
     assert "analysis.json is not valid" in why
 
 
-def test_a_cv_that_failed_half_way_is_written_again_not_rendered(tmp_path):
-    """The steps it finished are JSON, but under steps/: not a CV to render."""
+def test_a_folder_holding_its_cv_is_written_like_any_other(tmp_path):
+    """Each server is sent what it stored, and renders it: not the client's call."""
     folder = job_folder(tmp_path, jd__txt="a posting",
                         analysis__json=analysis(should_apply="YES").model_dump_json())
-    (folder / STEPS_DIRNAME).mkdir()
-    (folder / STEPS_DIRNAME / "key_points.json").write_text("[]")
+    (folder / "v11").mkdir()
+    (folder / "v11" / "cv.json").write_text("{}")
     assert classify(folder)[0] == "generate"
-    assert render_source(folder) is None
 
 
 def test_a_folder_holding_only_a_subfolder_is_an_error(tmp_path):
@@ -98,11 +91,15 @@ def test_a_folder_holding_only_a_subfolder_is_an_error(tmp_path):
     assert classify(folder)[0] == "error"
 
 
-def test_the_document_is_rendered_before_the_tex(tmp_path):
-    folder = job_folder(tmp_path, jd__txt="x", analysis__json="{}",
-                        cv_Jordan_Rivera__tex="tex", cv_Jordan_Rivera__json="{}")
-    assert render_source(folder).name == "cv_Jordan_Rivera.json"
-    (folder / "cv_Jordan_Rivera.json").unlink()
-    assert render_source(folder).name == "cv_Jordan_Rivera.tex"
-    (folder / "cv_Jordan_Rivera.tex").unlink()
-    assert render_source(folder) is None
+def test_an_analysis_keeps_what_the_client_does_not_know_and_adds_nothing(tmp_path):
+    """Another server's analysis has its own fields; writing it back loses none."""
+    folder = job_folder(tmp_path, analysis__json=json.dumps({
+        "job_title": "Head of IT", "company_name": "Acme", "should_apply": "YES",
+        "company_evaluation": "a 0.5 field"}))
+    parsed = read_analysis(folder)
+    parsed.posting_url = "https://jobs.example/1"
+    write_analysis(folder, parsed)
+
+    assert json.loads((folder / "analysis.json").read_text()) == {
+        "job_title": "Head of IT", "company_name": "Acme", "should_apply": "YES",
+        "company_evaluation": "a 0.5 field", "posting_url": "https://jobs.example/1"}

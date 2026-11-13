@@ -4,8 +4,9 @@
 !.env.example
 *.pem
 *.key
-# The client's own configuration: it holds a bearer token.
+# The client's configuration: a server folder's server.toml holds a bearer token.
 cv.toml
+server.toml
 
 # --- Your data --------------------------------------------------------------
 # The fictional set in examples/candidate/ is committed; yours is not. Keep
@@ -17,7 +18,6 @@ cv.toml
 
 # --- Output -----------------------------------------------------------------
 # Anything a run produced: CVs, spreadsheets, scratch folders.
-/applications/
 /out/
 /examples/out
 ats-strike-data

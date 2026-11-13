@@ -1,17 +1,20 @@
-"""``cv version`` — this build, and whether the server is one it can talk to.
+"""``cv version`` — this build, and whether each server is one it can talk to.
 
 The client's own version is printed before anything else is read, so a broken
-``cv.toml`` or a server that is down never stops that answer. The server is
-then asked once; only a major version the client would refuse to talk to is a
-failure, because that is the one thing the check can prove.
+configuration or a server that is down never stops that answer. Each server —
+the ``--server_ver`` ones, else the default — is then asked once; only one
+that speaks another protocol is a failure, because that is the one thing the
+check can prove.
 """
 
 from __future__ import annotations
 
 from typing import Optional
 
+from cv_contracts import PROTOCOL
+
 from .. import __version__
-from ..api import CVError, HttpApi, version_compat
+from ..api import CVError, HttpApi
 from ..config import Config
 
 
@@ -21,17 +24,17 @@ def run(config: Optional[Config], not_checked: str = "") -> int:
         print(f"server: not checked ({not_checked})")
         return 0
 
-    try:
-        server_version = HttpApi(config.server_url, token=config.token).status().data.version
-    except CVError as exc:
-        print(f"server: not checked ({exc})")
-        return 0
-
-    compat = version_compat(__version__, server_version)
-    verdict = {
-        "ok": "matches this client",
-        "warn": "minor versions differ, it works",
-        "stop": "major versions differ, this client refuses to talk to it",
-    }[compat]
-    print(f"server: v{server_version} at {config.server_url} — {verdict}")
-    return 1 if compat == "stop" else 0
+    refused = 0
+    for server in config.targets:
+        try:
+            status = HttpApi(server.url, token=server.token).status().data
+        except CVError as exc:
+            print(f"server {server.name}: not checked ({exc})")
+            continue
+        if status.protocol == PROTOCOL:
+            verdict = "speaks this client's protocol"
+        else:
+            verdict = f"speaks protocol {status.protocol}, this client refuses to talk to it"
+            refused += 1
+        print(f"server {server.name}: v{status.version} at {server.url} — {verdict}")
+    return 1 if refused else 0

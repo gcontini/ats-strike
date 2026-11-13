@@ -3,163 +3,106 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 
-import pytest
-from cv_contracts import JDAnalysis, static_jd_guess
+from cv_contracts import Analysed, static_jd_guess
 
-from cv_server.models import ATTEMPTS
-
-ANALYSIS = {
-    "match_percentage": 82, "match_rationale": "Strong overlap.",
-    "job_title": "Head of IT", "work_location": "Milan, Italy", "work_mode": "hybrid",
-    "expected_salary": "EUR 60k-80k", "max_salary": 80000,
-    "hard_skills": ["AWS", "Kubernetes", "ITIL", "Budgets", "Extra one"],
-    "soft_skills": ["Communication"], "company_name": "Acme Corp",
-    "posting_url": None, "gaps": "No SAP.", "pers_preferences": "Hybrid is fine.",
-    "pers_preference_score": 1.5,
-    "should_apply": "YES", "should_apply_reason": "Salary meets the threshold, strong match.",
-}
+from server_helpers import POSTING, Failing, a_job, files, logs
 
 
-def jd_parts(candidate, **extra):
-    return {
-        "candidate_profile": ("p.json", json.dumps(dict(candidate.profile)), "application/json"),
-        "pers_preferences": ("prefs.md", candidate.preferences, "text/markdown"),
-        **extra,
-    }
+def detect(client, text):
+    return client.post("/v1/jd/detect", files=files(job={"jd.txt": text}))
 
 
-def test_detect_rejects_short_text_without_calling_the_model(client, fake_llm):
-    body = client.post("/v1/jd/detect", data={"jd_text": "too short"}).json()
-
+def test_detect_rejects_short_text_without_calling_the_pipeline(client, stub):
+    body = detect(client, "too short").json()
     assert body["data"] == {"is_job_description": False}
-    assert fake_llm["detect"].calls == [], "the free check must come first"
+    assert stub.calls == [], "the free check must come first"
 
 
-def test_detect_asks_the_model_when_the_text_is_plausible(client, fake_llm):
-    fake_llm["detect"].replies = ["YES"]
-    text = "Job posting. " * 120
-    assert static_jd_guess(text)
-
-    body = client.post("/v1/jd/detect", data={"jd_text": text}).json()
-
-    assert body["data"]["is_job_description"] is True
-    assert len(fake_llm["detect"].calls) == 1
+def test_detect_asks_the_pipeline_when_the_text_is_plausible(client, stub):
+    assert static_jd_guess(POSTING)
+    body = detect(client, POSTING).json()
+    assert body["data"] == {"is_job_description": True}
+    assert stub.calls == [("detect", POSTING)]
 
 
-def test_detect_takes_the_model_at_its_word_when_it_says_no(client, fake_llm):
-    fake_llm["detect"].replies = ["NO, this is a privacy policy"]
-    body = client.post("/v1/jd/detect", data={"jd_text": "Job posting. " * 120}).json()
-    assert body["data"]["is_job_description"] is False
+def test_detect_takes_the_pipeline_at_its_word(client, stub):
+    stub.verdict = False
+    assert detect(client, POSTING).json()["data"]["is_job_description"] is False
 
 
-@pytest.mark.parametrize(
-    "reply, expected",
-    [
-        ("**YES**", True),
-        ("'YES'", True),
-        ("Yes.", True),
-        ("No.", False),
-    ],
-)
-def test_detect_reads_the_first_word_of_the_reply(client, fake_llm, reply, expected):
-    fake_llm["detect"].replies = [reply]
-    body = client.post("/v1/jd/detect", data={"jd_text": "Job posting. " * 120}).json()
-    assert body["data"]["is_job_description"] is expected
+def test_detect_carries_no_items(client):
+    assert set(detect(client, POSTING).json()["data"]) == {"is_job_description"}
 
 
-def test_detect_without_a_yes_or_no_is_retried_then_reported(client, fake_llm):
-    fake_llm["detect"].replies = ["Not a posting, YES it names a role"]
-    response = client.post("/v1/jd/detect", data={"jd_text": "Job posting. " * 120})
-    assert response.status_code == 502
-    assert len(fake_llm["detect"].calls) == ATTEMPTS
+def test_the_free_check_uses_the_servers_length_band(app_state, stub):
+    from fastapi.testclient import TestClient
+
+    from cv_server.api.app import create_app
+
+    app_state.settings = replace(app_state.settings, jd_min_chars=5)
+    with TestClient(create_app(state=app_state)) as client:
+        assert detect(client, "a short posting").json()["data"]["is_job_description"] is True
+    assert stub.calls == [("detect", "a short posting")]
 
 
-def test_detect_sends_the_posting_apart_from_the_instructions(client, fake_llm):
-    fake_llm["detect"].replies = ["YES"]
-    text = "Job posting. " * 120
-    client.post("/v1/jd/detect", data={"jd_text": text})
-
-    system, user = fake_llm["detect"].calls[-1]["messages"]
-    assert system["role"] == "system" and "exactly 'YES'" in system["content"]
-    assert user == {"role": "user", "content": text}
+def test_an_undecodable_byte_in_the_posting_is_replaced(client, stub):
+    detect(client, POSTING.encode() + b"\xff")
+    assert stub.calls[-1][1].endswith("�")
 
 
-def test_detect_ignores_a_temperature_sent_by_the_client(client, fake_llm):
-    """The client's temperature is for writing; detection keeps its own."""
-    fake_llm._chat["detect"].temperature = 0.0
-    fake_llm["detect"].replies = ["YES"]
-    client.post("/v1/jd/detect",
-                data={"jd_text": "Job posting. " * 120, "temperature": "1.5"})
-    assert fake_llm["detect"].calls[-1]["temperature"] == 0.0
-
-
-def test_analysis_runs_on_its_own_extra_body_and_ignores_the_others(client, fake_llm, candidate):
-    """A client sends every extra_body it has; each endpoint reads its own."""
-    fake_llm._chat["analysis"].temperature = 0.4
-    fake_llm["analysis"].replies = [json.dumps(ANALYSIS)]
-    client.post("/v1/jd/analysis", data={"jd_text": "a jd", "cv_extra_body": '{"temperature": 1.5}'},
-                files=jd_parts(candidate))
-    assert fake_llm["analysis"].calls[-1]["temperature"] == 0.4
-
-    client.post("/v1/jd/analysis", data={"jd_text": "a jd", "analysis_extra_body": '{"top_p": 0.5}'},
-                files=jd_parts(candidate))
-    sent = fake_llm["analysis"].calls[-1]
-    assert sent["top_p"] == 0.5 and "temperature" not in sent
-
-
-def test_analysis_returns_a_validated_analysis(client, fake_llm, candidate):
-    fake_llm["analysis"].replies = [json.dumps(ANALYSIS)]
-
-    body = client.post("/v1/jd/analysis", data={"jd_text": "a jd"},
-                       files=jd_parts(candidate)).json()
-
-    analysis = JDAnalysis.model_validate(body["data"])
-    assert analysis.company_name == "Acme Corp"
-    assert len(analysis.hard_skills) == 5, "the list is passed through unclamped"
-
-
-def test_analysis_prompt_carries_the_profile_and_the_preferences(client, fake_llm, candidate):
-    fake_llm["analysis"].replies = [json.dumps(ANALYSIS)]
-    client.post("/v1/jd/analysis", data={"jd_text": "SENTINEL"}, files=jd_parts(candidate))
-
-    prompt = fake_llm["analysis"].last_prompt
-    assert "SENTINEL" in prompt
-    assert candidate.profile["skills"][0] in prompt
-    assert candidate.preferences[:40] in prompt
-
-
-def test_an_overridden_analysis_prompt_is_used(client, fake_llm, candidate):
-    fake_llm["analysis"].replies = [json.dumps(ANALYSIS)]
-    files = jd_parts(candidate, sys_prompt_analysis=("p.txt", "SCORE IT STRICTLY"))
-    client.post("/v1/jd/analysis", data={"jd_text": "a jd"}, files=files)
-    system = fake_llm["analysis"].calls[0]["messages"][0]["content"]
-    assert system.startswith("SCORE IT STRICTLY"), "json_mode appends the schema after it"
-
-
-def test_analysis_requires_the_profile(client, candidate):
-    response = client.post(
-        "/v1/jd/analysis", data={"jd_text": "a jd"},
-        files={"pers_preferences": ("prefs.md", candidate.preferences, "text/markdown")},
-    )
+def test_detect_needs_a_posting(client, stub):
+    response = client.post("/v1/jd/detect", files=files(pack={"candidate_profile.json": b"{}"}))
     assert response.status_code == 400
-    assert "candidate_profile" in response.json()["error"]
+    assert "missing_part" in response.json()["error"]
+    assert "jd.txt" in response.json()["error"]
 
 
-def test_analysis_requires_the_preferences(client, candidate):
-    response = client.post(
-        "/v1/jd/analysis", data={"jd_text": "a jd"},
-        files={"candidate_profile": ("p.json", json.dumps(dict(candidate.profile)))},
+def test_analysis_returns_the_pipelines_object_untouched(client, stub):
+    stub.analysis = {"job_title": "Head of IT", "company_evaluation": "a field 1.0 never had"}
+    body = client.post("/v1/jd/analysis", files=a_job()).json()
+    reply = Analysed.model_validate(body["data"])
+    assert reply.analysis == stub.analysis
+
+
+def test_analysis_carries_its_log_lines_then_the_total(client):
+    items = client.post("/v1/jd/analysis", files=a_job()).json()["data"]["items"]
+    lines = logs(items)
+    assert all(item["location"] == "CV" for item in items)
+    assert "[stub] stub-model 0.5s" in lines[0]
+    assert lines[-1].endswith(
+        "INFO    [run] Σ 1 model call(s), 0.5s | input=11, thinking=2, output=20"
     )
+
+
+def test_a_log_line_is_dated_levelled_and_staged(client):
+    line = logs(client.post("/v1/jd/analysis", files=a_job()).json()["data"]["items"])[0]
+    ts, level, stage = line.split(" ", 2)[0], line[26:33], line[34:].split("]")[0]
+    assert ts.endswith("+00:00") and len(ts) == 25, "ISO-8601 to the second, UTC"
+    assert (level, stage) == ("INFO   ", "[-")
+
+
+def test_analysis_hands_the_pipeline_the_pack_the_job_and_the_settings(client, stub):
+    client.post("/v1/jd/analysis", files=a_job(), data={"settings": json.dumps({"pages": 1})})
+    name, pack, job, settings = stub.calls[-1]
+    assert name == "analyze"
+    assert pack == {"candidate_profile.json": b"{}"}
+    assert job == {"jd.txt": POSTING.encode()}
+    assert settings == {"pages": 1}
+
+
+def test_a_missing_file_the_pipeline_needs_is_a_400(client, stub):
+    stub.failure = Failing("missing_part", "file 'candidate_preferences.md' is required")
+    response = client.post("/v1/jd/analysis", files=a_job())
     assert response.status_code == 400
-    assert "pers_preferences" in response.json()["error"]
+    assert response.json()["error"] == (
+        "missing_part: file 'candidate_preferences.md' is required"
+    )
 
 
-def test_a_bad_analysis_is_retried_then_reported(client, fake_llm, candidate):
-    fake_llm["analysis"].replies = ["{}"]
-    response = client.post("/v1/jd/analysis", data={"jd_text": "a jd"},
-                           files=jd_parts(candidate))
-    body = response.json()
+def test_a_bad_analysis_is_a_502_naming_its_stage(client, stub):
+    stub.failure = Failing("model_output", "analysis: no usable reply", stage="jd.analysis")
+    response = client.post("/v1/jd/analysis", files=a_job())
     assert response.status_code == 502
-    assert "jd.analysis" in body["error"]
-    assert len(fake_llm["analysis"].calls) == ATTEMPTS, "it retried before giving up"
+    assert response.json()["error"].startswith("model_output [jd.analysis]: ")

@@ -4,7 +4,7 @@ What an earlier run left in ``working/`` is dealt with first, as you choose:
 resumed (approved postings go to the CV writer, unanswered ones are asked
 about before anything new), cleaned out, or left alone by quitting. Then the
 clipboard is read on the main thread (:mod:`cv_client.stages.listener`)
-and the CVs are written on a thread of their own.
+and the CVs are written on a thread per server.
 """
 
 from __future__ import annotations
@@ -12,10 +12,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from ..api import HttpApi
-from ..config import REQUIRED_FILES, Config
+from ..config import Config
 from ..sources.clipboard import NO_CLIPBOARD_HINT, ClipboardSource, clipboard_error
-from ..stages.calls import Calls
 from ..stages.generation import CvWriter, GenerationWorker
 from ..stages.intake import Intake
 from ..stages.listener import Listener
@@ -25,6 +23,7 @@ from ..stages.working import WorkingProcessor
 from ..tracking import build_tracker
 from ..ui import AutoConfirmer, Confirmer, PromptConfirmer, ask_recovery, fail
 from ..workspace import Workspace
+from . import connect
 
 
 def run(config: Config, out: Path, *, assume_yes: bool = False, track: bool = True,
@@ -32,8 +31,6 @@ def run(config: Config, out: Path, *, assume_yes: bool = False, track: bool = Tr
     problem = clipboard_error()
     if problem:
         fail(f"{problem}\n{NO_CLIPBOARD_HINT}")
-    for name in REQUIRED_FILES:
-        config.require(name)
 
     workspace = Workspace(out).ensure()
     files, folders = workspace.pending()
@@ -46,18 +43,20 @@ def run(config: Config, out: Path, *, assume_yes: bool = False, track: bool = Tr
             print(f"🧹 removed {workspace.clean()} leftover entr(ies)", flush=True)
         # "resume" is the watcher's own first step: WorkingProcessor.recover.
 
-    console = Console()
+    console = Console(verbose=config.verbose)
     keyboard = Keyboard(sys.stdin)
-    calls = Calls(HttpApi(config.server_url, token=config.token, verbose=config.verbose))
+    calls = connect(config.servers(), verbose=config.verbose)
     writer = CvWriter(calls, config, new=new)
     # ask stays True with --yes: here every posting goes to the confirmer, and
     # --yes is the confirmer that says yes.
     working = WorkingProcessor(workspace, writer, build_tracker(workspace.root, track), console)
     confirmer: Confirmer = AutoConfirmer() if assume_yes else PromptConfirmer(keyboard)
-    listener = Listener(ClipboardSource(), Intake(calls, config, working, confirmer, console),
-                        working, keyboard, console, assume_yes=assume_yes)
-    watcher = Watcher(working, listener.run, {"cv": GenerationWorker(working, writer, console)},
-                      keyboard, console)
+    intake = Intake(calls[config.default.name], working, confirmer, console)
+    listener = Listener(ClipboardSource(), intake, working, keyboard, console,
+                        assume_yes=assume_yes)
+    background = {f"cv-{server.name}": GenerationWorker(working, writer, console, server)
+                  for server in config.lanes()}
+    watcher = Watcher(working, listener.run, background, keyboard, console)
 
     print(f"📋 watching the clipboard. Output: {workspace.root}", flush=True)
     print("   Copy a job posting to start. q = let the CV being written finish, then quit. "

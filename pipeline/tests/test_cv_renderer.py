@@ -9,10 +9,10 @@ from pathlib import Path
 
 import pytest
 
-from cv_server.pipeline.cv_renderer import CVRenderer, check_pdf_pages
-from cv_server.pipeline.errors import LatexCompileError, LatexTimeoutError
+from cv_pipeline.cv_renderer import CVRenderer, check_pdf_pages
+from cv_pipeline.errors import LatexCompileError, LatexTimeoutError
 
-from server_helpers import GOLDEN
+from pipeline_helpers import GOLDEN
 
 needs_latex = pytest.mark.skipif(shutil.which("pdflatex") is None, reason="pdflatex not installed")
 
@@ -196,7 +196,7 @@ def test_page_check_counts_only_the_lines_past_the_limit(monkeypatch, tmp_path):
         def __init__(self, pages): self.pages = pages
 
     def reader_with(*counts):
-        monkeypatch.setattr("cv_server.pipeline.cv_renderer.PdfReader",
+        monkeypatch.setattr("cv_pipeline.cv_renderer.PdfReader",
                             lambda p: FakeReader([FakePage(n) for n in counts]))
 
     reader_with(40, 40, 1)
@@ -218,7 +218,7 @@ def test_page_check_honors_a_custom_limit(monkeypatch, tmp_path):
         def __init__(self, pages): self.pages = pages
 
     monkeypatch.setattr(
-        "cv_server.pipeline.cv_renderer.PdfReader",
+        "cv_pipeline.cv_renderer.PdfReader",
         lambda p: FakeReader([FakePage(0), FakePage(1)]),
     )
     result = check_pdf_pages(tmp_path / "x.pdf", limit=1)

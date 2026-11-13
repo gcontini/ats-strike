@@ -16,10 +16,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
-from cv_contracts import JDAnalysis
-
 from ..api import CVError
-from ..config import Config
+from ..jdanalysis import JDAnalysis
 from ..ui import Confirmer
 from .analysis import analyse
 from .calls import Calls
@@ -36,13 +34,11 @@ class Intake:
     def __init__(
         self,
         calls: Calls,
-        config: Config,
         working: "WorkingProcessor",
         confirmer: Confirmer,
         console: Console,
     ) -> None:
         self.calls = calls
-        self.config = config
         self.working = working
         self.confirmer = confirmer
         self.console = console
@@ -57,7 +53,7 @@ class Intake:
         log = TaggedLog(self.console, label)
         if analysis is None:
             try:
-                analysis = analyse(self.calls, self.config, text, log)
+                analysis = analyse(self.calls, text, log)
             except CVError as exc:
                 self.calls.failed(log, exc)
                 self.working.count_failure()

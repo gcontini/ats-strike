@@ -1,7 +1,8 @@
 """``cv watch`` — watch a folder; each posting goes through four stages.
 
-The stages live in :mod:`cv_client.stages`. This checks the folders and
-your files, builds the stages and runs them.
+The stages live in :mod:`cv_client.stages`. This checks the folders, builds
+the stages — the inbox on the default server, one CV writer per server — and
+runs them.
 """
 
 from __future__ import annotations
@@ -11,10 +12,8 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from ..api import HttpApi
-from ..config import REQUIRED_FILES, Config
+from ..config import Config
 from ..stages.approval import HumanApproval, TerminalReviewer
-from ..stages.calls import Calls
 from ..stages.generation import CvWriter, GenerationWorker
 from ..stages.inbox import InputProcessor
 from ..stages.terminal import Console, Keyboard
@@ -23,6 +22,7 @@ from ..stages.working import WorkingProcessor
 from ..tracking import build_tracker
 from ..ui import fail, warn
 from ..workspace import Workspace
+from . import connect
 
 
 def run(config: Config, inbox: Optional[Path], out: Path, *, assume_yes: bool = False,
@@ -39,29 +39,23 @@ def run(config: Config, inbox: Optional[Path], out: Path, *, assume_yes: bool = 
         # Each posting is deleted once handed over; one that cannot be would
         # be analysed, and paid for, again on every pass.
         fail(f"cannot delete files from {inbox}: the watcher removes each posting it hands over")
-    for name in REQUIRED_FILES:
-        config.require(name)
 
     workspace = Workspace(out).ensure()
     if workspace.root == inbox:
         fail("the input folder and the output folder must be different")
 
     ask = not assume_yes
-    console = Console()
-    calls = Calls(HttpApi(config.server_url, token=config.token, verbose=config.verbose))
+    console = Console(verbose=config.verbose)
+    calls = connect(config.servers(), verbose=config.verbose)
     writer = CvWriter(calls, config, new=new)
     working = WorkingProcessor(workspace, writer, build_tracker(workspace.root, track), console,
                                ask=ask)
     keyboard = Keyboard(sys.stdin)
     approval = HumanApproval(working, TerminalReviewer(keyboard), keyboard, console, ask=ask)
-    watcher = Watcher(
-        working,
-        approval.run,
-        {"inbox": InputProcessor(inbox, calls, config, working, console),
-         "cv": GenerationWorker(working, writer, console)},
-        keyboard,
-        console,
-    )
+    background = {"inbox": InputProcessor(inbox, calls[config.default.name], working, console)}
+    for server in config.lanes():
+        background[f"cv-{server.name}"] = GenerationWorker(working, writer, console, server)
+    watcher = Watcher(working, approval.run, background, keyboard, console)
 
     print(f"👀 watching {inbox}. Output: {workspace.root}", flush=True)
     print("   Drop postings (.txt) or analysed job folders in. "

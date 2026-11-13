@@ -19,8 +19,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal, Optional, Protocol
 
-from cv_contracts import JDAnalysis
-
+from ..jdanalysis import JDAnalysis
 from ..ui import print_analysis
 from .jobfolder import read_analysis, read_jd
 from .terminal import END_OF_INPUT, Console, Keyboard, TaggedLog

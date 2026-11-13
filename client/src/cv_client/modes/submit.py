@@ -1,7 +1,8 @@
 """``cv submit`` — one file, one CV, then exit.
 
-The same steps as ``clipboard`` — analysed, asked about, written — but the CV
-is written right here, and the command returns once it is filed. Whatever an
+The same steps as ``clipboard`` — analysed, asked about, written — but the CVs
+are written right here, one server after the other, and the command returns
+once the folder is filed. Whatever an
 earlier run left in ``working/`` is not touched: a one-off run must not start
 by asking about it.
 """
@@ -12,11 +13,8 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from cv_contracts import JDAnalysis
-
-from ..api import HttpApi
 from ..config import Config
-from ..stages.calls import Calls
+from ..jdanalysis import JDAnalysis
 from ..stages.generation import CvWriter, GenerationWorker
 from ..stages.intake import Intake
 from ..stages.terminal import Console, Keyboard
@@ -24,6 +22,7 @@ from ..stages.working import WorkingProcessor
 from ..tracking import build_tracker
 from ..ui import AutoConfirmer, Confirmer, PromptConfirmer, fail
 from ..workspace import Workspace
+from . import connect
 
 
 def run(config: Config, jd_file: Path, out: Path, *, analysis: Optional[Path] = None,
@@ -42,8 +41,8 @@ def run(config: Config, jd_file: Path, out: Path, *, analysis: Optional[Path] = 
             fail(f"{analysis} is not a valid analysis: {exc}")
 
     workspace = Workspace(out).ensure()
-    console = Console()
-    calls = Calls(HttpApi(config.server_url, token=config.token, verbose=config.verbose))
+    console = Console(verbose=config.verbose)
+    calls = connect(config.servers(), verbose=config.verbose)
     writer = CvWriter(calls, config, new=new)
     working = WorkingProcessor(workspace, writer, build_tracker(workspace.root, track), console)
     if assume_yes:
@@ -54,9 +53,10 @@ def run(config: Config, jd_file: Path, out: Path, *, analysis: Optional[Path] = 
         confirmer = PromptConfirmer(keyboard)
 
     text = jd_file.read_bytes().decode("utf-8", errors="replace")
-    if not Intake(calls, config, working, confirmer, console).take(text, jd_file.name,
-                                                                   analysis=given):
+    intake = Intake(calls[config.default.name], working, confirmer, console)
+    if not intake.take(text, jd_file.name, analysis=given):
         print("⏹ stopped. The posting waits in working/, and is asked about again at "
               "the next start of clipboard or watch.", flush=True)
-    GenerationWorker(working, writer, console).drain()
+    for server in config.lanes():
+        GenerationWorker(working, writer, console, server).drain()
     return 1 if working.failures else 0

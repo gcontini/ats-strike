@@ -1,11 +1,10 @@
-"""``cv render`` — a document or a .tex in, a PDF beside it out.
+"""``cv render`` — a ``cv.json`` or a ``cv.tex`` in, a PDF beside it out.
 
-The only mode that needs neither your profile nor a job description: it is
-the one to reach for after hand-editing a ``cv_*.json`` or a ``cv_*.tex``.
-
-The ``.json`` is one flat object — whatever the model wrote with your own
-candidate data over the top — which is exactly what a CV job's result held
-and what the job folder holds.
+The one to reach for after hand-editing the CV a server stored in a job
+folder (``<job>/<server>/cv.json`` or ``cv.tex``). The file goes to the
+``--server_ver`` server, or else the default, with that server folder's files,
+so the template and images are the ones it would write with today. Only the
+PDF is kept.
 
 A failed render is nearly always a LaTeX error, and the server's answer
 carries the end of the TeX log, which says where.
@@ -13,40 +12,43 @@ carries the end of the TeX log, which says where.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
-from ..api import HttpApi, CVError, read_text
+from ..api import CVError
 from ..config import Config
 from ..ui import fail
+from . import connect
+
+#: What the file is sent as, by its suffix: the server renders a document and
+#: compiles a ``.tex`` as it stands.
+JOB_NAMES = {".json": "cv.json", ".tex": "cv.tex"}
 
 
 def run(config: Config, source: Path, *, output: Path | None = None) -> int:
     source = Path(source).expanduser()
     if not source.is_file():
         fail(f"no such file: {source}")
+    name = JOB_NAMES.get(source.suffix)
+    if name is None:
+        fail(f"render takes a .tex or a .json file, not {source.suffix or 'a directory'}")
 
-    api = HttpApi(config.server_url, token=config.token, verbose=config.verbose)
-    template = read_text(config.path("resume.tex.jinja"))
-    images = config.image_parts()
-
+    [server] = config.targets
+    calls = connect([server], verbose=config.verbose)[server.name]
     try:
-        if source.suffix == ".tex":
-            envelope = api.render(tex=source.read_text(encoding="utf-8"), images=images)
-        elif source.suffix == ".json":
-            # Not validated here: the server is the one that has to be able to
-            # render it, and it says so with a stage and a cause.
-            document = json.loads(source.read_text(encoding="utf-8"))
-            envelope = api.render(document=document, template=template, images=images)
-        else:
-            fail(f"render takes a .tex or a .json file, not {source.suffix or 'a directory'}")
+        reply = calls.make(lambda: calls.api.render(server.pack(), {name: source.read_bytes()},
+                                                    server.settings))
     except CVError as exc:
         fail(f"{exc}")
-    except ValueError as exc:
-        fail(f"{source.name} is not valid JSON: {exc}")
 
-    rendered = envelope.data
+    if config.verbose:
+        for item in reply.items:
+            if (item.location, item.type) == ("CV", "log"):
+                print(f"  {server.name} {item.text}", flush=True)
+    pdf = next((item for item in reply.items if (item.location, item.type) == ("CV", "cv")),
+               None)
+    if pdf is None:
+        fail(f"{server.name} sent no PDF")
     target = Path(output) if output else source.with_suffix(".pdf")
-    target.write_bytes(rendered.pdf_bytes())
+    target.write_bytes(pdf.content())
     print(f"✅ {target}", flush=True)
     return 0

@@ -1,7 +1,7 @@
-"""The job-description side of the wire format.
+"""The job-description schemas the models answer in.
 
-:class:`JDAnalysis` is what ``POST /v1/jd/analysis`` returns and what clients
-store as ``analysis.json``. Like every model-facing schema, its field
+:class:`JDAnalysis` is what the analysis model writes, and what a client
+stores as ``analysis.json``. Like every model-facing schema, its field
 descriptions are part of the prompt.
 """
 

@@ -1,8 +1,7 @@
 """``cv`` — the command line.
 
-Parses, builds the :class:`Config` (flags beat the environment beats
-``cv.toml`` beats what is in the current folder) and hands over to a
-mode. It contains no logic of its own beyond that.
+Parses, builds the :class:`Config` (a flag beats ``cv.toml``) and hands over
+to a mode. It contains no logic of its own beyond that.
 """
 
 from __future__ import annotations
@@ -27,24 +26,30 @@ from .ui import fail, warn
 
 EPILOGUE = """\
 files:
-  Put candidate_profile.json, candidate_data.json and candidate_preferences.md
-  in the current folder and they are picked up by name. A prompt or
-  resume.tex.jinja found there overrides the server's default; anything absent
-  falls back to it. Every .png, .jpg and .jpeg in the folder is sent too, under
-  its own file name — the name your template includes it under.
+  cv.toml lists your server folders: servers = ["v11", "v05"]. Each folder
+  holds a server.toml (url, token, timeout, [settings]) and every
+  file that server is sent: candidate_profile.json, candidate_data.json,
+  candidate_preferences.md, and any prompt, template or image you want used
+  instead of the server's own. The default_server named in cv.toml analyses each
+  posting and writes the cover letter.
 
   --out defaults to the current folder, and watch's --in defaults to
   ./incoming (created if missing). analysis --out defaults to
   <data-dir>/incoming, where watch picks its folders up.
 
+servers:
+  Without --server_ver only the default server writes CVs. With it, the named
+  servers write one each, side by side, and the default still analyses.
+
 examples:
   cv clipboard --out ~/applications
   cv watch --in ~/Downloads/jds --out ~/applications --cover-letter yes
+  cv watch --server_ver v11 --server_ver v05
   cv submit posting.txt --out ~/applications --yes
   cv submit posting.txt analysis.json --out ~/applications
   cv submit-raw posting.txt -o cv.pdf -o cv.json
   cv analysis --in posting.txt --output-format folder
-  cv render ~/applications/CV/26-01-15/Acme_Head_of_IT/cv_jordan_rivera_head_of_it.json
+  cv render ~/applications/CV/26-01-15/Acme_Head_of_IT/v11/cv.json
   cv reset
 
 a CV is a session on the server, kept until its files are saved: running the
@@ -63,23 +68,32 @@ def global_options() -> argparse.ArgumentParser:
     common.add_argument("--config", type=Path, default=argparse.SUPPRESS,
                         help="Path to cv.toml.")
     common.add_argument("--data-dir", type=Path, default=argparse.SUPPRESS,
-                        help="Folder to look in for your files (before the current folder).")
-    common.add_argument("--server", default=argparse.SUPPRESS,
-                        help="Server URL (default: http://localhost:8080).")
-    common.add_argument("--token", default=argparse.SUPPRESS,
-                        help="Bearer token, if the server requires one.")
-    common.add_argument("--pages", type=int, default=argparse.SUPPRESS,
-                        help="Page limit the CV must fit (default: 2).")
+                        help="The folder that holds cv.toml (default: the current folder).")
     common.add_argument("-v", "--verbose", action="store_true", default=argparse.SUPPRESS,
-                        help="Print what the server reports about each step it finishes.")
+                        help="Print what the server reports about each step it finishes, "
+                             "and every line it logs.")
     return common
+
+
+def add_servers_flag(sub: argparse.ArgumentParser) -> None:
+    """``--server_ver``, repeatable: the servers that write CVs."""
+    sub.add_argument("--server_ver", "--server-ver", dest="server_ver", action="append",
+                     default=[], metavar="NAME",
+                     help="A server folder listed in cv.toml. Repeatable. "
+                          "Default: the default server.")
+
+
+def add_server_flag(sub: argparse.ArgumentParser) -> None:
+    """``--server_ver``, once: the server to use instead of the default."""
+    sub.add_argument("--server_ver", "--server-ver", dest="server_ver", metavar="NAME",
+                     help="A server folder listed in cv.toml, used instead of the default.")
 
 
 def build_parser() -> argparse.ArgumentParser:
     common = global_options()
     parser = argparse.ArgumentParser(
         prog="cv",
-        description="Turn job descriptions into tailored CVs, against an ats-strike server.",
+        description="Turn job descriptions into tailored CVs, against ats-strike servers.",
         epilog=EPILOGUE,
         formatter_class=argparse.RawDescriptionHelpFormatter,
         parents=[common],
@@ -103,6 +117,7 @@ def build_parser() -> argparse.ArgumentParser:
         sub.add_argument("--no-xlsx", action="store_true",
                          help="Do not record delivered CVs in applications.xlsx.")
         add_new_flag(sub)
+        add_servers_flag(sub)
 
     clip = modes.add_parser("clipboard", help="Watch the clipboard for postings.",
                               parents=[common])
@@ -136,6 +151,7 @@ def build_parser() -> argparse.ArgumentParser:
                      help="Write one output here: .pdf, .json or .tex. Repeatable. "
                           "Without it, a PDF named after the job description.")
     add_new_flag(raw)
+    add_server_flag(raw)
 
     analysis = modes.add_parser("analysis", help="Analyse one job description. Nothing else.",
                                 parents=[common])
@@ -149,38 +165,49 @@ def build_parser() -> argparse.ArgumentParser:
     analysis.add_argument("--out", type=Path,
                           help="Where --output-format folder writes. "
                                "Default: <data-dir>/incoming (created if missing).")
+    add_server_flag(analysis)
 
-    render = modes.add_parser("render", help="Compile a cv_*.json or cv_*.tex into a PDF.",
+    render = modes.add_parser("render", help="Compile a cv.json or cv.tex into a PDF.",
                               parents=[common])
     render.add_argument("source", type=Path, help="The .json document or .tex source.")
     render.add_argument("--output", type=Path,
                         help="Where to write the PDF (default: beside the input).")
+    add_server_flag(render)
 
-    modes.add_parser("reset", help="Delete every CV session the server still keeps.",
-                     parents=[common])
+    reset = modes.add_parser("reset", help="Delete every CV session the server still keeps.",
+                             parents=[common])
+    add_servers_flag(reset)
 
-    modes.add_parser("version", help="Print the version, and the server's.", parents=[common])
+    version = modes.add_parser("version", help="Print the version, and each server's.",
+                               parents=[common])
+    add_servers_flag(version)
     return parser
+
+
+#: The modes that analyse postings: the default server is needed whatever
+#: --server_ver names.
+ANALYSING_MODES = ("clipboard", "watch", "submit")
 
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = build_parser().parse_args(argv)
     flag = lambda name: getattr(args, name, None)  # noqa: E731 — SUPPRESS defaults
+    named = args.server_ver
+    selected = named if isinstance(named, list) else [named] if named else []
     try:
         config = load_config(
             config_file=flag("config"),
             data_dir=flag("data_dir"),
+            selected=selected,
+            default_needed=args.mode in ANALYSING_MODES,
             overrides={
-                "server_url": flag("server"),
-                "token": flag("token"),
-                "pages": flag("pages"),
                 "cover_letter": getattr(args, "cover_letter", None),
                 "verbose": flag("verbose"),
             },
         )
     except (ConfigError, FileNotFoundError, tomllib.TOMLDecodeError) as exc:
-        # Which build you are holding is the one question a broken cv.toml
-        # must not stop you answering.
+        # Which build you are holding is the one question a broken
+        # configuration must not stop you answering.
         if args.mode == "version":
             return version_mode.run(None, str(exc))
         fail(str(exc))

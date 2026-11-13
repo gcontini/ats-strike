@@ -4,19 +4,23 @@ from __future__ import annotations
 
 import json
 
+import openpyxl
 import pytest
 
+from cv_client.config import Config
+from cv_client.stages.generation import CvWriter, GenerationWorker
 from cv_client.stages.jobfolder import read_analysis
 from cv_client.stages.terminal import TaggedLog
 from cv_client.stages.working import WorkingProcessor
 from cv_client.tracking import build_tracker
 from cv_client.workspace import Artifacts, day
 
-from conftest import EXAMPLE_CANDIDATE, JD_TEXT, analysis, document, make_job
+from conftest import (
+    JD_TEXT, NAME, PDF, FakeApi, analysis, calls_for, document, make_job, make_server,
+)
 
 #: What the example candidate's CV for the Head of IT posting is called.
-STEM = Artifacts(json.loads((EXAMPLE_CANDIDATE / "candidate_data.json").read_text())["name"],
-                 "Head of IT").stem
+STEM = Artifacts(NAME, "Head of IT").stem
 
 
 def submit(processor, **fields):
@@ -35,6 +39,12 @@ def queued(q):
     return items
 
 
+def drain(processor):
+    """Every lane's queue, written one after the other, as submit does."""
+    for server in processor.writer.config.lanes():
+        GenerationWorker(processor, processor.writer, processor.console, server).drain()
+
+
 # --- a fresh posting ----------------------------------------------------------
 def test_no_goes_straight_to_discarded(processor, workspace):
     submit(processor, should_apply="NO")
@@ -43,7 +53,7 @@ def test_no_goes_straight_to_discarded(processor, workspace):
     assert folder.parent.name == day()
     assert names(folder) == ["analysis.json", "jd.txt", "log.log"]
     assert not any(workspace.working.iterdir())
-    assert processor.generations.empty() and processor.approvals.empty()
+    assert processor.generations["v11"].empty() and processor.approvals.empty()
 
 
 def test_yes_is_queued_for_its_cv_and_marks_nothing(processor, workspace):
@@ -51,14 +61,14 @@ def test_yes_is_queued_for_its_cv_and_marks_nothing(processor, workspace):
 
     assert folder.parent == workspace.working
     assert names(folder) == ["analysis.json", "jd.txt", "log.log"]
-    assert queued(processor.generations) == [folder]
+    assert queued(processor.generations["v11"]) == [folder]
     assert processor.approvals.empty()
 
 
 def test_check_waits_for_you(processor):
     folder = submit(processor, should_apply="CHECK")
     assert queued(processor.approvals) == [folder]
-    assert processor.generations.empty()
+    assert processor.generations["v11"].empty()
 
 
 def test_with_yes_check_waits_in_working_and_is_not_queued(workspace, writer, console):
@@ -67,7 +77,7 @@ def test_with_yes_check_waits_in_working_and_is_not_queued(workspace, writer, co
     folder = submit(processor, should_apply="CHECK")
 
     assert folder.is_dir()
-    assert processor.approvals.empty() and processor.generations.empty()
+    assert processor.approvals.empty() and processor.generations["v11"].empty()
     assert "waits in working/" in (folder / "log.log").read_text()
 
 
@@ -97,7 +107,7 @@ def test_a_posting_seen_before_writes_nothing(processor, workspace, capsys, wher
 
     assert submit(processor, should_apply="YES") is None
     assert not any(workspace.working.iterdir())
-    assert processor.generations.empty()
+    assert processor.generations["v11"].empty()
     out = capsys.readouterr().out
     assert label in out and str(earlier) in out
 
@@ -136,7 +146,7 @@ def test_approving_queues_it_and_keeps_your_answer(processor):
 
     assert (folder / "approval_status.txt").read_text().strip() == "APPROVED"
     assert read_analysis(folder).posting_url == "https://jobs.example/42"
-    assert queued(processor.generations) == [folder]
+    assert queued(processor.generations["v11"]) == [folder]
 
 
 def test_discarding_files_it_with_your_answer(processor, workspace):
@@ -164,7 +174,7 @@ def test_after_close_nothing_is_queued_but_everything_is_kept(processor, workspa
     yes = submit(processor, should_apply="YES", company_name="Alpha")
     check = submit(processor, should_apply="CHECK", company_name="Beta")
 
-    assert processor.generations.empty() and processor.approvals.empty()
+    assert processor.generations["v11"].empty() and processor.approvals.empty()
     assert workspace.working_jobs() == [yes, check]
 
 
@@ -182,7 +192,7 @@ def test_a_held_posting_waits_for_you_whatever_its_analysis_says(processor, work
     assert names(folder) == ["analysis.json", "approval_status.txt", "jd.txt", "log.log"]
     assert (folder / "approval_status.txt").read_text().strip() == "PENDING"
     assert "waiting for your answer" in (folder / "log.log").read_text()
-    assert processor.generations.empty() and processor.approvals.empty(), \
+    assert processor.generations["v11"].empty() and processor.approvals.empty(), \
         "the caller asks at once; nothing is queued"
 
 
@@ -201,14 +211,14 @@ def test_a_posting_left_unanswered_is_asked_about_again(processor, workspace):
     next_run.recover()
 
     assert queued(next_run.approvals) == [left]
-    assert next_run.generations.empty(), "a YES is not written without your answer"
+    assert next_run.generations["v11"].empty(), "a YES is not written without your answer"
 
 
 def test_approving_a_held_posting_replaces_pending(processor):
     folder = hold(processor)
     processor.approve(folder)
     assert (folder / "approval_status.txt").read_text().strip() == "APPROVED"
-    assert queued(processor.generations) == [folder]
+    assert queued(processor.generations["v11"]) == [folder]
 
 
 # --- what an earlier run left --------------------------------------------------
@@ -225,7 +235,7 @@ def test_recovery_follows_the_table(processor, workspace, api):
 
     processor.recover()
 
-    assert queued(processor.generations) == [yes, approved]
+    assert queued(processor.generations["v11"]) == [yes, approved]
     assert queued(processor.approvals) == [check]
     assert sorted(p.name for p in workspace.discarded.glob("*/*")) == ["D_no", "F_discarded"]
     errors = [p.name for p in workspace.error.glob("*/*")]
@@ -233,43 +243,24 @@ def test_recovery_follows_the_table(processor, workspace, api):
         "26-09-28-16-13-16_jd.txt", "26-09-28-16-13-16_jd.txt.log",
         "A_no_analysis", "G_odd"], errors
     assert "a loose file" in (workspace.error / day() / "26-09-28-16-13-16_jd.txt.log").read_text()
-    assert api.calls == [], "nothing but a render ever costs a call at startup"
+    assert api.calls == [], "nothing costs a call at startup"
     assert processor.failures == 0, "rejections are not failures"
 
 
-def test_a_leftover_holding_its_cv_is_rendered_and_delivered_without_a_row(
-        processor, workspace, api):
-    make_job(workspace.working, should_apply="CHECK",
-             **{f"{STEM}.json": json.dumps(document())})
+def test_a_leftover_holding_its_cv_sends_it_and_gets_no_row(processor, workspace, api):
+    """The server renders what it stored; a PDF already there means a re-run."""
+    make_job(workspace.working, approval="APPROVED",
+             **{"v11/cv.json": json.dumps(document()), f"{STEM}.pdf": "an old PDF"})
 
     processor.recover()
+    drain(processor)
 
-    assert api.calls == ["render"]
-    assert api.seen_document == document()
+    assert api.calls == ["create_cv", "events", "acknowledge"]
+    assert json.loads(api.seen_job["cv.json"]) == document()
     delivered = workspace.cv / day() / "Acme_Corp_Head_of_IT"
-    assert (delivered / f"{STEM}.pdf").read_bytes() == b"%PDF-fake"
-    assert (delivered / "candidate_signature.png").is_file()
-    assert not (workspace.root / "applications.xlsx").exists(), "a render is not an application"
-
-
-def test_a_leftover_with_only_its_tex_is_compiled_as_it_stands(processor, workspace, api):
-    make_job(workspace.working, **{f"{STEM}.tex": r"\documentclass{article}"})
-    processor.recover()
-    assert api.calls == ["render"]
-    assert api.seen_document is None, "the .tex was sent, not a document"
-
-
-def test_a_failed_render_goes_to_error_with_its_cause(processor, workspace, api):
-    api.fail_on = "render"
-    make_job(workspace.working, **{f"{STEM}.json": json.dumps(document())})
-
-    processor.recover()
-
-    [failed] = workspace.error.glob("*/Acme_Corp_Head_of_IT")
-    log = (failed / "log.log").read_text()
-    assert "model_output" in log
-    assert "request id: failed-request" in log
-    assert processor.failures == 1
+    assert (delivered / f"{STEM}.pdf").read_bytes() == PDF
+    assert (delivered / "v11" / "candidate_signature.png").is_file()
+    assert not (workspace.root / "applications.xlsx").exists(), "a re-run is not an application"
 
 
 def test_a_file_failing_again_replaces_itself_and_its_log(processor, workspace):
@@ -279,7 +270,7 @@ def test_a_file_failing_again_replaces_itself_and_its_log(processor, workspace):
         entry.write_text(JD_TEXT)
         log = TaggedLog(processor.console, entry.name)
         log.step(f"✗ {attempt} attempt")
-        processor.fail(entry, log)
+        processor.reject(entry, log, failed=True)
 
     assert sorted(p.name for p in workspace.error.glob("*/*")) == [
         "26-09-28-16-13-16_jd.txt", "26-09-28-16-13-16_jd.txt.log"]
@@ -287,21 +278,78 @@ def test_a_file_failing_again_replaces_itself_and_its_log(processor, workspace):
     assert "second attempt" in text and "first attempt" not in text
 
 
-def test_a_document_that_is_not_json_fails_without_a_call(processor, workspace, api):
-    make_job(workspace.working, **{f"{STEM}.json": "{not json"})
-    processor.recover()
-    assert api.calls == []
-    [failed] = workspace.error.glob("*/Acme_Corp_Head_of_IT")
-    assert "not valid JSON" in (failed / "log.log").read_text()
+# --- two servers -------------------------------------------------------------------
+@pytest.fixture
+def lanes(workspace, console, servers_dir, server):
+    """v11 the default, v05 another: both write CVs."""
+    v05 = make_server(servers_dir, "v05")
+    config = Config(targets=(server, v05), default=server)
+    apis = {"v11": FakeApi(), "v05": FakeApi()}
+    writer = CvWriter(calls_for(config, apis), config)
+    processor = WorkingProcessor(workspace, writer, build_tracker(workspace.root, True), console)
+    return processor, apis
 
 
-def test_a_tex_that_is_not_text_fails_without_a_call(processor, workspace, api):
-    job = make_job(workspace.working)
-    (job / f"{STEM}.tex").write_bytes(b"\xff\xfe\x00latex")
-    processor.recover()
-    assert api.calls == []
+def cv_path(workspace):
+    sheet = openpyxl.load_workbook(workspace.root / "applications.xlsx").active
+    return dict(zip([c.value for c in sheet[1]], [c.value for c in sheet[2]]))["cv_path"]
+
+
+def test_a_folder_goes_on_every_lane_and_is_delivered_once_all_have_written(lanes, workspace):
+    processor, apis = lanes
+    folder = submit(processor, should_apply="YES")
+    assert [queued(q) for q in processor.generations.values()] == [[folder], [folder]]
+
+    GenerationWorker(processor, processor.writer, processor.console,
+                     processor.writer.config.targets[0]).process(folder)
+    assert folder.is_dir(), "v05 is still at it"
+    GenerationWorker(processor, processor.writer, processor.console,
+                     processor.writer.config.targets[1]).process(folder)
+
+    delivered = workspace.cv / day() / "Acme_Corp_Head_of_IT"
+    assert sorted(p.name for p in delivered.glob("*.pdf")) == [f"{STEM}.pdf", f"{STEM}_v05.pdf"]
+    assert (delivered / "v11" / "cv.json").is_file() and (delivered / "v05" / "cv.json").is_file()
+    log = (delivered / "log.log").read_text()
+    assert "  v11 2026-01-15T09:00:00 INFO    [cv.jd_evaluation]" in log
+    assert "  v05 2026-01-15T09:00:00 INFO    [cv.jd_evaluation]" in log
+    assert cv_path(workspace).endswith(f"{STEM}.pdf"), "the default server's"
+    assert processor.failures == 0
+
+
+def test_one_lane_failing_still_delivers_and_counts(lanes, workspace):
+    processor, apis = lanes
+    apis["v11"].fail_on = "create_cv"
+    submit(processor, should_apply="YES")
+    drain(processor)
+
+    delivered = workspace.cv / day() / "Acme_Corp_Head_of_IT"
+    assert [p.name for p in delivered.glob("*.pdf")] == [f"{STEM}_v05.pdf"]
+    assert "✗ v11: model_output [create_cv]" in (delivered / "log.log").read_text()
+    assert processor.failures == 1, "the exit code says so"
+    assert cv_path(workspace).endswith(f"{STEM}_v05.pdf"), "no default PDF: the first written"
+
+
+def test_every_lane_failing_files_it_under_error(lanes, workspace):
+    processor, apis = lanes
+    for api in apis.values():
+        api.fail_on = "create_cv"
+    submit(processor, should_apply="YES")
+    drain(processor)
+
     [failed] = workspace.error.glob("*/Acme_Corp_Head_of_IT")
-    assert "not valid UTF-8 text" in (failed / "log.log").read_text()
+    log = (failed / "log.log").read_text()
+    assert "✗ v11:" in log and "✗ v05:" in log
+    assert processor.failures == 2
+    assert not (workspace.root / "applications.xlsx").exists()
+
+
+def test_a_re_run_on_two_lanes_gets_no_row(lanes, workspace):
+    processor, apis = lanes
+    make_job(workspace.working, approval="APPROVED", **{f"{STEM}.pdf": "from before"})
+    processor.recover()
+    drain(processor)
+    assert len(list(workspace.cv.glob("*/*/*.pdf"))) == 2
+    assert not (workspace.root / "applications.xlsx").exists()
 
 
 # --- a folder dropped into the inbox --------------------------------------------
@@ -312,16 +360,18 @@ def test_a_dropped_folder_is_copied_whole_and_routed(processor, workspace, tmp_p
     folder = processor.submit_folder(source, TaggedLog(processor.console, source.name))
 
     assert folder.name == "Acme_Corp_Head_of_IT"
-    assert queued(processor.generations) == [folder]
+    assert queued(processor.generations["v11"]) == [folder]
     assert (folder / "log.log").read_text().startswith("an earlier run\n")
     assert (folder / "approval_status.txt").is_file()
     assert source.is_dir(), "removing it from the inbox is the inbox's job"
 
 
-def test_a_dropped_folder_holding_its_cv_is_rendered(processor, workspace, api, tmp_path):
-    source = make_job(tmp_path / "in", **{f"{STEM}.json": json.dumps(document())})
+def test_a_dropped_folder_holding_its_cv_sends_it(processor, workspace, api, tmp_path):
+    source = make_job(tmp_path / "in", should_apply="YES",
+                      **{"v11/cv.json": json.dumps(document())})
     processor.submit_folder(source, TaggedLog(processor.console, source.name))
-    assert api.calls == ["render"]
+    drain(processor)
+    assert "cv.json" in api.seen_job
     assert (workspace.cv / day() / "Acme_Corp_Head_of_IT" / f"{STEM}.pdf").is_file()
 
 

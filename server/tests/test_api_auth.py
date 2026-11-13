@@ -9,6 +9,10 @@ from fastapi.testclient import TestClient
 
 from cv_server.api.app import create_app
 
+from server_helpers import Failing, files
+
+SHORT = files(job={"jd.txt": "short"})
+
 
 @pytest.fixture
 def secured_client(app_state):
@@ -18,11 +22,11 @@ def secured_client(app_state):
 
 
 def test_without_a_token_configured_the_api_is_open(client):
-    assert client.post("/v1/jd/detect", data={"jd_text": "short"}).status_code == 200
+    assert client.post("/v1/jd/detect", files=SHORT).status_code == 200
 
 
 def test_a_configured_token_is_required(secured_client):
-    response = secured_client.post("/v1/jd/detect", data={"jd_text": "short"})
+    response = secured_client.post("/v1/jd/detect", files=SHORT)
     assert response.status_code == 401
     assert response.headers["www-authenticate"] == "Bearer"
     assert "unauthorized" in response.json()["error"]
@@ -30,14 +34,14 @@ def test_a_configured_token_is_required(secured_client):
 
 def test_the_wrong_token_is_refused(secured_client):
     response = secured_client.post(
-        "/v1/jd/detect", data={"jd_text": "short"}, headers={"Authorization": "Bearer wrong"}
+        "/v1/jd/detect", files=SHORT, headers={"Authorization": "Bearer wrong"}
     )
     assert response.status_code == 401
 
 
 def test_the_right_token_gets_through(secured_client):
     response = secured_client.post(
-        "/v1/jd/detect", data={"jd_text": "short"}, headers={"Authorization": "Bearer s3cret"}
+        "/v1/jd/detect", files=SHORT, headers={"Authorization": "Bearer s3cret"}
     )
     assert response.status_code == 200
 
@@ -45,7 +49,15 @@ def test_the_right_token_gets_through(secured_client):
 def test_health_stays_open_so_a_platform_probe_works(secured_client):
     body = secured_client.get("/healthz").json()
     assert body["data"]["auth_required"] is True
-    assert body["data"]["models"]["cv"] == "fake-cv"
+    assert body["data"]["models"]["cv"] == "stub-cv"
+
+
+def test_health_says_which_protocol_it_speaks(client, stub):
+    data = client.get("/healthz").json()["data"]
+    assert data["protocol"] == 2
+    assert (data["status"], data["pdflatex"]) == ("ok", True)
+    stub.pdflatex = False
+    assert client.get("/healthz").json()["data"]["status"] == "degraded"
 
 
 def test_every_response_carries_its_request_id(client):
@@ -60,16 +72,11 @@ def test_an_id_is_generated_when_the_client_sends_none(client):
     assert len(response.json()["request_id"]) == 12
 
 
-def test_a_provider_failure_is_a_gateway_error_not_a_bug(client, fake_llm):
-    """The server is fine; the thing behind it is not. That is a 502, and the
-    provider's own message never reaches the caller."""
-    import httpx
-
-    fake_llm["detect"].error = httpx.ConnectError("http://provider.invalid is down")
-
-    response = client.post("/v1/jd/detect", data={"jd_text": "Job posting. " * 120})
-
+def test_a_provider_failure_is_a_gateway_error_not_a_bug(client, stub):
+    """The server is fine; the thing behind it is not. That is a 502."""
+    stub.failure = Failing("provider_unreachable", "the model endpoint failed: APIConnectionError")
+    response = client.post("/v1/jd/detect", files=files(job={"jd.txt": "Job posting. " * 120}))
     assert response.status_code == 502
-    body = response.json()
-    assert "provider_unreachable" in body["error"]
-    assert "provider.invalid" not in response.text
+    assert response.json()["error"] == (
+        "provider_unreachable: the model endpoint failed: APIConnectionError"
+    )

@@ -1,135 +1,96 @@
-"""Reading multipart parts: same rules everywhere, checked before any work.
+"""Reading a request: the same three parts on every route, checked before any work.
 
-Every endpoint takes files, and most also accept the same thing as a plain
-form field so ``curl -F jd_text=...`` works as well as ``-F jd=@JD.txt``. The
-file wins when both are sent.
+=========== ================ ============================================
+Part        Kind             Holds
+=========== ================ ============================================
+``pack``    file, repeatable every file of the client's server folder
+``job``     file, repeatable the posting as this server sees it
+``settings`` form field      a JSON object, forwarded untouched
+=========== ================ ============================================
+
+A file's part name is its path, relative, with ``/``. What the files mean is
+the pipeline's business; this module only makes sure they are what a request
+may carry.
 """
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional
-
 import json
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional
 
-from fastapi import UploadFile
+from fastapi import File, Form, UploadFile
 
-from .errors import BadPart, MissingPart, PartTooLarge
+from .errors import BadPart, PartTooLarge
 
-#: Strip a UTF-8 BOM: Windows editors add one and JSON parsers choke on it.
-_BOM = "﻿"
+#: How many files one request may carry, pack and job together. A server
+#: folder plus a job folder is a few dozen; this is far above that.
+MAX_FILES = 200
 
-#: How many images one request may carry. A template that needs more than a
-#: handful is not what this is for, and each one costs a part-sized upload.
-MAX_IMAGES = 10
-
-
-async def bytes_part(
-    upload: Optional[UploadFile], *, name: str, max_bytes: int, required: bool = False
-) -> Optional[bytes]:
-    """Read one uploaded file, refusing anything oversized before reading it."""
-    if upload is None:
-        if required:
-            raise MissingPart(f"part '{name}' is required")
-        return None
-    size = getattr(upload, "size", None)
-    if size is not None and size > max_bytes:
-        raise PartTooLarge(f"part '{name}' is {size} bytes (limit {max_bytes})")
-    blob = await upload.read()
-    if len(blob) > max_bytes:
-        raise PartTooLarge(f"part '{name}' is {len(blob)} bytes (limit {max_bytes})")
-    if required and not blob:
-        raise BadPart(f"part '{name}' is empty")
-    return blob
+#: The three parts, as every route declares them.
+PACK = File([], description="Every file of the server folder; its file name is its path")
+JOB = File([], description="The posting as this server sees it: jd.txt, analysis.json, ...")
+SETTINGS = Form(None, description="JSON object: the server folder's [settings], untouched")
 
 
-async def text_part(
-    upload: Optional[UploadFile],
-    raw: Optional[str] = None,
-    *,
-    name: str,
-    max_bytes: int,
-    required: bool = False,
-) -> Optional[str]:
-    """A text part, from the file if one was sent, else from the form field."""
-    blob = await bytes_part(upload, name=name, max_bytes=max_bytes, required=False)
-    if blob is not None:
-        try:
-            text = blob.decode("utf-8")
-        except UnicodeDecodeError as exc:
-            raise BadPart(f"part '{name}' is not UTF-8 text: {exc}") from exc
-    elif raw is not None:
-        text = raw
-    elif required:
-        raise MissingPart(f"part '{name}' is required (as a file or a form field)")
-    else:
-        return None
+@dataclass(frozen=True)
+class PipelineRequest:
+    """A request's three parts, read."""
 
-    text = text.lstrip(_BOM)
-    if required and not text.strip():
-        raise BadPart(f"part '{name}' is empty")
-    return text
+    pack: Dict[str, bytes] = field(default_factory=dict)
+    job: Dict[str, bytes] = field(default_factory=dict)
+    settings: Dict[str, Any] = field(default_factory=dict)
 
 
-async def json_part(
-    upload: Optional[UploadFile],
-    raw: Optional[str] = None,
-    *,
-    name: str,
-    max_bytes: int,
-    required: bool = False,
-) -> Optional[Dict[str, Any]]:
-    """A JSON object part, parsed and checked to be an object."""
-    text = await text_part(upload, raw, name=name, max_bytes=max_bytes, required=required)
-    if text is None:
-        return None
-    try:
-        data = json.loads(text)
-    except json.JSONDecodeError as exc:
-        raise BadPart(f"part '{name}' is not valid JSON: {exc}") from exc
-    if not isinstance(data, dict):
-        raise BadPart(f"part '{name}' must be a JSON object, got {type(data).__name__}")
-    return data
+def _safe_name(name: str) -> bool:
+    """Relative, ``/``-separated, inside the folder it names a file of."""
+    return bool(name) and not name.startswith("/") and "\\" not in name and (
+        ".." not in name.split("/")
+    )
 
 
-async def extra_bodies(
-    fields: Mapping[str, Optional[str]], *, max_bytes: int
-) -> Dict[str, Dict[str, Any]]:
-    """The ``<role>_extra_body`` fields a request sent, parsed, by role.
-
-    Each is a JSON object that replaces every request setting ``models.toml``
-    gives that role (see :meth:`ModelSelector.with_extra_body`).
-    """
-    bodies: Dict[str, Dict[str, Any]] = {}
-    for role, raw in fields.items():
-        body = await json_part(None, raw, name=f"{role}_extra_body", max_bytes=max_bytes)
-        if body is not None:
-            bodies[role] = body
-    return bodies
-
-
-async def images_part(
-    uploads: Optional[List[UploadFile]], *, max_bytes: int
-) -> Dict[str, bytes]:
-    """The uploaded images, keyed by the name the template includes them under.
-
-    The part's file name *is* the key — that is the whole interface — so it is
-    reduced to a bare name here, before anything downstream sees a path.
-    """
-    uploads = uploads or []
-    # Counted before anything is read: refusing fifty parts after reading them
-    # is not a limit.
-    if len(uploads) > MAX_IMAGES:
-        raise BadPart(f"too many images: {len(uploads)} (limit {MAX_IMAGES})")
-    images: Dict[str, bytes] = {}
+async def _files(uploads: List[UploadFile], *, part: str, max_bytes: int) -> Dict[str, bytes]:
+    files: Dict[str, bytes] = {}
     for upload in uploads:
-        name = Path(upload.filename or "").name
-        if not name or name.startswith("."):
-            raise BadPart(f"image part has no usable file name: {upload.filename!r}")
-        blob = await bytes_part(upload, name=f"images/{name}", max_bytes=max_bytes)
-        if blob:
-            images[name] = blob
-    return images
+        name = upload.filename or ""
+        if not _safe_name(name):
+            raise BadPart(f"a '{part}' file has an unusable name: {name!r}")
+        size = getattr(upload, "size", None)
+        if size is not None and size > max_bytes:
+            raise PartTooLarge(f"{part} file '{name}' is {size} bytes (limit {max_bytes})")
+        blob = await upload.read()
+        if len(blob) > max_bytes:
+            raise PartTooLarge(f"{part} file '{name}' is {len(blob)} bytes (limit {max_bytes})")
+        files[name] = blob  # a repeated name: the last one wins
+    return files
 
 
-__all__ = ["bytes_part", "text_part", "json_part", "extra_bodies", "images_part", "MAX_IMAGES"]
+async def read_request(
+    pack: Optional[List[UploadFile]],
+    job: Optional[List[UploadFile]],
+    settings: Optional[str],
+    *,
+    max_bytes: int,
+) -> PipelineRequest:
+    """The pack, the job and the settings, or the reason they cannot be had."""
+    pack, job = pack or [], job or []
+    # Counted before anything is read: refusing a thousand parts after reading
+    # them is not a limit.
+    if len(pack) + len(job) > MAX_FILES:
+        raise BadPart(f"too many files: {len(pack) + len(job)} (limit {MAX_FILES})")
+    parsed: Dict[str, Any] = {}
+    if settings is not None:
+        try:
+            parsed = json.loads(settings)
+        except json.JSONDecodeError as exc:
+            raise BadPart(f"part 'settings' is not valid JSON: {exc}") from exc
+        if not isinstance(parsed, dict):
+            raise BadPart(f"part 'settings' must be a JSON object, got {type(parsed).__name__}")
+    return PipelineRequest(
+        pack=await _files(pack, part="pack", max_bytes=max_bytes),
+        job=await _files(job, part="job", max_bytes=max_bytes),
+        settings=parsed,
+    )
+
+
+__all__ = ["PipelineRequest", "read_request", "MAX_FILES", "PACK", "JOB", "SETTINGS"]

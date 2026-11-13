@@ -55,10 +55,45 @@ class BudgetExceededError(PipelineError):
     kind = "budget_exceeded"
 
 
+class ProviderTimeoutError(PipelineError):
+    """The model endpoint did not answer in time."""
+
+    kind = "provider_timeout"
+
+
+class ProviderUnreachableError(PipelineError):
+    """The model endpoint could not be reached."""
+
+    kind = "provider_unreachable"
+
+
+class ProviderError(PipelineError):
+    """The model endpoint answered with an error."""
+
+    kind = "provider_error"
+
+
+class MissingPartError(PipelineError):
+    """A file the call needs is not in the pack or the job."""
+
+    kind = "missing_part"
+
+
+class BadPartError(PipelineError):
+    """A file, or a setting, that cannot be read as what it has to be."""
+
+    kind = "bad_part"
+
+
 __all__ = [
     "PipelineError",
     "LatexCompileError",
     "LatexTimeoutError",
     "ModelOutputError",
     "BudgetExceededError",
+    "ProviderTimeoutError",
+    "ProviderUnreachableError",
+    "ProviderError",
+    "MissingPartError",
+    "BadPartError",
 ]

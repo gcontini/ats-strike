@@ -1,33 +1,31 @@
 """What every request needs: the shared state, the token check, a job slot.
 
-The state is built once at startup and never mutated: the model selector, the
-default resource bundle, and one semaphore. Sharing a
-:class:`~cv_server.models.ModelSelector` across requests is safe — its
-chat models are built once and its HTTP clients are thread-safe.
+The state is built once at startup and never mutated: the pipeline and one
+semaphore. Sharing a :class:`~cv_pipeline.Pipeline` across requests is safe —
+its chat models are built once and its HTTP clients are thread-safe.
 """
 
 from __future__ import annotations
 
 import hmac
 import logging
-import shutil
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from threading import BoundedSemaphore
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
+from cv_contracts import StoreItem
+from cv_pipeline import Pipeline, current_run
 from fastapi import Header, Request
 from starlette.concurrency import run_in_threadpool
 
-from ..bundle import ResourceBundle, default_bundle
 from ..jobstore import JobStore
-from ..models import ModelSelector, build_selector
-from ..observability import LOGGER_ROOT, current_run
 from .errors import TooManyJobs, Unauthorized
+from .items import log_item, output_item, total_item
 from .settings import Settings
 
-logger = logging.getLogger(f"{LOGGER_ROOT}.api")
+logger = logging.getLogger("cv_server.api")
 
 
 @dataclass
@@ -35,10 +33,8 @@ class AppState:
     """Built once in the lifespan, read-only afterwards."""
 
     settings: Settings
-    llm: ModelSelector
-    bundle: ResourceBundle
+    pipeline: Pipeline
     job_slots: BoundedSemaphore
-    pdflatex: bool
 
     @property
     def jobs(self) -> JobStore:
@@ -47,17 +43,15 @@ class AppState:
 
     @classmethod
     def build(cls, settings: Settings) -> "AppState":
-        pdflatex = shutil.which("pdflatex") is not None
-        if not pdflatex:
+        pipeline = Pipeline.build()
+        if not pipeline.info()["pdflatex"]:
             logger.warning(
                 "  ⚠ pdflatex is not on PATH — /v1/cv and /v1/cv/render will fail"
             )
         return cls(
             settings=settings,
-            llm=build_selector(),
-            bundle=default_bundle(),
+            pipeline=pipeline,
             job_slots=BoundedSemaphore(settings.max_concurrent_jobs),
-            pdflatex=pdflatex,
         )
 
 
@@ -91,24 +85,54 @@ def claim_slot(state: AppState) -> None:
         )
 
 
+class Collected:
+    """What a short request produced, as things to store, in order: each
+    output the pipeline hands over, each line the request logs."""
+
+    def __init__(self) -> None:
+        self.items: List[StoreItem] = []
+
+    def status(self, status: str, detail: str = "") -> None:
+        """A reply has no status to show."""
+
+    def store(self, output: Any) -> None:
+        self.items.append(output_item(output))
+
+    def record(self, kind: str, payload: Any) -> None:
+        """The run's sink: a log line is kept, a model call is in the total."""
+        if kind == "log":
+            self.items.append(log_item(payload))
+
+
 async def execute(
     state: AppState, fn: Callable[..., Any], *, work_dir: bool = False
-) -> Any:
-    """Run one blocking pipeline job off the event loop.
+) -> Tuple[Any, List[StoreItem]]:
+    """Run one blocking pipeline call off the event loop: its value, and what
+    it produced to store.
 
     The CV endpoint does not come through here — it answers before its job is
     done (see :mod:`cv_server.api.jobs`). What is left are the short
     ones, which still want the concurrency limit and, for a render, a scratch
-    directory on local disk. They keep no session: their log is stdout.
+    directory on local disk. ``fn`` is handed the collecting sink — after the
+    scratch directory, when there is one. The request's log lines are
+    collected too, and, when it made a model call, the line that adds them up.
     """
     claim_slot(state)
+    run = current_run()
+    collected = Collected()
+    run.sink = collected.record
     try:
         if not work_dir:
-            return await run_in_threadpool(fn)
-        with tempfile.TemporaryDirectory(prefix="ats-strike-") as work:
-            return await run_in_threadpool(fn, Path(work))
+            value = await run_in_threadpool(fn, collected)
+        else:
+            with tempfile.TemporaryDirectory(prefix="ats-strike-") as work:
+                value = await run_in_threadpool(fn, Path(work), collected)
     finally:
+        run.sink = None
         state.job_slots.release()
+    if run.total.calls:
+        collected.items.append(total_item(run.total))
+    return value, collected.items
 
 
 def envelope_for(request_id: str, data: Any) -> Dict[str, Any]:
@@ -117,12 +141,13 @@ def envelope_for(request_id: str, data: Any) -> Dict[str, Any]:
 
 
 def envelope_of(data: Any) -> Dict[str, Any]:
-    """Wrap a successful payload. The commentary is fetched separately."""
+    """Wrap a successful payload."""
     return envelope_for(current_run().request_id, data)
 
 
 __all__ = [
     "AppState",
+    "Collected",
     "get_state",
     "require_token",
     "claim_slot",

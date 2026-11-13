@@ -22,9 +22,11 @@ import json
 import math
 import os
 import re
+import shutil
 import socket
 import subprocess
 import sys
+import tempfile
 import time
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
@@ -33,8 +35,8 @@ from pathlib import Path
 
 import httpx
 from cv_client.api import HttpApi, CVError
-from cv_client.config import Config
 from cv_client.cvjob import session_id, write_cv
+from cv_client.servers import Server
 from dotenv import dotenv_values
 from openai import OpenAI
 
@@ -210,12 +212,12 @@ def local_server(log: Path):
 def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
     """One CV per job description of the set, written into a new run folder.
 
-    A temperature goes to the cv step as its extra_body, which replaces every
-    other setting models.toml gives that step.
+    A temperature goes to the cv and duties steps as their extra_body, which
+    replaces every other setting models.toml gives those steps.
 
-    The client sends only the candidate's two files: no cv.toml, no prompt,
-    template or image, so every prompt is the server's own, from this
-    checkout's server/resources.
+    The client is handed a temporary server folder holding only the
+    candidate's two files: no prompt, template or image, so every prompt is
+    the server's own, from this checkout's pipeline/resources.
 
     The CVs that failed are written once more, at most RETRY_SHARE of the set;
     the line before the run folder says how many failed."""
@@ -223,11 +225,13 @@ def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
     now = datetime.now()
     run = RUNS / f"{now:%Y-%m-%d_%H%M}-{set_name}"
     run.mkdir(parents=True)
-    with local_server(run / "server.log") as url:
-        config = Config(
-            server_url=url, timeout=CV_TIMEOUT,
-            extra_body={} if temperature is None else {role: {"temperature": temperature} for role in ("cv", "duties")},
-            files={name: candidate / name for name in CANDIDATE_FILES})
+    with local_server(run / "server.log") as url, tempfile.TemporaryDirectory() as folder:
+        for name in CANDIDATE_FILES:
+            shutil.copy(candidate / name, Path(folder) / name)
+        server = Server(
+            name="eval", folder=Path(folder), url=url, default=True, timeout=CV_TIMEOUT,
+            settings={} if temperature is None else {"extra_body": {
+                role: {"temperature": temperature} for role in ("cv", "duties")}})
         health = httpx.get(url + "/healthz", timeout=60).json()["data"]
         (run / "run.json").write_text(json.dumps({
             "version": health["version"], "models": health["models"], "server": url,
@@ -241,22 +245,27 @@ def generate(set_name: str, temperature: float | None, candidate: Path) -> Path:
 
         def one(jd: Path) -> bool:
             say = lambda message: print(f"{jd.stem[:2]} {message.strip()}", flush=True)  # noqa: E731
-            text, kept = jd.read_text(encoding="utf-8"), []
+            job, kept = {"jd.txt": jd.read_text(encoding="utf-8").encode("utf-8")}, {}
+
+            def store(item) -> None:
+                if item.location == "CV" and (item.type == "cv" or item.name == "cv.json"):
+                    kept[item.type] = item.content()
+
             try:
                 # new: a session another run left behind is dropped, not replayed.
-                write_cv(api, config, text, say=say, keep=kept.append, new=True)
+                write_cv(api, server, job, say=say, store=store, new=True)
             except CVError as exc:
                 (run / f"{jd.stem}.error.txt").write_text(
                     f"{exc} (request {exc.request_id})\n", encoding="utf-8")
                 say(f"FAILED: {exc}")
                 return False
             (run / f"{jd.stem}.error.txt").unlink(missing_ok=True)
-            [rendered] = kept
+            document = json.loads(kept["step"])
             (run / f"{jd.stem}.cv.json").write_text(
-                json.dumps(rendered.document, indent=2, ensure_ascii=False), encoding="utf-8")
-            (run / f"{jd.stem}.pdf").write_bytes(rendered.pdf_bytes())
-            (run / f"{jd.stem}.units.txt").write_text(units_text(rendered.document), encoding="utf-8")
-            say(f"done (request {session_id(text)})")
+                json.dumps(document, indent=2, ensure_ascii=False), encoding="utf-8")
+            (run / f"{jd.stem}.pdf").write_bytes(kept["cv"])
+            (run / f"{jd.stem}.units.txt").write_text(units_text(document), encoding="utf-8")
+            say(f"done (request {session_id(job['jd.txt'])})")
             return True
 
         with ThreadPoolExecutor(PARALLEL) as pool:
@@ -314,8 +323,8 @@ def main() -> None:
     gen = steps.add_parser("generate", help="Write the CVs of a set into a new run folder.")
     gen.add_argument("set", choices=("quick", "thorough"))
     gen.add_argument("--temperature", type=float,
-                     help="The cv step's temperature, as its whole extra_body. "
-                          "Default: cv.toml's [extra_body], else the server's settings.")
+                     help="The cv and duties steps' temperature, as their whole extra_body. "
+                          "Default: the server's settings.")
     gen.add_argument("--candidate", type=Path, default=CANDIDATE,
                      help="Folder with candidate_profile.json and candidate_data.json. "
                           "Default: examples/candidate.")

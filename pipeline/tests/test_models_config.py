@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from cv_server.models import MODEL_ROLES, load_model_config
+from cv_pipeline.models import MODEL_ROLES, load_model_config
 
 TOML = """
 [provider]

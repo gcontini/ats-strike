@@ -66,8 +66,9 @@ scratch on each run.
 
 ## What a user downloads
 
-A release is one flat `.tar.gz` holding both binaries and the files the client
-looks for by name. How it is assembled, and how to cut one, is in
+A release is one `.tar.gz` (and a `.zip`) holding both binaries, a `cv.toml`
+and a server folder `v11/` with the fictional candidate: a data folder, ready
+to run. How it is assembled, and how to cut one, is in
 [Cutting a release](release.md).
 
 ## Running from source instead
@@ -75,14 +76,14 @@ looks for by name. How it is assembled, and how to cut one, is in
 ```bash
 uv sync
 uv run cv --help
-uv run cv --server http://localhost:8080 clipboard --out ~/applications
+uv run cv --data-dir ~/cv clipboard --out ~/applications   # ~/cv holds cv.toml
 uv run pytest client/tests        # no server, no terminal, no network
 ```
 
 The client's tests fake at the boundary: `CVApi` is a protocol, so the
 modes run against a stub with no HTTP at all, and `tests/test_integration.py`
-drives the real client against the real app in-process through an
-`httpx.Client` — both halves, no socket.
+drives the real client against two real server apps in-process through
+`httpx.Client`s — client, protocol and pipeline, no socket.
 
 ## Adding a new way to feed it postings
 

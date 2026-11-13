@@ -1,24 +1,14 @@
-"""ats-strike server: the HTTP API that writes and renders CVs.
+"""ats-strike server: the protocol, and nothing that makes a CV.
 
-Layers, outermost first:
+- ``api`` — FastAPI routers, the request reader (a pack, a job, settings),
+  auth, error mapping, and the thread a CV job runs in. Knows about HTTP and
+  nothing about LaTeX, prompts or models.
+- ``jobstore`` — where a CV job's session lives: a directory of events under
+  ``ATS_WORK_DIR``.
 
-- ``api`` — FastAPI routers, multipart handling, auth, error mapping. Knows
-  about HTTP and nothing about LaTeX or prompts.
-- ``pipeline`` — :class:`CVGenerator` (the CV's six steps, with
-  ``cv_review`` for its validation), :class:`CVRenderer`,
-  :class:`JDValidator`, :class:`LetterGenerator`. Pure library code: every
-  input arrives in memory, every output is returned, nothing is read from a
-  configured path.
-- ``models`` — one long-lived chat model per role, from
-  ``resources/models.toml``, and ``call_llm`` / ``call_tools`` to ask it.
-- ``bundle`` / ``defaults`` — where the impersonal defaults come from, and the
-  per-request split between them and the personal inputs.
-- ``observability`` / ``jobstore`` — what a CV job says about itself (every
-  log line, every model call and its cost) and where it goes: the job's
-  session, a directory of events under ``ATS_WORK_DIR``.
-
-The wire format lives in :mod:`cv_contracts`, which both this and the
-client depend on; neither imports the other.
+The work itself is :mod:`cv_pipeline`'s, called through its top level only.
+The wire format lives in :mod:`cv_contracts`, which both this and the client
+depend on; neither imports the other.
 """
 
-__all__ = ["api", "bundle", "defaults", "models", "observability", "pipeline"]
+__all__ = ["api", "jobstore"]

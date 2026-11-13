@@ -29,7 +29,9 @@ END_OF_INPUT = "\x04"
 class Console:
     """Every background line, printed whole and never over a question."""
 
-    def __init__(self) -> None:
+    def __init__(self, *, verbose: bool = False) -> None:
+        #: --verbose: the lines a server logged are shown too, not only kept.
+        self.verbose = verbose
         self._lock = threading.Lock()
         self._held: Optional[List[str]] = None
 
@@ -69,6 +71,12 @@ class TaggedLog(JobLog):
     def step(self, message: str) -> None:
         super().step(message)
         self.console.say(f"[{self.tag}] {message}")
+
+    def server_line(self, server_name: str, text: str) -> None:
+        """Kept always; shown with --verbose only — it is one per model call."""
+        super().server_line(server_name, text)
+        if self.console.verbose:
+            self.console.say(f"[{self.tag}] {server_name} {text}")
 
     def append_to(self, path: Path) -> Path:
         """Add what was collected since the last write, then start afresh."""

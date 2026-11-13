@@ -12,16 +12,34 @@ One directory holds the whole workflow::
 A job is assembled under ``working/`` and moved into place in one step when it
 is finished, so a folder under ``CV/`` is never half-written. This module owns
 every path and every move; nothing else in the client builds a path by hand.
+
+Inside a job folder each server has a subfolder of its own, named after it,
+holding what it stored for the job; the PDFs sit at the top::
+
+    CV/26-11-13/Acme_Head_of_IT/
+        jd.txt  analysis.json  approval_status.txt  log.log
+        cv_jordan_rivera_head_of_it.pdf        the default server's
+        cv_jordan_rivera_head_of_it_v05.pdf    any other server's
+        v11/  cv.json  cv.tex  steps/*.json  candidate_signature.png
+        v05/  cv.json  cv.tex
+
+:class:`JobFiles` is the only code that knows that layout.
 """
 
 from __future__ import annotations
 
+import json
 import re
 import shutil
 from dataclasses import dataclass
 from datetime import datetime
-from pathlib import Path
-from typing import List, Optional, Tuple
+from pathlib import Path, PurePosixPath, PureWindowsPath
+from typing import Dict, List, Optional, Tuple
+
+from cv_contracts import StoreItem
+
+from .joblog import JobLog
+from .servers import Server
 
 #: Daily folders under CV/, discarded/ and error/.
 DAY_FORMAT = "%y-%m-%d"
@@ -30,9 +48,10 @@ JD_FILENAME = "jd.txt"
 ANALYSIS_FILENAME = "analysis.json"
 LOG_FILENAME = "log.log"
 LETTER_FILENAME = "cover_letter.txt"
-#: Inside a job folder: each step's intermediate result, one JSON file each.
-#: A folder, so no file of it can be mistaken for the CV beside it.
-STEPS_DIRNAME = "steps"
+#: Inside a server folder: where the server's ``CACHE`` items land.
+CACHE_DIRNAME = "cache"
+#: The images a server folder sends, copied beside its ``cv.tex``.
+IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg")
 
 
 def day(now: Optional[datetime] = None) -> str:
@@ -90,17 +109,101 @@ class Artifacts:
     def stem(self) -> str:
         return f"cv_{sanitize_name(self.candidate)}_{sanitize_name(self.job_title)}".lower()
 
-    @property
-    def pdf(self) -> str:
-        return f"{self.stem}.pdf"
+    def pdf(self, server: str = "") -> str:
+        """The CV's PDF; ``server`` is the suffix of a server that is not the default."""
+        return f"{self.stem}_{server}.pdf" if server else f"{self.stem}.pdf"
 
-    @property
-    def tex(self) -> str:
-        return f"{self.stem}.tex"
 
-    @property
-    def document(self) -> str:
-        return f"{self.stem}.json"
+def _safe(name: str) -> bool:
+    """A relative path that stays inside the folder it is joined to, on any system."""
+    return bool(name) and "\\" not in name and not PureWindowsPath(name).drive and not (
+        PurePosixPath(name).is_absolute() or ".." in PurePosixPath(name).parts
+    )
+
+
+class JobFiles:
+    """One server's files in one job folder: what it is sent, and where what
+    it sends back is kept.
+
+    ========================= ==================================================
+    location / type           goes to
+    ========================= ==================================================
+    ``CV`` / ``log``          the job's log, as ``  <server> <text>``
+    ``CV`` / ``step``         ``<job>/<server>/<name>``
+    ``CV`` / ``cv``           ``<job>/cv_<candidate>_<title>[_<server>].pdf``
+    ``CACHE`` / ``step``      ``<server folder>/cache/<name>``
+    ``CACHE`` / ``log``       appended to ``<server folder>/cache/log.log``
+    anything else             skipped, with a line in the job's log
+    ========================= ==================================================
+
+    The suffix is left off for the default server. A name that would leave
+    its folder is skipped the same way.
+    """
+
+    def __init__(self, job_folder: Path, server: Server) -> None:
+        self.job = Path(job_folder)
+        self.server = server
+        #: What this server stored for the job.
+        self.own = self.job / server.name
+
+    def outgoing(self) -> Dict[str, bytes]:
+        """The job as this server sees it: the posting, its analysis, and
+        everything it stored here before."""
+        files = {JD_FILENAME: (self.job / JD_FILENAME).read_bytes()}
+        analysis = self.job / ANALYSIS_FILENAME
+        if analysis.is_file():
+            files[ANALYSIS_FILENAME] = analysis.read_bytes()
+        if self.own.is_dir():
+            for path in sorted(self.own.rglob("*")):
+                if path.is_file():
+                    files[path.relative_to(self.own).as_posix()] = path.read_bytes()
+        return files
+
+    def pdf(self) -> Path:
+        """Where this server's PDF goes: named after you and the job title."""
+        data_file = self.server.folder / "candidate_data.json"
+        data = json.loads(data_file.read_text(encoding="utf-8")) if data_file.is_file() else {}
+        analysis = json.loads((self.job / ANALYSIS_FILENAME).read_text(encoding="utf-8"))
+        artifacts = Artifacts(str(data.get("name") or "candidate"),
+                              str(analysis.get("job_title") or ""))
+        return self.job / artifacts.pdf("" if self.server.default else self.server.name)
+
+    def store(self, item: StoreItem, log: JobLog) -> Optional[Path]:
+        """Keep one thing the server sent; the file written, if any."""
+        where = (item.location, item.type)
+        if where == ("CV", "log"):
+            log.server_line(self.server.name, item.content().decode("utf-8", errors="replace"))
+            return None
+        if where == ("CV", "cv"):
+            return self._pdf(item, log)
+        if where == ("CACHE", "log"):
+            cache = self.server.folder / CACHE_DIRNAME
+            cache.mkdir(exist_ok=True)
+            with (cache / LOG_FILENAME).open("ab") as fh:
+                fh.write(item.content() + b"\n")
+            return cache / LOG_FILENAME
+        bases = {("CV", "step"): self.own,
+                 ("CACHE", "step"): self.server.folder / CACHE_DIRNAME}
+        if where not in bases or not _safe(item.name):
+            log.step(f"⚠ {self.server.name}: skipped a {item.location}/{item.type} item "
+                     f"named {item.name!r}")
+            return None
+        target = bases[where] / item.name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(item.content())
+        return target
+
+    def _pdf(self, item: StoreItem, log: JobLog) -> Path:
+        """The CV, then the pack's images beside its ``cv.tex``, so it
+        compiles again by hand."""
+        target = self.pdf()
+        target.write_bytes(item.content())
+        self.own.mkdir(exist_ok=True)
+        for image in sorted(self.server.folder.iterdir()):
+            if image.is_file() and image.suffix in IMAGE_SUFFIXES:
+                shutil.copy2(image, self.own / image.name)
+        log.step(f"{self.server.name}: CV Path: {target.name}")
+        return target
 
 
 class Workspace:
@@ -204,7 +307,7 @@ class Workspace:
 
 
 __all__ = [
-    "Workspace", "Artifacts", "sanitize_name", "job_name", "staged_job", "unstage",
-    "day",
-    "JD_FILENAME", "ANALYSIS_FILENAME", "LOG_FILENAME", "LETTER_FILENAME", "STEPS_DIRNAME",
+    "Workspace", "Artifacts", "JobFiles", "sanitize_name", "job_name", "staged_job",
+    "unstage", "day",
+    "JD_FILENAME", "ANALYSIS_FILENAME", "LOG_FILENAME", "LETTER_FILENAME", "CACHE_DIRNAME",
 ]

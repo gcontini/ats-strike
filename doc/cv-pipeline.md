@@ -4,7 +4,7 @@ What `POST /v1/cv` does with the minutes it takes: six steps, each on a model
 of its own, then a render that trims the CV until it fits. The method is the
 one adapticv-ai worked out.
 
-The code is `server/src/cv_server/pipeline/cv_generator.py`
+The code is `pipeline/src/cv_pipeline/cv_generator.py`
 (`CVGenerator`, the steps as a LangGraph graph), `cv_review.py` (the
 validation loop) and `cv_renderer.py` (the compile and the page count).
 

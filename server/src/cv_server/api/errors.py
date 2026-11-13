@@ -12,21 +12,13 @@ from __future__ import annotations
 import logging
 from typing import Tuple
 
+from cv_contracts import Envelope
+from cv_pipeline import PipelineError, current_run
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from cv_contracts import Envelope
-from openai import APIConnectionError, APIError, APITimeoutError
 from pydantic import ValidationError
 
-from ..observability import LOGGER_ROOT, current_run
-from ..pipeline.errors import (
-    BudgetExceededError,
-    LatexCompileError,
-    LatexTimeoutError,
-    PipelineError,
-)
-
-logger = logging.getLogger(f"{LOGGER_ROOT}.api")
+logger = logging.getLogger("cv_server.api")
 
 
 class ApiError(Exception):
@@ -73,13 +65,16 @@ class JobNotReady(ApiError):
     kind = "job_not_ready"
 
 
-#: Pipeline failures that are the client's or the provider's fault, not a bug.
-#: Anything else derived from :class:`PipelineError` is a 502 — the model never
-#: produced something usable, which is a gateway problem rather than ours.
+#: A pipeline failure's kind, and the status it answers with. Any other kind
+#: is a 502 — the model never produced something usable, or its endpoint
+#: failed, which is a gateway problem rather than ours.
 _PIPELINE_STATUS = {
-    LatexCompileError: 422,
-    LatexTimeoutError: 504,
-    BudgetExceededError: 504,
+    "missing_part": 400,
+    "bad_part": 400,
+    "latex_compile": 422,
+    "latex_timeout": 504,
+    "budget_exceeded": 504,
+    "provider_timeout": 504,
 }
 
 
@@ -90,41 +85,26 @@ def _pipeline_message(exc: PipelineError) -> str:
     where = f" [{exc.stage}]" if exc.stage else ""
     detail = "".join(f" {key}={value}" for key, value in exc.detail.items())
     message = f"{exc.kind}{where}: {exc}{f' ({detail.strip()})' if detail else ''}"
-    if isinstance(exc, LatexCompileError) and exc.log_tail:
-        return f"{message}\n{exc.log_tail}"
+    log_tail = getattr(exc, "log_tail", "")
+    if log_tail:
+        return f"{message}\n{log_tail}"
     return message
-
-
-def _provider_message(exc: APIError) -> str:
-    # Never echo the body: it can carry the endpoint and the key. LangChain
-    # raises its own subclasses, and a timeout is a connection error too.
-    kind = (
-        "provider_timeout" if isinstance(exc, APITimeoutError)
-        else "provider_unreachable" if isinstance(exc, APIConnectionError)
-        else "provider_error"
-    )
-    return f"{kind}: the model endpoint failed: {type(exc).__name__}"
 
 
 def describe_failure(exc: Exception) -> Tuple[int, str]:
     """The HTTP status and the one-line cause for a failure, decided once.
 
     Anything the model provider did wrong is a gateway problem, not ours: the
-    server is working, the thing behind it is not. Only a genuine bug here
-    earns a 500.
+    server is working, the thing behind it is not. The pipeline has already
+    turned a provider's error into a :class:`PipelineError` of its kind. Only
+    a genuine bug here earns a 500.
     """
     if isinstance(exc, ApiError):
         return exc.status, f"{exc.kind}: {exc.message}"
     if isinstance(exc, PipelineError):
-        for kind, status in _PIPELINE_STATUS.items():
-            if isinstance(exc, kind):
-                return status, _pipeline_message(exc)
-        return 502, _pipeline_message(exc)
+        return _PIPELINE_STATUS.get(exc.kind, 502), _pipeline_message(exc)
     if isinstance(exc, ValidationError):
         return 422, "validation_error: the uploaded document does not match the expected schema"
-    if isinstance(exc, APIError):
-        # APITimeoutError is an APIError, but a timeout is 504 rather than 502.
-        return (504 if isinstance(exc, APITimeoutError) else 502), _provider_message(exc)
     # A bare TimeoutError is still the thing behind us being slow; anything
     # left over is a bug here.
     return (504 if isinstance(exc, TimeoutError) else 500), (
@@ -150,7 +130,7 @@ def failure_response(request_id: str, status: int, message: str) -> JSONResponse
 def log_failure(exc: Exception, where: str) -> None:
     """Log a failure the way the handler does: a traceback only for a real bug."""
     status = describe_failure(exc)[0]
-    if status >= 500 and not isinstance(exc, (ApiError, PipelineError, APIError)):
+    if status >= 500 and not isinstance(exc, (ApiError, PipelineError)):
         logger.exception("unhandled error on %s", where)
     else:
         logger.warning("%s -> %d: %s", where, status, exc)

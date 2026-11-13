@@ -2,43 +2,43 @@
 
 The free structural check comes first, so copying a password or a line of code
 never reaches the network; deciding whether plausible text really is a posting
-is the server's job. The inbox, the clipboard and ``submit`` all start here.
+is the server's job — the default server's, which analyses every posting
+whatever server writes its CV. The inbox, the clipboard and ``submit`` all
+start here.
 """
 
 from __future__ import annotations
 
 from typing import Optional
 
-from cv_contracts import JDAnalysis, static_jd_guess
+from cv_contracts import static_jd_guess
 
-from ..api import read_text
-from ..config import Config
+from ..jdanalysis import JDAnalysis
 from ..joblog import JobLog
+from ..workspace import JD_FILENAME
 from .calls import Calls
 
 
-def analyse(calls: Calls, config: Config, text: str, log: JobLog) -> Optional[JDAnalysis]:
+def analyse(calls: Calls, text: str, log: JobLog) -> Optional[JDAnalysis]:
     """The posting's analysis; ``None``, with why in ``log``, for one that is not.
 
-    A failed call raises :class:`~cv_client.api.CVError` for the
-    caller to file.
+    The reply's log lines go into ``log``. A failed call raises
+    :class:`~cv_client.api.CVError` for the caller to file.
     """
     if not static_jd_guess(text):
         log.step(f"✗ not a job description ({len(text)} chars, nothing sent)")
         return None
-    detection = calls.make(lambda: calls.api.detect(text))
+    job = {JD_FILENAME: text.encode("utf-8")}
+    detection = calls.make(lambda: calls.api.detect(job))
     if not detection.is_job_description:
         log.step("✗ not a job description")
         return None
     log.step(f"✓ job description ({len(text)} chars)")
     log.step("📊 analyzing the posting...")
-    return calls.make(lambda: calls.api.analyze(
-        text,
-        profile=config.require("candidate_profile.json").read_bytes(),
-        preferences=config.require("candidate_preferences.md").read_text(encoding="utf-8"),
-        prompt=read_text(config.path("sys_prompt_analysis.txt")),
-        extra_body=config.extra_body,
-    ))
+    server = calls.server
+    reply = calls.make(lambda: calls.api.analyze(server.pack(), job, server.settings))
+    calls.keep_log(log, reply.items)
+    return JDAnalysis.model_validate(reply.analysis)
 
 
 __all__ = ["analyse"]

@@ -3,136 +3,130 @@
 from __future__ import annotations
 
 import base64
-from datetime import datetime
 
 import pytest
 
+import cv_contracts
 from cv_contracts import (
     EVENT_PAYLOADS,
+    PROTOCOL,
     TERMINAL_EVENTS,
-    CVArtifact,
-    CVFailure,
-    CVResult,
-    CVStatus,
+    Analysed,
+    Done,
     Envelope,
-    JDAnalysis,
-    LogEntry,
-    ModelCall,
-    RenderedCV,
-    TokenUsage,
+    Failure,
+    Letter,
+    Rendered,
+    ServerStatus,
+    Status,
+    StoreItem,
     static_jd_guess,
 )
 
-# --- what a CV job reports and returns --------------------------------------
-def test_a_status_carries_one_step_and_nothing_else():
-    """Each step is its own event: the history is the session, not the status."""
-    assert set(CVStatus.model_fields) == {"status", "detail"}
+
+def test_this_is_protocol_two():
+    assert PROTOCOL == 2
 
 
-def test_a_status_starts_with_no_detail():
-    """The first step is announced before any step has finished."""
-    assert CVStatus(status="jd_evaluation").detail == ""
+# --- a thing to store --------------------------------------------------------
+def test_text_travels_as_text():
+    item = StoreItem.from_content("CV", "step", "steps/key_points.json", '{"à": 1}')
+    assert (item.text, item.base64) == ('{"à": 1}', None)
+    assert item.content() == '{"à": 1}'.encode("utf-8")
 
 
-def test_the_steps_are_the_six_of_the_pipeline_in_order():
-    steps = CVStatus.model_fields["status"].annotation.__args__
-    assert steps == ("jd_evaluation", "profile_scoring", "format_selection", "cv",
-                     "validation", "highlight")
+def test_bytes_travel_as_base64():
+    item = StoreItem.from_content("CV", "cv", "cv.pdf", b"%PDF-1.7\x00\xff")
+    assert item.text is None
+    assert base64.b64decode(item.base64) == b"%PDF-1.7\x00\xff"
+    assert item.content() == b"%PDF-1.7\x00\xff"
 
 
-def test_a_detail_may_span_lines():
-    """The format's reason follows the choice, on lines of its own."""
-    status = CVStatus(status="cv", detail="format B: experiences [0, 1, 2]\n  most relevant")
-    assert status.detail.splitlines()[-1] == "  most relevant"
+def test_a_log_line_has_no_name():
+    item = StoreItem(location="CV", type="log", text="2026-11-13T09:00:00+00:00 INFO    [-] hi")
+    assert item.name == ""
 
 
-def test_an_unknown_status_is_refused():
-    with pytest.raises(ValueError):
-        CVStatus(status="thinking-about-it")
+def test_an_unknown_location_or_type_is_still_read():
+    """A client skips what it does not know; it must be able to read it first."""
+    item = StoreItem.model_validate({"location": "ELSEWHERE", "type": "video", "name": "x"})
+    assert (item.location, item.type) == ("ELSEWHERE", "video")
 
 
-def test_the_end_is_an_event_not_a_status():
-    """A job ends with its result or its error, which carry what a status
-    could not: the CV, the cause, the bill."""
-    with pytest.raises(ValueError):
-        CVStatus(status="END")
+@pytest.mark.parametrize("item", [
+    StoreItem.from_content("CACHE", "step", "pool.json", "[]"),
+    StoreItem.from_content("CV", "cv", "cv.pdf", b"%PDF"),
+])
+def test_an_item_round_trips_as_json(item):
+    assert StoreItem.model_validate_json(item.model_dump_json()) == item
 
 
-def test_a_rendered_cv_carries_the_pdf_back_as_bytes():
-    rendered = RenderedCV.from_bytes(tex="\\documentclass{article}", pdf=b"%PDF-1.7")
-    assert rendered.pdf_bytes() == b"%PDF-1.7"
-    assert base64.b64decode(rendered.pdf_base64) == b"%PDF-1.7"
-
-
-def test_a_re_render_echoes_no_document():
-    """Whoever asked for a render already has the data it rendered."""
-    assert RenderedCV.from_bytes(tex="x", pdf=b"y").document is None
-
-
-def test_the_document_has_no_schema():
-    """It is whatever the model wrote with your own data over the top, and only
-    your template has an opinion about it."""
-    rendered = RenderedCV.from_bytes(tex="x", pdf=b"y", document={"hobbies": ["climbing"]})
-    assert rendered.document == {"hobbies": ["climbing"]}
-
-
-# --- the envelope -----------------------------------------------------------
-def test_an_envelope_round_trips_with_its_payload():
-    envelope = Envelope[JDAnalysis](request_id="abc", ok=False)
-    assert Envelope[JDAnalysis].model_validate_json(envelope.model_dump_json()).ok is False
-
-
-def test_an_envelope_carries_only_the_payload():
-    """Logs travel as a CV job's events or stay in the server's log, so
-    nothing large rides on every reply."""
-    assert set(Envelope[JDAnalysis].model_fields) == {"request_id", "ok", "data", "error"}
-
-
-def test_a_failure_says_why_in_one_line():
-    """One string, not a structure: the detail that would not fit is in the
-    log, which is where a reader who wants it is going anyway."""
-    envelope = Envelope[JDAnalysis](
-        request_id="abc", ok=False, error="model_output [cv.cv]: no usable reply"
-    )
-    assert "cv.cv" in envelope.error
-
-
-# --- the events a CV job streams --------------------------------------------
+# --- the events a CV job streams ---------------------------------------------
 def test_every_event_type_names_its_payload():
-    assert set(EVENT_PAYLOADS) == {"status", "artifact", "log", "usage", "result", "error"}
-    assert set(TERMINAL_EVENTS) == {"result", "error"}
+    assert EVENT_PAYLOADS == {"status": Status, "store": StoreItem, "done": Done, "error": Failure}
+    assert TERMINAL_EVENTS == ("done", "error")
+
+
+def test_a_status_is_free_text():
+    """The step names are the server's: a client shows them and knows none."""
+    assert Status(status="thinking-about-it").detail == ""
+
+
+def test_the_end_carries_no_bill():
+    """Token usage is a log line now; the last events carry only what they say."""
+    assert set(Done.model_fields) == {"detail"}
+    assert set(Failure.model_fields) == {"http_status", "error"}
 
 
 @pytest.mark.parametrize("payload", [
-    CVStatus(status="validation", detail="cv finished"),
-    CVArtifact(name="key_points", data=[{"id": 1, "requirement": "Kubernetes",
-                                         "keywords": ["K8s"], "importance": 90}]),
-    LogEntry(ts=datetime(2026, 1, 15, 9, 0), level="INFO", stage="cv.profile_scoring",
-             message="gpt-fake 1.2s | input=10, output=20"),
-    ModelCall(role="cv", model="gpt-fake", seconds=1.2, input_tokens=10,
-              thinking_tokens=0, output_tokens=20),
+    Status(status="validation", detail="cv finished\n  on two lines"),
+    StoreItem.from_content("CV", "log", "", "a line"),
+    Done(detail="done, 2 model calls"),
+    Failure(http_status=502, error="model_output [cv.cv]: no usable reply"),
 ])
 def test_an_event_round_trips_as_json(payload):
     kind = next(k for k, model in EVENT_PAYLOADS.items() if isinstance(payload, model))
     assert EVENT_PAYLOADS[kind].model_validate_json(payload.model_dump_json()) == payload
 
 
-def test_a_result_carries_the_cv_and_the_bill():
-    result = CVResult(
-        cv=RenderedCV.from_bytes(tex="x", pdf=b"%PDF-1.7", document={"name": "Jordan"}),
-        detail="done, 2 model calls",
-        total=TokenUsage(calls=2, seconds=3.5, input_tokens=100, output_tokens=40),
-    )
-    back = CVResult.model_validate_json(result.model_dump_json())
-    assert back.cv.pdf_bytes() == b"%PDF-1.7"
-    assert back.total.calls == 2
+# --- the REST replies --------------------------------------------------------
+def test_a_server_that_does_not_say_its_protocol_is_one():
+    status = ServerStatus.model_validate({
+        "status": "ok", "version": "1.0.4", "pdflatex": True, "models": {}, "auth_required": False,
+    })
+    assert status.protocol == 1
 
 
-def test_a_failure_still_carries_the_bill():
-    """A user who paid for four attempts is entitled to see all four."""
-    failure = CVFailure(http_status=502, error="model_output [cv.cv]: no usable reply",
-                        total=TokenUsage(calls=4))
-    assert CVFailure.model_validate_json(failure.model_dump_json()).total.calls == 4
+def test_an_analysis_is_an_opaque_object():
+    """Whatever fields the server's pipeline writes, they come through."""
+    reply = Analysed(analysis={"job_title": "Head of IT", "company_evaluation": "fine"})
+    back = Analysed.model_validate_json(reply.model_dump_json())
+    assert back.analysis["company_evaluation"] == "fine"
+    assert back.items == []
+
+
+def test_replies_carry_things_to_store():
+    log = StoreItem.from_content("CV", "log", "", "Σ 1 model call(s), 0.5s")
+    pdf = StoreItem.from_content("CV", "cv", "cv.pdf", b"%PDF")
+    assert Rendered(items=[pdf, log]).items[0].content() == b"%PDF"
+    assert Letter(text="Dear", items=[log]).items == [log]
+
+
+# --- the envelope -----------------------------------------------------------
+def test_an_envelope_round_trips_with_its_payload():
+    envelope = Envelope[Rendered](request_id="abc", ok=False)
+    assert Envelope[Rendered].model_validate_json(envelope.model_dump_json()).ok is False
+
+
+def test_an_envelope_carries_only_the_payload():
+    assert set(Envelope[Rendered].model_fields) == {"request_id", "ok", "data", "error"}
+
+
+def test_the_contracts_know_no_pipeline():
+    """No analysis schema, no step names, no rendered-CV shape."""
+    for gone in ("JDAnalysis", "JDDetection", "RenderedCV", "CVStatus", "CVArtifact",
+                 "CVResult", "CVFailure", "ModelCall", "TokenUsage", "LogEntry", "CoverLetter"):
+        assert not hasattr(cv_contracts, gone), gone
 
 
 # --- the free JD check ------------------------------------------------------

@@ -7,8 +7,8 @@
 #     docker build -t ats-strike-server .
 #     docker run --rm -p 8080:8080 --env-file .env ats-strike-server
 #
-# Built from the repository root's contracts/ and server/ only; the client is
-# a separate artifact and shares nothing but the contracts package.
+# Built from the repository root's contracts/, pipeline/ and server/ only; the
+# client is a separate artifact and shares nothing but the contracts package.
 #
 # Classic-builder safe: no BuildKit features and no heredocs.
 
@@ -28,6 +28,7 @@ WORKDIR /app
 # The workspace members must be present for uv to resolve against the lock.
 COPY pyproject.toml uv.lock README.md ./
 COPY contracts/pyproject.toml ./contracts/
+COPY pipeline/pyproject.toml ./pipeline/
 COPY server/pyproject.toml ./server/
 COPY client/pyproject.toml ./client/
 RUN uv sync --frozen --no-dev --package ats-strike-server --no-install-workspace
@@ -36,8 +37,9 @@ RUN uv sync --frozen --no-dev --package ats-strike-server --no-install-workspace
 # packages into the venv instead of linking them back to /app/src, so the
 # runtime stage needs nothing but the venv itself.
 COPY contracts/src ./contracts/src
+COPY pipeline/src ./pipeline/src
+COPY pipeline/resources ./pipeline/resources
 COPY server/src ./server/src
-COPY server/resources ./server/resources
 RUN uv sync --frozen --no-dev --package ats-strike-server --no-editable
 
 

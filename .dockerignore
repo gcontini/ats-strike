@@ -1,13 +1,15 @@
-# The image needs the two packages it builds from and nothing else.
+# The image needs the three packages it builds from and nothing else.
 *
 !pyproject.toml
 !uv.lock
 !README.md
 !contracts/pyproject.toml
 !contracts/src
+!pipeline/pyproject.toml
+!pipeline/src
+!pipeline/resources
 !server/pyproject.toml
 !server/src
-!server/resources
 !client/pyproject.toml
 !server/docker
 

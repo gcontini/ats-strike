@@ -22,7 +22,7 @@ way.
 flowchart TB
     subgraph s1["stage 1 — build (uv:python3.12-bookworm-slim)"]
         L1["pyproject.toml · uv.lock<br/>+ the three member pyprojects"] --> L2["uv sync --frozen --no-dev<br/>--package ats-strike-server<br/>--no-install-workspace"]
-        L2 --> L3["contracts/src · server/src · server/resources"]
+        L2 --> L3["contracts/src · pipeline/src · pipeline/resources · server/src"]
         L3 --> L4["uv sync --frozen --no-dev --no-editable<br/>→ /app/.venv"]
     end
     subgraph s2["stage 2 — runtime (python:3.12-slim-bookworm)"]
@@ -177,7 +177,7 @@ The LaTeX-dependent tests skip themselves when `pdflatex` is absent. Nothing
 in the suite calls a model: `server/tests/server_helpers.py` wires a real
 `ModelSelector` to a fake HTTP transport, so request assembly, structured
 output, retries and usage logging are all the production code paths.
-`server/tests/golden/cv_golden.tex` pins the whole render — an escaping
+`pipeline/tests/golden/cv_golden.tex` pins the whole render — an escaping
 regression is otherwise invisible until someone reads a bad PDF.
 
 ## Deploying

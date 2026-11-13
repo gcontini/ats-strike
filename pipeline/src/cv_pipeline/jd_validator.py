@@ -2,10 +2,9 @@
 
 Two jobs, each on its own model:
 
-- :meth:`JDValidator.detect` — is this text a job posting at all? The free
-  structural checks run first (see
-  :func:`cv_contracts.static_jd_guess`); the model (``detect``) is only
-  asked when they pass, so a clipboard full of code costs nothing.
+- :meth:`JDValidator.detect` — is this text a job posting at all? Only the
+  model (``detect``) call: the free structural checks are the caller's, run
+  before it, so a clipboard full of code costs nothing.
 - :meth:`JDValidator.analyze` — on the ``analysis`` model, score the posting against the candidate
   profile and extract the facts a CV and a cover letter need.
 
@@ -19,18 +18,11 @@ import json
 import logging
 from typing import Optional
 
-from cv_contracts import (
-    MAX_JD_CHARS,
-    MIN_JD_CHARS,
-    JDAnalysis,
-    JDDetection,
-    static_jd_guess,
-)
-
-from ..bundle import CandidateInputs
-from ..defaults import read_text_default
-from ..models import ModelSelector
-from ..observability import LOGGER_ROOT, stage
+from .bundle import CandidateInputs
+from .defaults import read_text_default
+from .models import ModelSelector
+from .observability import LOGGER_ROOT, stage
+from .schemas import JDAnalysis, JDDetection
 
 logger = logging.getLogger(f"{LOGGER_ROOT}.jd")
 
@@ -51,33 +43,17 @@ class JDValidator:
         The ``detect`` model answers :meth:`detect`, the ``analysis`` model
         :meth:`analyze` — reading a posting is extraction, not writing, so
         neither needs the large model.
-    min_chars / max_chars:
-        The length band :meth:`detect` accepts before it will ask the model.
     """
 
-    def __init__(
-        self,
-        llm: ModelSelector,
-        *,
-        min_chars: int = MIN_JD_CHARS,
-        max_chars: int = MAX_JD_CHARS,
-    ) -> None:
+    def __init__(self, llm: ModelSelector) -> None:
         self.llm = llm
-        self.min_chars = min_chars
-        self.max_chars = max_chars
 
     # --- public API ---------------------------------------------------------
     def detect(self, text: str) -> JDDetection:
-        """Is ``text`` a job description? Static checks first, model second.
+        """Is ``text`` a job description? The model's yes or no.
 
-        The caller gets a yes or a no; why is in this request's log, which
-        also records whether the model was asked at all (it is not, when the
-        structural checks already say no — that is the point of having them).
+        The caller gets a yes or a no; why is in this request's log.
         """
-        if not static_jd_guess(text, min_chars=self.min_chars, max_chars=self.max_chars):
-            logger.info("  ✗ not a job description (%d chars, no model call)", len(text))
-            return JDDetection(is_job_description=False)
-
         # The posting is a message of its own, after the instructions: a page
         # of 20000 characters must not bury them, nor pass for them.
         with stage("jd.detect"):

@@ -66,7 +66,7 @@ def test_y_approves_and_queues_it(processor, console):
 
     assert approval.review_one(processor.approvals.get_nowait()) is True
     assert (folder / "approval_status.txt").read_text().strip() == "APPROVED"
-    assert processor.generations.get_nowait() == folder
+    assert processor.generations["v11"].get_nowait() == folder
 
 
 def test_a_pasted_url_approves_it_and_is_kept(processor, console):
@@ -92,7 +92,7 @@ def test_q_leaves_the_posting_as_it_was(processor, console):
 
     assert approval.review_one(processor.approvals.get_nowait()) is False
     assert not (folder / "approval_status.txt").exists()
-    assert processor.generations.empty()
+    assert processor.generations["v11"].empty()
 
 
 def test_a_posting_broken_while_it_waited_is_filed_not_fatal(processor, console, workspace):

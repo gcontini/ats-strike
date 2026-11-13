@@ -11,8 +11,7 @@ import sys
 from dataclasses import dataclass
 from typing import Optional, Protocol
 
-from cv_contracts import JDAnalysis
-
+from .jdanalysis import JDAnalysis
 from .stages.terminal import END_OF_INPUT, Keyboard
 
 

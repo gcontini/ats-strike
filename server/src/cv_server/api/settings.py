@@ -39,10 +39,6 @@ class Settings:
     max_part_bytes: int = 2_000_000
     #: Whole requests allowed to run at once; the rest get 429.
     max_concurrent_jobs: int = 10
-    #: Per-compile timeout — a supplied template can loop forever otherwise.
-    latex_timeout: float = 120.0
-    #: Wall-clock budget for one CV run, checked before each step.
-    request_budget_seconds: float = 1200.0
     #: Length band for the free JD pre-check.
     jd_min_chars: int = MIN_JD_CHARS
     jd_max_chars: int = MAX_JD_CHARS
@@ -57,8 +53,6 @@ class Settings:
             session_ttl_days=_float("ATS_SESSION_TTL_DAYS", 1.0),
             max_part_bytes=_int("ATS_MAX_PART_BYTES", 2_000_000),
             max_concurrent_jobs=_int("ATS_MAX_CONCURRENT_JOBS", 10),
-            latex_timeout=_float("ATS_LATEX_TIMEOUT", 120.0),
-            request_budget_seconds=_float("ATS_REQUEST_BUDGET_SECONDS", 1200.0),
             jd_min_chars=_int("ATS_JD_MIN_CHARS", MIN_JD_CHARS),
             jd_max_chars=_int("ATS_JD_MAX_CHARS", MAX_JD_CHARS),
         )

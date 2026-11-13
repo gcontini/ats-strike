@@ -8,10 +8,14 @@ delivered, and the same posting dropped twice is never written twice.
 The inbox hands it analysed postings and folders (:meth:`submit`,
 :meth:`submit_folder`), ``clipboard`` and ``submit`` the postings they are
 about to ask you about (:meth:`hold`), the approval loop your answers
-(:meth:`approve`, :meth:`discard`, :meth:`requeue`), and the CV worker
-finished and failed jobs (:meth:`deliver`, :meth:`fail`). Anything that has to
-wait goes on one of its two queues; where it goes is decided by
-:func:`~.jobfolder.route`, for new postings and leftovers alike.
+(:meth:`approve`, :meth:`discard`, :meth:`requeue`), and each CV worker the
+folders it has finished (:meth:`finished`). Anything that has to wait goes on
+a queue: the approvals, or one CV queue per server (a lane); where it goes is
+decided by :func:`~.jobfolder.route`, for new postings and leftovers alike.
+
+A folder queued for its CV goes on every lane, and is delivered once every
+lane has reported: to ``CV/`` when at least one server wrote its CV, to
+``error/`` when none did.
 """
 
 from __future__ import annotations
@@ -19,13 +23,12 @@ from __future__ import annotations
 import queue
 import shutil
 import threading
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Mapping, Optional
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Mapping, Optional, Sequence, Set
 
-from cv_contracts import JDAnalysis
-
-from ..api import CVError
 from ..duplicates import find_previous
+from ..jdanalysis import JDAnalysis
 from ..tracking import TEMPLATE_NAME, Tracker
 from ..workspace import JD_FILENAME, LOG_FILENAME, Workspace
 from .jobfolder import (
@@ -42,6 +45,17 @@ from .terminal import Console, TaggedLog
 
 if TYPE_CHECKING:
     from .generation import CvWriter
+
+
+@dataclass
+class _Queued:
+    """A folder on the CV lanes: who is still at it, and how it went."""
+
+    left: Set[str]
+    #: It held a CV PDF already: a re-run, which is not a new application.
+    had_pdf: bool
+    #: The lanes that finished it, in the order they did.
+    written: List[str] = field(default_factory=list)
 
 
 class WorkingProcessor:
@@ -64,10 +78,13 @@ class WorkingProcessor:
         self.ask = ask
         #: Postings waiting for you (CHECK, or PENDING), in the order they arrived.
         self.approvals: "queue.Queue[Path]" = queue.Queue()
-        #: Folders waiting for their CV.
-        self.generations: "queue.Queue[Path]" = queue.Queue()
+        #: Lane (a server's name) -> the folders waiting for its CV.
+        self.generations: Dict[str, "queue.Queue[Path]"] = {
+            lane: queue.Queue() for lane in (writer.lanes if writer is not None else [])
+        }
         #: Jobs that failed (rejections are not failures): the exit code.
         self.failures = 0
+        self._queued: Dict[Path, _Queued] = {}
         self._lock = threading.Lock()
         self._closed = threading.Event()
 
@@ -87,7 +104,7 @@ class WorkingProcessor:
     def submit_folder(self, source: Path, log: TaggedLog) -> Optional[Path]:
         """An analysed folder dropped into the inbox, copied in whole.
 
-        Everything in it comes along — a CV document to re-render, your
+        Everything in it comes along — each server's CV to render again, your
         ``approval_status.txt`` — and the same table as for a leftover decides
         where it goes. ``None`` for a posting seen before.
         """
@@ -154,15 +171,39 @@ class WorkingProcessor:
         """You said s or n: asked again after the others."""
         self.approvals.put(folder)
 
-    # --- from the CV worker -------------------------------------------------
-    def deliver(self, folder: Path, log: TaggedLog, *, record_row: bool) -> Path:
-        """Finished: ``CV/<day>/``. Only a generated CV gets a spreadsheet row."""
+    # --- from the CV workers ------------------------------------------------
+    def finished(self, folder: Path, lane: str, log: TaggedLog, ok: bool) -> Optional[Path]:
+        """One lane is done with a folder: its log goes into ``log.log``.
+
+        When it was the last lane, the folder is delivered if at least one
+        lane wrote its CV, else filed under ``error/``; where it went is
+        returned. ``None`` while other lanes are still at it.
+        """
+        with self._lock:
+            log.append_to(folder / LOG_FILENAME)
+            queued = self._queued[folder]
+            queued.left.discard(lane)
+            if ok:
+                queued.written.append(lane)
+            else:
+                self.failures += 1
+            if queued.left:
+                return None
+            del self._queued[folder]
+        end = TaggedLog(self.console, folder.name)
+        if not queued.written:
+            return self._to_error(folder, end, failed=True)
+        return self.deliver(folder, end, record_row=not queued.had_pdf, written=queued.written)
+
+    def deliver(self, folder: Path, log: TaggedLog, *, record_row: bool,
+                written: Sequence[str] = ()) -> Path:
+        """Finished: ``CV/<day>/``. A re-run gets no spreadsheet row; a new
+        one points at the default server's PDF, else the first written."""
         delivered = self._file(folder, log, self.workspace.deliver, "delivered")
         if record_row:
-            pdf = self.writer.pdf_name(delivered)
             try:
                 self.tracker.record(delivered, read_analysis(delivered),
-                                    delivered / pdf if pdf else None)
+                                    self.writer.pdf(delivered, written))
             except Exception as exc:
                 # The CV is delivered and was paid for; a broken or locked
                 # spreadsheet is bookkeeping, and must not undo that or stop
@@ -171,19 +212,20 @@ class WorkingProcessor:
                 log.append_to(delivered / LOG_FILENAME)
         return delivered
 
-    def fail(self, folder: Path, log: TaggedLog) -> Path:
-        """A call failed: ``error/``, every file kept so it can be dropped back."""
-        return self.reject(folder, log, failed=True)
-
     # --- endings ------------------------------------------------------------
     def reject(self, entry: Path, log: TaggedLog, *, failed: bool = False) -> Path:
-        """``error/<day>/<name>``, with why: inside a folder, beside a file."""
+        """``error/<day>/<name>``, with why: inside a folder, beside a file.
+        ``failed`` counts it: a call failed, every file is kept so it can be
+        dropped back."""
+        if failed:
+            self.count_failure()
+        return self._to_error(entry, log, failed=failed)
+
+    def _to_error(self, entry: Path, log: TaggedLog, *, failed: bool) -> Path:
         if entry.is_dir():
             log.append_to(entry / LOG_FILENAME)
         with self._lock:
             target = self.workspace.to_error(entry)
-        if failed:
-            self.count_failure()
         if target.is_file():
             beside = target.with_name(target.name + ".log")
             beside.unlink(missing_ok=True)  # it explained the file just replaced
@@ -214,8 +256,6 @@ class WorkingProcessor:
         elif where == "discard":
             log.step(f"🗑 {why}")
             self._file(folder, log, self.workspace.discard, "discarded")
-        elif where == "render":
-            self._render(folder, log)
         elif where == "approve":
             if not self.ask:
                 log.step(f"⏸ {why}: waits in working/ for a run without --yes")
@@ -232,22 +272,18 @@ class WorkingProcessor:
 
     def _queue_cv(self, folder: Path, log: TaggedLog) -> None:
         # The log is written before the folder is queued: from then on the CV
-        # worker appends to the same log.log.
+        # workers append to the same log.log.
         if self._closed.is_set():
             log.step("⏸ waits in working/ for the next start")
             log.append_to(folder / LOG_FILENAME)
             return
-        log.step("queued for its CV")
+        log.step(f"queued for its CV: {', '.join(self.generations)}")
         log.append_to(folder / LOG_FILENAME)
-        self.generations.put(folder)
-
-    def _render(self, folder: Path, log: TaggedLog) -> None:
-        try:
-            self.writer.render(folder, log)
-        except CVError:
-            self.fail(folder, log)
-            return
-        self.deliver(folder, log, record_row=False)
+        with self._lock:
+            self._queued[folder] = _Queued(left=set(self.generations),
+                                           had_pdf=any(folder.glob("cv_*.pdf")))
+        for lane in self.generations.values():
+            lane.put(folder)
 
     def _file(self, folder: Path, log: TaggedLog, move: Callable[[Path], Path], what: str) -> Path:
         """Write the log into the folder, then move the folder, under the lock."""

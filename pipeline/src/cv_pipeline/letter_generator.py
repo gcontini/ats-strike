@@ -12,8 +12,8 @@ import logging
 from datetime import date
 from typing import Any, Dict, List, Mapping, Optional
 
-from ..models import ModelSelector
-from ..observability import LOGGER_ROOT, stage
+from .models import ModelSelector
+from .observability import LOGGER_ROOT, stage
 from .errors import ModelOutputError
 from .parsing import strip_fences
 

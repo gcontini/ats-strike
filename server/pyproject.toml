@@ -1,31 +1,18 @@
 [project]
 name = "ats-strike-server"
-version = "0.5.5"
-description = "ats-strike HTTP API: turn a job description into tailored CV data and a compiled LaTeX PDF."
+version = "1.0.4"
+description = "ats-strike HTTP API: the protocol (packs, sessions, SSE) in front of the CV pipeline."
 requires-python = ">=3.12"
 license = "MIT"
 dependencies = [
     "ats-strike-contracts",
+    # Everything that makes a CV: models, LangGraph, LaTeX, templating.
+    "ats-strike-pipeline",
     # Web layer. uvicorn plain, not [standard]: no uvloop/httptools/websockets.
     "fastapi>=0.115",
     "uvicorn>=0.30",
     # Required for File()/Form() parts — FastAPI raises without it.
     "python-multipart>=0.0.9",
-    # Every model call goes through LangChain (cv_server/models): ChatOpenAI
-    # for any OpenAI-compatible endpoint, ChatDeepSeek for api.deepseek.com.
-    "langchain-openai>=1.6",
-    "langchain-deepseek>=1.1",
-    # The CV pipeline's steps as a graph, with Send for the calls a step makes
-    # side by side (cv_server/pipeline/cv_generator.py).
-    "langgraph>=1.2",
-    # Still imported directly: the API layer maps its errors to 502/504.
-    "openai",
-    # Templating the LaTeX CV.
-    "Jinja2",
-    # Page counting on the compiled PDF.
-    "pypdf",
-    # .env secrets for local runs.
-    "python-dotenv",
 ]
 
 [project.scripts]
@@ -33,24 +20,16 @@ ats-strike = "cv_server.server:main"
 
 [tool.uv.sources]
 ats-strike-contracts = { workspace = true }
+ats-strike-pipeline = { workspace = true }
 
 [build-system]
 requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
-# resources/ lives next to src/, not inside it, so it needs its own
-# package-dir entry and an explicit packages list (packages.find only scans
-# "where").
 [tool.setuptools]
-package-dir = { "" = "src", "cv_server.resources" = "resources" }
+package-dir = { "" = "src" }
 packages = [
     "cv_server",
     "cv_server.api",
     "cv_server.api.routers",
-    "cv_server.models",
-    "cv_server.pipeline",
-    "cv_server.resources",
 ]
-
-[tool.setuptools.package-data]
-"cv_server.resources" = ["*.txt", "*.json", "*.toml", "*.jinja", "*.png"]

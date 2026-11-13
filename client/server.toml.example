@@ -1,0 +1,29 @@
+# <server folder>/server.toml: where one ats-strike server is, and what it is
+# sent besides the folder's files.
+#
+# The folder holds every file this server is sent, sub-folders included:
+#   candidate_profile.json  candidate_data.json  candidate_preferences.md
+#   candidate_signature.png  and any sys_prompt_*.txt, *_schema.json,
+#   resume.tex.jinja or image you want used instead of the server's own.
+#   cache/ is the server's: it fills it itself.
+# This file is the one file of the folder that is never sent.
+
+url = "http://localhost:8080"
+
+# Only if the server requires one (it answers 401 without it).
+# token = "..."
+
+# How long to follow a CV job, in seconds. Writing one takes minutes.
+# timeout = 1800
+
+# Sent with every request as it is: what it means is the server's business.
+# These are the 1.x server's.
+# [settings]
+# pages = 2                     # page limit the CV must fit (default 2)
+#
+# A model role's request settings instead of the server's: replaces ALL of
+# that role's settings in the server's models.toml for the request. Roles:
+# jd_evaluation, profile_scoring, format_selection, cv, duties, validation,
+# highlight (the CV), analysis and letter.
+# [settings.extra_body.cv]
+# temperature = 0.4
