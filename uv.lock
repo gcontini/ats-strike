@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
 
 [manifest]
@@ -1363,7 +1363,7 @@ wheels = [
 
 [[package]]
 name = "resumix-client"
-version = "0.5.0"
+version = "0.5.4"
 source = { editable = "client" }
 dependencies = [
     { name = "httpx" },
@@ -1382,7 +1382,7 @@ requires-dist = [
 
 [[package]]
 name = "resumix-contracts"
-version = "0.5.0"
+version = "0.5.4"
 source = { editable = "contracts" }
 dependencies = [
     { name = "pydantic" },
@@ -1393,7 +1393,7 @@ requires-dist = [{ name = "pydantic" }]
 
 [[package]]
 name = "resumix-server"
-version = "0.5.0"
+version = "0.5.4"
 source = { editable = "server" }
 dependencies = [
     { name = "fastapi" },

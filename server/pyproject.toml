@@ -1,6 +1,6 @@
 [project]
 name = "resumix-server"
-version = "0.5.0"
+version = "0.5.4"
 description = "resumix HTTP API: turn a job description into tailored CV data and a compiled LaTeX PDF."
 requires-python = ">=3.12"
 license = "MIT"
