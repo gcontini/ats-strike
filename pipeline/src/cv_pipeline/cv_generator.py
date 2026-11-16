@@ -29,6 +29,8 @@ import time
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
+from openai import APIError
+
 from .bundle import CandidateInputs, ResourceBundle
 from .models import ModelSelector, Usage
 from .observability import LOGGER_ROOT, stage
@@ -191,7 +193,7 @@ class CVGenerator:
 
         The highlighter only inserts Markdown markers inside existing string
         values — content, structure and order are preserved — following the
-        rules in the highlight prompt. When it gets no usable reply a warning
+        rules in the highlight prompt. When it gets no usable reply, or its endpoint refuses the call, a warning
         is logged and the un-highlighted ``cv_data`` is returned, so the job
         still succeeds.
         """
@@ -214,7 +216,7 @@ class CVGenerator:
                 "highlight", TailoredCVData, self.bundle.sys_prompt_highlight,
                 [{"role": "user", "content": request}], usage=self.usage,
             )
-        except ModelOutputError as e:
+        except (ModelOutputError, APIError) as e:
             logger.warning("  ⚠ highlighting failed (%s) — continuing with the un-highlighted CV", e)
             return cv_data
 

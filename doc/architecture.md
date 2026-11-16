@@ -46,7 +46,7 @@ server and by a frozen executable, and has to stay cheap in both.
 |---|---|---|
 | `client/` | Your profile, your contact data, your template and images, the output tree, the spreadsheet | A PyInstaller executable, ~1 file |
 | `server/` | The provider API key, the five prompts, the LaTeX template, the LaTeX toolchain | A container image, ~780 MB |
-| `contracts/` | The response envelope, the payload models, the free JD pre-check | A pydantic-only package, vendored into both |
+| `contracts/` | The response envelope, the payload models, the free JD pre-check | A pydantic-only package with its own repository, [ats-strike-contract](https://github.com/gcontini/ats-strike-contract), checked out here as a git submodule |
 
 ## What crosses the wire
 

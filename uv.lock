@@ -1,5 +1,5 @@
 version = 1
-revision = 5
+revision = 3
 requires-python = ">=3.12"
 
 [manifest]
@@ -53,7 +53,7 @@ wheels = [
 
 [[package]]
 name = "ats-strike-contracts"
-version = "0.5.6"
+version = "1.0.0"
 source = { editable = "contracts" }
 dependencies = [
     { name = "pydantic" },

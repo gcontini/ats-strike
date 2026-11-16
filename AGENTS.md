@@ -79,4 +79,7 @@ because breaking it has a cost we have already paid once.
 - `uv` for everything: `uv sync`, `uv run pytest`, `uv lock`.
 - Docker: **classic builder only**. No BuildKit features, no heredocs in a
   Dockerfile.
+- `contracts/` is a git submodule, the ats-strike-contract repository, shared
+  with main. Change it there, not as a copy; a change is a commit in that
+  repository plus the new pointer here.
 - Do not commit or push. Changes are left in the working tree for review.

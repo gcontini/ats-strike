@@ -1,13 +1,15 @@
 # ats-strike 0.5 — a uv workspace with three members.
 #
-#   contracts/  the wire format a client and the server agree on (pydantic only)
+#   contracts/  the wire format a client and the server agree on (pydantic only):
+#               the ats-strike-contract repository, as a git submodule
 #   pipeline/   everything that makes a CV: LLM calls + pdflatex; no HTTP
 #   server/     the HTTP API in front of the pipeline, deployed as a container
 #
 # Dependency direction is one-way: contracts <- server -> pipeline. The
 # pipeline imports none of the others; tests/test_architecture.py enforces it.
-# contracts/ and server/ are copied from main byte for byte: the client lives
-# there, and talks to this server and to a 1.x one alike.
+# contracts/ is the same submodule as on main, and server/ is copied from main
+# byte for byte: the client lives there, and talks to this server and to a 1.x
+# one alike.
 #
 #     uv sync                 install every member into one .venv
 #     uv run pytest           run all three test suites

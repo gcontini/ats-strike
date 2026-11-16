@@ -94,10 +94,13 @@ written in one place and everything else reads it:
 
 | Where | Who writes it |
 |---|---|
-| `contracts/`, `server/`, `client/` `pyproject.toml` | the workflow, with `sed` |
+| `pipeline/`, `server/` `pyproject.toml` | the workflow, with `sed` |
 | `uv.lock` | `uv lock`, in the same commit |
 | `resumix version`, and every `--verbose` run | `importlib.metadata.version("resumix-client")` |
 | `/healthz` and the OpenAPI document | `importlib.metadata.version("resumix-server")` |
+
+`contracts/` is not: it is the ats-strike-contract submodule and keeps its
+own version there. A release ships whatever commit the submodule points at.
 
 `uv.lock` is in that list because it records each workspace member's version
 as well. A bump that did not regenerate it would commit a lock that disagrees

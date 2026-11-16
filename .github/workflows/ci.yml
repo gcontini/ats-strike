@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          submodules: true   # contracts/ is the ats-strike-contract submodule.
       - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
@@ -48,6 +50,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          submodules: true   # contracts/ is the ats-strike-contract submodule.
       - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
@@ -58,6 +62,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          submodules: true   # contracts/ is the ats-strike-contract submodule.
       # Classic builder, as everywhere else: the Dockerfile must stay
       # buildable without BuildKit.
       - name: Build the server image

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import shutil
 
+import httpx
 import pytest
 
 from cv_pipeline.cv_generator import CVGenerator
@@ -324,6 +325,13 @@ def test_a_violation_too_short_to_act_on_is_not_a_rejection(
 
 def test_highlighting_failure_keeps_the_unhighlighted_cv(bundle, candidate, tmp_path, no_latex):
     model = fake(cv_json(), highlight="}{ not json")
+    document, *_ = build(bundle, candidate, tmp_path, model, highlight=True).generate("JD")
+    assert document["job_title"] == "Staff Platform Engineer"
+
+
+def test_a_highlight_endpoint_failure_keeps_the_unhighlighted_cv(bundle, candidate, tmp_path, no_latex):
+    model = fake(cv_json())
+    model["highlight"].error = httpx.ConnectError("the endpoint is down")
     document, *_ = build(bundle, candidate, tmp_path, model, highlight=True).generate("JD")
     assert document["job_title"] == "Staff Platform Engineer"
 

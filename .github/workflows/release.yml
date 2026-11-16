@@ -30,6 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          submodules: true   # contracts/ is the ats-strike-contract submodule.
           # The push below is a fast-forward of one commit; a shallow clone is
           # one more thing that can refuse it. This repository is small.
           fetch-depth: 0
@@ -60,13 +61,13 @@ jobs:
         run: |
           set -eux
           sed -i "s/^version = \".*\"$/version = \"$VERSION\"/" \
-            contracts/pyproject.toml pipeline/pyproject.toml server/pyproject.toml
+            pipeline/pyproject.toml server/pyproject.toml
           # uv.lock records each member's version too. Leaving it stale would
           # commit a lock that disagrees with the manifests, and `uv lock
           # --check` and `uv sync --locked` both refuse that.
           uv lock
           grep -H '^version = ' \
-            contracts/pyproject.toml pipeline/pyproject.toml server/pyproject.toml
+            pipeline/pyproject.toml server/pyproject.toml
 
       - name: Commit, tag and push
         id: push
@@ -76,7 +77,7 @@ jobs:
           set -eux
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add contracts/pyproject.toml pipeline/pyproject.toml server/pyproject.toml uv.lock
+          git add pipeline/pyproject.toml server/pyproject.toml uv.lock
           git commit -m "release v$VERSION"
           git tag "v$VERSION"
           # --atomic: the branch and the tag land together, or neither does.
@@ -96,6 +97,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          submodules: true   # contracts/ is the ats-strike-contract submodule.
           ref: ${{ needs.tag.outputs.sha }}
 
       - name: Build it

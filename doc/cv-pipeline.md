@@ -200,3 +200,32 @@ None has a loop. Each runs on its own model: `detect`, `analysis` and `letter`.
 - **`letter_generator.generate`** — prose in, prose out; 180–450 words,
   validated. The prompt asks the model to look the employer up when it can
   search the web; whether it can is the `letter` role's `extra_body`.
+
+## Files and settings
+
+What the 0.5 pipeline reads from a [protocol](protocol.md) request: the
+pack files and the `settings` keys. Anything it does not name is ignored,
+`cache/` included. A 1.x server reads its own set (see main's
+[CV pipeline page](https://github.com/gcontini/ats-strike/blob/main/doc/cv-pipeline.md#files-and-settings)).
+
+| Pack file | Becomes |
+|---|---|
+| `candidate_profile.json` | the candidate's profile (JSON object). Needed by analysis, CV, letter. |
+| `candidate_data.json` | what the template prints: name, contact details. Needed by CV and letter. No model is shown it. |
+| `candidate_preferences.md` | your preferences. Needed by analysis. |
+| `sys_prompt_analysis.txt` | the analysis prompt |
+| `sys_prompt_cv.txt`, `sys_prompt_review.txt`, `sys_prompt_highlight.txt`, `sys_prompt_letter.txt` | that prompt |
+| `resume.tex.jinja` | the template, page counts included |
+| top-level `*.png`, `*.jpg`, `*.jpeg` | images, under their own file name, merged over the shipped ones |
+
+Text is UTF-8 with a BOM stripped; a needed file that is missing is `400
+missing_part`; one that is not UTF-8, not JSON or not a JSON object is `400
+bad_part`. `jd.txt` is decoded with undecodable bytes replaced. A written CV
+stores `cv.json`, `cv.tex` and the PDF, and no intermediate step.
+
+| Setting | Means |
+|---|---|
+| `pages` | Page limit the CV must fit: an integer of at least 1 (default 2), else `bad_part` |
+| `temperature`, `presence_penalty` | Numbers, else `bad_part`: the `cv` model's sampling for a CV, the `letter` model's for a letter. Analysis keeps its own. |
+
+Unknown keys are ignored.

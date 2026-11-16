@@ -22,8 +22,14 @@ debugger instead of an image.
 ## Install
 
 ```bash
+git clone --recurse-submodules --branch fix-0.5.x https://github.com/gcontini/ats-strike
 uv sync
 ```
+
+`contracts/` is a git submodule (the ats-strike-contract repository): in a
+clone made without `--recurse-submodules` it is empty until
+`git submodule update --init`, and after a `git pull` that moved it,
+`git submodule update` brings it along.
 
 One `.venv` at the repository root for `contracts/`, `server/` and `client/`.
 Point VS Code's Python interpreter at `${workspaceFolder}/.venv/bin/python`
