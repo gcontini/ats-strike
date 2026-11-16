@@ -25,22 +25,19 @@ Follow these strict rules:
     * Leave out the "|<scores>" suffixes and the "score" fields.
 
 2. FIELD RULES
+    * job_title: Start from the first KEY POINT, but it MUST pass the Interview Defendability Test: use it verbatim only if MASTER PROFILE shows the candidate covered similar scope, seniority, and function in some point of his career OR if it is included in MASTER PROFILE->job_title
+        - Do NOT adopt an unearned seniority/leadership label (e.g. "Head", "Manager", "Director") if MASTER PROFILE shows no people-management or ownership at that level.
+        - If the the first KEY POINT is not fully grounded, invent a title that borrows the KEY POINT domain/terminology as closely as possible while staying defensible from MASTER PROFILE's actual titles/experiences (e.g. "Solution Architect" -> "Solution Architect, AI & Digital Enablement" rather than "AI Tech Lead"). You can take inspiration (but not limited to) from MASTER PROFILE->job_title if specified.
     * summary: one paragraph of 3 to 5 sentences, maximum 600 characters, that tells a recruiter why this candidate
-      fits this job. Start from the summaries item scored higher:
-      - first sentence: the role, the years of experience, the kind of projects and clients, if it fits the most matching KEY POINT;
-      - then what the candidate does that matches the most important KEY POINTS, backed by
-        the technologies, scale or context of the MASTER PROFILE experiences;
-      - Pick the important KEY POINTS the MASTER PROFILE backs, it must make the recruiter interested by matching
-        what he is searching: prefer abstract capabilities and technologies over specific duties. 
-      - It is the first thing that a recruiter reads, invest extra effort in polishing it. 
-      - summary style:
-        Write it as connected prose that reads well aloud. Keep the sentences simple, but vary how they start and how they
-        are built: at most two sentences start with "I", never two in a row. Join related capabilities in one sentence
-        rather than writing a short sentence for each.
-        The recruiter has no prior knowledge of the candidate, if you refer to a specific experience/technology/duty check that he has enough context to understand.
-        Give each item a bit of context: Do not make plain lists of unrelated capabilities (you can list similar capabilities as reinforcement). 
-        Keep it grounded in MASTER PROFILE: DO NOT FABRICATE responsibilities.
-        Replace <<job_title>> with your job_title: keep job_title and the beginning of the summary consistent.
+      fits this job. 
+      - take summaries in MASTER PROFILE as examples they are in the format 'job_hint|summary'.
+          - start from the one whose job_hint is more similar to the first KEY POINT. Strip the job_hint
+          - If none similar invent following the examples
+      - <<summary_keywords>>: complete the sentence using what the candidate does that matches the most important KEY POINTS, backed by the technologies, scale or context of the MASTER PROFILE experiences, try not to repeat the keywords in the following section; 
+      - <<summary_sentence>>: similar to above try to complete the profile explaining why the candidate is fit for the position.
+        - Pick the important KEY POINTS the MASTER PROFILE backs, it must make the recruiter interested by matching what he is searching: prefer abstract capabilities and technologies over specific duties. 
+      - Keep it grounded in MASTER PROFILE: DO NOT FABRICATE responsibilities.
+      - Replace <<job_title>> with the job_title: keep job_title and the beginning of the summary consistent.
     * certifications: break ties in favor of the most recent. Do not invent certifications.
       - Preserve each selected certification's date and name exactly as given, sort most recent first.
 

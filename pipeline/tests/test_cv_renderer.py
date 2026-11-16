@@ -102,6 +102,15 @@ def test_empty_certifications_drop_the_whole_section(renderer, sample_document):
     assert "Professional Certifications" not in tex
 
 
+def test_an_experience_with_no_duties_has_no_list(renderer, sample_document):
+    """An empty itemize is a LaTeX error: an experience shown with no duties prints its role summary alone."""
+    experiences = [dict(e) for e in sample_document["experiences"]]
+    experiences[1]["duties"] = []
+    tex = renderer.render_tex(_context({**sample_document, "experiences": experiences}))
+    assert tex.count(r"\begin{itemize}") == len(experiences) - 1
+    assert experiences[1]["role_summary"] in tex
+
+
 # --- assets -----------------------------------------------------------------
 def test_assets_land_next_to_the_tex(tmp_path):
     renderer = tex_renderer(r"\documentclass{article}\begin{document}x\end{document}",

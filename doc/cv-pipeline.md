@@ -58,13 +58,21 @@ covered adds nothing, and weak matches cannot fill a key point before its
 strong ones. The duties prompt says the same in words, and the trim below
 uses the same rule.
 
-**Formats.** What `format_selection` chooses from, and what the trim keeps:
+**Formats.** What `format_selection` chooses from:
 
 | Format | Experiences | Duties each | Duties in all |
 |---|---|---|---|
-| A | 3 | 3–9 | 23 |
-| B | 4 | 2–6 | 18 |
-| C | 5 | 1–4 | 14 |
+| A | 3 | 0–9 | 23 |
+| B | 4 | 0–8 | 19 |
+| C | 5 | 0–5 | 16 |
+
+It fills the places with the duties that add the most coverage, keeping one
+or two for long duties the writer may split. Then it counts the years the
+chosen experiences cover: when a significant part of the career is missing, it
+moves to a format with more experiences and adds the longest one not shown,
+paying with the lowest-scoring duties. An experience with no duties shows
+only its role summary, which the writer turns into a synthesis of what you
+did there, under 180 characters.
 
 The code assumes nothing about the CV or the profile beyond the work
 experiences (each with an `id` and its `duties`), their duties and the
@@ -101,7 +109,7 @@ The validators count no pages. The page limit is the render's business alone.
 After the highlight the CV is rendered — your `candidate_data` merged over
 the top, the scores removed — and its pages are counted. While it runs past
 the page limit (`pages`, 2 by default), one duty goes: of the experiences with
-more duties than the format's minimum, the duty whose removal loses the
+more than one duty, the duty whose removal loses the
 fewest coverage points; on a tie, the one with the lowest total score, then
 the older experience's. Then it is rendered again. When no duty can go, the
 longer CV is delivered.

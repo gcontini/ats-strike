@@ -11,7 +11,8 @@ The method is adapticv-ai's, one model role per step:
     stay out of the profile, in ``score_reasons``: the writer and the
     highlighter are shown them as EVIDENCE.
 ``format_selection``
-    One of :data:`FORMATS`, the experiences to show and how many duties each.
+    One of :data:`FORMATS`, the experiences to show and how many duties each,
+    0 included: an experience with none shows a short summary written for it.
 ``cv``
     The body (job title, summary, skills, certifications), and each chosen
     experience on its own.
@@ -25,7 +26,8 @@ The steps are a LangGraph graph. A step that makes several calls fans them
 out with ``Send`` — one per profile list, per experience — and a node in
 code puts the answers back in profile order. Then the CV is rendered: while
 the PDF runs past the page limit, the duty whose removal loses the least
-:func:`capped_coverage` goes, and it is rendered again. Every render is of the
+:func:`capped_coverage` goes (an experience keeps its last one), and it is
+rendered again. Every render is of the
 merged document, your ``candidate_data`` over the top, so every page count is
 the page count of the CV you will send — yet no model is ever shown that data.
 
@@ -61,12 +63,12 @@ from .errors import BudgetExceededError, ModelOutputError
 
 logger = logging.getLogger(f"{LOGGER_ROOT}.cv")
 
-#: The CV formats format_selection chooses from; the render keeps at least
-#: min_duties per experience. Shown to the model as they are.
+#: The CV formats format_selection chooses from. Any experience may show 0
+#: duties: it then shows only a short summary. Shown to the model as they are.
 FORMATS = {
-    "A": {"experiences": 3, "min_duties": 3, "max_duties": 9, "max_total_duties": 23},
-    "B": {"experiences": 4, "min_duties": 2, "max_duties": 7, "max_total_duties": 19},
-    "C": {"experiences": 5, "min_duties": 1, "max_duties": 4, "max_total_duties": 14},
+    "A": {"experiences": 3, "max_duties": 9, "max_total_duties": 23},
+    "B": {"experiences": 4, "max_duties": 8, "max_total_duties": 19},
+    "C": {"experiences": 5, "max_duties": 5, "max_total_duties": 16},
 }
 #: The "|3-80,7-40" suffix of a scored text: key point id - score.
 SCORES = re.compile(r"\|((?:\d+-\d+,?)*)$")
@@ -506,12 +508,11 @@ class CVGenerator:
     def _render(self, state: Mapping[str, Any]) -> Tuple[Dict[str, Any], RenderResult, int]:
         """The highlighted CV without the scores, compiled; the document, the result and how many duties went.
 
-        While the PDF is longer than the page limit, it removes a duty of an experience with more duties than the
-        format's minimum: the one whose removal loses the fewest capped_coverage points; on a tie, the one with the
-        lowest total score, then the older experience's. Then it renders again. When no duty can go, it keeps the
-        longer PDF."""
+        While the PDF is longer than the page limit, it removes a duty of an experience with more than one: the one
+        whose removal loses the fewest capped_coverage points; on a tie, the one with the lowest total score, then
+        the older experience's. Then it renders again. An experience written with duties keeps one, so only an
+        experience written with none shows its summary alone. When no duty can go, it keeps the longer PDF."""
         resume = copy.deepcopy(state["highlighted_resume"])
-        min_duties = FORMATS[state["format_selection"]["format"]]["min_duties"]
         importance = {k["id"]: k["importance"] for k in state["key_points"]}
         removed = 0
         with stage("render"):
@@ -528,7 +529,7 @@ class CVGenerator:
                         j,
                     )
                     for i, j, duty in shown
-                    if len(resume["experiences"][i]["duties"]) > min_duties
+                    if len(resume["experiences"][i]["duties"]) > 1
                 ]
                 if not removable:
                     logger.warning("  ⚠ %d pages and no duty left to remove: keeping it", result.pages)

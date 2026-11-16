@@ -7,7 +7,7 @@ Input:
   Each has id, requirement, keywords, importance (0-100: how important it is for the role).
 - WRITING STYLE (optional): how the candidate writes.
 - SCHEMA: JSON schema of the output, with the length limits of each field.
-- DUTY CAP: the maximum number of duties for this experience.
+- DUTY CAP: the maximum number of duties for this experience. 0: no duties, only the role_summary (see 1.).
 - EXPERIENCE: the work experience from MASTER PROFILE. Each duty ends with "|<scores>", e.g. "|3-80,7-40":
   the KEY POINTS it matches (by id), each with how well it matches (0-100).
 - EVIDENCE: for each duty of EXPERIENCE that matches some KEY POINTS (by number, 1 = first duty), its matches:
@@ -21,6 +21,9 @@ Follow these strict rules:
       If it is longer, shorten it, following the WRITING STYLE.
     * role_summary, when you shorten it: general introduction of the role scope, mission, team or context.
       Do not repeat duties verbatim.
+    * DUTY CAP 0: duties is an empty list, and role_summary takes their place: in less than 180 characters, sum up what
+      the candidate did in this experience: the role, then the work behind the most important KEY POINTS its duties
+      prove (their EVIDENCE), with the technologies that back it. The rules of 3. apply; do not fabricate.
     * duties:
        - Actual responsibilities/tasks held in that experience, taken from EXPERIENCE->duties. Rewrite every duty to improve style and match lenght cap.
        - At most DUTY CAP duties in the final work experience, and use all the places when EXPERIENCE has enough duties.

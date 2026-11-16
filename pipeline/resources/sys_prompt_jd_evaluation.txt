@@ -17,7 +17,7 @@ then review the whole list. Output the items, not the leaves.
   - A discipline: the field that 2 or more skills belong to.
   - A leaf that fits no group.
   - English: when the JD is written in English, one requirement can be "English" (if not superseeded by other items); importance 10-30, more when the JD stresses it or mention international communication.
-  - The last two items, below.
+  - The last item, below.
 - **Leave out:**
   - Generic candidate traits (eg. "motivated", "team player" ...). Keep the skills the JD requires that a CV line can prove, such as stakeholder management or technical leadership.
   - Years of experience and seniority: they describe the whole career, not one line of a CV.
@@ -88,9 +88,8 @@ then review the whole list. Output the items, not the leaves.
         Disciplines are exempt: their skills carry the qualifier.
      c. Spread: the few items the role is about score 80 or more; the usual requirements 40-70;
         minor ones and nice to have 10-30.
-- **Last two items:**
+- **Last item:**
   - requirement: "success stories", keywords: ["compliments", "success", "resulting in"], importance in the low-middle: about 40, compared with the other items.
-  - requirement: "concrete examples" (specific cases, figures or results that back a skill), keywords: ["example", "results"], importance mid-low.
 - **`requirement`:** a short English phrase that describe ONE skill or activity.
   - Name the SINGLE activity, not a list of categories: "Technology selection aligned with enterprise standards", not "Technologies, platforms and tools".
   - ONE means one capability, not one technology: "Java backend development" is one skill, with Spring Boot, JPA and Maven as its keywords.

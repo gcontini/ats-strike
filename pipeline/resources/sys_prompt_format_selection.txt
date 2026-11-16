@@ -1,25 +1,30 @@
 Input:
 * KEY POINTS: JSON list of the job's requirements. Each has id, requirement, keywords, importance (0-100). Item 1 is the job title.
-* FORMATS: JSON object of the CV formats: for each one, how many work experiences it shows, the minimum and
-  maximum duties of each experience, and the maximum duties overall. Every format fits the page: they trade depth for breadth.
+* FORMATS: JSON object of the CV formats: for each one, how many work experiences it shows, the maximum duties of each
+  experience, and the maximum duties overall. Every format fits the page: they trade duties for experiences.
+  An experience can show 0 duties: it then shows only a short summary of what the candidate did there.
 * WORK EXPERIENCES: JSON list from the candidate's profile, most recent first. Each duty ends with "|<scores>",
   e.g. "|3-80,7-40": the KEY POINTS it matches (by id), each with how well it matches (0-100).
 
-Choose the CV format, the work experiences to show and how many duties each one shows.
-* The most recent work experience and the longest one is always shown.
-* Judge how relevant each experience is on three signals together:
-  - Duties: how high its 2-3 best duties score on important KEY POINTS.
-  - Role: how well its title and role summary match the job title and the most important KEY POINTS, read as a recruiter would:
-    the title says what the candidate did every day, the duties only tell a few stories of it.
-  - Years: how long it lasted. A recruiter counts the years spent on the job's core skills: an experience that holds most of
-    those years is relevant even when its duties score lower, because without it the CV cannot show them.
-  Age alone does not make an experience less relevant.
-* Choose the format by what one more experience adds: take a format with more experiences when the next experience proves an important
-  KEY POINT (by role, years or duties) better than the experiences already chosen, even if they lose their lowest-scoring duties.
-  Otherwise prefer fewer experiences with more duties.
-* duty_caps: how many duties each chosen experience shows, within the format's minimum and maximum and its maximum
-  overall, never more than the work experience has. Give more duty_caps to the more relevant experiences.
-  - experiences whose duties score higher get more
+Choose the CV format, the work experiences to show and how many duties each one shows. The most recent work experience
+is always shown. Work in this order:
+1. Most important duties first. Start from the format with the fewest experiences and fill its places one duty at a time,
+   taking next the duty that adds the most: for each KEY POINT, add up its 2 best scores among the duties taken (the others
+   do not count); a KEY POINT is full at 2 x its importance (importance 70: full at 140 points), and points beyond that add
+   nothing. Each duty taken is one place for its experience. The experiences shown are the ones whose duties come first,
+   up to the format's number of experiences. When no duty left adds points, fill the remaining places with the best of
+   the others: the format's maximum overall is what fits the page, and a place left empty is empty space on it.
+   Keep 1 or 2 of the format's places for the experiences whose duties taken are the longest: the writer may split a long
+   duty in two.
+2. Years covered. When the duties left add very little (they score low, or their KEY POINTS are already full), count the years
+   the chosen experiences cover, from their dates, against the candidate's whole career. If a significant part of the
+   career is not shown, switch to a format with more experiences and add the longest experience not shown yet.
+   Its places come from your lowest-scoring duties: give it those places when its own duties score as well as them;
+   otherwise it shows 0 duties. Decide what is significant, and whether one more switch is worth it, by weighing the
+   completeness of the CV against the importance of the duties lost (never trade an important duty for a not so important experience).
+3. duty_caps: how many duties each chosen experience shows, from 0 to the format's maximum, never more than the work
+   experience has. Together they use all the format's maximum overall, unless the chosen experiences do not have that
+   many duties.
 
 Output only JSON, with the experience ids in profile order and one duty cap for each, in the same order:
-{"reason": "<why this format and these experiences, one or two sentences>", "format": "B", "experience_ids": [0, 1, 2, 4], "duty_caps": [5, 6, 3, 2]}
+{"reason": "<why this format and these experiences, with the years they cover, one or two sentences>", "format": "<A, B or C>", "experience_ids": [<ids, in profile order>], "duty_caps": [<one per id, same order>]}

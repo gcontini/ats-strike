@@ -30,7 +30,8 @@ MAX_VALIDATIONS = 5
 
 
 class ReplaceInDuties(BaseModel):
-    """Replace the exact text `old` with `new` in duty number `duty` (1 = first), or in every duty when `duty` is omitted.
+    """Replace the exact text `old` with `new` in duty number `duty` (1 = first), or in every duty and in the role
+    summary when `duty` is omitted.
 
     reason: the category (Exaggeration, Syntax or Logic) and the fact in EXPERIENCE that `old` contradicts.
     """
@@ -58,13 +59,20 @@ class ReplaceInBody(BaseModel):
 
 
 def apply_duties(doc: Dict[str, Any], args: Mapping[str, Any]) -> Optional[str]:
-    """Apply one replace_in_duties call to the experience; an error when `old` is not found."""
+    """Apply one replace_in_duties call to the experience; an error when `old` is not found.
+
+    Without a duty number it replaces in every duty and in the role summary: an experience shown with no duties
+    has only its role summary to fix."""
     targets = [args["duty"] - 1] if args.get("duty") else range(len(doc["duties"]))
     hits = [i for i in targets if 0 <= i < len(doc["duties"]) and args["old"] in doc["duties"][i]]
     for i in hits:
         doc["duties"][i] = doc["duties"][i].replace(args["old"], args["new"])
-    if not hits:
-        return f"{args['old']!r} not found in " + (f"duty {args['duty']}" if args.get("duty") else "any duty")
+    in_summary = not args.get("duty") and args["old"] in doc.get("role_summary", "")
+    if in_summary:
+        doc["role_summary"] = doc["role_summary"].replace(args["old"], args["new"])
+    if not hits and not in_summary:
+        where = f"duty {args['duty']}" if args.get("duty") else "any duty or the role summary"
+        return f"{args['old']!r} not found in {where}"
     return None
 
 

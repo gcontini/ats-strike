@@ -288,10 +288,10 @@ def test_no_model_is_ever_shown_your_candidate_data(bundle, candidate, tmp_path,
 # --- the render ---------------------------------------------------------------
 def test_an_overlong_cv_loses_its_least_useful_duties_until_it_fits(bundle, candidate, tmp_path, renders):
     """Every duty covers the same key point, so the cut goes by age: the oldest
-    experience's last duties first, never below the format's minimum."""
+    experience's last duties first, down to its last one."""
     llm = script_cv(FakeLLM(), caps=(5, 5, 5), fmt="B")
     (document, _, _, summary), *_ = run(bundle, candidate, tmp_path, llm)
-    assert [len(e["duties"]) for e in document["experiences"]] == [5, 2, 2]
+    assert [len(e["duties"]) for e in document["experiences"]] == [5, 3, 1]
     assert "6 duty(s) removed to fit" in summary
     assert [1 + sum(len(e["duties"]) for e in d["experiences"]) // 5 for d in renders] == [
         4, 3, 3, 3, 3, 3, 2,
@@ -299,11 +299,22 @@ def test_an_overlong_cv_loses_its_least_useful_duties_until_it_fits(bundle, cand
 
 
 def test_a_cv_that_cannot_lose_a_duty_is_delivered_long(bundle, candidate, tmp_path, renders):
-    """Format A keeps three duties an experience: at 9 duties nothing more can go."""
-    llm = script_cv(FakeLLM(), caps=(4, 4, 3), fmt="A")
+    """An experience written with duties keeps one: five experiences at one duty each is as short as it gets."""
+    llm = script_cv(FakeLLM(), ids=(0, 1, 2, 3, 4), caps=(2, 2, 2, 2, 2), fmt="C")
     (document, _, _, summary), *_ = run(bundle, candidate, tmp_path, llm, page_limit=1)
-    assert [len(e["duties"]) for e in document["experiences"]] == [3, 3, 3]
-    assert "2 page(s), 2 duty(s) removed to fit" in summary
+    assert [len(e["duties"]) for e in document["experiences"]] == [1, 1, 1, 1, 1]
+    assert "2 page(s), 5 duty(s) removed to fit" in summary
+
+
+def test_an_experience_with_no_duties_is_written_without_and_never_trimmed(bundle, candidate, tmp_path, renders):
+    """A duty cap of 0 reaches the writer as DUTY CAP: 0; the experience comes back with no duties, and the trim cuts
+    the others, never below one each."""
+    llm = script_cv(FakeLLM(), ids=(0, 1, 2, 4), caps=(5, 5, 5, 0), fmt="B")
+    (document, _, _, summary), *_ = run(bundle, candidate, tmp_path, llm)
+    assert sum("DUTY CAP: 0" in user_text(call) for call in llm["duties"].calls) == 1
+    assert [len(e["duties"]) for e in document["experiences"]] == [5, 3, 1, 0]
+    assert document["experiences"][3]["company"] == candidate.profile["experiences"][4]["company"]
+    assert "6 duty(s) removed to fit" in summary
 
 
 # --- budget -------------------------------------------------------------------

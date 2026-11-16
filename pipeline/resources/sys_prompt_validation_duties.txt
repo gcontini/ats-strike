@@ -13,6 +13,9 @@ Input:
 - EXPERIENCE: the verified work experience, from MASTER PROFILE.
 - GENERATED EXPERIENCE: the same experience in the CV. Each duty ends with "|<scores>": ignore it,
   never put it in old or new.
+  A GENERATED EXPERIENCE with no duties shows only its role_summary: a deliberate short summary of what the candidate
+  did in that experience. Check it as you would check a duty (summing up several duties there is not excessive
+  synthesis), and fix it with a call without duty.
 - FAILED REPLACEMENTS (optional): your fixes from the previous attempt whose old text was not found.
 
 ** Mindset** : attempt 1: be strict on facts and grammar.
@@ -50,7 +53,7 @@ Analyze GENERATED EXPERIENCE and REPORT violations in the following categories (
   - The Interview Defendability Test: Ask yourself: "Could the candidate reasonably defend this statement in a job interview without being caught in an undeniable lie?" If YES, DO NOT flag it.
   - Only flag undeniable, material errors. Ignore adaptations that can be inferred directly by the role/situation.
   - Standard resume polishing, active phrasing, and reasonable synthesis of context are valid and must not be flagged.
-* Batch a repeated defect into ONE violation: If the SAME defect appears in more than two duties -- the same stray prefix or leftover marker, the same non-ASCII character throughout, the same banned word reused -- report it exactly once, with ONE replace_in_duties call without duty (it replaces in every duty).
+* Batch a repeated defect into ONE violation: If the SAME defect appears in more than two duties -- the same stray prefix or leftover marker, the same non-ASCII character throughout, the same banned word reused -- report it exactly once, with ONE replace_in_duties call without duty (it replaces in every duty and in the role_summary).
 * Omissions are OK (are the standard): The GENERATED EXPERIENCE is the result of tailoring EXPERIENCE to a specific job description (not provided). Missing duties or skills are expected and MUST NOT be flagged.
 
 ## OUTPUT FORMAT
@@ -58,7 +61,8 @@ Report each violation with ONE call of the replace_in_duties tool, and nothing e
 - If there are NO issues in the three categories above, reply with the single literal string "OK" and call no tool.
 - Otherwise call the tool once for EACH violation, at most 15 calls, most important violation first.
   Make ALL the calls in this one reply: violations you leave for a later attempt may never be fixed. Its arguments:
-  1. **duty** - the number of the duty (1 = first duty). Omit it only for a defect batched across all duties.
+  1. **duty** - the number of the duty (1 = first duty). Omit it only for a defect batched across all duties, or for
+     the role_summary of an experience with no duties.
   2. **old** - the exact offending text, copied verbatim (same characters, spaces and punctuation) from the current GENERATED EXPERIENCE.
      Quote the shortest span that, once replaced, gives a correct sentence.
      Change only the wrong words. Keep the rest of the duty as it is: its opening, its sentence shape, and every

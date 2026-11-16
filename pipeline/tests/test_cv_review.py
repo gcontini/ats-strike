@@ -27,15 +27,28 @@ def test_a_replacement_in_one_duty_leaves_the_others_alone():
 
 
 def test_a_replacement_without_a_duty_goes_everywhere():
-    doc = {"company": "Northwind", "duties": ["the team.", "the team."]}
+    doc = {"company": "Northwind", "role_summary": "A team.", "duties": ["the team.", "the team."]}
     apply_duties(doc, {"old": "team", "new": "squad"})
     assert doc["duties"] == ["the squad.", "the squad."]
+    assert doc["role_summary"] == "A squad."
+
+
+def test_an_experience_with_no_duties_is_fixed_in_its_role_summary():
+    doc = {"company": "Northwind", "role_summary": "Led the team.", "duties": []}
+    assert apply_duties(doc, {"old": "Led", "new": "Worked in"}) is None
+    assert doc["role_summary"] == "Worked in the team."
+
+
+def test_a_numbered_duty_never_reaches_the_role_summary():
+    doc = {"company": "Northwind", "role_summary": "A team.", "duties": ["the team."]}
+    apply_duties(doc, {"old": "team", "new": "squad", "duty": 1})
+    assert doc["role_summary"] == "A team."
 
 
 def test_a_replacement_that_finds_nothing_says_where_it_looked():
     doc = experience()
     assert apply_duties(doc, {"old": "nowhere", "new": "x", "duty": 1}) == "'nowhere' not found in duty 1"
-    assert apply_duties(doc, {"old": "nowhere", "new": "x"}) == "'nowhere' not found in any duty"
+    assert apply_duties(doc, {"old": "nowhere", "new": "x"}) == "'nowhere' not found in any duty or the role summary"
     assert doc == experience()
 
 

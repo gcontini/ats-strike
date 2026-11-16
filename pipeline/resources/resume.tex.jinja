@@ -85,12 +85,14 @@
 \BLOCK{ endif }
 \leavevmode\\[0.7ex]
 \VAR{ exp.role_summary }
+\BLOCK{ if exp.duties }
 \liststyleListi
 \begin{itemize}\setlength\itemsep{0pt}\setlength\parsep{3pt}
 \BLOCK{ for bullet in exp.duties }
 \item {\VAR{ bullet }}
 \BLOCK{ endfor }
 \end{itemize}
+\BLOCK{ endif }
 \BLOCK{ endfor }
 \textcolor{darkblue}{\subsection{Languages}}
 {\VAR{ languages }}
