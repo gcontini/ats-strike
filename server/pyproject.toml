@@ -1,6 +1,6 @@
 [project]
 name = "ats-strike-server"
-version = "0.5.2"
+version = "0.5.6"
 description = "ats-strike HTTP API: the protocol (packs, sessions, SSE) in front of the CV pipeline."
 requires-python = ">=3.12"
 license = "MIT"

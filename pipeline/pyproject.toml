@@ -1,6 +1,6 @@
 [project]
 name = "ats-strike-pipeline"
-version = "0.5.2"
+version = "0.5.6"
 description = "ats-strike 0.5 CV pipeline: a job description and a pack of files in, tailored CV data and a compiled LaTeX PDF out. No HTTP."
 requires-python = ">=3.12"
 license = "MIT"
