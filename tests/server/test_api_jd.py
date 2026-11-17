@@ -11,7 +11,7 @@ from server_helpers import POSTING, Failing, a_job, files, logs
 
 
 def detect(client, text):
-    return client.post("/v1/jd/detect", files=files(job={"jd.txt": text}))
+    return client.post("/v1/jd/detect", files=files(job={"job_description.txt": text}))
 
 
 def test_detect_rejects_short_text_without_calling_the_pipeline(client, stub):
@@ -56,7 +56,7 @@ def test_detect_needs_a_posting(client, stub):
     response = client.post("/v1/jd/detect", files=files(pack={"candidate_profile.json": b"{}"}))
     assert response.status_code == 400
     assert "missing_part" in response.json()["error"]
-    assert "jd.txt" in response.json()["error"]
+    assert "job_description.txt" in response.json()["error"]
 
 
 def test_analysis_returns_the_pipelines_object_untouched(client, stub):
@@ -88,7 +88,7 @@ def test_analysis_hands_the_pipeline_the_pack_the_job_and_the_settings(client, s
     name, pack, job, settings = stub.calls[-1]
     assert name == "analyze"
     assert pack == {"candidate_profile.json": b"{}"}
-    assert job == {"jd.txt": POSTING.encode()}
+    assert job == {"job_description.txt": POSTING.encode()}
     assert settings == {"pages": 1}
 
 

@@ -66,7 +66,7 @@ def test_a_written_cv_stores_each_step_then_the_document_the_tex_and_the_pdf(
 ):
     script_cv(fake_llm)
     sink = Recorder()
-    summary = pipeline.cv(example_pack, {"jd.txt": b"x" * 1200}, {}, tmp_path, sink)
+    summary = pipeline.cv(example_pack, {"job_description.txt": b"x" * 1200}, {}, tmp_path, sink)
 
     assert sink.statuses == STEPS
     assert [o.name for o in sink.outputs] == (
@@ -89,7 +89,7 @@ def test_a_stored_step_is_indented_json_with_its_accents_kept(
 ):
     script_cv(fake_llm, body={**SAMPLE_BODY, "summary": "Ingénieur"})
     sink = Recorder()
-    pipeline.cv(example_pack, {"jd.txt": b"x" * 1200}, {}, tmp_path, sink)
+    pipeline.cv(example_pack, {"job_description.txt": b"x" * 1200}, {}, tmp_path, sink)
     text = sink.named("steps/cv_body.json").content
     assert "Ingénieur" in text
     assert text == json.dumps(json.loads(text), indent=2, ensure_ascii=False)
@@ -101,7 +101,7 @@ def test_a_cv_runs_on_its_own_roles_extra_bodies_only(pipeline, fake_llm, exampl
     for role in ("cv", "duties"):
         fake_llm._chat[role].temperature = 0.4
     settings = {"extra_body": {"cv": {"top_p": 0.9}, "letter": {"top_p": 0.1}}}
-    pipeline.cv(example_pack, {"jd.txt": b"x" * 1200}, settings, tmp_path, Recorder())
+    pipeline.cv(example_pack, {"job_description.txt": b"x" * 1200}, settings, tmp_path, Recorder())
 
     assert all(c["top_p"] == 0.9 and "temperature" not in c for c in fake_llm["cv"].calls)
     assert all(c["temperature"] == 0.4 and "top_p" not in c for c in fake_llm["duties"].calls)
@@ -126,7 +126,7 @@ def pipeline_lines():
 @needs_latex
 def test_pages_reaches_the_page_count(pipeline, fake_llm, example_pack, tmp_path, pipeline_lines):
     script_cv(fake_llm)
-    pipeline.cv(example_pack, {"jd.txt": b"x" * 1200}, {"pages": 1}, tmp_path, Recorder())
+    pipeline.cv(example_pack, {"job_description.txt": b"x" * 1200}, {"pages": 1}, tmp_path, Recorder())
     assert any("past page 1" in line for line in pipeline_lines)
 
 
@@ -135,7 +135,7 @@ def test_a_missing_pack_file_fails_before_any_model_call(pipeline, fake_llm, exa
     script_cv(fake_llm)
     pack = {k: v for k, v in example_pack.items() if k != "candidate_data.json"}
     with pytest.raises(PipelineError) as failure:
-        pipeline.cv(pack, {"jd.txt": b"x" * 1200}, {}, tmp_path, Recorder())
+        pipeline.cv(pack, {"job_description.txt": b"x" * 1200}, {}, tmp_path, Recorder())
     assert failure.value.kind == "missing_part"
     assert no_model_was_called(fake_llm)
 
@@ -146,7 +146,7 @@ def test_a_missing_pack_file_fails_before_any_model_call(pipeline, fake_llm, exa
 def test_a_document_is_rendered_into_a_tex_and_a_pdf(
     pipeline, fake_llm, example_pack, tmp_path, sample_document, call
 ):
-    job = {"jd.txt": b"x" * 1200, "cv.json": json.dumps(sample_document).encode()}
+    job = {"job_description.txt": b"x" * 1200, "cv.json": json.dumps(sample_document).encode()}
     sink = Recorder()
     if call == "render":
         pipeline.render(example_pack, job, tmp_path, sink)
@@ -162,7 +162,7 @@ def test_a_document_is_rendered_into_a_tex_and_a_pdf(
 def test_a_tex_is_compiled_into_a_pdf_only(pipeline, fake_llm, tmp_path):
     tex = "\\documentclass{article}\\begin{document}Edited By Hand\\end{document}"
     sink = Recorder()
-    pipeline.cv({}, {"jd.txt": b"x", "cv.tex": tex.encode()}, {}, tmp_path, sink)
+    pipeline.cv({}, {"job_description.txt": b"x", "cv.tex": tex.encode()}, {}, tmp_path, sink)
     assert [(o.type, o.name) for o in sink.outputs] == [("cv", "cv.pdf")]
     assert no_model_was_called(fake_llm)
 
@@ -177,7 +177,7 @@ def test_the_document_wins_over_the_tex(pipeline, tmp_path, sample_document):
 
 def test_a_render_needs_something_to_render(pipeline, tmp_path):
     with pytest.raises(PipelineError) as failure:
-        pipeline.render({}, {"jd.txt": b"x"}, tmp_path, Recorder())
+        pipeline.render({}, {"job_description.txt": b"x"}, tmp_path, Recorder())
     assert failure.value.kind == "missing_part"
 
 
@@ -190,7 +190,7 @@ def test_detect_is_the_model_call(pipeline, fake_llm):
 
 def test_an_analysis_comes_back_as_a_plain_object(pipeline, fake_llm, example_pack):
     fake_llm["analysis"].replies = [json.dumps(ANALYSIS)]
-    analysis = pipeline.analyze(example_pack, {"jd.txt": b"SENTINEL"}, {})
+    analysis = pipeline.analyze(example_pack, {"job_description.txt": b"SENTINEL"}, {})
 
     assert analysis == ANALYSIS
     prompt = fake_llm["analysis"].last_prompt
@@ -204,7 +204,7 @@ def test_an_analysis_takes_its_prompt_and_its_extra_body_from_the_request(
     fake_llm["analysis"].replies = [json.dumps(ANALYSIS)]
     pack = {**example_pack, "sys_prompt_analysis.txt": b"SCORE IT STRICTLY"}
     settings = {"extra_body": {"analysis": {"top_p": 0.5}, "cv": {"top_p": 0.9}}}
-    pipeline.analyze(pack, {"jd.txt": b"a jd"}, settings)
+    pipeline.analyze(pack, {"job_description.txt": b"a jd"}, settings)
 
     sent = fake_llm["analysis"].calls[-1]
     assert sent["messages"][0]["content"].startswith("SCORE IT STRICTLY")
@@ -214,14 +214,14 @@ def test_an_analysis_takes_its_prompt_and_its_extra_body_from_the_request(
 def test_an_analysis_needs_the_preferences(pipeline, example_pack):
     pack = {k: v for k, v in example_pack.items() if k != "candidate_preferences.md"}
     with pytest.raises(PipelineError) as failure:
-        pipeline.analyze(pack, {"jd.txt": b"a jd"}, {})
+        pipeline.analyze(pack, {"job_description.txt": b"a jd"}, {})
     assert failure.value.kind == "missing_part"
 
 
 def test_a_letter_draws_on_the_analysis_and_the_pack_prompt(pipeline, fake_llm, example_pack):
     fake_llm["letter"].replies = [LETTER]
     pack = {**example_pack, "sys_prompt_letter.txt": b"WRITE IT SHORT"}
-    job = {"jd.txt": b"a jd", "analysis.json": json.dumps(ANALYSIS).encode()}
+    job = {"job_description.txt": b"a jd", "analysis.json": json.dumps(ANALYSIS).encode()}
 
     assert pipeline.letter(pack, job, {}) == LETTER
     sent = fake_llm["letter"].calls[0]

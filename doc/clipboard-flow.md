@@ -29,7 +29,7 @@ sequenceDiagram
     In->>In: static_jd_guess(text)
     Note right of In: too short, too long or binary<br/>→ printed and dropped, nothing sent
 
-    In->>Api: detect(job: jd.txt)
+    In->>Api: detect(job: job_description.txt)
     Api->>Srv: GET /healthz
     Note right of Api: once per client, 3 attempts, 2 s apart;<br/>another protocol → refused
     Srv-->>Api: 200 ServerStatus
@@ -52,7 +52,7 @@ sequenceDiagram
     In-->>Lis: back to the clipboard at once
 
     Gen->>Api: create_cv(pack, job, settings, id)
-    Api->>Srv: POST /v1/cv, X-Request-Id: sha256(jd.txt)
+    Api->>Srv: POST /v1/cv, X-Request-Id: sha256(job_description.txt)
     Srv-->>Api: 202 {reattached}
 
     Gen->>Api: events(id)
@@ -82,7 +82,7 @@ sequenceDiagram
 
 ```mermaid
 flowchart LR
-    CLIP["clipboard"] --> HELD["working/Acme_Corp_Head_of_IT/<br/>jd.txt · analysis.json<br/>approval_status.txt: PENDING"]
+    CLIP["clipboard"] --> HELD["working/Acme_Corp_Head_of_IT/<br/>job_description.txt · analysis.json<br/>approval_status.txt: PENDING"]
     HELD -->|"y or URL"| QUEUED["working/…<br/>APPROVED, queued"]
     HELD -->|"q: asked again<br/>at the next start"| HELD
     HELD -->|"n or s"| DISC["discarded/26-01-15/…<br/><i>analysis kept</i>"]
@@ -123,7 +123,7 @@ does. First every
 `analysis.json` under `CV/`, `discarded/` and `working/` is compared with the
 new one: a posting already applied to, discarded or still in flight is
 dropped with the earlier folder's path, and nothing is written. Otherwise
-`jd.txt`, `analysis.json` and `approval_status.txt` saying `PENDING` are
+`job_description.txt`, `analysis.json` and `approval_status.txt` saying `PENDING` are
 written at once.
 
 **5 — The question is the only thing standing between you and the bill.**

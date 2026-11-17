@@ -109,12 +109,12 @@ def test_a_bad_request_starts_no_session(client, stub, app_state):
 # --- what comes back ---------------------------------------------------------
 def test_the_pipeline_is_handed_the_whole_request(client, stub):
     parts = files(pack={"candidate_profile.json": b"{}", "cache/pool.json": b"[]"},
-                  job={"jd.txt": POSTING, "steps/key_points.json": b"[]"})
+                  job={"job_description.txt": POSTING, "steps/key_points.json": b"[]"})
     run_cv(client, parts=parts, settings={"pages": 1, "extra_body": {"cv": {"top_p": 1}}})
     name, pack, job, settings, _ = stub.calls[-1]
     assert name == "cv"
     assert pack == {"candidate_profile.json": b"{}", "cache/pool.json": b"[]"}
-    assert job == {"jd.txt": POSTING.encode(), "steps/key_points.json": b"[]"}
+    assert job == {"job_description.txt": POSTING.encode(), "steps/key_points.json": b"[]"}
     assert settings == {"pages": 1, "extra_body": {"cv": {"top_p": 1}}}
 
 

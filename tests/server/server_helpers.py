@@ -126,7 +126,7 @@ def files(pack: Optional[dict] = None, job: Optional[dict] = None) -> list:
 
 def a_job(text: str = POSTING, **more) -> list:
     """A pack of one profile and a job of one posting."""
-    return files(pack={"candidate_profile.json": b"{}"}, job={"jd.txt": text, **more})
+    return files(pack={"candidate_profile.json": b"{}"}, job={"job_description.txt": text, **more})
 
 
 # --- a CV session -------------------------------------------------------------

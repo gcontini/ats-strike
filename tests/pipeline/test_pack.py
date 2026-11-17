@@ -130,12 +130,12 @@ def test_an_extra_body_that_is_not_an_object_is_a_bad_part(settings):
 
 # --- the job ------------------------------------------------------------------
 def test_the_posting_is_needed():
-    with pytest.raises(MissingPartError, match="jd.txt"):
+    with pytest.raises(MissingPartError, match="job_description.txt"):
         pack.jd_text({})
 
 
 def test_an_undecodable_byte_in_the_posting_is_replaced():
-    assert pack.jd_text({"jd.txt": b"caf\xe9"}) == "caf�"
+    assert pack.jd_text({"job_description.txt": b"caf\xe9"}) == "caf�"
 
 
 def test_the_analysis_is_optional():
@@ -144,11 +144,11 @@ def test_the_analysis_is_optional():
 
 
 @pytest.mark.parametrize("names, action", [
-    ({"jd.txt"}, "generate"),
-    ({"jd.txt", "cv.tex"}, "render_tex"),
-    ({"jd.txt", "cv.json"}, "render_document"),
-    ({"jd.txt", "cv.json", "cv.tex"}, "render_document"),
-    ({"jd.txt", "steps/key_points.json"}, "generate"),
+    ({"job_description.txt"}, "generate"),
+    ({"job_description.txt", "cv.tex"}, "render_tex"),
+    ({"job_description.txt", "cv.json"}, "render_document"),
+    ({"job_description.txt", "cv.json", "cv.tex"}, "render_document"),
+    ({"job_description.txt", "steps/key_points.json"}, "generate"),
 ])
 def test_what_a_cv_request_does_is_decided_by_the_job(names, action):
     assert pack.job_action({name: b"" for name in names}) == action

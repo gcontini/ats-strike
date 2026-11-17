@@ -24,7 +24,7 @@ async def detect_jd(
     job: List[UploadFile] = JOB,
     settings: Optional[str] = SETTINGS,
 ) -> dict:
-    """Is the job's ``jd.txt`` a job posting? Static checks first, one model call second.
+    """Is the job's ``job_description.txt`` a job posting? Static checks first, one model call second.
 
     The caller gets a yes or a no; why is in this request's log, which also
     records whether the model was asked at all (it is not, when the structural
@@ -32,9 +32,9 @@ async def detect_jd(
     """
     state = get_state(request)
     parts = await read_request(pack, job, settings, max_bytes=state.settings.max_part_bytes)
-    if "jd.txt" not in parts.job:
-        raise MissingPart("job file 'jd.txt' is required")
-    text = parts.job["jd.txt"].decode("utf-8", errors="replace")
+    if "job_description.txt" not in parts.job:
+        raise MissingPart("job file 'job_description.txt' is required")
+    text = parts.job["job_description.txt"].decode("utf-8", errors="replace")
 
     if not static_jd_guess(
         text, min_chars=state.settings.jd_min_chars, max_chars=state.settings.jd_max_chars

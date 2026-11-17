@@ -11,7 +11,7 @@ from cv_server.api.app import create_app
 
 from server_helpers import Failing, files
 
-SHORT = files(job={"jd.txt": "short"})
+SHORT = files(job={"job_description.txt": "short"})
 
 
 @pytest.fixture
@@ -75,7 +75,7 @@ def test_an_id_is_generated_when_the_client_sends_none(client):
 def test_a_provider_failure_is_a_gateway_error_not_a_bug(client, stub):
     """The server is fine; the thing behind it is not. That is a 502."""
     stub.failure = Failing("provider_unreachable", "the model endpoint failed: APIConnectionError")
-    response = client.post("/v1/jd/detect", files=files(job={"jd.txt": "Job posting. " * 120}))
+    response = client.post("/v1/jd/detect", files=files(job={"job_description.txt": "Job posting. " * 120}))
     assert response.status_code == 502
     assert response.json()["error"] == (
         "provider_unreachable: the model endpoint failed: APIConnectionError"
