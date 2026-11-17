@@ -160,8 +160,11 @@ def test_the_calls_of_a_step_run_side_by_side(bundle, candidate, tmp_path, rende
     """Nine scoring calls that each wait for the others can only finish together."""
     # LangGraph's pool has min(32, cpus + 4) threads: a 4-vCPU runner has 8, one
     # short of the nine this test needs. What it checks is that the calls are
-    # not serialised, not how big the machine is.
+    # not serialised, not how big the machine is. Python 3.13+ counts the cpus
+    # with os.process_cpu_count, 3.12 with os.cpu_count.
     monkeypatch.setattr(os, "cpu_count", lambda: 32)
+    if hasattr(os, "process_cpu_count"):
+        monkeypatch.setattr(os, "process_cpu_count", lambda: 32)
     barrier = threading.Barrier(9, timeout=10)
 
     def waits(body):
