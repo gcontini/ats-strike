@@ -15,6 +15,7 @@ from cv_pipeline.errors import ModelOutputError
 from pipeline_helpers import FakeLLM, completion, sample_cv_data
 
 OK_REVIEW = "OK"                        # the reviewer's "nothing to fix"
+INPUTS = "--------\nCANDIDATE_PROFILE:\n{}\n--------\nJOB_DESCRIPTION:\nJD\n"
 TOO_LONG = length_advice(3, 2, 1, 0)    # a 3-page CV, the first time round
 
 
@@ -33,10 +34,10 @@ def fake(*cv, review=(OK_REVIEW,), highlight=None, **cv_spec) -> FakeLLM:
     return llm
 
 
-def build(bundle, candidate, tmp_path, llm, highlight=False, **kw) -> CVGenerator:
+def build(bundle, candidate, tmp_path, llm, highlight=False, inputs=INPUTS, **kw) -> CVGenerator:
     """A generator over fakes; the highlight pass only where a test asks."""
     return CVGenerator(
-        llm=llm, bundle=bundle, candidate=candidate, work_dir=tmp_path,
+        llm=llm, bundle=bundle, candidate=candidate, inputs=inputs, work_dir=tmp_path,
         highlight=highlight, **kw,
     )
 
@@ -185,11 +186,13 @@ def test_a_cv_still_too_long_is_asked_for_a_bigger_cut_next_round(
     assert "DELETE 2 whole duty" in prompts[2]
 
 
-def test_the_prompt_carries_the_system_prompt_profile_and_jd(
+def test_the_prompt_carries_the_system_prompt_and_the_inputs(
     bundle, candidate, tmp_path, no_latex
 ):
+    """The user turn is the fixed request plus the inputs the prompt declared,
+    as the caller laid them out."""
     model = fake(cv_json())
-    build(bundle, candidate, tmp_path, model).generate("SENTINEL JD")
+    build(bundle, candidate, tmp_path, model, inputs="SENTINEL INPUTS").generate("JD")
 
     first = model["cv"].calls[0]
     # On json_mode the schema rides in the system prompt, once: the endpoint
@@ -198,8 +201,8 @@ def test_the_prompt_carries_the_system_prompt_profile_and_jd(
     assert '"job_title"' in first["messages"][0]["content"]
     assert first["response_format"] == {"type": "json_object"}
     user = first["messages"][1]["content"]
-    assert candidate.profile["skills"][0] in user
-    assert "SENTINEL JD" in user
+    assert user.startswith("Please tailor my CV for this JOB_DESCRIPTION.")
+    assert "SENTINEL INPUTS" in user
 
 
 def test_an_endpoint_that_takes_the_schema_is_not_sent_it_twice(

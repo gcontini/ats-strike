@@ -6,10 +6,15 @@ folder, by relative path), the **job** (the posting as this server sees it:
 **settings** (a JSON object, forwarded untouched by the client). Nothing else
 in the pipeline knows file names; nothing here calls a model or writes a file.
 
+A system prompt names the files its model is shown: its ``Inputs:`` block
+lists one ``NAME: description`` per line, and each name is the file
+``name.*``, top-level in the pack or the job or directly under the pack's
+``cache/`` (see :func:`prompt_inputs`).
+
 Text is UTF-8 with a BOM stripped. A file a call needs and does not find is a
 :class:`MissingPartError`; one that is not UTF-8, not JSON or not a JSON
-object is a :class:`BadPartError`. A file this module does not name is
-ignored — ``cache/`` included.
+object is a :class:`BadPartError`. A file neither this module nor a prompt's
+``Inputs:`` names is ignored.
 """
 
 from __future__ import annotations
@@ -17,7 +22,7 @@ from __future__ import annotations
 import json
 from dataclasses import fields
 from pathlib import PurePosixPath
-from typing import Any, Dict, Mapping, Optional
+from typing import Any, Dict, List, Mapping, Optional
 
 from .bundle import CandidateInputs, ResourceBundle
 from .defaults import TEMPLATE_FILE
@@ -30,7 +35,6 @@ _BOM = "﻿"
 
 PROFILE_FILE = "candidate_profile.json"
 DATA_FILE = "candidate_data.json"
-PREFERENCES_FILE = "candidate_preferences.md"
 ANALYSIS_PROMPT_FILE = "sys_prompt_analysis.txt"
 
 #: The bundle fields a pack file replaces: ``<field>.txt`` for each prompt.
@@ -41,7 +45,6 @@ IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg")
 SAMPLING_SETTINGS = ("temperature", "presence_penalty")
 
 JD_FILE = "job_description.txt"
-JOB_ANALYSIS_FILE = "analysis.json"
 DOCUMENT_FILE = "cv.json"
 TEX_FILE = "cv.tex"
 
@@ -98,13 +101,60 @@ def analysis_prompt(pack: Files) -> Optional[str]:
     return text_file(pack, ANALYSIS_PROMPT_FILE)
 
 
-def candidate(pack: Files, *, data: bool = False, preferences: bool = False) -> CandidateInputs:
-    """The personal inputs: the profile always, the data and the preferences
-    when the call needs them."""
+def candidate(pack: Files, *, data: bool = False) -> CandidateInputs:
+    """The personal inputs: the profile always, the data when the call needs it."""
     return CandidateInputs(
         profile=json_file(pack, PROFILE_FILE, required=True),
-        preferences=text_file(pack, PREFERENCES_FILE, required=True) if preferences else "",
         data=json_file(pack, DATA_FILE, required=True) if data else {},
+    )
+
+
+# --- the prompt's inputs ------------------------------------------------------
+INPUTS_HEADER = "Inputs:"
+#: Where an input's file may sit: top-level, or directly under ``cache/``,
+#: where a client keeps what a server asked it to cache.
+INPUT_FOLDERS = (PurePosixPath("."), PurePosixPath("cache"))
+SEPARATOR = "--------------------------------------------"
+
+
+def declared_inputs(system_prompt: str) -> List[str]:
+    """The names the prompt's ``Inputs:`` block declares, in order: the text
+    before the first ``:`` of each line, up to the first blank one."""
+    lines = system_prompt.splitlines()
+    try:
+        start = next(i for i, line in enumerate(lines) if line.strip() == INPUTS_HEADER) + 1
+    except StopIteration:
+        raise BadPartError(f"the system prompt has no '{INPUTS_HEADER}' section") from None
+    names: List[str] = []
+    for line in lines[start:]:
+        if not line.strip():
+            break
+        names.append(line.split(":", 1)[0].strip())
+    return names
+
+
+def input_text(files: Files, name: str) -> str:
+    """The text of the one file ``name.*`` (lowercase, any extension),
+    top-level or directly under ``cache/``."""
+    stem = name.lower()
+    matches = sorted(
+        path for path in files
+        if PurePosixPath(path).parent in INPUT_FOLDERS and PurePosixPath(path).stem == stem
+    )
+    if not matches:
+        raise MissingPartError(f"no file '{stem}.*' for the prompt input {name}")
+    if len(matches) > 1:
+        raise BadPartError(f"the prompt input {name} matches several files: {', '.join(matches)}")
+    return text_file(files, matches[0], required=True)
+
+
+def prompt_inputs(system_prompt: str, pack: Files, job: Files) -> str:
+    """The variable part of the user prompt: one block per input the prompt
+    declares, in its order, each holding its file's text as sent."""
+    files = {**pack, **job}
+    return "".join(
+        f"{SEPARATOR}\n{name}:\n{input_text(files, name)}\n"
+        for name in declared_inputs(system_prompt)
     )
 
 
@@ -141,11 +191,6 @@ def jd_text(job: Files) -> str:
     return blob.decode("utf-8", errors="replace")
 
 
-def job_analysis(job: Files) -> Optional[Dict[str, Any]]:
-    """The posting's analysis, when the job carries one."""
-    return json_file(job, JOB_ANALYSIS_FILE)
-
-
 def job_action(job: Files) -> str:
     """What a CV request does with this job: the document wins over the tex,
     and either wins over writing."""
@@ -173,10 +218,12 @@ __all__ = [
     "bundle_overrides",
     "analysis_prompt",
     "candidate",
+    "declared_inputs",
+    "input_text",
+    "prompt_inputs",
     "page_limit",
     "sampling",
     "jd_text",
-    "job_analysis",
     "job_action",
     "job_document",
     "job_tex",

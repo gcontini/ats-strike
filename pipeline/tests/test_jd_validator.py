@@ -6,7 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from cv_pipeline.schemas import JDAnalysis
-from cv_pipeline.jd_validator import JDValidator
+from cv_pipeline.jd_validator import JD_SYSTEM_PROMPT, JDValidator
 from pipeline_helpers import FakeLLM
 
 VALID = {
@@ -29,19 +29,19 @@ VALID = {
 }
 
 
-def analyze(candidate, *replies):
+def analyze(*replies):
     llm = FakeLLM()
     llm["analysis"].replies = list(replies)
-    return llm, JDValidator(llm).analyze("a posting", candidate)
+    return llm, JDValidator(llm).analyze("JOB_DESCRIPTION:\na posting\n", JD_SYSTEM_PROMPT)
 
 
-def test_parses_plain_json(candidate):
-    assert analyze(candidate, json.dumps(VALID))[1].company_name == "Globex"
+def test_parses_plain_json():
+    assert analyze(json.dumps(VALID))[1].company_name == "Globex"
 
 
-def test_strips_markdown_fences(candidate):
+def test_strips_markdown_fences():
     fenced = "```json\n" + json.dumps(VALID) + "\n```"
-    assert analyze(candidate, fenced)[1].match_percentage == 82
+    assert analyze(fenced)[1].match_percentage == 82
 
 
 @pytest.mark.parametrize("field, value", [
@@ -64,10 +64,10 @@ def test_optional_fields_may_be_absent():
     assert analysis.company_evaluation is None
 
 
-def test_retry_names_the_missing_field(candidate):
+def test_retry_names_the_missing_field():
     """The second round is told which field was missing, not handed a raw dump."""
     no_title = {k: v for k, v in VALID.items() if k != "job_title"}
-    llm, analysis = analyze(candidate, json.dumps(no_title), json.dumps(VALID))
+    llm, analysis = analyze(json.dumps(no_title), json.dumps(VALID))
 
     assert analysis.job_title == "Staff Platform Engineer"
     correction = llm["analysis"].calls[1]["messages"][-1]["content"]

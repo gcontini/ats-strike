@@ -36,7 +36,7 @@ from .errors import (
     ProviderTimeoutError,
     ProviderUnreachableError,
 )
-from .jd_validator import JDValidator
+from .jd_validator import JD_SYSTEM_PROMPT, JDValidator
 from .letter_generator import LetterGenerator
 from .models import ModelSelector, build_selector
 
@@ -131,23 +131,18 @@ class Pipeline:
 
     def analyze(self, pack: Files, job: Files, settings: Mapping) -> Dict[str, Any]:
         """The posting scored against the profile, its facts extracted."""
-        candidate = packs.candidate(pack, preferences=True)
-        prompt = packs.analysis_prompt(pack)
-        jd = packs.jd_text(job)
+        prompt = packs.analysis_prompt(pack) or JD_SYSTEM_PROMPT
+        inputs = packs.prompt_inputs(prompt, pack, job)
         with _provider_errors():
-            return JDValidator(self.llm).analyze(jd, candidate, prompt).model_dump(mode="json")
+            return JDValidator(self.llm).analyze(inputs, prompt).model_dump(mode="json")
 
     def letter(self, pack: Files, job: Files, settings: Mapping) -> str:
         """The cover letter, plain text."""
-        candidate = packs.candidate(pack, data=True)
         bundle = self.bundle.with_overrides(**packs.bundle_overrides(pack))
-        jd = packs.jd_text(job)
-        analysis = packs.job_analysis(job)
+        inputs = packs.prompt_inputs(bundle.sys_prompt_letter, pack, job)
         llm = self.llm.with_overrides("letter", **packs.sampling(settings))
         with _provider_errors():
-            return LetterGenerator(llm, system_prompt=bundle.sys_prompt_letter).generate(
-                jd, profile=candidate.profile, candidate_data=candidate.data, analysis=analysis
-            )
+            return LetterGenerator(llm, system_prompt=bundle.sys_prompt_letter).generate(inputs)
 
     def cv(self, pack: Files, job: Files, settings: Mapping, work_dir: Path, sink: Sink) -> str:
         """The CV for this job: ``cv.json`` in the job is rendered, else
@@ -160,6 +155,7 @@ class Pipeline:
         bundle = self.bundle.with_overrides(**packs.bundle_overrides(pack))
         candidate = packs.candidate(pack, data=True)
         jd = packs.jd_text(job)
+        inputs = packs.prompt_inputs(bundle.sys_prompt_cv, pack, job)
         pages = packs.page_limit(settings)
         llm = self.llm.with_overrides("cv", **packs.sampling(settings))
 
@@ -168,6 +164,7 @@ class Pipeline:
                 llm=llm,
                 bundle=bundle,
                 candidate=candidate,
+                inputs=inputs,
                 work_dir=work_dir,
                 max_attempts=self.max_attempts,
                 deadline=time.monotonic() + self.budget_seconds,

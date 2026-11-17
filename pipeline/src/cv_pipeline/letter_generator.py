@@ -7,10 +7,9 @@ no content review. Whether the model can look the employer up is the
 
 from __future__ import annotations
 
-import json
 import logging
 from datetime import date
-from typing import Any, Dict, List, Mapping, Optional
+from typing import Any, Dict, List
 
 from .models import ModelSelector
 from .observability import LOGGER_ROOT, stage
@@ -48,54 +47,6 @@ class LetterGenerator:
         self.llm = llm
         self.system_prompt = system_prompt
 
-    def _build_user_message(
-        self,
-        job_description: str,
-        profile: Mapping[str, Any],
-        candidate_data: Mapping[str, Any],
-        analysis: Mapping[str, Any],
-    ) -> str:
-        """Assemble the single user turn: today's date, the master profile,
-        the candidate's contact details (the letter's header block, unlike
-        the CV, is written by the model rather than a template — it needs
-        the real name, email, phone and LinkedIn, not what the profile
-        happens to contain), a trimmed JD-analysis subset (only the fields
-        relevant to a letter — the full JDAnalysis carries scoring fields
-        with no place in one), and the raw JD.
-        """
-        analysis_subset = {
-            k: analysis.get(k)
-            for k in (
-                "company_name",
-                "job_title",
-                "work_location",
-                "hard_skills",
-                "soft_skills",
-                "gaps",
-                "posting_url",
-            )
-            if analysis.get(k) is not None
-        }
-
-        return (
-            "Write my cover letter for this JOB DESCRIPTION. "
-            "Output plain text only, starting at the header block.\n"
-            "--------------------------------------------\n"
-            f"TODAY'S DATE: {date.today().isoformat()}\n"
-            "--------------------------------------------\n"
-            "CANDIDATE_PROFILE:\n"
-            f"{json.dumps(dict(profile), indent=2)}\n"
-            "--------------------------------------------\n"
-            "CANDIDATE_DATA:\n"
-            f"{json.dumps(dict(candidate_data), indent=2)}\n"
-            "--------------------------------------------\n"
-            "JD ANALYSIS:\n"
-            f"{json.dumps(analysis_subset, indent=2)}\n"
-            "--------------------------------------------\n"
-            "JOB DESCRIPTION:\n"
-            f"{job_description}\n"
-        )
-
     @staticmethod
     def _validate_letter(text: str) -> None:
         """Light sanity checks on the generated letter. Raises ``ValueError``
@@ -123,24 +74,23 @@ class LetterGenerator:
                 "ASCII only (straight quotes, '--' for a dash)."
             ) from e
 
-    def generate(
-        self,
-        job_description: str,
-        *,
-        profile: Mapping[str, Any],
-        candidate_data: Mapping[str, Any],
-        analysis: Optional[Mapping[str, Any]] = None,
-    ) -> str:
+    def generate(self, inputs: str) -> str:
         """Write the letter and return its text.
 
-        ``analysis`` is optional everywhere in resumix: the JD alone is
-        enough to write a letter, it just makes for a less targeted one.
+        ``inputs`` is one block per file the system prompt declares (see
+        :func:`~cv_pipeline.pack.prompt_inputs`); today's date is added here.
+        The shipped prompt asks for the profile, the candidate's contact
+        details (the letter's header block, unlike the CV's, is written by the
+        model, not a template), the posting's analysis and the posting.
         """
         logger.info("--- cover letter ---")
         messages: List[Dict[str, Any]] = [{
             "role": "user",
-            "content": self._build_user_message(
-                job_description, profile, candidate_data, dict(analysis or {})
+            "content": (
+                "Write my cover letter for this JOB_DESCRIPTION. "
+                f"Today's date is {date.today().isoformat()}. "
+                "Output plain text only, starting at the header block.\n"
+                f"{inputs}"
             ),
         }]
 

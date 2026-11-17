@@ -204,23 +204,25 @@ None has a loop. Each runs on its own model: `detect`, `analysis` and `letter`.
 ## Files and settings
 
 What the 0.5 pipeline reads from a [protocol](protocol.md) request: the
-pack files and the `settings` keys. Anything it does not name is ignored,
-`cache/` included. A 1.x server reads its own set (see main's
+pack files and the `settings` keys. Anything neither this table nor a
+prompt's `Inputs:` block names is ignored. A 1.x server reads its own set (see main's
 [CV pipeline page](https://github.com/gcontini/ats-strike/blob/main/doc/cv-pipeline.md#files-and-settings)).
 
 | Pack file | Becomes |
 |---|---|
 | `candidate_profile.json` | the candidate's profile (JSON object). Needed by analysis, CV, letter. |
-| `candidate_data.json` | what the template prints: name, contact details. Needed by CV and letter. No model is shown it. |
-| `candidate_preferences.md` | your preferences. Needed by analysis. |
+| `candidate_data.json` | what the template prints: name, contact details. Needed by CV and letter. The CV models are never shown it; the letter prompt declares it for its header block. |
+| `candidate_preferences.md` | your preferences. Read when a prompt declares it: the shipped analysis prompt does. |
 | `sys_prompt_analysis.txt` | the analysis prompt |
 | `sys_prompt_cv.txt`, `sys_prompt_review.txt`, `sys_prompt_highlight.txt`, `sys_prompt_letter.txt` | that prompt |
 | `resume.tex.jinja` | the template, page counts included |
 | top-level `*.png`, `*.jpg`, `*.jpeg` | images, under their own file name, merged over the shipped ones |
+| any top-level or `cache/` file a prompt's `Inputs:` names | that input's text, shown to the model (below) |
 
 Text is UTF-8 with a BOM stripped; a needed file that is missing is `400
 missing_part`; one that is not UTF-8, not JSON or not a JSON object is `400
-bad_part`. `job_description.txt` is decoded with undecodable bytes replaced. A written CV
+bad_part`. `job_description.txt` is decoded with undecodable bytes replaced,
+except as a prompt input, where it is checked like any other file. A written CV
 stores `cv.json`, `cv.tex` and the PDF, and no intermediate step.
 
 | Setting | Means |
@@ -229,3 +231,36 @@ stores `cv.json`, `cv.tex` and the PDF, and no intermediate step.
 | `temperature`, `presence_penalty` | Numbers, else `bad_part`: the `cv` model's sampling for a CV, the `letter` model's for a letter. Analysis keeps its own. |
 
 Unknown keys are ignored.
+
+### Prompt inputs
+
+The CV, analysis and letter prompts each declare what their model is shown, in
+an `Inputs:` block after the opening sentences. The block runs up to the first
+blank line, with one input per line:
+
+```
+Inputs:
+CANDIDATE_PROFILE: raw candidate profile with long description of experiences
+JOB_DESCRIPTION: raw job description (often with company description header and footer)
+```
+
+Each name is a file named after it in lowercase, with any extension
+(`CANDIDATE_PROFILE` is `candidate_profile.json`, `PRECOMPILED_CV1` could be
+`precompiled_cv1.md`). The file is looked up at the top level of the pack or
+the job, or directly under the pack's `cache/`, where the client keeps a
+server's `CACHE` items. The user prompt is the call's fixed request followed by
+one block per input, in the declared order. Each block holds the file's text
+exactly as sent.
+
+To add an input, put its file in the server folder and its name in your copy
+of the prompt; no code changes. A prompt with no `Inputs:` block is `400
+bad_part`. A declared input with no file is `400 missing_part`. Two files that
+fit one name (`foo.md` and `cache/foo.json`) are `400 bad_part`.
+
+The shipped prompts declare:
+
+| Prompt | Inputs |
+|---|---|
+| `sys_prompt_cv.txt` | `CANDIDATE_PROFILE`, `JOB_DESCRIPTION` |
+| `sys_prompt_analysis.txt` | `CANDIDATE_PROFILE`, `CANDIDATE_PREFERENCES`, `JOB_DESCRIPTION` |
+| `sys_prompt_letter.txt` | `CANDIDATE_PROFILE`, `CANDIDATE_DATA`, `ANALYSIS`, `JOB_DESCRIPTION`. Today's date is added by the code. |

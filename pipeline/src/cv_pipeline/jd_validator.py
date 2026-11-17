@@ -8,17 +8,14 @@ Two jobs, each on its own model:
 - :meth:`JDValidator.analyze` — on the ``analysis`` model, score the posting against the candidate
   profile and extract the facts a CV and a cover letter need.
 
-The profile and the preferences arrive with the call, never from disk: the
+What the analysis is shown arrives with the call, never from disk: the
 same validator instance serves every request.
 """
 
 from __future__ import annotations
 
-import json
 import logging
-from typing import Optional
 
-from .bundle import CandidateInputs
 from .defaults import read_text_default
 from .models import ModelSelector
 from .observability import LOGGER_ROOT, stage
@@ -63,29 +60,18 @@ class JDValidator:
         logger.info("  🔎 job description check: %s", "YES" if verdict else "NO")
         return JDDetection(is_job_description=verdict)
 
-    def analyze(
-        self, job_description: str, candidate: CandidateInputs,
-        system_prompt: Optional[str] = None,
-    ) -> JDAnalysis:
+    def analyze(self, inputs: str, system_prompt: str) -> JDAnalysis:
         """Compare a job description against the profile and extract key facts.
 
-        ``system_prompt`` replaces the shipped one for this call; ``None``
-        keeps it.
+        ``inputs`` is the user turn: one block per file ``system_prompt``
+        declares (see :func:`~cv_pipeline.pack.prompt_inputs`) — the shipped
+        :data:`JD_SYSTEM_PROMPT` asks for the profile, the preferences and
+        the posting.
         """
-        content = (
-            "CANDIDATE_PROFILE:\n"
-            f"{json.dumps(dict(candidate.profile), indent=2)}\n\n"
-            "--------------------------------------------\n"
-            "CANDIDATE_PREFERENCES:\n"
-            f"{candidate.preferences}\n\n"
-            "--------------------------------------------\n"
-            "JOB_DESCRIPTION:\n"
-            f"{job_description}\n"
-        )
         with stage("jd.analysis"):
             return self.llm.call_llm(
-                "analysis", JDAnalysis, system_prompt or JD_SYSTEM_PROMPT,
-                [{"role": "user", "content": content}],
+                "analysis", JDAnalysis, system_prompt,
+                [{"role": "user", "content": inputs}],
             )
 
 

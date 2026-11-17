@@ -14,6 +14,12 @@ from pipeline_helpers import EXAMPLE_CANDIDATE, sample_cv_data
 
 needs_latex = pytest.mark.skipif(shutil.which("pdflatex") is None, reason="pdflatex not installed")
 JD = {"job_description.txt": b"x" * 1200}
+
+
+def own_prompt(text: str, *inputs: str) -> bytes:
+    """A pack's prompt override: its text, then the inputs it declares."""
+    block = "".join(f"{name}: an input\n" for name in inputs)
+    return f"{text}\n\nInputs:\n{block}\nRules.\n".encode()
 LETTER = " ".join(["word"] * 200)
 ANALYSIS = {
     "match_percentage": 82, "match_rationale": "Strong overlap.",
@@ -155,11 +161,42 @@ def test_max_attempts_bounds_the_rounds(fake_llm, bundle, example_pack, tmp_path
 @needs_latex
 def test_the_pack_prompts_are_the_ones_used(pipeline, fake_llm, example_pack, tmp_path):
     a_good_run(fake_llm)
-    pack = {**example_pack, "sys_prompt_cv.txt": b"MY OWN PROMPT",
+    pack = {**example_pack,
+            "sys_prompt_cv.txt": own_prompt("MY OWN PROMPT", "CANDIDATE_PROFILE", "JOB_DESCRIPTION"),
             "sys_prompt_review.txt": b"MY OWN REVIEW"}
     pipeline.cv(pack, JD, {}, tmp_path, Recorder())
     assert fake_llm["cv"].calls[0]["messages"][0]["content"].startswith("MY OWN PROMPT")
     assert fake_llm["review"].calls[0]["messages"][0]["content"].startswith("MY OWN REVIEW")
+
+
+@needs_latex
+def test_a_file_the_cv_prompt_declares_is_shown_to_the_cv_model(
+    pipeline, fake_llm, example_pack, tmp_path
+):
+    """How an input is added: a file in the server folder, and its name in the
+    prompt's Inputs block. No code knows it."""
+    a_good_run(fake_llm)
+    pack = {**example_pack,
+            "sys_prompt_cv.txt": own_prompt("WRITE", "PRECOMPILED_CV1", "JOB_DESCRIPTION"),
+            "precompiled_cv1.md": b"SENTINEL CV"}
+    pipeline.cv(pack, JD, {}, tmp_path, Recorder())
+
+    user = fake_llm["cv"].calls[0]["messages"][1]["content"]
+    assert "PRECOMPILED_CV1:\nSENTINEL CV\n" in user
+    assert user.index("PRECOMPILED_CV1:") < user.index("JOB_DESCRIPTION:\nxxx")
+    assert "CANDIDATE_PROFILE:" not in user          # not declared, not sent
+
+
+def test_a_declared_input_with_no_file_fails_before_any_model_call(
+    pipeline, fake_llm, example_pack, tmp_path
+):
+    a_good_run(fake_llm)
+    pack = {**example_pack, "sys_prompt_cv.txt": own_prompt("WRITE", "PRECOMPILED_CV1")}
+    with pytest.raises(PipelineError) as failure:
+        pipeline.cv(pack, JD, {}, tmp_path, Recorder())
+    assert failure.value.kind == "missing_part"
+    assert "precompiled_cv1.*" in str(failure.value)
+    assert no_model_was_called(fake_llm)
 
 
 @needs_latex
@@ -258,7 +295,8 @@ def test_an_analysis_takes_its_prompt_from_the_pack_and_ignores_the_sampling(
     """The sampling settings are the CV's and the letter's; analysis keeps its own."""
     fake_llm._chat["analysis"].temperature = 0.4
     fake_llm["analysis"].replies = [json.dumps(ANALYSIS)]
-    pack = {**example_pack, "sys_prompt_analysis.txt": b"SCORE IT STRICTLY"}
+    pack = {**example_pack, "sys_prompt_analysis.txt": own_prompt("SCORE IT STRICTLY",
+                                                                  "JOB_DESCRIPTION")}
     pipeline.analyze(pack, {"job_description.txt": b"a jd"}, {"temperature": 1.5})
 
     sent = fake_llm["analysis"].calls[-1]
@@ -275,19 +313,29 @@ def test_an_analysis_needs_the_preferences(pipeline, example_pack):
 
 def test_a_letter_draws_on_the_analysis_and_the_pack_prompt(pipeline, fake_llm, example_pack):
     fake_llm["letter"].replies = [LETTER]
-    pack = {**example_pack, "sys_prompt_letter.txt": b"WRITE IT SHORT"}
+    prompt = own_prompt("WRITE IT SHORT", "ANALYSIS", "JOB_DESCRIPTION")
+    pack = {**example_pack, "sys_prompt_letter.txt": prompt}
     job = {"job_description.txt": b"a jd", "analysis.json": json.dumps(ANALYSIS).encode()}
 
     assert pipeline.letter(pack, job, {}) == LETTER
     sent = fake_llm["letter"].calls[0]
-    assert sent["messages"][0]["content"] == "WRITE IT SHORT"
-    assert "Acme Corp" in fake_llm["letter"].last_prompt
+    assert sent["messages"][0]["content"] == prompt.decode()
+    # The whole analysis, as the job carried it: scoring fields included.
+    assert json.dumps(ANALYSIS) in fake_llm["letter"].last_prompt
+
+
+def test_the_shipped_letter_prompt_needs_the_analysis(pipeline, fake_llm, example_pack):
+    with pytest.raises(PipelineError) as failure:
+        pipeline.letter(example_pack, {"job_description.txt": b"a jd"}, {})
+    assert failure.value.kind == "missing_part"
+    assert no_model_was_called(fake_llm)
 
 
 def test_a_letter_takes_the_sampling_settings(pipeline, fake_llm, example_pack):
     fake_llm._chat["letter"].temperature = 0.4
     fake_llm["letter"].replies = [LETTER]
-    pipeline.letter(example_pack, {"job_description.txt": b"a jd"}, {"temperature": 1.5})
+    job = {"job_description.txt": b"a jd", "analysis.json": json.dumps(ANALYSIS).encode()}
+    pipeline.letter(example_pack, job, {"temperature": 1.5})
     assert fake_llm["letter"].calls[-1]["temperature"] == 1.5
     assert fake_llm._chat["letter"].temperature == 0.4, "the override is for one request"
 

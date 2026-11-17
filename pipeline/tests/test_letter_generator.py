@@ -1,5 +1,7 @@
 """Cover letter validation."""
 
+from datetime import date
+
 import pytest
 
 from cv_pipeline.letter_generator import MAX_WORDS, MIN_WORDS, LetterGenerator
@@ -36,7 +38,14 @@ def test_rejects_non_ascii():
 def test_strips_code_fences_the_model_adds_anyway():
     llm = FakeLLM()
     llm["letter"].replies = ["```\n" + letter(MIN_WORDS + 10) + "\n```"]
-    text = LetterGenerator(llm, system_prompt="write").generate(
-        "a posting", profile={}, candidate_data={}
-    )
+    text = LetterGenerator(llm, system_prompt="write").generate("JOB_DESCRIPTION:\na posting\n")
     assert text == letter(MIN_WORDS + 10)
+
+
+def test_the_user_turn_is_today_s_date_and_the_inputs():
+    llm = FakeLLM()
+    llm["letter"].replies = [letter(MIN_WORDS + 10)]
+    LetterGenerator(llm, system_prompt="write").generate("SENTINEL INPUTS")
+    user = llm["letter"].calls[0]["messages"][-1]["content"]
+    assert date.today().isoformat() in user
+    assert user.endswith("SENTINEL INPUTS")

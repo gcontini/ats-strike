@@ -8,6 +8,7 @@ import pytest
 
 from cv_pipeline import pack
 from cv_pipeline.errors import BadPartError, MissingPartError
+from cv_pipeline.jd_validator import JD_SYSTEM_PROMPT
 
 PROFILE = json.dumps({"skills": ["Go"]}).encode()
 DATA = json.dumps({"name": "Jordan Rivera"}).encode()
@@ -68,17 +69,14 @@ def test_the_profile_is_always_needed():
         pack.candidate({})
 
 
-def test_the_data_and_the_preferences_only_when_asked():
+def test_the_data_only_when_asked():
     bare = pack.candidate({"candidate_profile.json": PROFILE})
-    assert (bare.profile, bare.data, bare.preferences) == ({"skills": ["Go"]}, {}, "")
+    assert (bare.profile, bare.data) == ({"skills": ["Go"]}, {})
     with pytest.raises(MissingPartError, match="candidate_data.json"):
         pack.candidate({"candidate_profile.json": PROFILE}, data=True)
-    with pytest.raises(MissingPartError, match="candidate_preferences.md"):
-        pack.candidate({"candidate_profile.json": PROFILE}, preferences=True)
-    full = pack.candidate({"candidate_profile.json": PROFILE, "candidate_data.json": DATA,
-                           "candidate_preferences.md": b"Remote only"},
-                          data=True, preferences=True)
-    assert (full.data["name"], full.preferences) == ("Jordan Rivera", "Remote only")
+    full = pack.candidate({"candidate_profile.json": PROFILE, "candidate_data.json": DATA},
+                          data=True)
+    assert full.data["name"] == "Jordan Rivera"
 
 
 @pytest.mark.parametrize("blob, why", [
@@ -90,6 +88,90 @@ def test_the_data_and_the_preferences_only_when_asked():
 def test_a_profile_that_is_not_a_json_object_is_a_bad_part(blob, why):
     with pytest.raises(BadPartError, match=why):
         pack.candidate({"candidate_profile.json": blob})
+
+
+# --- the prompt's inputs ------------------------------------------------------
+PROMPT = """You write CVs.
+
+Inputs:
+CANDIDATE_PROFILE: the profile
+PRECOMPILED_CV1: a CV written before: by hand
+JOB_DESCRIPTION: the posting
+
+Rules: CANDIDATE_PROFILE: is not an input.
+"""
+FILES = {
+    "candidate_profile.json": b'{"skills": ["Go"]}',
+    "precompiled_cv1.md": b"# My CV",
+}
+POSTING = {"job_description.txt": b"Staff engineer"}
+
+
+def test_the_inputs_are_the_names_of_the_block_in_order_up_to_the_blank_line():
+    assert pack.declared_inputs(PROMPT) == [
+        "CANDIDATE_PROFILE", "PRECOMPILED_CV1", "JOB_DESCRIPTION",
+    ]
+
+
+def test_a_prompt_without_an_inputs_block_is_a_bad_part():
+    with pytest.raises(BadPartError, match="Inputs:"):
+        pack.declared_inputs("You write CVs.")
+
+
+def test_each_input_is_its_file_s_text_in_the_declared_order():
+    assert pack.prompt_inputs(PROMPT, FILES, POSTING) == (
+        "--------------------------------------------\n"
+        'CANDIDATE_PROFILE:\n{"skills": ["Go"]}\n'
+        "--------------------------------------------\n"
+        "PRECOMPILED_CV1:\n# My CV\n"
+        "--------------------------------------------\n"
+        "JOB_DESCRIPTION:\nStaff engineer\n"
+    )
+
+
+def test_an_input_may_come_from_the_cache():
+    """Where a client keeps a server's CACHE items: ``<server folder>/cache``."""
+    files = {"cache/precompiled_cv1.txt": b"cached", "candidate_profile.json": b"{}"}
+    assert "PRECOMPILED_CV1:\ncached\n" in pack.prompt_inputs(PROMPT, files, POSTING)
+
+
+@pytest.mark.parametrize("path", [
+    "cache/old/precompiled_cv1.md", "steps/precompiled_cv1.json", "v05/precompiled_cv1.md",
+])
+def test_a_deeper_file_is_not_an_input(path):
+    files = {"candidate_profile.json": b"{}", path: b"too deep"}
+    with pytest.raises(MissingPartError, match=r"precompiled_cv1\.\*"):
+        pack.prompt_inputs(PROMPT, files, POSTING)
+
+
+def test_an_input_with_no_file_is_a_missing_part():
+    with pytest.raises(MissingPartError, match=r"'job_description\.\*'.*JOB_DESCRIPTION"):
+        pack.prompt_inputs(PROMPT, FILES, {})
+
+
+@pytest.mark.parametrize("other", ["precompiled_cv1.txt", "cache/precompiled_cv1.json"])
+def test_two_files_for_one_input_are_a_bad_part(other):
+    with pytest.raises(BadPartError, match="several files"):
+        pack.prompt_inputs(PROMPT, {**FILES, other: b"another"}, POSTING)
+
+
+def test_an_input_file_is_checked_like_any_other_text():
+    with pytest.raises(BadPartError, match="precompiled_cv1.md"):
+        pack.prompt_inputs(PROMPT, {**FILES, "precompiled_cv1.md": b"  "}, POSTING)
+
+
+@pytest.mark.parametrize("prompt, inputs", [
+    ("sys_prompt_cv", ["CANDIDATE_PROFILE", "JOB_DESCRIPTION"]),
+    ("sys_prompt_letter", ["CANDIDATE_PROFILE", "CANDIDATE_DATA", "ANALYSIS", "JOB_DESCRIPTION"]),
+])
+def test_the_shipped_prompts_declare_their_inputs(bundle, prompt, inputs):
+    assert pack.declared_inputs(getattr(bundle, prompt)) == inputs
+
+
+def test_the_shipped_analysis_prompt_declares_its_inputs():
+    assert pack.declared_inputs(JD_SYSTEM_PROMPT) == [
+        "CANDIDATE_PROFILE", "CANDIDATE_PREFERENCES", "JOB_DESCRIPTION",
+    ]
 
 
 # --- the settings -------------------------------------------------------------
@@ -139,11 +221,6 @@ def test_the_posting_is_needed():
 
 def test_an_undecodable_byte_in_the_posting_is_replaced():
     assert pack.jd_text({"job_description.txt": b"caf\xe9"}) == "caf�"
-
-
-def test_the_analysis_is_optional():
-    assert pack.job_analysis({}) is None
-    assert pack.job_analysis({"analysis.json": b'{"job_title": "CTO"}'}) == {"job_title": "CTO"}
 
 
 @pytest.mark.parametrize("names, action", [

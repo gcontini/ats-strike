@@ -16,14 +16,14 @@ nowhere else — but the renderer needs it, and so the endpoint takes it.
 
 Every input arrives in memory — prompts and template in a
 :class:`~resumix_server.bundle.ResourceBundle`, the profile and the
-candidate data in :class:`~resumix_server.bundle.CandidateInputs`. Nothing
+candidate data in :class:`~resumix_server.bundle.CandidateInputs`, and the
+files the CV prompt declares as its inputs, already laid out as text. Nothing
 is read from disk and nothing is written outside ``work_dir``.
 """
 
 from __future__ import annotations
 
 import copy
-import json
 import logging
 import time
 from pathlib import Path
@@ -94,8 +94,12 @@ class CVGenerator:
         Prompts and the LaTeX template for this run (defaults, or whatever the
         request overrode).
     candidate:
-        The profile the model tailors from. Not cached; it dies with the
-        request.
+        The profile the review checks the CV against, and the data the
+        renderer prints. Not cached; it dies with the request.
+    inputs:
+        The variable part of the CV prompt: one block per file the system
+        prompt's ``Inputs:`` declares, in its order (see
+        :func:`~cv_pipeline.pack.prompt_inputs`). Not cached either.
     work_dir:
         Scratch directory for the page-check renders. Created and removed by
         the caller.
@@ -117,6 +121,7 @@ class CVGenerator:
         llm: ModelSelector,
         bundle: ResourceBundle,
         candidate: CandidateInputs,
+        inputs: str,
         work_dir: Path,
         highlight: bool = True,
         max_attempts: int = 4,
@@ -129,6 +134,7 @@ class CVGenerator:
         self.highlight = highlight
         self.bundle = bundle
         self.candidate = candidate
+        self.inputs = inputs
         self.work_dir = Path(work_dir)
         self.max_attempts = max_attempts
         self.deadline = deadline
@@ -238,14 +244,9 @@ class CVGenerator:
         """
         started = time.monotonic()
         user_prompt = (
-            "Please tailor my CV for this JOB DESCRIPTION. "
+            "Please tailor my CV for this JOB_DESCRIPTION. "
             "Output strictly json format.\n"
-            "--------------------------------------------\n"
-            "CANDIDATE_PROFILE:\n"
-            f"{json.dumps(self._master_profile, indent=2)}\n"
-            "--------------------------------------------\n"
-            "JOB DESCRIPTION:\n"
-            f"{job_description}\n\n"
+            f"{self.inputs}\n"
         )
 
         final_cv_data = None
