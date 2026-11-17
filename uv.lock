@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
 
 [manifest]
@@ -64,7 +64,7 @@ requires-dist = [{ name = "pydantic" }]
 
 [[package]]
 name = "ats-strike-pipeline"
-version = "1.1.0"
+version = "1.2.0"
 source = { editable = "pipeline" }
 dependencies = [
     { name = "jinja2" },
@@ -89,7 +89,7 @@ requires-dist = [
 
 [[package]]
 name = "ats-strike-server"
-version = "1.1.0"
+version = "1.2.0"
 source = { editable = "server" }
 dependencies = [
     { name = "ats-strike-contracts" },
