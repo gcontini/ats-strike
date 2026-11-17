@@ -1,13 +1,18 @@
 # Cutting a release
 
-One version for the whole repository, and one thing you type. Actions →
-**Release** → *Run workflow* → `0.3.0` → *Run*. Nothing happens on your
-machine.
+One version for the server, and one thing you type. Actions → **Release** →
+*Run workflow* → `0.3.0` → *Run*. Nothing happens on your machine.
 
-`.github/workflows/release.yml` writes that number into the three
-`pyproject.toml` files and `uv.lock`, commits it, tags `v0.3.0`, and builds
-everything from that tag: `.tar.gz` and `.zip` archives on the release page,
-the server image on Docker Hub, and this site under its own version.
+`.github/workflows/release.yml` writes that number into the pipeline's and
+the server's `pyproject.toml` and `uv.lock`, commits it, tags `v0.3.0`, and
+builds everything from that tag: the server image on Docker Hub and Alibaba,
+this site under its own version, and a release page with the notes.
+
+The client is not part of it: it lives in
+[ats-strike-client](https://github.com/gcontini/ats-strike-client), has its own
+version, and its own Release workflow publishes the executables — see
+[its release page](https://github.com/gcontini/ats-strike-client/blob/main/doc/release.md). A client talks to any server with the same protocol
+number, so the two are released whenever each is ready.
 
 ## Before the first one
 
@@ -23,8 +28,8 @@ and variables → Actions*:
 | `ACR_PASSWORD` | secret | Its fixed registry password. An AccessKey does not work. |
 
 Without them the `image` job fails at `docker login`, after the image has been
-built and checked — and because `package` waits on every job, no release is
-published until they exist. `server/terraform/README.md` covers the Alibaba
+built and checked — and because `release` waits on every job, no release
+page is published until they exist. `server/terraform/README.md` covers the Alibaba
 side.
 
 **GitHub Pages**, once, under *Settings → Pages*: source **GitHub Actions**.
@@ -53,33 +58,29 @@ It refuses, before writing anything, when:
 
 | Refusal | Why |
 |---|---|
-| the version is not `MAJOR.MINOR.PATCH` | the tag, the archive name and the image tag are all built from it |
+| the version is not `MAJOR.MINOR.PATCH` | the tag and the image tag are both built from it |
 | you dispatched from a branch other than `main` | a release that is not on the main line is a release nobody can reconstruct |
-| `v<version>` is already on the remote | re-releasing a version silently is how two different binaries end up with one number |
+| `v<version>` is already on the remote | re-releasing a version silently is how two different images end up with one number |
 
 ## What happens
 
 ```mermaid
 flowchart TB
-    TAG["<b>tag</b><br/>validate · rewrite three pyprojects<br/>uv lock · commit · tag · push --atomic"]
-    B1["<b>build</b> — ubuntu<br/>pyinstaller → cv<br/>assert <i>cv version</i>"]
-    B2["<b>build</b> — windows<br/>pyinstaller → cv.exe<br/>assert <i>cv version</i>"]
+    TAG["<b>tag</b><br/>validate · rewrite two pyprojects<br/>uv lock · commit · tag · push --atomic"]
     IMG["<b>image</b><br/>DOCKER_BUILDKIT=0 docker build<br/>assert /healthz version<br/>docker push Docker Hub :x.y.z and :latest<br/>docker push Alibaba :x.y.z"]
     DOC["<b>docs</b><br/>mike deploy x.y.z latest<br/>mike set-default latest<br/>→ gh-pages → deploy-pages"]
-    PKG["<b>package</b><br/>download both binaries<br/>assemble · tar.gz<br/>gh release create"]
-    TAG --> B1 --> PKG
-    TAG --> B2 --> PKG
-    TAG --> IMG --> PKG
-    TAG --> DOC --> PKG
+    REL["<b>release</b><br/>gh release create<br/>notes, no assets"]
+    TAG --> IMG --> REL
+    TAG --> DOC --> REL
 ```
 
 **The tag is pushed first, before anything is built.** That order is forced:
-the binaries have to carry the version, so the bump has to precede the build,
+the image has to carry the version, so the bump has to precede the build,
 and the build jobs can only check out a commit that exists on the remote. Every
 "tag last" arrangement ends up shipping the bump as a patch and re-applying it
-in three jobs — more moving parts for the same result.
+in each job — more moving parts for the same result.
 
-`package` waits for every other job, so the release page never announces a
+`release` waits for every other job, so the release page never announces a
 version whose server image is not on Docker Hub or whose docs are not up. The
 image job logs in to the registry *after* the build and the health check, so a
 broken image never gets as far as authenticating.
@@ -91,61 +92,32 @@ written in one place and everything else reads it:
 
 | Where | Who writes it |
 |---|---|
-| `contracts/`, `server/`, `client/` `pyproject.toml` | the workflow, with `sed` |
+| `pipeline/`, `server/` `pyproject.toml` | the workflow, with `sed` |
 | `uv.lock` | `uv lock`, in the same commit |
-| `cv version`, and every `--verbose` run | `importlib.metadata.version("ats-strike-client")` |
 | `/healthz` and the OpenAPI document | `importlib.metadata.version("ats-strike-server")` |
+
+`contracts/` is not: it is the ats-strike-contract submodule and keeps its
+own version there. A release ships whatever commit the submodule points at.
 
 `uv.lock` is in that list because it records each workspace member's version
 as well. A bump that did not regenerate it would commit a lock that disagrees
 with the manifests, which `uv lock --check` and `uv sync --locked` both refuse.
-The binaries themselves would still be right — `uv sync --frozen` builds the
-workspace members from source, so the manifest wins — but a repository whose
-lock contradicts its manifests is a trap for the next person.
+The image itself would still be right — it installs the workspace members
+from source, so the manifest wins — but a repository whose lock contradicts
+its manifests is a trap for the next person.
 
-What guards the version in the artefacts is not the lock but the assertions:
-both build jobs run `cv version` on the binary they just produced, and the
-image job reads `/healthz` from the container it just built, before any of it
-is published.
+What guards the version in the image is not the lock but the assertion: the
+image job reads `/healthz` from the container it just built, before it is
+published.
 
 ## What gets published
 
 | Artifact | Where | Name |
 |---|---|---|
-| both executables and the files beside them | the release page | `ats-strike-x.y.z.tar.gz` and `ats-strike-x.y.z.zip` |
+| the release notes | the release page | `vx.y.z`, no assets: the executables are on ats-strike-client's own release pages |
 | the server image | Docker Hub | `lmstch/ats-strike:x.y.z` and `:latest` |
 | the same image, for Function Compute | Alibaba Container Registry | `<ACR_REPOSITORY>:x.y.z`, deployed by `terraform apply` |
 | this site | GitHub Pages, from `gh-pages` | `/x.y.z/`, and `/latest/` which `/` redirects to |
-
-The archive is a data folder, ready to run:
-
-```text
-cv                           the Linux executable, already +x
-cv.exe                       the Windows executable
-README.md                    the client README, links rewritten for this layout
-cv.toml                      servers = ["v11"]
-posting.txt                  something to try it on
-v11/                         a server folder
-  server.toml                points at http://localhost:8080; edit it
-  candidate_profile.json     the fictional set, ready to edit
-  candidate_data.json
-  candidate_preferences.md
-  candidate_signature.png
-```
-
-`cv.toml` lists `v11/`, and the client sends that folder's files to the server
-its `server.toml` names, so the archive works as soon as it is extracted and
-`url` points at your server:
-
-```bash
-mkdir ats-strike && tar xzf ats-strike-1.1.0.tar.gz -C ats-strike
-cd ats-strike
-$EDITOR v11/server.toml      # url, and token if the server wants one
-./cv submit-raw posting.txt
-```
-
-Extract it into a folder of its own, as above: it unpacks five files and a
-folder wherever you stand.
 
 ## The site's own versions
 
@@ -163,9 +135,8 @@ gh-pages/
 
 The docs version is the release version, in full — `0.3.0`, not `0.3`. mike's
 own convention is major.minor, so that patches share a docs version, but one
-number for the whole repository is worth more here than a shorter selector: a
-tag, an archive, an image tag and a docs URL that all read `0.3.0` need no
-explaining.
+number for the whole server is worth more here than a shorter selector: a
+tag, an image tag and a docs URL that all read `0.3.0` need no explaining.
 
 `mike set-default --push latest` runs on every release. It is idempotent, and
 doing it every time is what lets the first release set the redirect up with no
@@ -182,9 +153,9 @@ misconfiguration.
 |---|---|---|
 | `tag` | nothing — the branch and the tag are pushed with `--atomic`, so they land together or not at all | fix it and dispatch again |
 | a later job, transiently — a runner flake, a registry 5xx | the bump commit and the tag, no release | **Re-run failed jobs**. `tag` is skipped and its `sha` output carries over, so the re-run builds the same commit. |
-| a later job, for a real reason — the Windows build broke, the image fails its health check, a doc link is dead | the same | the release was never valid. Fix it on `main` and release the next patch number. |
+| a later job, for a real reason — the image fails its health check, a doc link is dead | the same | the release was never valid. Fix it on `main` and release the next patch number. |
 
-`docs` and `image` both publish before `package` does, so a failure after them
+`docs` and `image` both publish before `release` does, so a failure after them
 can leave a site and an image for a version that has no release page. Both are
 safe to redo: `mike deploy` overwrites the version's directory, and
 `docker push` overwrites the tag.
@@ -196,6 +167,6 @@ a good release.
 
 One thing worth knowing: **the release commit does not run CI.** Pushes made
 with `GITHUB_TOKEN` do not trigger further workflow runs. Its only difference
-from `main` is three version strings and the lock, and both `uv sync --frozen`
+from `main` is two version strings and the lock, and both `uv sync --frozen`
 and the Docker build fail loudly on a broken lock — but the rule that follows
 from it is: **release only from a green `main`.**

@@ -47,7 +47,7 @@ class ReplaceInDuties(BaseModel):
 class ReplaceInBody(BaseModel):
     """Replace the exact text `old` with `new` in the text field `field`, or in every text field when it is omitted.
 
-    reason: the category (Exaggeration, Syntax or Logic) and the fact in MASTER PROFILE that `old` contradicts.
+    reason: the category (Exaggeration, Syntax or Logic) and the fact in CANDIDATE_PROFILE that `old` contradicts.
     """
 
     model_config = ConfigDict(title="replace_in_body")

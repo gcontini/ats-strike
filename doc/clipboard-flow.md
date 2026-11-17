@@ -4,10 +4,10 @@ One posting, from the moment you press Ctrl+C on a job ad to the folder that
 holds the PDF. This is `cv clipboard` with one server, the default. `submit`
 runs the same steps once, for one file, and writes the CV on the main thread
 before it returns. `watch` reads postings from a folder and asks only about
-the CHECK ones — see [the client guide](client.md). With `--server_ver` the
+the CHECK ones — see [the client guide](https://github.com/gcontini/ats-strike-client/blob/main/doc/client.md). With `--server_ver` the
 default still does the detection, the analysis and the letter, and each named
 server writes its CV on a thread of its own (see
-[several servers](client.md#several-servers)).
+[several servers](https://github.com/gcontini/ats-strike-client/blob/main/doc/client.md#several-servers)).
 
 ## The call sequence
 
@@ -181,6 +181,9 @@ broken `applications.xlsx` becomes a warning line in `log.log`; the CV was
 paid for and stays delivered.
 
 ## Where each step lives in the code
+
+Every step here is the client's, so every path is in
+[ats-strike-client](https://github.com/gcontini/ats-strike-client/blob/main).
 
 | Step | Module |
 |---|---|

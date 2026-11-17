@@ -53,6 +53,7 @@ from typing import Annotated, Any, Callable, Dict, List, Mapping, Optional, Tupl
 
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
+from openai import APIError
 
 from .bundle import CandidateInputs, ResourceBundle
 from .models import ModelSelector, Usage
@@ -66,9 +67,9 @@ logger = logging.getLogger(f"{LOGGER_ROOT}.cv")
 #: The CV formats format_selection chooses from. Any experience may show 0
 #: duties: it then shows only a short summary. Shown to the model as they are.
 FORMATS = {
-    "A": {"experiences": 3, "max_duties": 9, "max_total_duties": 23},
-    "B": {"experiences": 4, "max_duties": 8, "max_total_duties": 19},
-    "C": {"experiences": 5, "max_duties": 5, "max_total_duties": 16},
+    "A": {"experiences": 3, "max_duties": 9, "max_total_duties": 26},
+    "B": {"experiences": 4, "max_duties": 8, "max_total_duties": 23},
+    "C": {"experiences": 5, "max_duties": 7, "max_total_duties": 20},
 }
 #: The "|3-80,7-40" suffix of a scored text: key point id - score.
 SCORES = re.compile(r"\|((?:\d+-\d+,?)*)$")
@@ -420,7 +421,7 @@ class CVGenerator:
     def _write_body(self, state: CVState) -> dict:
         """The CV fields outside the work experiences, as in the body schema."""
         profile = {k: v for k, v in state["scored_profile"].items() if k != "writing_style"}
-        text = key_points_and_style(state) + f"SCHEMA:\n{self.bundle.cv_body_schema}\n\nMASTER PROFILE:\n{dumps(profile)}"
+        text = key_points_and_style(state) + f"SCHEMA:\n{self.bundle.cv_body_schema}\n\nCANDIDATE_PROFILE:\n{dumps(profile)}"
         with stage("cv.cv"):
             return {"cv_body": self._ask("cv", dict, self.bundle.sys_prompt_cv_body, text)}
 
@@ -453,7 +454,7 @@ class CVGenerator:
         profile = {k: v for k, v in self.candidate.profile.items() if k != "writing_style"}
 
         def text_for(doc: dict, attempt: int) -> str:
-            return (writing_style(self.candidate.profile) + f"MASTER PROFILE:\n{dumps(profile)}\n\n"
+            return (writing_style(self.candidate.profile) + f"CANDIDATE_PROFILE:\n{dumps(profile)}\n\n"
                     + f"ATTEMPT: {attempt}\n\nGENERATED CV BODY:\n{dumps(doc)}")
 
         with stage("cv.validation"):
@@ -487,7 +488,7 @@ class CVGenerator:
 
         The model is shown the CV the models wrote — never your candidate data, which goes over the top at the
         render. EVIDENCE: for each experience of the CV, the matches of its duties in the profile, with their words.
-        A highlighter that gives no usable answer leaves the CV unmarked rather than failing a finished job."""
+        A highlighter that gives no usable answer, or whose endpoint refuses the call, leaves the CV unmarked rather than failing a finished job."""
         resume = {**state["checked_body"], "experiences": state["checked_experiences"]}
         evidence = [
             [m for matches in duty_matches(state, i) for m in matches]
@@ -497,7 +498,7 @@ class CVGenerator:
         with stage("cv.highlight"):
             try:
                 resume = keep_words(self._ask("highlight", dict, self.bundle.sys_prompt_highlight, text), resume)
-            except ModelOutputError as e:
+            except (ModelOutputError, APIError) as e:
                 logger.warning("  ⚠ highlighting failed (%s) — continuing with the unmarked CV", e)
             flat = json.dumps(resume)  # every text, to list the markers
             logger.info("bold: %s", re.findall(r"\*\*([^*]+)\*\*", flat))

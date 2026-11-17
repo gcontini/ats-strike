@@ -10,7 +10,6 @@
 !pipeline/resources
 !server/pyproject.toml
 !server/src
-!client/pyproject.toml
 !server/docker
 
 # Secrets and personal data never enter the build context. The server holds

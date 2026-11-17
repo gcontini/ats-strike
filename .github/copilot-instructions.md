@@ -7,13 +7,15 @@ each can be deployed and tested independently:
 ```
 contracts/   cv_contracts  — pydantic models + envelope + the free JD guess
 server/      cv_server     — stateless FastAPI service: LLM calls + pdflatex
-client/      cv_client     — the thing you run: clipboard/watch/submit/render
 ```
 
-Dependency direction is one-way — `client → contracts ← server`, never
-`client ↔ server` — and enforced by `tests/test_architecture.py` (AST-based:
-it fails the build if either side imports the other, or if `contracts` pulls
-in anything heavier than pydantic). Read [AGENTS.md](../AGENTS.md) first for
+The client (`cv_client`, the thing you run: clipboard/watch/submit/render) is
+the ats-strike-client repository, and the tests that run client and server
+together, plus cv-eval, are ats-integration-tests. Dependency direction is
+one-way — `client → contracts ← server`, never `client ↔ server` — and
+enforced by `tests/test_architecture.py` here and in the client (AST-based:
+it fails the build if `contracts` pulls in anything heavier than pydantic, or
+if the server imports the client). Read [AGENTS.md](../AGENTS.md) first for
 the principles this design follows (SOLID, one job per class, no hidden
 global state); this file is the file map and the day-to-day commands.
 
@@ -110,58 +112,10 @@ over the defaults by file name).
 Packaged as `cv_server.resources` (see `server/pyproject.toml`) so
 `importlib.resources` still finds it despite living outside `src/`.
 
-**`client/src/cv_client/`** — your data, a bearer token, no Python
-required to run it (PyInstaller `--onefile`)
-- `api.py` — `CVApi` (Protocol) / `HttpApi` (httpx) — the only module
-  that knows the server exists. `events()` reads a CV session's SSE stream.
-  `CVError` carries `status` (0: no answer came, so a stream can be
-  reopened) and `request_id`.
-- `cvjob.py` — `write_cv()`: the session id (SHA-256 of the posting), start
-  or reattach, follow the events (reconnecting with `Last-Event-ID`), hand the
-  CV to `keep`, *then* acknowledge. `--new` acknowledges first.
-- `config.py` / `discovery.py` — settings resolution, highest precedence
-  first: CLI flag → env var → `cv.toml` → file found next to the
-  executable → server default. `CONFIG_KEYS` maps short TOML keys to the
-  filenames `discovery.py` looks for.
-- `joblog.py` — `JobLog` (per-job `log.log`: client steps, and a CV's server
-  lines as they stream in).
-- `workspace.py` — `Workspace`: owns the `working/error/discarded/cv` folder
-  tree, atomic moves, the daily subfolders. `new_job()` never replaces a
-  folder of the same name (a CV may still be written in it). `pending()` and
-  `clean()` serve clipboard's startup question about leftovers.
-- `sources/clipboard.py` — `ClipboardSource`, a `JDSource`: `poll()` returns
-  the clipboard's text once each time it changes.
-- `stages/` — the one pipeline every mode runs on (it imports nothing from
-  `modes` or `sources`; `tests/test_architecture.py` checks).
-  `analysis.py` (free check → detect → analyze, for every new posting),
-  `inbox.py` (watch's `--in`, on a thread), `approval.py` (watch's question:
-  y/d/s/n/q or a URL), `intake.py` (clipboard's and submit's question:
-  URL/y, n/s, q — every posting is asked about, and waits as `PENDING` while
-  you read), `listener.py` (clipboard's main thread: leftovers first, then
-  the clipboard, `q` when idle), `generation.py` (the CV queue: on a thread
-  for watch and clipboard, drained inline by submit), and `working.py`
-  (`WorkingProcessor`: every move, the duplicate check and both queues, under
-  one lock). A folder goes where `jobfolder.route()` says — the same pure
-  table for new postings, dropped folders and leftovers in `working/`.
-  `watcher.py` runs a foreground loop and the background stages: `q`
-  finishes what is running, Ctrl-C stops at once.
-- `modes/{clipboard,watch,submit,submit_raw,analysis,render,reset}.py` — thin:
-  build the stages and run them (`clipboard` asks r/c/q about leftovers first;
-  `submit` writes its CV on the main thread and returns when it is filed), or
-  (for `submit-raw`/`analysis`/`render`/`reset`) call the API directly.
-- `tracking.py` — `XlsxTracker` (openpyxl, `applications.xlsx`) / `NullTracker`.
-- `ui.py` — `Confirmer` protocol (`PromptConfirmer`, which reads the
-  `Keyboard`, / `AutoConfirmer` for `--yes`), the analysis table, the
-  recovery prompt.
-
 **Shared**
 - `examples/candidate/` — a fictional profile/data/preferences/image set,
   shipped so a fresh download has something to run against immediately.
 - `tests/test_architecture.py` — the one-way dependency rule, enforced.
-- `tests/test_integration.py` — client and server together in one process
-  (httpx against the real ASGI app via `starlette.testclient.TestClient`,
-  only the model call faked) — the one test that catches the two sides
-  disagreeing about the wire format.
 
 ## Key contracts & invariants
 
@@ -226,13 +180,8 @@ required to run it (PyInstaller `--onefile`)
 - LaTeX templates use Jinja delimiters `\VAR{}`/`\BLOCK{}`; escaping is done
   by `_sanitize_latex`/`_sanitize_obj` in `cv_renderer.py` — keep `{}` guard
   groups intact.
-- Console prints in the client use `flush=True` (long-lived watch/clipboard
-  processes).
 - Docker: **classic builder only** — no BuildKit features, no heredocs in a
   Dockerfile (`Dockerfile`, at the repo root, built with `DOCKER_BUILDKIT=0`).
-- PyInstaller (`client/packaging/cv.spec`), not Cython — Cython still
-  needs an interpreter and does not produce a standalone exe. Build on the
-  target OS; it does not cross-compile.
 - Keep the code simple; this is a personal tool wearing production-shaped
   seams (SOLID, tests, sandboxing) because it is a portfolio piece — do not
   add speculative options beyond what is asked.
@@ -245,9 +194,8 @@ uv sync
 
 # run from source
 uv run ats-strike                       # the server
-uv run cv clipboard --out ~/applications   # the client
 
-# tests — all four suites, no API key, no network
+# tests — all three suites, no API key, no network
 uv run pytest
 uv run pytest server/tests                 # one package only
 uv run pytest -k architecture              # the dependency-direction rule
@@ -255,9 +203,6 @@ uv run pytest -k architecture              # the dependency-direction rule
 # the server image (classic builder only)
 DOCKER_BUILDKIT=0 docker build -t ats-strike-server .
 docker run --rm -p 8080:8080 --env-file .env ats-strike-server
-
-# the client executable (build on the OS you are targeting)
-uv run --with pyinstaller pyinstaller client/packaging/cv.spec
 ```
 
 `pdflatex`-dependent tests skip themselves when it is not on `PATH`.
@@ -268,13 +213,13 @@ stay under test with no network call.
 ## Testing guidance
 
 - No test may need an API key, a network socket, or a terminal.
-- Fake at the transport boundary, not above it — inside `ModelSelector` for
-  the server, behind the `CVApi` protocol (`FakeApi`) for the client —
+- Fake at the transport boundary, not above it — inside `ModelSelector` —
   so the code that assembles a request is what actually runs under test.
 - `server/tests/golden/cv_golden.tex` pins the whole render byte-for-byte; an
   escaping regression is otherwise invisible until someone reads a bad PDF.
-- `tests/test_integration.py` is the one place both packages run together;
-  keep it passing before touching either side's contract usage.
+- ats-integration-tests' `tests/test_integration.py` is the one place client
+  and server run together; keep it passing before touching either side's
+  contract usage.
 
 ## Interaction with the user
 

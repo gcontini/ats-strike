@@ -66,17 +66,20 @@ Any OpenAI-compatible provider works — see
 [`server/README.md`](server/README.md) for the other providers and the full
 environment table. `curl localhost:8080/healthz` should report `pdflatex: true`.
 
-**2. Download the client** — a single executable, no Python required, from the
-[releases page](https://github.com/gcontini/ats-strike/releases): pick
-`ats-strike-linux-x86_64` or `ats-strike-windows-x86_64` and unpack it. Your
-files live in a *server folder* beside it — `v11/`, say — holding your
+**2. Download the client** — a single executable, no Python required, from
+[ats-strike-client](https://github.com/gcontini/ats-strike-client)'s
+[releases page](https://github.com/gcontini/ats-strike-client/releases): unpack
+`ats-strike-client-x.y.z.tar.gz` (or the `.zip`) into a folder of its own. Your
+files live in a *server folder* beside the binary — `v11/`, say — holding your
 `candidate_profile.json`, `candidate_data.json` and `candidate_preferences.md`
-(start from the fictional set in `examples/candidate/`) and a `server.toml`
-saying where that server is; a `cv.toml` lists the folder:
+(the archive's `v11/` holds a fictional set to start from); a `cv.toml` says
+where that server is and which folder it is sent:
 
 ```toml
-# cv.toml                      # v11/server.toml
-servers = ["v11"]              url = "http://localhost:8080"
+# cv.toml
+[servers.v11]
+folder = "v11"
+url    = "http://localhost:8080"
 ```
 
 ```bash
@@ -86,10 +89,11 @@ servers = ["v11"]              url = "http://localhost:8080"
 Copy a job posting to your clipboard; ats-strike checks it, shows you the
 analysis, and on confirmation writes the CV into
 `~/applications/CV/<day>/<Company>_<Title>/`. `watch` and `submit` work the
-same way against files instead of the clipboard. List a second server folder
+same way against files instead of the clipboard. Add a second server section
 and `--server_ver v11 --server_ver v05` writes one CV with each, side by side,
-into the same job folder — [`client/README.md`](client/README.md) covers the
-modes, configuration, and the output layout.
+into the same job folder — the client's
+[README](https://github.com/gcontini/ats-strike-client/blob/main/client/README.md)
+covers the modes, configuration, and the output layout.
 
 ## Architecture
 
@@ -122,11 +126,15 @@ Package boundaries, what crosses the wire, and the async job model are in
 
 ```bash
 uv sync
-uv run pytest                   # all four suites; no API key, no network
+uv run pytest                   # all three suites; no API key, no network
 uv run ats-strike            # the server, from source
-uv run cv --help         # the client, from source
 uv run --group docs mkdocs serve  # the documentation site, on :8000
 ```
+
+The client is developed in
+[ats-strike-client](https://github.com/gcontini/ats-strike-client), and the
+tests that run the two together — plus the CV quality evaluation — in
+[ats-integration-tests](https://github.com/gcontini/ats-integration-tests).
 
 ## License
 

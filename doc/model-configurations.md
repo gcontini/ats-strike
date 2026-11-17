@@ -167,7 +167,7 @@ the rows below are its JD-analysis runs. Settings named in the old keys:
 
 Since 2026-10-20 a CV is written in adapticv-ai's six steps, one role each.
 The rows here are adapticv-ai's own bench of 2026-10-19 on the ten quick JDs
-of `tests/cv_quality/` — the same prompts, called through `ChatOpenAI` from
+of `tests/cv_quality/` (in [ats-integration-tests](https://github.com/gcontini/ats-integration-tests)) — the same prompts, called through `ChatOpenAI` from
 that project, not through ats-strike — and ats-strike's shipped setting. Each row
 is the whole pipeline: every step on the same model, `reasoning_effort` high
 for `profile_scoring` and medium for the other five, no temperature.
@@ -240,7 +240,7 @@ adapticv-ai's prompt; the last row below is the old loop's.
 
 ### cv-eval (`tests/cv_quality`, not a server role)
 
-Called by the evaluation scripts directly with the `openai` client, not through
+cv-eval lives in [ats-integration-tests](https://github.com/gcontini/ats-integration-tests). Called by the evaluation scripts directly with the `openai` client, not through
 `models.toml`.
 
 | Provider | Model | Settings | Status | Date | Notes |

@@ -76,13 +76,13 @@ nav:
       - The CV pipeline: cv-pipeline.md
       - A run, end to end: clipboard-flow.md
   - Using it:
-      - The client: client.md
+      - The client: https://github.com/gcontini/ats-strike-client/blob/main/doc/client.md
       - Running the two halves apart: deployment.md
       - Developing locally in VS Code: development-setup.md
   - Reference:
       - The HTTP API: protocol.md
       - Building the server: build-server.md
       - Model configurations: model-configurations.md
-      - Building the client: build-client.md
+      - Building the client: https://github.com/gcontini/ats-strike-client/blob/main/doc/build-client.md
       - Cutting a release: release.md
       - Credits: credits.md

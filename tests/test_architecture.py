@@ -1,11 +1,11 @@
-"""The rules that keep the four packages independent.
+"""The rules that keep the three packages independent.
 
-These are not style checks: the server image must not carry the client's
-dependencies, the frozen client must not drag in the server's, and neither
-can be refactored freely if they import each other. The direction is
-``client -> contracts <- server -> pipeline``: the server is the protocol, the
-pipeline everything that makes a CV, and the pipeline knows nothing of HTTP
-or of the wire format.
+These are not style checks: the contracts are imported by the client too (the
+ats-strike-client repository, which has its own copy of these rules), so they
+must stay cheap, and the pipeline must stay a library. The direction is
+``contracts <- server -> pipeline``: the server is the protocol, the pipeline
+everything that makes a CV, and the pipeline knows nothing of HTTP or of the
+wire format.
 """
 
 from __future__ import annotations
@@ -19,7 +19,6 @@ PACKAGES = {
     "contracts": REPO_ROOT / "contracts" / "src" / "cv_contracts",
     "pipeline": REPO_ROOT / "pipeline" / "src" / "cv_pipeline",
     "server": REPO_ROOT / "server" / "src" / "cv_server",
-    "client": REPO_ROOT / "client" / "src" / "cv_client",
 }
 
 
@@ -36,16 +35,8 @@ def imports_of(package: Path) -> Set[str]:
     return found
 
 
-def test_the_client_never_imports_the_server():
-    assert "cv_server" not in imports_of(PACKAGES["client"])
-
-
 def test_the_server_never_imports_the_client():
     assert "cv_client" not in imports_of(PACKAGES["server"])
-
-
-def test_the_client_never_imports_the_pipeline():
-    assert "cv_pipeline" not in imports_of(PACKAGES["client"])
 
 
 def test_the_pipeline_imports_none_of_the_others_and_knows_no_http():
@@ -87,48 +78,6 @@ def test_the_contracts_depend_on_pydantic_and_nothing_else():
     assert not (imports_of(PACKAGES["contracts"]) & heavy)
 
 
-def test_the_client_carries_no_server_side_dependency():
-    """No LaTeX, no model SDK, no templating in the shipped executable."""
-    forbidden = {"openai", "jinja2", "pypdf", "fastapi", "uvicorn", "subprocess",
-                 "langchain_core", "langchain_openai", "langchain_deepseek", "langgraph"}
-    assert not (imports_of(PACKAGES["client"]) & forbidden - {"subprocess"})
-    # subprocess is allowed in exactly one place: probing the clipboard helper.
-    users = [p.name for p in PACKAGES["client"].rglob("*.py")
-             if "import subprocess" in p.read_text(encoding="utf-8")]
-    assert users == ["clipboard.py"]
-
-
 def test_the_server_carries_no_client_side_dependency():
     """The image has no clipboard and no spreadsheet."""
     assert not (imports_of(PACKAGES["server"]) & {"pyperclip", "openpyxl"})
-
-
-def client_modules_used_by(subpackage: Path) -> Set[str]:
-    """Every ``cv_client.<module>`` a client subpackage imports, however spelled."""
-    found: Set[str] = set()
-    for path in subpackage.rglob("*.py"):
-        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                names = [alias.name.split(".") for alias in node.names]
-                found.update(parts[1] for parts in names
-                             if parts[0] == "cv_client" and len(parts) > 1)
-            elif isinstance(node, ast.ImportFrom):
-                parts = (node.module or "").split(".")
-                if node.level == 0 and parts[0] == "cv_client" and len(parts) > 1:
-                    found.add(parts[1])
-                elif node.level == 2 and node.module:  # from ..module import x
-                    found.add(parts[0])
-                elif node.level == 2:  # from .. import module
-                    found.update(alias.name for alias in node.names)
-    return found
-
-
-def test_the_stages_never_reach_back_into_the_modes_or_the_sources():
-    """``stages/`` is the one pipeline every mode builds on. It uses the shared
-    modules (the API, the workspace, the spreadsheet) but never a mode, and
-    never where a posting comes from: a new source is a new ``JDSource``,
-    handed in by its mode, and no change here."""
-    used = client_modules_used_by(PACKAGES["client"] / "stages")
-    assert "workspace" in used, "the check must see the imports it is checking"
-    assert not used & {"modes", "sources"}

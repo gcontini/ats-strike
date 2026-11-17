@@ -1,7 +1,10 @@
 # Developing locally, in VS Code
 
 This page is for working on ats-strike itself: both halves on your own machine,
-under the debugger, breakpoints on either side of the HTTP call. No
+under the debugger, breakpoints on either side of the HTTP call. The server is
+this repository and the client is
+[ats-strike-client](https://github.com/gcontini/ats-strike-client): check
+them out side by side and open both in one VS Code window. No
 container, no cloud instance — the client's `server_url` is `localhost`, and
 if you point the server at a local model endpoint too, nothing leaves the
 machine at all.
@@ -14,7 +17,7 @@ debugger instead of an image.
 
 | | |
 |---|---|
-| Python 3.12+, [uv](https://docs.astral.sh/uv/) | Builds the workspace's one `.venv` for all three packages |
+| Python 3.12+, [uv](https://docs.astral.sh/uv/) | Builds one `.venv` per repository |
 | VS Code with the Python extension | Ships `debugpy`, which the launch configs below use |
 | `pdflatex` on `PATH` | Only for `/v1/cv` and `/v1/cv/render` to actually produce a PDF — see [below](#pdflatex-without-the-container) |
 | A model endpoint | Your own provider key, or a local one — see [Configure](#configure) |
@@ -22,12 +25,22 @@ debugger instead of an image.
 ## Install
 
 ```bash
-uv sync
+git clone --recurse-submodules https://github.com/gcontini/ats-strike
+git clone --recurse-submodules https://github.com/gcontini/ats-strike-client
+(cd ats-strike && uv sync)
+(cd ats-strike-client && uv sync)
 ```
 
-One `.venv` at the repository root for `contracts/`, `server/` and `client/`.
-Point VS Code's Python interpreter at `${workspaceFolder}/.venv/bin/python`
-if it does not pick it up on its own.
+`contracts/` is a git submodule (the ats-strike-contract repository) in both:
+in a clone made without `--recurse-submodules` it is empty until
+`git submodule update --init`, and after a `git pull` that moved it,
+`git submodule update` brings it along.
+
+One `.venv` per checkout: `contracts/`, `pipeline/` and `server/` here,
+`contracts/` and `client/` in ats-strike-client. Add both folders to one VS
+Code workspace (*File → Add Folder to Workspace*), and point each folder's
+Python interpreter at its own `.venv/bin/python` if VS Code does not pick it
+up on its own.
 
 ## Configure
 
@@ -54,15 +67,16 @@ MODEL_API_KEY=anything   # Ollama ignores it, but the OpenAI client requires one
 
 ## The launch configs
 
-`.vscode/launch.json` has:
+Each checkout's `.vscode/launch.json` has its half:
 
-| Name | Runs |
-|---|---|
-| `server (ats-strike)` | `cv_server.server:main` in-process — the same entry point as `uv run ats-strike`, just under `debugpy` |
-| `client (submit-raw)` | `cv submit-raw examples/posting.txt` against the example candidate in `examples/candidate/` — one CV, no clipboard, no confirmation prompt. The quickest way to prove the two halves talk to each other |
-| `client (clipboard)` | The interactive mode, against the same example data |
+| Name | Where | Runs |
+|---|---|---|
+| `server (ats-strike)` | this repository | `cv_server.server:main` in-process — the same entry point as `uv run ats-strike`, just under `debugpy` |
+| `client (submit-raw)` | ats-strike-client | `cv submit-raw examples/posting.txt` against the example candidate in that repository's `examples/candidate/` — one CV, no clipboard, no confirmation prompt. The quickest way to prove the two halves talk to each other |
+| `client (clipboard)` | ats-strike-client | The interactive mode, against the same example data |
 
-and one compound, **`server + client (clipboard)`**, that starts both. Each
+and the workspace file has one compound, **`server + client (clipboard)`**,
+that starts both. Each
 runs as its own `debugpy` session, so a breakpoint in `cv_server` and one
 in `cv_client` both work at the same time — they are two processes, not
 one call stack, so stepping through one will not show you the other side of
@@ -73,8 +87,8 @@ the HTTP request.
 1. Set the Run and Debug target to **`server + client (clipboard)`** and
    press F5. Two debug sessions start; wait for the server's `Uvicorn running
    on http://0.0.0.0:8080` in its Debug Console before copying a posting.
-2. Copy the text of the repository's `examples/posting.txt` (or any real
-   one). The client asks whether to submit; say `y`. Output lands under
+2. Copy the text of the client repository's `examples/posting.txt` (or any
+   real one). The client asks whether to submit; say `y`. Output lands under
    `ats-strike-data/dev/`.
 3. To check just the wiring without touching the clipboard, run
    `client (submit-raw)` on its own against an already-running server — it
@@ -107,7 +121,7 @@ except `/v1/cv` and `/v1/cv/render` still works — `/v1/jd/detect` and
 
 | What you see | What to do |
 |---|---|
-| `ModuleNotFoundError: cv_client` / `cv_server` | VS Code is using a different interpreter than `.venv`. Reselect it, or re-run `uv sync` |
+| `ModuleNotFoundError: cv_client` / `cv_server` | VS Code is using a different interpreter than that folder's `.venv`. Reselect it, or re-run `uv sync` in that checkout |
 | `cannot reach the ats-strike server at http://localhost:8080` | The `server (ats-strike)` session is not running, or is still starting — check its Debug Console |
 | `"status": "degraded"` from `/healthz` | No `pdflatex` on `PATH`; see [above](#pdflatex-without-the-container) |
 | `no clipboard here: neither DISPLAY nor WAYLAND_DISPLAY…` | `apt install xclip` (X11) or `wl-clipboard` (Wayland) locally, or a devcontainer/SSH remote with no display at all — use `client (submit-raw)` instead |

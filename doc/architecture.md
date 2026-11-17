@@ -6,7 +6,7 @@
 flowchart TB
     subgraph your["your machine"]
         CLI["<b>cv</b> (client)<br/>single executable"]
-        FILES["one folder per server:<br/>server.toml · candidate_*.json/.md<br/>resume.tex.jinja · prompts · images · cache/"]
+        FILES["one folder per server:<br/>candidate_*.json/.md<br/>resume.tex.jinja · prompts · images · cache/"]
         OUT["CV/ · discarded/ · error/ · working/<br/>applications.xlsx"]
         FILES --> CLI
         CLI --> OUT
@@ -37,25 +37,27 @@ flowchart TB
     PIPE --> TEX
 ```
 
-`client → contracts ← server → pipeline`. The client and the server never
-import each other, the pipeline imports none of the others and knows no HTTP,
-and the server reaches the pipeline only through its top level (`from
-cv_pipeline import ...`); `tests/test_architecture.py` fails the build if any
-of that breaks. The contracts package depends on pydantic and nothing else: it
+`client → contracts ← server → pipeline`. The client and the server live in
+separate repositories and never import each other, the pipeline imports none
+of the others and knows no HTTP, and the server reaches the pipeline only
+through its top level (`from cv_pipeline import ...`);
+`tests/test_architecture.py`, here and in the client's repository, fails the
+build if any of that breaks. The contracts package depends on pydantic and nothing else: it
 is loaded both by a web server and by a frozen executable, and has to stay
 cheap in both.
 
 | Package | Holds | Ships as |
 |---|---|---|
-| `client/` | Your server folders — profile, contact data, template, images — the output tree, the spreadsheet | A PyInstaller executable, ~1 file |
+| `client/` | Your server folders — profile, contact data, template, images — the output tree, the spreadsheet | A PyInstaller executable, ~1 file, from its own repository, [ats-strike-client](https://github.com/gcontini/ats-strike-client) |
 | `server/` | The protocol: request reading, auth, sessions, the event stream | Inside the container image |
 | `pipeline/` | Everything that makes a CV: the prompts and schemas, the models and their API keys, the LaTeX template and toolchain | Inside the container image, ~780 MB with TeX |
-| `contracts/` | The wire format: the envelope, the payloads, a thing to store, the protocol number, the free JD pre-check | A pydantic-only package, vendored into client and server |
+| `contracts/` | The wire format: the envelope, the payloads, a thing to store, the protocol number, the free JD pre-check | A pydantic-only package with its own repository, [ats-strike-contract](https://github.com/gcontini/ats-strike-contract), checked out here as a git submodule |
 
 The wire knows no pipeline: the client sends a **pack** — every file of a
 server folder — and stores what the server tells it to store. So one client
 talks to a 0.5, a 1.x and a 2.0 server, side by side on one posting, and
-`contracts/src` and `server/src` are the same files on every release line;
+`contracts/` is the same submodule and `server/src` the same files on every
+release line;
 only `pipeline/` differs. See [the protocol](protocol.md).
 
 ## What crosses the wire

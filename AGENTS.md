@@ -5,19 +5,14 @@ because breaking it has a cost we have already paid once.
 
 ## Shape
 
-- **One job per class.** `HttpApi` speaks HTTP and nothing else. `Workspace`
-  owns paths and moves and nothing else. `WorkingProcessor` decides where a
-  job folder goes next and makes every move. If you cannot say what a class
-  does in one sentence without "and", split it.
-- **Depend on protocols, not implementations.** `CVApi`, `JDSource`,
-  `Confirmer`, `Tracker` exist so the modes can be tested with no server, no
-  terminal and no spreadsheet. A new source of job descriptions should be a
-  new `JDSource` and no change anywhere else.
-- **One-way dependencies:** `client → contracts ← server → pipeline`. The
-  client and the server never import each other, and the pipeline imports
-  none of the others; `tests/test_architecture.py` enforces it. The contracts
-  package imports nothing but pydantic — it is loaded by a web server and by a
-  frozen executable, and has to stay cheap in both.
+- **One job per class.** If you cannot say what a class does in one sentence
+  without "and", split it.
+- **One-way dependencies:** `contracts ← server → pipeline`. The pipeline
+  imports none of the others; `tests/test_architecture.py` enforces it. The
+  client is the ats-strike-client repository and meets the server over HTTP
+  only. The contracts package imports nothing but pydantic — it is loaded by a
+  web server and by the client's frozen executable, and has to stay cheap in
+  both.
 - **The pipeline is a library.** Everything under `cv_pipeline`
   takes its inputs in memory and returns its outputs. It reads no
   configuration, resolves no paths and writes nothing outside the scratch
@@ -34,12 +29,6 @@ because breaking it has a cost we have already paid once.
 - **Prefer deleting.** The three-model rework removed a whole second CV
   pipeline; the client/server split removed a thread pool and a folder
   protocol. Less surface has consistently been the better answer here.
-- **Simple over clever.** Each stage of the watcher takes one posting at a
-  time. The stages run side by side — the inbox on a thread, the CV writer on
-  a thread per server, you on the main thread — because most postings no
-  longer need a question: a CV takes minutes, and it is written while you read
-  the next posting. That is the one concurrency there is; still nothing inside
-  a stage runs in parallel.
 - **KISS: this runs for one person, not at scale.** ats-strike is personal
   tooling, not a production service with many tenants. Don't add retries,
   caching layers, queues, connection pools, horizontal scaling or config
@@ -79,4 +68,9 @@ because breaking it has a cost we have already paid once.
 - `uv` for everything: `uv sync`, `uv run pytest`, `uv lock`.
 - Docker: **classic builder only**. No BuildKit features, no heredocs in a
   Dockerfile.
+- `contracts/` is a git submodule, the ats-strike-contract repository, shared
+  with the 0.5 line and the client. Change it there, not as a copy; a change
+  is a commit in that repository plus the new pointer here.
+- The client is ats-strike-client; the tests that need the client and the
+  server together, and cv-eval, are ats-integration-tests. Change them there.
 - Do not commit or push. Changes are left in the working tree for review.

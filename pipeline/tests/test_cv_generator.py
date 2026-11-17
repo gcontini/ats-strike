@@ -9,6 +9,7 @@ import threading
 import time
 from dataclasses import replace
 
+import httpx
 import pytest
 
 from cv_pipeline.bundle import CandidateInputs
@@ -197,7 +198,7 @@ def test_the_writer_gets_the_body_and_each_chosen_experience_with_its_evidence(
     duties = sorted((user_text(call) for call in llm["duties"].calls),
                     key=lambda text: section({"messages": [{"role": "user", "content": text}]},
                                              "EXPERIENCE")["id"])
-    assert len(body) == 1 and "MASTER PROFILE:" in body[0] and "WRITING STYLE:" in body[0]
+    assert len(body) == 1 and "CANDIDATE_PROFILE:" in body[0] and "WRITING STYLE:" in body[0]
     assert f"SCHEMA:\n{bundle.cv_body_schema}" in body[0]
     assert len(duties) == 3 and all("DUTY CAP: 2" in text for text in duties)
     evidence = section({"messages": [{"role": "user", "content": duties[0]}]}, "EVIDENCE")
@@ -241,7 +242,7 @@ def test_the_validators_check_against_the_profile_without_the_scores(bundle, can
     *_, llm = run(bundle, candidate, tmp_path)
     texts = [user_text(call) for call in llm["validation"].calls]
     body = next(text for text in texts if "GENERATED CV BODY" in text)
-    assert "MASTER PROFILE:" in body and "|1-80" not in body.split("GENERATED CV BODY")[0]
+    assert "CANDIDATE_PROFILE:" in body and "|1-80" not in body.split("GENERATED CV BODY")[0]
     assert "writing_style" not in body.split("GENERATED CV BODY")[0]
     assert all("ATTEMPT: 1" in text for text in texts)
 
@@ -271,6 +272,13 @@ def test_a_highlight_that_changed_a_text_keeps_its_original(bundle, candidate, t
 def test_a_highlighter_that_never_answers_leaves_the_cv_unmarked(bundle, candidate, tmp_path, renders):
     llm = script_cv(FakeLLM())
     llm["highlight"].replies = ["not json"]
+    (document, *_), *_ = run(bundle, candidate, tmp_path, llm)
+    assert document["summary"] == SAMPLE_BODY["summary"]
+
+
+def test_a_highlighter_whose_endpoint_fails_leaves_the_cv_unmarked(bundle, candidate, tmp_path, renders):
+    llm = script_cv(FakeLLM())
+    llm["highlight"].error = httpx.ConnectError("the endpoint is down")
     (document, *_), *_ = run(bundle, candidate, tmp_path, llm)
     assert document["summary"] == SAMPLE_BODY["summary"]
 

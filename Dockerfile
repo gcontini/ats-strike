@@ -7,8 +7,9 @@
 #     docker build -t ats-strike-server .
 #     docker run --rm -p 8080:8080 --env-file .env ats-strike-server
 #
-# Built from the repository root's contracts/, pipeline/ and server/ only; the
-# client is a separate artifact and shares nothing but the contracts package.
+# Built from the repository root's contracts/, pipeline/ and server/ — the
+# whole workspace. The client is the ats-strike-client repository and shares
+# nothing but the contracts package.
 #
 # Classic-builder safe: no BuildKit features and no heredocs.
 
@@ -30,7 +31,6 @@ COPY pyproject.toml uv.lock README.md ./
 COPY contracts/pyproject.toml ./contracts/
 COPY pipeline/pyproject.toml ./pipeline/
 COPY server/pyproject.toml ./server/
-COPY client/pyproject.toml ./client/
 RUN uv sync --frozen --no-dev --package ats-strike-server --no-install-workspace
 
 # Then the code, which changes on every commit. --no-editable copies the

@@ -5,5 +5,4 @@
 exclude_paths:
   - 'contracts/tests/**'
   - 'server/tests/**'
-  - 'client/tests/**'
   - 'tests/**'

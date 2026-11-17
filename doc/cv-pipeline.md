@@ -62,9 +62,9 @@ uses the same rule.
 
 | Format | Experiences | Duties each | Duties in all |
 |---|---|---|---|
-| A | 3 | 0–9 | 23 |
-| B | 4 | 0–8 | 19 |
-| C | 5 | 0–5 | 16 |
+| A | 3 | 0–9 | 26 |
+| B | 4 | 0–8 | 23 |
+| C | 5 | 0–7 | 20 |
 
 It fills the places with the duties that add the most coverage, keeping one
 or two for long duties the writer may split. Then it counts the years the
@@ -209,3 +209,32 @@ None has a loop. Each runs on its own model: `detect`, `analysis` and `letter`.
 - **`letter_generator.generate`** — prose in, prose out; 180–450 words,
   validated. The prompt asks the model to look the employer up when it can
   search the web; whether it can is the `letter` role's `extra_body`.
+
+## Files and settings
+
+What the 1.x pipeline reads from a [protocol](protocol.md) request: the
+pack files and the `settings` keys. Anything it does not name is ignored,
+`cache/` included. A 0.5 server reads its own set (see the `fix-0.5.x` branch's
+[CV pipeline page](https://github.com/gcontini/ats-strike/blob/fix-0.5.x/doc/cv-pipeline.md#files-and-settings)).
+
+| Pack file | Becomes |
+|---|---|
+| `candidate_profile.json` | the candidate's profile (JSON object). Needed by analysis, CV, letter. |
+| `candidate_data.json` | what the template prints: name, contact details. Needed by CV and letter. No model is shown it. |
+| `candidate_preferences.md` | your preferences. Needed by analysis. |
+| `sys_prompt_analysis.txt` | the analysis prompt |
+| `sys_prompt_<step>.txt` (`jd_evaluation`, `profile_scoring`, `format_selection`, `cv_body`, `cv_duties`, `validation_body`, `validation_duties`, `highlight`, `letter`, …) | that prompt |
+| `cv_body_schema.json`, `cv_duties_schema.json` | the JSON schema the writer is shown |
+| `resume.tex.jinja` | the template, page counts included |
+| top-level `*.png`, `*.jpg`, `*.jpeg` | images, under their own file name, merged over the shipped ones |
+
+Text is UTF-8 with a BOM stripped; a needed file that is missing is `400
+missing_part`; one that is not UTF-8, not JSON or not a JSON object is `400
+bad_part`. `jd.txt` is decoded with undecodable bytes replaced.
+
+| Setting | Means |
+|---|---|
+| `pages` | Page limit the CV must fit: an integer of at least 1 (default 2), else `bad_part` |
+| `extra_body` | Role → JSON object: that role's request settings for this request, replacing everything `models.toml` gives it. Each call takes only its own roles: analysis `analysis`; letter `letter`; CV `jd_evaluation`, `profile_scoring`, `format_selection`, `cv`, `duties`, `validation`, `highlight`. |
+
+Unknown keys and roles are ignored.

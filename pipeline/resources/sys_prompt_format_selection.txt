@@ -8,14 +8,17 @@ Input:
 
 Choose the CV format, the work experiences to show and how many duties each one shows. The most recent work experience
 is always shown. Work in this order:
-1. Most important duties first. Start from the format with the fewest experiences and fill its places one duty at a time,
-   taking next the duty that adds the most: for each KEY POINT, add up its 2 best scores among the duties taken (the others
-   do not count); a KEY POINT is full at 2 x its importance (importance 70: full at 140 points), and points beyond that add
-   nothing. Each duty taken is one place for its experience. The experiences shown are the ones whose duties come first,
-   up to the format's number of experiences. When no duty left adds points, fill the remaining places with the best of
-   the others: the format's maximum overall is what fits the page, and a place left empty is empty space on it.
-   Keep 1 or 2 of the format's places for the experiences whose duties taken are the longest: the writer may split a long
-   duty in two.
+1. Most important duties first. Start from the format with the fewest experiences.
+   a. A duty is worth the points it adds to the KEY POINTS: for each KEY POINT only its 2 best scores among the
+      duties taken count, and it is full at 2 x its importance (importance 70: full at 140 points); points beyond
+      that add nothing. A duty is worth less once other duties cover its KEY POINTS.
+   b. Take the duties one at a time, always the one worth the most now. Each duty taken is one place for its
+      experience. The first experiences to get a duty are the ones shown, up to the format's number of
+      experiences; skip the duties of the others.
+   c. When no duty left is worth any points, go on with the highest-scoring duties left: the format's maximum
+      overall is what fits the page, and an unused place is blank space on it.
+   d. Stop 1 or 2 places before the format's maximum overall, and give those places to the experiences whose
+      duties taken are the longest: the writer may split a long duty in two.
 2. Years covered. When the duties left add very little (they score low, or their KEY POINTS are already full), count the years
    the chosen experiences cover, from their dates, against the candidate's whole career. If a significant part of the
    career is not shown, switch to a format with more experiences and add the longest experience not shown yet.

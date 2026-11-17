@@ -1,8 +1,9 @@
 name: Release
 
-# One version for the whole repository. You type it here; this writes it into
-# the four pyprojects and the lock, tags it, and builds both halves from that
-# tag. See doc/release.md.
+# The server's version. You type it here; this writes it into the pipeline's
+# and the server's pyprojects and the lock, tags it, and builds the image and
+# the docs from that tag. The client is released from its own repository,
+# ats-strike-client, with its own version. See doc/release.md.
 on:
   workflow_dispatch:
     inputs:
@@ -22,7 +23,7 @@ concurrency: release
 
 jobs:
   # The version becomes a commit and a tag. Everything after this builds from
-  # that tag, so a binary cannot claim a version it was not built at.
+  # that tag, so an image cannot claim a version it was not built at.
   tag:
     runs-on: ubuntu-latest
     outputs:
@@ -30,6 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          submodules: true   # contracts/ is the ats-strike-contract submodule.
           # The push below is a fast-forward of one commit; a shallow clone is
           # one more thing that can refuse it. This repository is small.
           fetch-depth: 0
@@ -58,13 +60,13 @@ jobs:
         run: |
           set -eux
           sed -i "s/^version = \".*\"$/version = \"$VERSION\"/" \
-            contracts/pyproject.toml pipeline/pyproject.toml server/pyproject.toml client/pyproject.toml
+            pipeline/pyproject.toml server/pyproject.toml
           # uv.lock records each member's version too. Leaving it stale would
           # commit a lock that disagrees with the manifests, and `uv lock
           # --check` and `uv sync --locked` both refuse that.
           uv lock
           grep -H '^version = ' \
-            contracts/pyproject.toml pipeline/pyproject.toml server/pyproject.toml client/pyproject.toml
+            pipeline/pyproject.toml server/pyproject.toml
 
       - name: Commit, tag and push
         id: push
@@ -74,47 +76,12 @@ jobs:
           set -eux
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add contracts/pyproject.toml pipeline/pyproject.toml server/pyproject.toml client/pyproject.toml uv.lock
+          git add pipeline/pyproject.toml server/pyproject.toml uv.lock
           git commit -m "release v$VERSION"
           git tag "v$VERSION"
           # --atomic: the branch and the tag land together, or neither does.
           git push --atomic origin HEAD:main "refs/tags/v$VERSION"
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-  # PyInstaller does not cross-compile: one runner per OS. Both check out the
-  # tagged commit by sha — main would give a binary one version behind.
-  build:
-    needs: tag
-    strategy:
-      # Unlike CI, a release stops at the first failure: there is nothing to
-      # learn from the second binary once the first one is wrong.
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ needs.tag.outputs.sha }}
-      - uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
-      - run: uv sync --frozen
-      - run: uv run --with pyinstaller pyinstaller --noconfirm client/packaging/cv.spec
-
-      # The one thing this job exists to prove. -F because Windows prints CRLF
-      # and because a version string is not a regex.
-      - name: Check it reports the version being released
-        env:
-          VERSION: ${{ inputs.version }}
-        shell: bash
-        run: ./dist/cv version | grep -qF "version $VERSION"
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: binary-${{ matrix.os }}
-          path: dist/cv*
-          if-no-files-found: error
 
   # The server image, from the same commit. Classic builder, linux/amd64,
   # plain docker push — see AGENTS.md. Docker Hub is the public copy; the
@@ -126,6 +93,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          submodules: true   # contracts/ is the ats-strike-contract submodule.
           ref: ${{ needs.tag.outputs.sha }}
 
       - name: Build it
@@ -197,6 +165,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          submodules: true   # contracts/ is the ats-strike-contract submodule.
           ref: ${{ needs.tag.outputs.sha }}
           # mike commits onto gh-pages and needs the real history of it, not
           # the single commit a shallow clone would give it.
@@ -238,61 +207,18 @@ jobs:
       - uses: actions/deploy-pages@v5
         id: deploy
 
-  # One archive, both binaries, and a data folder ready to run: cv.toml lists
-  # the server folder v11/, which holds server.toml and the fictional
-  # candidate, so extract, cd in, and it works. Last, and behind the image, so
-  # the release never announces a server version that is not on Docker Hub.
-  package:
-    needs: [tag, build, image, docs]
+  # The release page, last, so it never announces a version whose image is not
+  # on Docker Hub or whose docs are not up. It carries notes only: the
+  # binaries are on ats-strike-client's own release pages.
+  release:
+    needs: [tag, image, docs]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ needs.tag.outputs.sha }}
-
-      - uses: actions/download-artifact@v8
-        with:
-          pattern: binary-*
-          merge-multiple: true
-          path: package
-
-      - name: Assemble the download
-        env:
-          VERSION: ${{ inputs.version }}
-        run: |
-          set -eux
-          mkdir -p package/v11
-          cp client/README.md package/
-          cp client/cv.toml.example package/cv.toml
-          cp client/server.toml.example package/v11/server.toml
-          cp examples/candidate/* package/v11/
-          cp examples/posting.txt package/
-          # The README is written for the repository. Here there is no server/,
-          # the fictional candidate set is already in v11/, and posting.txt is
-          # beside the binary.
-          sed -i 's|(\.\./server/README\.md)|(https://github.com/${{ github.repository }}/blob/main/server/README.md)|' package/README.md
-          sed -i 's|Start from the fictional set in \[`examples/candidate/`\](\.\./examples/candidate)|The fictional set is already in `v11/` — edit it in place.|' package/README.md
-          sed -i '/^   — copy them into your server folder and edit\.$/d' package/README.md
-          sed -i 's|^   cv submit-raw \.\./examples/posting\.txt$|   cv submit-raw posting.txt|' package/README.md
-          # The artifact service hands every file back as 644; tar stores the
-          # mode it is given and tar xzf restores it.
-          chmod +x package/cv
-          # An explicit list, so a missing file fails the step instead of
-          # silently shipping a smaller archive.
-          FILES="cv cv.exe README.md cv.toml posting.txt v11/server.toml
-                 v11/candidate_profile.json v11/candidate_data.json
-                 v11/candidate_preferences.md v11/candidate_signature.png"
-          tar -czf "ats-strike-$VERSION.tar.gz" -C package $FILES
-          tar -tzvf "ats-strike-$VERSION.tar.gz"
-          # Also create a zip archive for Windows users, with the same paths.
-          (cd package && zip -q "../ats-strike-$VERSION.zip" $FILES)
-          unzip -l "ats-strike-$VERSION.zip"
-
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ inputs.version }}
         # --verify-tag: without it, gh would happily invent the tag from the
         # default branch tip if the tag job had not made one.
-        run: gh release create "v$VERSION" "ats-strike-$VERSION.tar.gz" "ats-strike-$VERSION.zip"
+        run: gh release create "v$VERSION" --repo "${{ github.repository }}"
              --verify-tag --generate-notes

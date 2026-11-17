@@ -64,14 +64,14 @@ flowchart TB
 ```
 
 **1 — Both local.** The default. `docker run -p 8080:8080` and
-`url = "http://localhost:8080"` in the server folder's `server.toml`. No token needed: nothing but your own
+`url = "http://localhost:8080"` in the server's `cv.toml` section. No token needed: nothing but your own
 machine can reach it. This is also the cheapest way to try a different model —
 the container restarts in a second.
 
 **2 — Server on a machine you own.** A NAS, a home server, a spare box. Set
 `ATS_API_TOKEN` even here: without it, anyone on the network can spend
-your provider credit. Point every client at it with `url` in its server
-folder's `server.toml`.
+your provider credit. Point every client at it with `url` in its
+`cv.toml` server section.
 
 **3 — Server on a cloud platform.** Works as-is: the image runs as any uid,
 needs no volume, tolerates a read-only root filesystem, and answers `/healthz`
@@ -96,26 +96,29 @@ for the platform probe without a token. Three things to get right:
 
 ## What the client needs to know
 
-A server folder's `server.toml` says it, and only `url` is required:
+A `[servers.<name>]` section of `cv.toml` says it, and only `folder` and `url`
+are required:
 
 ```toml
+[servers.v11]
+folder  = "v11"            # the files this server is sent
 url     = "https://ats-strike.example.run.app"
 token   = "the-bearer-token"
 timeout = 1800             # how long to follow one CV job
 
-[settings]                 # forwarded untouched; its meaning is the server's
+[servers.v11.settings]     # forwarded untouched; its meaning is the server's
 pages = 2
 ```
 
 That, and the protocol number `/healthz` reports, is the entire coupling.
 Everything else the client sends is content. To run a second server version
-beside the first, give it a folder of its own and list both in `cv.toml`
-(see [the client guide](client.md#several-servers)).
+beside the first, give it a section of its own in `cv.toml`
+(see [the client guide](https://github.com/gcontini/ats-strike-client/blob/main/doc/client.md#several-servers)).
 
 ## Keeping the boundary honest
 
 If you change either half, these are the rules that keep them separable — they
-are also what the test suite checks:
+are also what the two repositories' test suites check:
 
 - `client → contracts ← server → pipeline`. The client and the server never
   import each other; the pipeline imports none of the others, and the server
@@ -130,27 +133,23 @@ are also what the test suite checks:
   all: a new step, artifact or setting is a file to store or a key in
   `[settings]`.
 
-## Should the repository be split too?
+## Four repositories
 
-The artifacts are already independent — a container image and an executable,
-built by separate CI jobs from disjoint directories. What is shared is the
-repository, the lock file and the version number.
+The two halves are separate repositories, each with its own version and its
+own release:
 
-Keeping one repository is the better trade today:
+| Repository | Holds | Releases |
+|---|---|---|
+| [ats-strike](https://github.com/gcontini/ats-strike) | the server, the pipeline, this site | the container image and the site, at the server's version |
+| [ats-strike-client](https://github.com/gcontini/ats-strike-client) | the CLI | both executables and a data folder, at the client's version |
+| [ats-strike-contract](https://github.com/gcontini/ats-strike-contract) | the wire format, `cv_contracts` | nothing: the others check it out as a git submodule at `contracts/`, the 0.5 line too |
+| [ats-integration-tests](https://github.com/gcontini/ats-integration-tests) | the other three as submodules, and the tests that need the client and the server together | nothing |
 
-- `cv_contracts` is imported by both halves as a workspace member. Two
-  repositories would mean publishing it to an index, or vendoring it twice, to
-  buy nothing a directory boundary does not already give.
-- A wire change currently lands as one commit that updates both sides and one
-  test run that proves they still agree — `tests/test_integration.py` drives
-  the real client against two real server apps in-process. Split, that becomes
-  a release dance across three repositories.
-- Both halves are small. The reason to split a repository is that two teams
-  keep colliding in it; nothing here collides.
-
-Split it when one of these becomes true, and not before: the client acquires
-its own release cadence and users who never touch the server; someone else's
-client needs `cv_contracts` from an index; or the server grows a
-private deployment history that should not be in a public client repository.
-When that day comes, the seam is already cut — publish `contracts/` as a
-versioned package, pin it from both sides, and move the two directories out.
+A client talks to any server that speaks the same protocol number, which
+`/healthz` reports, so the two need not move in step. A wire change travels
+as a commit in the contract repository, then the new submodule pointer in the
+server and in the client, then the new pointers in ats-integration-tests:
+its `tests/test_integration.py` drives the real client against two real
+server apps in-process, and its CI renders a PDF with the built executable
+through a running server. That last step is what proves the two halves still
+agree.
