@@ -76,7 +76,7 @@ class JDValidator:
             "CANDIDATE_PROFILE:\n"
             f"{json.dumps(dict(candidate.profile), indent=2)}\n\n"
             "--------------------------------------------\n"
-            "PERSONAL_PREFERENCES:\n"
+            "CANDIDATE_PREFERENCES:\n"
             f"{candidate.preferences}\n\n"
             "--------------------------------------------\n"
             "JOB_DESCRIPTION:\n"

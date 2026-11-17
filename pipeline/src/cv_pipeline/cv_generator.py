@@ -241,7 +241,7 @@ class CVGenerator:
             "Please tailor my CV for this JOB DESCRIPTION. "
             "Output strictly json format.\n"
             "--------------------------------------------\n"
-            "MASTER PROFILE:\n"
+            "CANDIDATE_PROFILE:\n"
             f"{json.dumps(self._master_profile, indent=2)}\n"
             "--------------------------------------------\n"
             "JOB DESCRIPTION:\n"

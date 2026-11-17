@@ -207,7 +207,7 @@ class CVValidator:
             "PROFILE. Attempt %d\n") % (attempt + 1)
         review_request += (
             "--------------------------------------------\n"
-            "MASTER PROFILE:\n"
+            "CANDIDATE_PROFILE:\n"
             f"{json.dumps(self._master_profile, indent=2)}\n"
             "--------------------------------------------\n"
             "GENERATED CV:\n"

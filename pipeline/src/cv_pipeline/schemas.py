@@ -38,7 +38,7 @@ class JDAnalysis(BaseModel):
     salary_match: Optional[bool] = Field(
         None,
         description=(
-            "True if max_salary meets the PERSONAL_PREFERENCES salary rule, False if it falls short; always true or false when "
+            "True if max_salary meets the CANDIDATE_PREFERENCES salary rule, False if it falls short; always true or false when "
             "max_salary is stated, null only when max_salary is -1 or salary "
             "rule fails to apply"
         ),
@@ -59,12 +59,12 @@ class JDAnalysis(BaseModel):
         description="Describe the gaps between the candidate and the job description"
     )
     pers_preferences: str = Field(
-        description="Textual analysis of the gaps between the PERSONAL_PREFERENCES and the job description"
+        description="Textual analysis of the gaps between the CANDIDATE_PREFERENCES and the job description"
     )
     pers_preference_score: float = Field(
         description=(
             "Numeric (real) score, e.g. 2.5 or 0.5, obtained by summing the "
-            "validated PERSONAL_PREFERENCES points against the job description; "
+            "validated CANDIDATE_PREFERENCES points against the job description; "
             "0.0 if none apply"
         ),
     )
@@ -72,7 +72,7 @@ class JDAnalysis(BaseModel):
         description=(
             "NO = skip the job, CHECK = flag it for a human check, YES = apply "
             "automatically. Decided by the should_apply rules in "
-            "PERSONAL_PREFERENCES; if there are none, by salary_match"
+            "CANDIDATE_PREFERENCES; if there are none, by salary_match"
         ),
     )
     should_apply_reason: str = Field(
@@ -84,7 +84,7 @@ class JDAnalysis(BaseModel):
         description=(
             "Only when should_apply is CHECK: a short evaluation of the hiring "
             "company from online reviews (e.g. trustpilot.com, glassdoor.it) and "
-            "the instruction in PERSONAL_PREFERENCES->company_evaluation if present; null otherwise"
+            "the instruction in CANDIDATE_PREFERENCES->company_evaluation if present; null otherwise"
         ),
     )
 

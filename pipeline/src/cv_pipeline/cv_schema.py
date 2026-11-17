@@ -33,7 +33,7 @@ class WorkExperienceItem(BaseModel):
 
     id: Optional[int] = Field(
         None,
-        description="Numeric id copied as-is from the matching experience in the candidate's MASTER PROFILE.",
+        description="Numeric id copied as-is from the matching experience in the candidate's CANDIDATE_PROFILE.",
     )
     title: str = Field(description="Job title in this specific job experience")
     company: str = Field(description="Company name")
@@ -49,7 +49,7 @@ class WorkExperienceItem(BaseModel):
         min_length= 20,
         max_length= 300,
         description="Overview of the role (scope, mission, team or context), "
-        "tailored from the matching MASTER PROFILE experience's role_summary. ")
+        "tailored from the matching CANDIDATE_PROFILE experience's role_summary. ")
     duties: List[str] = Field(
         min_length=1,
         max_length=15,
@@ -88,7 +88,7 @@ class TailoredCVData(BaseModel):
     )
     certifications: List[CertificationItem] = Field(
         default_factory=list, max_length=5,
-        description="The most relevant certifications from the candidate's MASTER PROFILE for this JD, most relevant/recent first."
+        description="The most relevant certifications from the candidate's CANDIDATE_PROFILE for this JD, most relevant/recent first."
     )
 
 
