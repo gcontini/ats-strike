@@ -276,13 +276,13 @@ the LaTeX log before it goes back.
 
 ```bash
 uv sync
-uv run pytest server/tests pipeline/tests   # no API key, no network
+uv run pytest tests/server tests/pipeline   # no API key, no network
 uv run pytest                               # every package, plus the integration test
 ```
 
 The LaTeX-dependent tests skip themselves when `pdflatex` is absent. Nothing
-in the suite calls a model. `server/tests` run the protocol against a stub
-pipeline; `pipeline/tests/pipeline_helpers.py` wires a real `ModelSelector`
+in the suite calls a model. `tests/server` run the protocol against a stub
+pipeline; `tests/pipeline/pipeline_helpers.py` wires a real `ModelSelector`
 to a fake HTTP transport, so request assembly, structured output, retries and
 usage logging are all the production code paths — and the integration test
 runs two real servers on it.

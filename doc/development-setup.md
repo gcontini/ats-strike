@@ -138,7 +138,7 @@ system Python:
 
 ```bash
 uv run --group docs mkdocs serve    # live preview on http://localhost:8000
-uv run --group docs mkdocs build    # static HTML into site/ (gitignored)
+uv run --group docs mkdocs build    # static HTML into out/site/ (gitignored)
 ```
 
 | | |

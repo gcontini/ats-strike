@@ -21,7 +21,6 @@ examples
 **/*.py[cod]
 **/*.egg-info
 ats-strike-data
-build
 .claude
 .github
 .venv_win

@@ -169,15 +169,15 @@ docker run -p 8080:8080 --env-file .env \
 ```bash
 uv sync
 uv run ats-strike            # http://localhost:8080
-uv run pytest server/tests      # no API key, no network
+uv run pytest tests/server      # no API key, no network
 uv run pytest                   # every package, plus the integration test
 ```
 
 The LaTeX-dependent tests skip themselves when `pdflatex` is absent. Nothing
-in the suite calls a model: `server/tests/server_helpers.py` wires a real
+in the suite calls a model: `tests/pipeline/pipeline_helpers.py` wires a real
 `ModelSelector` to a fake HTTP transport, so request assembly, structured
 output, retries and usage logging are all the production code paths.
-`pipeline/tests/golden/cv_golden.tex` pins the whole render — an escaping
+`tests/pipeline/golden/cv_golden.tex` pins the whole render — an escaping
 regression is otherwise invisible until someone reads a bad PDF.
 
 ## Deploying

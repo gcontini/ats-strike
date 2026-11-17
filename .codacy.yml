@@ -4,5 +4,4 @@
 # fixtures that pin its behaviour.
 exclude_paths:
   - 'contracts/tests/**'
-  - 'server/tests/**'
   - 'tests/**'

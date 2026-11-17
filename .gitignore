@@ -17,14 +17,10 @@ server.toml
 /candidate_signature.png
 
 # --- Output -----------------------------------------------------------------
-# Anything a run produced: CVs, spreadsheets, scratch folders.
+# The one folder for anything generated: run outputs, scratch folders, the
+# rendered doc site (out/site/), build leftovers. Delete it at will.
 /out/
-/examples/out
 ats-strike-data
-
-# --- Docs -------------------------------------------------------------------
-# The rendered site. doc/ is the source; mkdocs builds this.
-/site/
 
 # --- Terraform --------------------------------------------------------------
 # The state and the variables hold the provider keys and the trigger token in
@@ -42,8 +38,6 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .pytest_cache/
-build/
-dist/
 *.aux
 *.log
 *.fdb_latexmk

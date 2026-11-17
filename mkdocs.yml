@@ -1,7 +1,7 @@
 # The doc/ folder, as a site.
 #
 #     uv run --group docs mkdocs serve     live preview on http://localhost:8000
-#     uv run --group docs mkdocs build     static HTML into site/
+#     uv run --group docs mkdocs build     static HTML into out/site/
 #
 # Versions are pinned in pyproject.toml's `docs` group: MkDocs 1.x and Material
 # 9.x. Material is what renders the mermaid fences and the theming below; a
@@ -12,6 +12,8 @@ repo_url: https://github.com/gcontini/ats-strike
 # Where the built site lives. mike needs it for the version selector's links.
 site_url: https://gcontini.github.io/ats-strike/
 docs_dir: doc
+# Built output goes with every other generated file, in the gitignored out/.
+site_dir: out/site
 
 # Flat page/index.html folders buy nothing here — doc/ has no subfolders to
 # begin with, so this just makes the built site match: architecture.html

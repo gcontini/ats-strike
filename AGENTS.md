@@ -59,7 +59,7 @@ because breaking it has a cost we have already paid once.
 - Fake at the boundary, not above it: the test double replaces the HTTP client
   *inside* a real `ModelSelector`, so request assembly, structured-output
   negotiation and usage logging stay under test.
-- `pipeline/tests/golden/cv_golden.tex` pins the whole render. An escaping
+- `tests/pipeline/golden/cv_golden.tex` pins the whole render. An escaping
   regression is otherwise invisible until someone reads a bad PDF.
 - Tests that need `pdflatex` skip themselves; everything else always runs.
 

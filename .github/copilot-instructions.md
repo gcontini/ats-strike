@@ -197,7 +197,7 @@ uv run ats-strike                       # the server
 
 # tests — all three suites, no API key, no network
 uv run pytest
-uv run pytest server/tests                 # one package only
+uv run pytest tests/server                 # one package only
 uv run pytest -k architecture              # the dependency-direction rule
 
 # the server image (classic builder only)
@@ -206,7 +206,7 @@ docker run --rm -p 8080:8080 --env-file .env ats-strike-server
 ```
 
 `pdflatex`-dependent tests skip themselves when it is not on `PATH`.
-`server/tests/server_helpers.py` wires a real `ModelSelector` to a fake HTTP
+`tests/pipeline/pipeline_helpers.py` wires a real `ModelSelector` to a fake HTTP
 transport (`FakeLLM`), so request assembly, structured output and retries
 stay under test with no network call.
 
@@ -215,7 +215,7 @@ stay under test with no network call.
 - No test may need an API key, a network socket, or a terminal.
 - Fake at the transport boundary, not above it — inside `ModelSelector` —
   so the code that assembles a request is what actually runs under test.
-- `server/tests/golden/cv_golden.tex` pins the whole render byte-for-byte; an
+- `tests/pipeline/golden/cv_golden.tex` pins the whole render byte-for-byte; an
   escaping regression is otherwise invisible until someone reads a bad PDF.
 - ats-integration-tests' `tests/test_integration.py` is the one place client
   and server run together; keep it passing before touching either side's
