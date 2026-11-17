@@ -29,7 +29,7 @@ MAX_FILES = 200
 
 #: The three parts, as every route declares them.
 PACK = File([], description="Every file of the server folder; its file name is its path")
-JOB = File([], description="The posting as this server sees it: jd.txt, analysis.json, ...")
+JOB = File([], description="The posting as this server sees it: job_description.txt, analysis.json, ...")
 SETTINGS = Form(None, description="JSON object: the server folder's [settings], untouched")
 
 

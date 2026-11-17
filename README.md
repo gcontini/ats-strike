@@ -62,10 +62,11 @@ Any OpenAI-compatible provider works — see
 [`server/README.md`](server/README.md) for the other providers and the full
 environment table. `curl localhost:8080/healthz` should report `pdflatex: true`.
 
-**2. Get the client** — it is released from main, and the same client talks
-to this 0.5 server and to a 1.x one, side by side: give this server a folder
-of its own next to the others. Its
-[`client/README.md`](https://github.com/gcontini/ats-strike/blob/main/client/README.md)
+**2. Get the client** — it is released from
+[ats-strike-client](https://github.com/gcontini/ats-strike-client), and the
+same client talks to this 0.5 server and to a 1.x one, side by side: give this
+server a folder of its own next to the others. Its
+[`client/README.md`](https://github.com/gcontini/ats-strike-client/blob/main/client/README.md)
 covers the modes, the configuration and the output layout.
 
 ## Architecture

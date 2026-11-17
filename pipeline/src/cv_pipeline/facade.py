@@ -151,7 +151,7 @@ class Pipeline:
 
     def cv(self, pack: Files, job: Files, settings: Mapping, work_dir: Path, sink: Sink) -> str:
         """The CV for this job: ``cv.json`` in the job is rendered, else
-        ``cv.tex`` is compiled, else the CV is written from ``jd.txt``.
+        ``cv.tex`` is compiled, else the CV is written from ``job_description.txt``.
         Returns one line about the run."""
         action = packs.job_action(job)
         if action != "generate":

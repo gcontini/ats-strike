@@ -13,7 +13,7 @@ from cv_pipeline import Output, Pipeline, PipelineError
 from pipeline_helpers import EXAMPLE_CANDIDATE, sample_cv_data
 
 needs_latex = pytest.mark.skipif(shutil.which("pdflatex") is None, reason="pdflatex not installed")
-JD = {"jd.txt": b"x" * 1200}
+JD = {"job_description.txt": b"x" * 1200}
 LETTER = " ".join(["word"] * 200)
 ANALYSIS = {
     "match_percentage": 82, "match_rationale": "Strong overlap.",
@@ -216,7 +216,7 @@ def test_a_document_is_rendered_into_a_tex_and_a_pdf(
 def test_a_tex_is_compiled_into_a_pdf_only(pipeline, fake_llm, tmp_path):
     tex = "\\documentclass{article}\\begin{document}Edited By Hand\\end{document}"
     sink = Recorder()
-    pipeline.cv({}, {"jd.txt": b"x", "cv.tex": tex.encode()}, {}, tmp_path, sink)
+    pipeline.cv({}, {"job_description.txt": b"x", "cv.tex": tex.encode()}, {}, tmp_path, sink)
     assert [(o.type, o.name) for o in sink.outputs] == [("cv", "cv.pdf")]
     assert no_model_was_called(fake_llm)
 
@@ -231,7 +231,7 @@ def test_the_document_wins_over_the_tex(pipeline, tmp_path, sample_document):
 
 def test_a_render_needs_something_to_render(pipeline, tmp_path):
     with pytest.raises(PipelineError) as failure:
-        pipeline.render({}, {"jd.txt": b"x"}, tmp_path, Recorder())
+        pipeline.render({}, {"job_description.txt": b"x"}, tmp_path, Recorder())
     assert failure.value.kind == "missing_part"
 
 
@@ -244,7 +244,7 @@ def test_detect_is_the_model_call(pipeline, fake_llm):
 
 def test_an_analysis_comes_back_as_a_plain_object(pipeline, fake_llm, example_pack):
     fake_llm["analysis"].replies = [json.dumps(ANALYSIS)]
-    analysis = pipeline.analyze(example_pack, {"jd.txt": b"SENTINEL"}, {})
+    analysis = pipeline.analyze(example_pack, {"job_description.txt": b"SENTINEL"}, {})
 
     assert analysis == ANALYSIS
     prompt = fake_llm["analysis"].last_prompt
@@ -259,7 +259,7 @@ def test_an_analysis_takes_its_prompt_from_the_pack_and_ignores_the_sampling(
     fake_llm._chat["analysis"].temperature = 0.4
     fake_llm["analysis"].replies = [json.dumps(ANALYSIS)]
     pack = {**example_pack, "sys_prompt_analysis.txt": b"SCORE IT STRICTLY"}
-    pipeline.analyze(pack, {"jd.txt": b"a jd"}, {"temperature": 1.5})
+    pipeline.analyze(pack, {"job_description.txt": b"a jd"}, {"temperature": 1.5})
 
     sent = fake_llm["analysis"].calls[-1]
     assert sent["messages"][0]["content"].startswith("SCORE IT STRICTLY")
@@ -269,14 +269,14 @@ def test_an_analysis_takes_its_prompt_from_the_pack_and_ignores_the_sampling(
 def test_an_analysis_needs_the_preferences(pipeline, example_pack):
     pack = {k: v for k, v in example_pack.items() if k != "candidate_preferences.md"}
     with pytest.raises(PipelineError) as failure:
-        pipeline.analyze(pack, {"jd.txt": b"a jd"}, {})
+        pipeline.analyze(pack, {"job_description.txt": b"a jd"}, {})
     assert failure.value.kind == "missing_part"
 
 
 def test_a_letter_draws_on_the_analysis_and_the_pack_prompt(pipeline, fake_llm, example_pack):
     fake_llm["letter"].replies = [LETTER]
     pack = {**example_pack, "sys_prompt_letter.txt": b"WRITE IT SHORT"}
-    job = {"jd.txt": b"a jd", "analysis.json": json.dumps(ANALYSIS).encode()}
+    job = {"job_description.txt": b"a jd", "analysis.json": json.dumps(ANALYSIS).encode()}
 
     assert pipeline.letter(pack, job, {}) == LETTER
     sent = fake_llm["letter"].calls[0]
@@ -287,7 +287,7 @@ def test_a_letter_draws_on_the_analysis_and_the_pack_prompt(pipeline, fake_llm, 
 def test_a_letter_takes_the_sampling_settings(pipeline, fake_llm, example_pack):
     fake_llm._chat["letter"].temperature = 0.4
     fake_llm["letter"].replies = [LETTER]
-    pipeline.letter(example_pack, {"jd.txt": b"a jd"}, {"temperature": 1.5})
+    pipeline.letter(example_pack, {"job_description.txt": b"a jd"}, {"temperature": 1.5})
     assert fake_llm["letter"].calls[-1]["temperature"] == 1.5
     assert fake_llm._chat["letter"].temperature == 0.4, "the override is for one request"
 

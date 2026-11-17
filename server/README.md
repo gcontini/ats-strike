@@ -145,7 +145,7 @@ is only reasonable on a private network.
 The full specification is in [doc/protocol.md](../doc/protocol.md). In
 short: every pipeline request is `multipart/form-data` with the same three
 parts — `pack` (the client's server folder, each file named by its relative
-path), `job` (`jd.txt`, `analysis.json`, and what this server stored for the
+path), `job` (`job_description.txt`, `analysis.json`, and what this server stored for the
 job before) and `settings` (a JSON object, forwarded untouched) — and every
 response is the same envelope:
 
@@ -174,7 +174,7 @@ is a log line: the last one of a reply or a session adds up the model calls.
 | Call | What it does |
 |---|---|
 | `GET /healthz` | No auth. The version, `"protocol": 2`, whether `pdflatex` is present, the model per role, whether a token is required |
-| `POST /v1/jd/detect` | Is the job's `jd.txt` a posting? Structural checks, then one small model call |
+| `POST /v1/jd/detect` | Is the job's `job_description.txt` a posting? Structural checks, then one small model call |
 | `POST /v1/jd/analysis` | Scores the posting against the pack's profile and preferences; answers `{analysis, items}`, the analysis an opaque object |
 | `POST /v1/cv` | `202`, and the CV job starts as a session keyed by `X-Request-Id`: the job's `cv.json` is rendered, else its `cv.tex` compiled, else the CV is written — minutes of model calls: write, review, render, until it fits the page limit |
 | `GET /v1/cv/{id}/events` | The session as server-sent events — `status`, `store`, then `done` or `error` — replayable from `Last-Event-ID` |
@@ -184,8 +184,8 @@ is a log line: the last one of a reply or a session adds up the model calls.
 | `POST /v1/letter` | A cover letter: `{text, items}` |
 
 ```bash
-ID=$(sha256sum JD.txt | cut -c1-64)
-curl -s -H "X-Request-Id: $ID" -F job=@JD.txt\;filename=jd.txt \
+ID=$(sha256sum job_description.txt | cut -c1-64)
+curl -s -H "X-Request-Id: $ID" -F job=@job_description.txt \
      -F pack=@candidate_profile.json -F pack=@candidate_data.json localhost:8080/v1/cv
 curl -sN localhost:8080/v1/cv/$ID/events      # the job, to its last event
 curl -s -X DELETE localhost:8080/v1/cv/$ID    # once everything is saved

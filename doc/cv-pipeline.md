@@ -220,7 +220,7 @@ pack files and the `settings` keys. Anything it does not name is ignored,
 
 Text is UTF-8 with a BOM stripped; a needed file that is missing is `400
 missing_part`; one that is not UTF-8, not JSON or not a JSON object is `400
-bad_part`. `jd.txt` is decoded with undecodable bytes replaced. A written CV
+bad_part`. `job_description.txt` is decoded with undecodable bytes replaced. A written CV
 stores `cv.json`, `cv.tex` and the PDF, and no intermediate step.
 
 | Setting | Means |

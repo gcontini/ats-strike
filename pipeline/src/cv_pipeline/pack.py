@@ -2,7 +2,7 @@
 
 A request is three things: the **pack** (every file of a client's server
 folder, by relative path), the **job** (the posting as this server sees it:
-``jd.txt``, ``analysis.json``, and what an earlier run stored) and the
+``job_description.txt``, ``analysis.json``, and what an earlier run stored) and the
 **settings** (a JSON object, forwarded untouched by the client). Nothing else
 in the pipeline knows file names; nothing here calls a model or writes a file.
 
@@ -40,7 +40,7 @@ IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg")
 #: The sampling settings a CV (role ``cv``) and a letter (role ``letter``) take.
 SAMPLING_SETTINGS = ("temperature", "presence_penalty")
 
-JD_FILE = "jd.txt"
+JD_FILE = "job_description.txt"
 JOB_ANALYSIS_FILE = "analysis.json"
 DOCUMENT_FILE = "cv.json"
 TEX_FILE = "cv.tex"
