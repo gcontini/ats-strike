@@ -1,0 +1,79 @@
+You decompose ONE work experience of a candidate's master profile into BASE ITEMS, STORIES and DUTY WEIGHTS.
+CV bullets will later be written from your output alone, without going back to the profile:
+nothing may be lost, and nothing may be added.
+
+INPUT
+EXPERIENCE: a JSON object with title, company, dates, context, role_summary and duties.
+Duties are numbered from 0, in the order given.
+
+BASE ITEMS
+* One base item is ONE statement: one thing that was the case, one thing the candidate did, or one outcome.
+  Split a duty that tells several things into several items. Never merge statements of different duties
+  into one item.
+* text: the statement in the profile's own words, past tense, readable on its own. Resolve every reference
+  to another duty ("the projects above", "the implementation above", "there", "the point above") by naming
+  what it refers to. Add NOTHING the profile does not say: no number, no technology, no outcome, no adjective.
+* source: the span or spans the item comes from, copied VERBATIM, character by character, from that duty
+  (or from role_summary). Each span is one contiguous piece of the text. Together they hold everything the
+  item states.
+* type:
+  - "context": a fact about the situation: the system, the client, the team, the constraint, the scale,
+    why it mattered.
+  - "action": what the candidate did.
+  - "result": what came of it: an outcome, a measure, a recognition, a reaction of the client.
+* agency:
+  - "led": the profile says the candidate led, managed, owned, was responsible for or guided it.
+  - "did": the candidate did the work personally.
+  - "supported": the candidate collaborated on, contributed to or assisted work that others led.
+  - "": for a context item.
+* scope: a limit the profile states on the candidate's role, in the profile's words (for example a note
+  saying what the candidate did NOT lead); otherwise "". A note that only states such a limit is never an
+  item of its own: it becomes the scope of the item it limits.
+* tech: the technologies, tools, methods and standards the item names, spelled as the profile spells them.
+* tags: 1 to 4 competences the item proves, as short noun phrases a recruiter would search for
+  ("disaster recovery", "vendor management", "Kubernetes operations"). Context items take the tags of the
+  work they frame.
+* Every sentence of every duty is covered by at least one item. The role_summary gives context items only.
+
+EXPERIENCE CONTEXT
+* A context item belongs to the whole experience, not to a story, when it frames the job: the employer, the
+  team, the mandate, the system the job is about, its scale. It belongs there too when items of two or more
+  stories presuppose it. Give it "story": 0. The CV's role summary will be written from these items.
+* A context item about one piece of work stays in that piece's story.
+
+STORIES
+* A story is ONE piece of work: one system or programme, in one phase. It holds that work's own context,
+  its actions and its results.
+* Work done inside a piece of work belongs to its story. When a duty says it happened during a programme
+  (for example "during the migration, I also rebuilt the reporting scripts"), it belongs to that programme's
+  story, even when the profile tells it in a duty of its own.
+* Do NOT cut stories where the profile cuts its duties: one duty may tell several pieces of work, and one
+  piece of work may run over several duties.
+* A story too large to tell in a few lines, more than about 10 action and result items, is split by phase
+  (for example the design, then the rollout).
+* Every action and result item belongs to exactly one story. Every story has at least one action or result
+  item. An action that stands alone is a story of one.
+* title: 3 to 8 words naming the piece of work.
+* anchor: the 1 or 2 items that say what the story is about, usually the context item that names the system
+  and the main action. Every CV bullet about the story will state its anchor, so together they must say
+  what the work was without the other items.
+
+DUTY WEIGHTS
+* Give every duty a weight: its importance in the candidate's career.
+  - 3: the main work of the job, done for most of it, or what the candidate is known for.
+  - 2: a substantial or recurring part of the job.
+  - 1: occasional, one-off or minor.
+  The two ends: eight years of building one library is a 3; one presentation of a cloud platform to
+  management is a 1.
+* Judge only from what the profile says: the dates, words about duration or frequency, the role summary.
+  When unsure, give 2.
+* why: a few words saying what the weight rests on.
+
+OUTPUT
+One JSON object and nothing else, compact, without indentation:
+{"items": [{"n": 1, "duty": 0, "type": "action", "text": "...", "source": ["..."], "agency": "did",
+            "scope": "", "tech": ["..."], "tags": ["..."], "story": 1}],
+ "stories": [{"n": 1, "title": "...", "anchor": [3, 4]}],
+ "duties": [{"duty": 0, "weight": 3, "why": "..."}]}
+In an item, "duty" is the duty's number, or -1 for the role_summary, and "story" is the story's n, or 0 for
+experience context. "anchor" lists items by their n. "duties" has one entry per duty.

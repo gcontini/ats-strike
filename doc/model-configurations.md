@@ -248,6 +248,14 @@ cv-eval lives in [ats-integration-tests](https://github.com/gcontini/ats-integra
 | OpenAI (provider 3 keys) | `gpt-6-luna` | Chat Completions, `reasoning_effort = none`, strict `json_schema`, no temperature | **fails** (for this use) | 2026-11-09 | Tried to strip the company header and footer of the 50 test JDs into `jds/stripped/` by returning the first and last line of the role. The call itself is fine (strict `json_schema`, no thinking, 0.5–2.6k tokens in, 15 out), but a single line range cannot skip a company paragraph that sits between the title and the role: it kept "ABOUT THE COMPANY" and similar blocks in many JDs, and kept a values block or a benefits list at the end of others. All 50 were redone by hand. |
 | DashScope (provider 1) | `text-embedding-v4` | OpenAI-compatible `/embeddings`, default 1024 dimensions | **works** | 2026-11-09 | The cosine of `cv_eval.py score`, on the Singapore workspace host. The same pair embedded three times gave the identical cosine to six decimals. |
 
+### Pipeline 2.0: compile (`resources/v2/models.toml`, not served yet)
+
+The roles of `src/pipeline_v2`, called through `ModelSelector` with v2's own `models.toml`.
+
+| Provider | Model | Settings | Status | Date | Notes |
+|---|---|---|---|---|---|
+| DashScope, Beijing workspace (`use_alternate_provider = 4`) | `qwen3.8-max` (shipped) | role `compile`: `thinking = on`, `extra_body = { thinking_budget = 8000 }`, no `reasoning_effort`, no output cap, plain JSON reply (no structured output) | **works** | 2026-11-18 | S1's base items and stories (`scripts/v2_items.py`): one call per experience, side by side. The real profile (5 experiences, 38 duties): 48–172 s a call, 172 s wall; 9.2k tokens in, 24.7k thinking, 10.4k out; 114 items in 26 stories, 0 dropped, 92–98% of the duty text under verbatim spans; its reply is the store's first layer. The example profile: 76–181 s, 113 items, 1 dropped (a span stitched across a colon). Every reply validated at the first attempt and finished with `stop`; 4 of the 10 calls stopped at exactly the 8,000 budget. |
+
 ### S0 probe of CV pipeline 2.0 (`out/probe-s0`, not server roles)
 
 Called through `ModelSelector` with the probe's own `probe_models.toml`, not the server's

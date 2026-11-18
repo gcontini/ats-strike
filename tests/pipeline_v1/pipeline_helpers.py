@@ -8,6 +8,7 @@ import os
 import re
 import threading
 from pathlib import Path
+from typing import Iterable
 
 import httpx
 
@@ -108,16 +109,17 @@ class FakeLLM(ModelSelector):
     Only the transport is replaced, so everything the server relies on —
     request assembly, structured output, retries, usage — is the production
     code path. Role ``r`` calls model ``fake-r``; ``llm[r]`` is its
-    :class:`FakeRole`. ``specs`` sets a role's ``ModelSpec`` fields.
+    :class:`FakeRole`. ``roles`` are the roles built (v1's by default; v2's
+    tests pass theirs), and ``specs`` sets a role's ``ModelSpec`` fields.
     """
 
-    def __init__(self, **specs: dict) -> None:
-        self.roles = {role: FakeRole() for role in MODEL_ROLES}
+    def __init__(self, *, roles: Iterable[str] = MODEL_ROLES, **specs: dict) -> None:
+        self.roles = {role: FakeRole() for role in roles}
         config = ModelConfig(
             provider={"api_key_env": "ATS_FAKE_KEY", "base_url": "http://fake.invalid/v1"},
             defaults={},
             models={
-                role: ModelSpec(model=f"fake-{role}", **specs.get(role, {})) for role in MODEL_ROLES
+                role: ModelSpec(model=f"fake-{role}", **specs.get(role, {})) for role in self.roles
             },
         )
         transport = httpx.MockTransport(self._answer)

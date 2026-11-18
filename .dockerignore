@@ -8,6 +8,7 @@ src/contracts
 !src/contracts/pyproject.toml
 !src/contracts/src
 !resources/v1
+!resources/v2
 !resources/docker
 
 # Secrets and personal data never enter the build context. The server holds

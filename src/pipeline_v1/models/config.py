@@ -13,7 +13,7 @@ import os
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Literal, Optional, Tuple
+from typing import Any, Dict, Iterable, Literal, Optional, Tuple
 
 from pydantic import BaseModel, ConfigDict
 
@@ -86,14 +86,19 @@ def _overridden(role: str, table: Dict[str, Any]) -> Dict[str, Any]:
     return table
 
 
-def load_model_config(resources_dir: Optional[Path] = None) -> ModelConfig:
-    """Parse ``models.toml``: from ``resources_dir`` when given, else the shipped copy."""
+def load_model_config(
+    resources_dir: Optional[Path] = None, roles: Iterable[str] = MODEL_ROLES
+) -> ModelConfig:
+    """Parse ``models.toml``: from ``resources_dir`` when given, else the shipped copy.
+
+    ``roles`` are the tables read: v1's by default; another pipeline passes its own.
+    """
     path = Path(resources_dir) / MODELS_FILE if resources_dir else default_path(MODELS_FILE)
     raw = tomllib.loads(path.read_text(encoding="utf-8"))
     return ModelConfig(
         provider=raw["provider"],
         defaults=raw.get("defaults", {}),
         models={
-            role: ModelSpec(**_overridden(role, raw["models"][role])) for role in MODEL_ROLES
+            role: ModelSpec(**_overridden(role, raw["models"][role])) for role in roles
         },
     )

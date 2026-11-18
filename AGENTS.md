@@ -7,14 +7,15 @@ because breaking it has a cost we have already paid once.
 
 - **One job per class.** If you cannot say what a class does in one sentence
   without "and", split it.
-- **One-way dependencies:** `contracts ← cv_server → pipeline_v1`. The
-  pipeline imports none of the others; `tests/test_architecture.py` enforces
+- **One-way dependencies:** `contracts ← cv_server → pipeline_v1 ← pipeline_v2`.
+  The pipelines import none of the others, and `pipeline_v2` takes only v1's
+  `models`, `observability` and `errors`; `tests/test_architecture.py` enforces
   it. The client is the ats-strike-client repository and meets the server over
   HTTP only. The contracts package imports nothing but pydantic — it is loaded by a
   web server and by the client's frozen executable, and has to stay cheap in
   both.
-- **The pipeline is a library.** Everything under `pipeline_v1`
-  takes its inputs in memory and returns its outputs. It reads no
+- **The pipeline is a library.** Everything under `pipeline_v1` and
+  `pipeline_v2` takes its inputs in memory and returns its outputs. It reads no
   configuration, resolves no paths and writes nothing outside the scratch
   directory it is handed. That is what makes it safe to run per request.
 - **No hidden global state.** Configuration is passed in, not imported.

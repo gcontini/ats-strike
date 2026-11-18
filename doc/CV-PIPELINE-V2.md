@@ -1,9 +1,10 @@
 # CV pipeline v2: design
 
 Status: draft, 2026-11-12, updated 2026-11-18. The probe of
-[section 11](#11-plan-of-work) has run: **go**, on the conditions listed there. Nothing
-of the build exists yet. This replaces the draft of 2026-11-10, which compiled the
-profile into facts and still wrote every CV with a model;
+[section 11](#11-plan-of-work) has run: **go**, on the conditions listed there. The
+repository has the new layout, and v2's first step, the base items, is built. This
+replaces the draft of 2026-11-10, which compiled the profile into facts and still
+wrote every CV with a model;
 [section 12](#12-alternatives-considered) says what was kept from it. v2 is a second
 pipeline on the same server, served at `/v2` beside v1 (`/v1`, described in
 [doc/cv-pipeline.md](cv-pipeline.md)), which stays.
@@ -141,7 +142,9 @@ candidate in `examples/candidate`:
 - **`source`** is copied verbatim from the profile. Code checks that each span
   is a substring of its experience and drops an item that fails. In the probe
   the spans covered 93–97% of each experience's duty text and no item was
-  dropped.
+  dropped. S1's build of the step did the same on the current profile: 114
+  items in 26 stories, none dropped, 92–98% covered, in five calls and about
+  three minutes.
 - **`type`** drives repetition. Two bullets never share an action or a result;
   a context may recur, spelled out once.
 - **`agency`** is `led`, `did` or `supported`, with what the profile's notes
@@ -160,7 +163,8 @@ candidate in `examples/candidate`:
   built during a port belongs to the port. The candidate found the probe's
   stories "a bit granular" and merged five into two.
 - **Each story names its anchor:** the one or two items that say what it is
-  about. Every bullet that opens the story states it.
+  about. Every bullet that opens the story names what it is about, without
+  restating both items of a two-item anchor.
 - **Narrative weights.** Each duty gets a weight from 1 to 3 for how much it
   mattered in the career: years spent building one core product rank high, a
   one-off presentation low. The compile call proposes each weight with a reason,
@@ -215,7 +219,10 @@ What the probe taught about the tree:
   are not items; a leaf they prove carries an `outside` note and counts.
 - Placement is loosest where the tree is coarse: the job furthest from the
   profile's centre had the lowest agreement between two allocations (66%). The
-  corpus sample is where the margins get detail.
+  corpus is where the margins get detail: its job descriptions' analyses add the
+  terms the candidate's own applications never asked. They are read with the
+  test set's job descriptions left out, since every one of them also sits in
+  the corpus.
 
 The tree's names and aliases are also what gets printed in the skills block
 and in the summary's keyword slot. That is why the naming matters.
@@ -451,18 +458,21 @@ one, and give each requirement a share of the CV close to its share of the job
 [2]. A sum of this shape is monotone submodular, the class for which greedy
 selection under a budget is the standard method [1].
 
-**The human score is the narrative score:** how much of the career's important
-work the CV tells. Each experience counts its share of the career's months. That
-share is multiplied by the weighted share of its duties the CV shows: each duty
-counts its narrative weight times the share of its action and result items that
-are printed. A compact line counts for the items it uses. Skipping a long
-experience therefore costs in proportion to its length, and leaving out a
-duty's main work costs more than leaving out a one-off.
+**The human score is the narrative score:** the share of the career's years
+the CV tells. Each job counts its years, and its duties share them by points: a
+weight of 1, 2 or 3 counts 1, 3 or 9 points, and a duty's years are the job's
+years times its points over the job's points, so a job's duties add up to its
+years. A duty counts its years times the share of its action and result items
+that are printed; a compact line counts for the items it uses. Skipping a long
+experience therefore costs in proportion to its length, and, within a job,
+leaving out main work costs nine times as much as leaving out a one-off.
 
 The weights are judged once per duty, on three levels, when the store is
 compiled, where the candidate can read and correct them. Nothing is judged per
 job: a model scoring on a fine scale is inconsistent from one call to the next
-[3], and v1's scores were multiples of 5 in 99.9% of cases.
+[3], and v1's scores were multiples of 5 in 99.9% of cases. The points triple
+at each level because, counted as 1, 2 and 3, a one-off in a long job outweighed
+main work in a shorter one.
 
 The probe's human score had five terms (continuity, completeness, rhythm, and
 pre-scored context and success). It stayed within 0.04 across every plan and
@@ -498,8 +508,8 @@ v1 stays, served at `/v1`. v2 has none of v1's:
 - **One server, several pipelines.** v1 and v2, and later the 0.5 line, are
   packages side by side in one project (`src/pipeline_v1`, `src/pipeline_v2`),
   each with its own resources and model roles, each served under its own path
-  behind the same facade. v2 uses v1's model, logging and error modules, never
-  its steps.
+  behind the same facade. v2 uses v1's model, logging and error modules, and
+  later its LaTeX renderer and review loop; never its other steps.
 - **No hidden global state.** The mix and the page geometry are arguments.
 - **Contracts.** Unchanged. The store's pydantic model lives in the v2 pipeline:
   the client stores and sends the store's files without reading them.
@@ -570,9 +580,9 @@ Then the build, one sub-plan each:
 
 | | Sub-plan | Output |
 |---|---|---|
-| R | Repository layout | one project: `src/pipeline_v1` (today's pipeline), `src/cv_server`, `resources/v1`, `resources/docker`, `terraform/`; v1 unchanged |
-| S1 | Base items and stories | the decomposition prompt, the source check, item types; shared context at the experience level; stories by piece of work, with anchors; narrative weights; code in `src/pipeline_v2` |
-| S2 | Competence tree | the corpus sample, the shape and attach prompts, `proven` on more than one weak attachment, the alias check, ghost leaves, the held-out test |
+| R | Repository layout | done: one project, with `src/pipeline_v1` (the former pipeline package), `src/cv_server`, the contracts submodule in `src/contracts`, `resources/v1`, `resources/docker` and `terraform/`; v1 unchanged |
+| S1 | Base items and stories | done: the decomposition prompt, the source check, item types; shared context at the experience level; stories by piece of work, with anchors; narrative weights; code in `src/pipeline_v2` |
+| S2 | Competence tree | corpus terms (the test set's copies left out), the shape and attach prompts, `proven` on more than one weak attachment, the alias check, ghost leaves, the held-out test |
 | S3 | Pool | role summary first, ladder, wordings, up to three group views per long story, what each piece leans on and its check, compact lines, skill phrases on strong leaves, summary frames with checks |
 | S4 | Review and store | the pool review prompt, edits refused over the limit, the marking loop, the store as cache items, lock rules |
 | H | One server, several pipelines | each pipeline under its own path; the client names the pipeline per server; the 0.5 line as `src/pipeline_v0` |
@@ -643,7 +653,8 @@ to the wire is the pipeline's path in the client's server section.
 3. **Geometry.** Constants in the client's configuration, or measured from a
    calibration render of the template (the probe's choice)?
 4. **Story size.** About ten action and result items at most, split by phase
-   above that, so three group views can tell a story?
+   above that, so three group views can tell a story? In S1 none of the real
+   profile's 26 stories came near ten.
 5. **Compile time.** The probe's compile took about an hour of model time, one
    call after another: how it fits the protocol's request budget.
 

@@ -21,7 +21,7 @@ import time
 from dataclasses import dataclass, fields
 from pathlib import Path
 from threading import Lock
-from typing import Any, Dict, List, Mapping, Optional, Tuple, Type, TypeVar
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Tuple, Type, TypeVar
 
 import httpx
 from dotenv import load_dotenv
@@ -34,7 +34,7 @@ from ..observability import LOGGER_ROOT, ModelCall, current_run, current_stage
 from ..errors import ModelOutputError
 from ..parsing import raw_excerpt
 from .base import Provider
-from .config import ModelConfig, load_model_config
+from .config import MODEL_ROLES, ModelConfig, load_model_config
 from .deepseek import DeepSeekProvider
 from .standard import StandardProvider
 
@@ -337,7 +337,9 @@ class ModelSelector:
         return reply, reply, None
 
 
-def build_selector(resources_dir: Optional[Path] = None) -> ModelSelector:
-    """The selector the server runs on: ``.env`` loaded, then every role built."""
+def build_selector(
+    resources_dir: Optional[Path] = None, roles: Iterable[str] = MODEL_ROLES
+) -> ModelSelector:
+    """The selector the server runs on: ``.env`` loaded, then every role in ``roles`` built."""
     load_dotenv()
-    return ModelSelector(load_model_config(resources_dir))
+    return ModelSelector(load_model_config(resources_dir, roles))

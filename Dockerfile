@@ -37,6 +37,7 @@ RUN uv sync --frozen --no-dev --no-install-project --no-install-local
 # runtime stage needs nothing but the venv itself.
 COPY src ./src
 COPY resources/v1 ./resources/v1
+COPY resources/v2 ./resources/v2
 RUN uv sync --frozen --no-dev --no-editable
 
 
