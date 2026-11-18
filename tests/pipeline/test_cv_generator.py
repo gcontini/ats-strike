@@ -15,7 +15,6 @@ import pytest
 from cv_pipeline.bundle import CandidateInputs
 from cv_pipeline.cv_generator import (
     ARTIFACTS,
-    FORMATS,
     CVGenerator,
     capped_coverage,
     keep_words,
@@ -187,8 +186,11 @@ def test_every_call_of_every_step_is_counted(bundle, candidate, tmp_path, render
 
 # --- format_selection and cv --------------------------------------------------
 def test_the_format_choice_sees_the_formats_and_the_scored_experiences(bundle, candidate, tmp_path, renders):
-    *_, llm = run(bundle, candidate, tmp_path)
-    assert section(llm["format_selection"].calls[0], "FORMATS") == FORMATS
+    """The formats are in the prompt, so a client that overrides it sets its own."""
+    own = replace(bundle, sys_prompt_format_selection='MY FORMATS: {"Z": {"experiences": 2}}')
+    *_, llm = run(own, candidate, tmp_path)
+    system = next(m["content"] for m in llm["format_selection"].calls[0]["messages"] if m["role"] == "system")
+    assert 'MY FORMATS: {"Z": {"experiences": 2}}' in str(system)
     shown = section(llm["format_selection"].calls[0], "WORK EXPERIENCES")
     assert shown[0]["duties"][0].endswith("|1-80")
 
@@ -307,6 +309,20 @@ def test_an_overlong_cv_loses_its_least_useful_duties_until_it_fits(bundle, cand
     assert [1 + sum(len(e["duties"]) for e in d["experiences"]) // 5 for d in renders] == [
         4, 3, 3, 3, 3, 3, 2,
     ]
+
+
+def test_only_an_experiences_last_duty_is_ever_removed(bundle, candidate, tmp_path, renders):
+    """A later duty may refer to an earlier one, so the cut never leaves it dangling: the least useful duty of all
+    sits in the middle of the first experience and stays; the second experience's last duty, worth more, goes."""
+    resume = {"experiences": [
+        {"company": "New", "duties": ["a|1-90", "b|1-90", "useless|2-1", "c|1-90", "d|2-60"]},
+        {"company": "Old", "duties": ["e|2-50", "f|2-40"]},
+    ]}
+    state = {"highlighted_resume": resume, "key_points": KEY_POINTS}
+    gen = generator(bundle, candidate, tmp_path, FakeLLM(), page_limit=1)
+    document, _, removed = gen._render(state)
+    assert removed == 3
+    assert [e["duties"] for e in document["experiences"]] == [["a", "b", "useless"], ["e"]]
 
 
 def test_a_cv_that_cannot_lose_a_duty_is_delivered_long(bundle, candidate, tmp_path, renders):

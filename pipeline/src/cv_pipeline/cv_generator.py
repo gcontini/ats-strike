@@ -11,7 +11,7 @@ The method is adapticv-ai's, one model role per step:
     stay out of the profile, in ``score_reasons``: the writer and the
     highlighter are shown them as EVIDENCE.
 ``format_selection``
-    One of :data:`FORMATS`, the experiences to show and how many duties each,
+    One of the formats its prompt lists, the experiences to show and how many duties each,
     0 included: an experience with none shows a short summary written for it.
 ``cv``
     The body (job title, summary, skills, certifications), and each chosen
@@ -25,9 +25,9 @@ The method is adapticv-ai's, one model role per step:
 The steps are a LangGraph graph. A step that makes several calls fans them
 out with ``Send`` — one per profile list, per experience — and a node in
 code puts the answers back in profile order. Then the CV is rendered: while
-the PDF runs past the page limit, the duty whose removal loses the least
-:func:`capped_coverage` goes (an experience keeps its last one), and it is
-rendered again. Every render is of the
+the PDF runs past the page limit, of the experiences' last duties the one
+whose removal loses the least :func:`capped_coverage` goes (an experience
+keeps its first one), and it is rendered again. Every render is of the
 merged document, your ``candidate_data`` over the top, so every page count is
 the page count of the CV you will send — yet no model is ever shown that data.
 
@@ -64,13 +64,6 @@ from .errors import BudgetExceededError, ModelOutputError
 
 logger = logging.getLogger(f"{LOGGER_ROOT}.cv")
 
-#: The CV formats format_selection chooses from. Any experience may show 0
-#: duties: it then shows only a short summary. Shown to the model as they are.
-FORMATS = {
-    "A": {"experiences": 3, "max_duties": 9, "max_total_duties": 26},
-    "B": {"experiences": 4, "max_duties": 8, "max_total_duties": 23},
-    "C": {"experiences": 5, "max_duties": 7, "max_total_duties": 20},
-}
 #: The "|3-80,7-40" suffix of a scored text: key point id - score.
 SCORES = re.compile(r"\|((?:\d+-\d+,?)*)$")
 #: A key point counts up to COVERAGE_CAP x its importance in duty score
@@ -397,9 +390,9 @@ class CVGenerator:
 
     # --- format_selection ---------------------------------------------------
     def _select_format(self, state: CVState) -> dict:
-        """The CV format (FORMATS), the experiences to show and how many duties each one shows."""
+        """The CV format (the prompt lists them), the experiences to show and how many duties each one shows."""
         text = (
-            f"KEY POINTS:\n{dumps(state['key_points'])}\n\nFORMATS:\n{dumps(FORMATS)}\n\n"
+            f"KEY POINTS:\n{dumps(state['key_points'])}\n\n"
             f"WORK EXPERIENCES:\n{dumps(state['scored_profile']['experiences'])}"
         )
         with stage("cv.format_selection"):
@@ -509,9 +502,10 @@ class CVGenerator:
     def _render(self, state: Mapping[str, Any]) -> Tuple[Dict[str, Any], RenderResult, int]:
         """The highlighted CV without the scores, compiled; the document, the result and how many duties went.
 
-        While the PDF is longer than the page limit, it removes a duty of an experience with more than one: the one
-        whose removal loses the fewest capped_coverage points; on a tie, the one with the lowest total score, then
-        the older experience's. Then it renders again. An experience written with duties keeps one, so only an
+        While the PDF is longer than the page limit, it removes the last duty of an experience with more than one —
+        only the last, because a later duty may refer to an earlier one ("there", "these problems"): the one whose
+        removal loses the fewest capped_coverage points; on a tie, the one with the lowest total score, then the
+        older experience's. Then it renders again. An experience written with duties keeps one, so only an
         experience written with none shows its summary alone. When no duty can go, it keeps the longer PDF."""
         resume = copy.deepcopy(state["highlighted_resume"])
         importance = {k["id"]: k["importance"] for k in state["key_points"]}
@@ -520,22 +514,21 @@ class CVGenerator:
             while (result := self.renderer.render_document(self._document(resume))).pages > self.renderer.page_limit:
                 shown = [(i, j, d) for i, e in enumerate(resume["experiences"]) for j, d in enumerate(e["duties"])]
                 covered = capped_coverage([d for _, _, d in shown], importance)
-                removable = [  # (points lost without the duty, its total score, -i, -j: the older experience's, i, j)
+                removable = [  # (points lost without the duty, its total score, -i: the older experience's, i, j)
                     (
                         covered - capped_coverage([d for a, b, d in shown if (a, b) != (i, j)], importance),
                         sum(scores_of(duty).values()),
                         -i,
-                        -j,
                         i,
                         j,
                     )
                     for i, j, duty in shown
-                    if len(resume["experiences"][i]["duties"]) > 1
+                    if j == len(resume["experiences"][i]["duties"]) - 1 > 0
                 ]
                 if not removable:
                     logger.warning("  ⚠ %d pages and no duty left to remove: keeping it", result.pages)
                     break
-                lost, _, _, _, i, j = min(removable)
+                lost, _, _, i, j = min(removable)
                 exp = resume["experiences"][i]
                 duty = exp["duties"].pop(j)
                 removed += 1
@@ -593,7 +586,6 @@ class CVGenerator:
 
 __all__ = [
     "CVGenerator",
-    "FORMATS",
     "COVERAGE_CAP",
     "COVERAGE_BEST",
     "capped_coverage",

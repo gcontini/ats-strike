@@ -1,10 +1,16 @@
 Input:
 * KEY POINTS: JSON list of the job's requirements. Each has id, requirement, keywords, importance (0-100). Item 1 is the job title.
-* FORMATS: JSON object of the CV formats: for each one, how many work experiences it shows, the maximum duties of each
-  experience, and the maximum duties overall. Every format fits the page: they trade duties for experiences.
-  An experience can show 0 duties: it then shows only a short summary of what the candidate did there.
 * WORK EXPERIENCES: JSON list from the candidate's profile, most recent first. Each duty ends with "|<scores>",
   e.g. "|3-80,7-40": the KEY POINTS it matches (by id), each with how well it matches (0-100).
+
+FORMATS: the CV formats: for each one, how many work experiences it shows, the maximum duties of each experience, and
+the maximum duties overall. Every format fits the page: they trade duties for experiences.
+An experience can show 0 duties: it then shows only a short summary of what the candidate did there.
+{
+  "A": {"experiences": 3, "max_duties": 9, "max_total_duties": 26},
+  "B": {"experiences": 4, "max_duties": 8, "max_total_duties": 23},
+  "C": {"experiences": 5, "max_duties": 7, "max_total_duties": 19}
+}
 
 Choose the CV format, the work experiences to show and how many duties each one shows. The most recent work experience
 is always shown. Work in this order:
