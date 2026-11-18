@@ -10,9 +10,10 @@ cd <repo root>
 DOCKER_BUILDKIT=0 docker build -t ats-strike-server .
 ```
 
-**The `Dockerfile` lives at the repository root, not in `server/`**, because
-some cloud builders refuse a Dockerfile in a subfolder. The build context is
-the root: the image needs `contracts/` and `server/`, and nothing else.
+**The `Dockerfile` lives at the repository root, not in `resources/docker/`**,
+because some cloud builders refuse a Dockerfile in a subfolder. The build
+context is the root: the image needs `src/` (the contracts included) and
+`resources/`, and nothing else.
 
 **Classic builder only.** No BuildKit features and no heredocs — CI builds
 with `DOCKER_BUILDKIT=0` on purpose, and the image must stay buildable that
@@ -21,8 +22,8 @@ way.
 ```mermaid
 flowchart TB
     subgraph s1["stage 1 — build (uv:python3.12-bookworm-slim)"]
-        L1["pyproject.toml · uv.lock<br/>+ the three member pyprojects"] --> L2["uv sync --frozen --no-dev<br/>--package ats-strike-server<br/>--no-install-workspace"]
-        L2 --> L3["contracts/src · pipeline/src · pipeline/resources · server/src"]
+        L1["pyproject.toml · uv.lock<br/>+ the contracts' pyproject"] --> L2["uv sync --frozen --no-dev<br/>--no-install-project<br/>--no-install-local"]
+        L2 --> L3["src · resources/v1"]
         L3 --> L4["uv sync --frozen --no-dev --no-editable<br/>→ /app/.venv"]
     end
     subgraph s2["stage 2 — runtime (python:3.12-slim-bookworm)"]
@@ -45,7 +46,7 @@ to `/app/src`, so the runtime stage needs nothing but the venv.
 | `texlive-latex-base` | `hyperref`, `graphicx`, `array`, `hhline`, `amsmath`, `babel-english` — everything `resume.tex.jinja` uses |
 | `texlive-fonts-recommended` | The font files behind psnfss (Charter, Times, Palatino, ...). The stock template does not need them; a template of your own that loads `\usepackage{charter}` does |
 | `cm-super` | Type 1 CM fonts. Without them, T1 encoding falls back to bitmap fonts and the PDF looks scanned. `cm-super-minimal` is not enough: it leaves the design sizes the CV uses for headings and small print as Type 3 bitmaps |
-| `fontawesome5` (vendored) | The contact icons in the CV header. Debian ships it only inside the 1.7 GB `texlive-fonts-extra`, so it is vendored as a TeX Live archive in `server/docker/vendor/` and unpacked into `TEXMFLOCAL`. No network access during the build |
+| `fontawesome5` (vendored) | The contact icons in the CV header. Debian ships it only inside the 1.7 GB `texlive-fonts-extra`, so it is vendored as a TeX Live archive in `resources/docker/vendor/` and unpacked into `TEXMFLOCAL`. No network access during the build |
 
 The image is ~780 MB, almost all of it that toolchain.
 
@@ -68,11 +69,11 @@ docker run --read-only --tmpfs /tmp:exec -p 8080:8080 --env-file .env ats-strike
 font cache there. A tmpfs also means a CV session does not survive a restart —
 mount a volume, or a bucket, at `ATS_WORK_DIR` if you want it to.
 
-`server/compose.yaml` does all of the above with the settings already wired:
+`resources/docker/compose.yaml` does all of the above with the settings already wired:
 
 ```bash
 cp .env.example .env     # then fill in one provider's API key
-cd server && docker compose up --build
+cd resources/docker && docker compose up --build
 ```
 
 The published image is on Docker Hub:
@@ -174,10 +175,10 @@ uv run pytest                   # every package, plus the integration test
 ```
 
 The LaTeX-dependent tests skip themselves when `pdflatex` is absent. Nothing
-in the suite calls a model: `tests/pipeline/pipeline_helpers.py` wires a real
+in the suite calls a model: `tests/pipeline_v1/pipeline_helpers.py` wires a real
 `ModelSelector` to a fake HTTP transport, so request assembly, structured
 output, retries and usage logging are all the production code paths.
-`tests/pipeline/golden/cv_golden.tex` pins the whole render — an escaping
+`tests/pipeline_v1/golden/cv_golden.tex` pins the whole render — an escaping
 regression is otherwise invisible until someone reads a bad PDF.
 
 ## Deploying
@@ -189,7 +190,7 @@ That is the one thing to plan around.
   client acknowledges it, or until its last event is older than
   `ATS_SESSION_TTL_DAYS`. The default is the system temp directory, which
   on most container platforms is RAM-backed and empty again after a redeploy.
-  Mount a volume — or a bucket, as `server/terraform` does on Alibaba Cloud —
+  Mount a volume — or a bucket, as `terraform/` does on Alibaba Cloud —
   to have sessions outlive the instance. Each event is a file written once,
   which a bucket mounted as a folder can do.
 - **One process per work root.** The job slots and the worker threads are

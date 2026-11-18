@@ -90,7 +90,7 @@ for the platform probe without a token. Three things to get right:
 - **Give the work root a home that outlives the instance** — a volume, or a
   bucket mounted as a folder — and a session survives the instance being
   recycled: the client gets its CV back by running the posting again.
-  `server/terraform` mounts an OSS bucket on Alibaba Cloud. A platform that
+  `terraform/` mounts an OSS bucket on Alibaba Cloud. A platform that
   only gives CPU during requests (Cloud Run's default) stalls a job whenever no
   stream is open: give it CPU for the whole instance instead.
 
@@ -142,7 +142,7 @@ own release:
 |---|---|---|
 | [ats-strike](https://github.com/gcontini/ats-strike) | the server, the pipeline, this site | the container image and the site, at the server's version |
 | [ats-strike-client](https://github.com/gcontini/ats-strike-client) | the CLI | both executables and a data folder, at the client's version |
-| [ats-strike-contract](https://github.com/gcontini/ats-strike-contract) | the wire format, `cv_contracts` | nothing: the others check it out as a git submodule at `contracts/`, the 0.5 line too |
+| [ats-strike-contract](https://github.com/gcontini/ats-strike-contract) | the wire format, `cv_contracts` | nothing: the others check it out as a git submodule: at `src/contracts/` here, at `contracts/` in the client, the 0.5 line and ats-integration-tests |
 | [ats-integration-tests](https://github.com/gcontini/ats-integration-tests) | the other three as submodules, and the tests that need the client and the server together | nothing |
 
 A client talks to any server that speaks the same protocol number, which

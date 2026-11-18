@@ -1,10 +1,12 @@
 # CV pipeline v2: design
 
-Status: draft, 2026-11-12. The probe of [section 11](#11-plan-of-work) has run: **go**,
-on the conditions listed there. Nothing of the build exists yet. This replaces the
-draft of 2026-11-10, which compiled the profile into facts and still wrote every CV
-with a model; [section 12](#12-alternatives-considered) says what was kept from it.
-When v2 ships, it replaces [doc/cv-pipeline.md](cv-pipeline.md), which describes v1.
+Status: draft, 2026-11-12, updated 2026-11-18. The probe of
+[section 11](#11-plan-of-work) has run: **go**, on the conditions listed there. Nothing
+of the build exists yet. This replaces the draft of 2026-11-10, which compiled the
+profile into facts and still wrote every CV with a model;
+[section 12](#12-alternatives-considered) says what was kept from it. v2 is a second
+pipeline on the same server, served at `/v2` beside v1 (`/v1`, described in
+[doc/cv-pipeline.md](cv-pipeline.md)), which stays.
 
 ## Summary
 
@@ -59,8 +61,8 @@ Goals:
 
 1. **Write once, select many times.** The text of a CV is written and reviewed
    once per profile, not once per job.
-2. **A tunable balance.** Keyword coverage against context, stories and a
-   complete career, as weights in the client's configuration.
+2. **A tunable balance.** Keyword coverage against a CV that tells the career's
+   important work, as weights in the client's configuration.
 3. **No silent gaps.** An experience is left out only when the balance says so,
    and the earliest and the most recent are always shown.
 4. **A readable summary.** The job's keywords move to where they cost a reader
@@ -85,8 +87,8 @@ flowchart TD
     ITEMS --> TREE["<b>tree</b><br/>competences, market names, aliases"]
     TREE --> POOL["<b>pool</b><br/>bullets on a ladder, groups,<br/>skill phrases, summary frames"]
     POOL --> REV["<b>review</b><br/>code checks, a pool review, the candidate"]
-    REV --> STORE(["the store<br/>next to the profile, editable"])
-    STORE --> START(["POST /v1/cv<br/>JD + profile + store + mix"])
+    REV --> STORE(["the store<br/>in the client's cache, editable"])
+    STORE --> START(["POST /v2/cv<br/>JD + profile + store + mix"])
     START --> ALLOC["<b>allocate</b><br/>the job's requirements onto the tree"]
     ALLOC --> SEL["select<br/>(code) content and length"]
     SEL --> FIT{"over the page limit?"}
@@ -100,19 +102,24 @@ Terms used below:
 
 - **base item:** one statement from the profile, typed context, action or result.
 - **story:** the base items that tell one piece of work together.
+- **anchor:** the one or two items that say what a story is about.
+- **narrative weight:** how much a duty mattered in the career, from 1 to 3.
 - **node:** one competence in the tree. A **leaf** is something a recruiter
   searches for. A **ghost leaf** is one the profile cannot prove.
 - **rung:** one length of a story's bullet: 1, 2 or 3 lines.
 - **wording:** one of the stored versions of a rung.
-- **group:** bullets that go into the CV together or not at all.
+- **group:** bullets that go into the CV together or not at all. A long story
+  has up to three, each a different view of it.
 - **slot:** one place in a planned CV, to be filled by a wording.
 - **mix:** the weights that balance the keyword score against the human score.
 
 ## 4. The store: once per profile
 
-The store is compiled from the profile, kept next to it on the client, and
-editable by hand. It is personal data: it travels with each CV request, as the
-profile does, and the server keeps none of it.
+The store is compiled from the profile and editable by hand. It is personal
+data, and the server keeps none of it. The server returns the store's files as
+cache items, the client keeps them in its folder for the v2 server, and sends
+them back with every request, as it does the profile. Protocol 2 already
+carries such items, so the store adds nothing to the wire.
 
 For the probe's profile (five experiences) the store came to 120 items in 27
 stories, a tree of 176 nodes, and a pool of 162 bullets, 5 compact lines, 5 role
@@ -142,13 +149,24 @@ candidate in `examples/candidate`:
   rehearsal item.
 - References between duties ("the cloud projects above") are resolved, so each
   item stands alone.
-- **Context belongs to the experience, not to a story.** Job-level context (the
-  system, the client, the team) is kept at the experience level and handed to
-  every pool call. The probe first put it in stories of its own, and the bullets
-  of a call that was not handed it came out bare.
-- **A story is one system and one phase of work,** not one duty of the profile.
-  The candidate found the probe's stories "a bit granular" and merged five into
-  two; the profile's duty split is not the unit.
+- **Shared context belongs to the experience.** A context item that frames the
+  job (the employer, the team, the mandate, the system the job is about), or
+  that two stories presuppose, goes to the experience's context list. The role
+  summary says it, so any bullet of the job may lean on it. The probe first put
+  job-level context in stories of its own, and the bullets of a call that was
+  not handed it came out bare.
+- **A story is one piece of work:** one system or programme in one phase, not
+  one duty of the profile. Work done inside it belongs to it, as a service
+  built during a port belongs to the port. The candidate found the probe's
+  stories "a bit granular" and merged five into two.
+- **Each story names its anchor:** the one or two items that say what it is
+  about. Every bullet that opens the story states it.
+- **Narrative weights.** Each duty gets a weight from 1 to 3 for how much it
+  mattered in the career: years spent building one core product rank high, a
+  one-off presentation low. The compile call proposes each weight with a reason,
+  judged on what the profile says and never on a job, and the candidate
+  corrects it. Each experience weighs by its months, counted in code from its
+  dates.
 
 ### 4.2 The competence tree
 
@@ -213,15 +231,18 @@ and in the summary's keyword slot. That is why the naming matters.
   | 1 line | Wrote the disaster recovery plan of the Games' results system against a 2-hour RTO. |
   | 2 lines | Wrote the backup, restore and disaster recovery procedures of the Games' results system, a core system with a 2-hour RTO. My team tested them at the full-scale rehearsals and met the SLA. |
 
-- **Groups.** A longer story told over two or three bullets, or bullets that
-  refer to each other, form a group. It is selected, placed and trimmed as one
-  unit, so no bullet ever refers to one that was cut. Up to 7 lines; a story
-  that joins several pieces of work, up to 9. The candidate's verdict on the
-  probe: "I do love the groups".
-- **The role summary comes first.** It is written before the ladder and handed
-  to the ladder call, so a bullet carries only the context the header and the
-  role summary do not. Five of the candidate's thirteen notes on the probe's
-  pool were bullets repeating what the header or the role summary already said.
+- **Groups.** A story told over two or three bullets that refer to each other
+  forms a group. It is selected, placed and trimmed as one unit, so no bullet
+  ever refers to one that was cut. A long story gets up to three groups, each a
+  different view of the whole story that mixes its sides. Each group starts by
+  stating the anchor, and its later bullets may lean on earlier ones ("During
+  the port, ..."). Up to 7 lines each. The candidate's verdict on the probe: "I
+  do love the groups".
+- **The role summary comes first.** It is written from the experience's shared
+  context before the ladder, and handed to the ladder call, so a bullet carries
+  only the context the header and the role summary do not. Five of the
+  candidate's thirteen notes on the probe's pool were bullets repeating what the
+  header or the role summary already said.
 - **Compact lines.** One line per experience, dense with terms, for a job shown
   only to keep the career whole.
 - **Skill phrases,** composed where it helps: "Terraform IaC", "CI/CD with
@@ -231,11 +252,16 @@ and in the summary's keyword slot. That is why the naming matters.
   `<<job_title>>`, a slot for a few keywords, and a slot for one `<<sentence>>`.
   They were the weakest pieces of the probe's pool, written far from the items:
   their numbers and years are checked in code against the profile, and they are
-  reviewed at compile time.
+  reviewed at compile time. A filled summary's soft limit is 450 characters: the
+  prompts state it, and the code checks accept 500.
 
-Each bullet and group carries: the items it uses and those it fully covers, its
-nodes and how fully it proves each, its line count, the terms it contains, and
-two human factors scored once, from 0 to 2: **context** and **success**.
+Each bullet and group carries:
+- the items it uses and those it fully covers;
+- the items it leans on without stating them (see
+  [section 4.5](#45-context-and-references));
+- its nodes and how fully it proves each;
+- its line count and the terms it contains;
+- its narrative weight: the highest among the duties of the items it covers.
 
 ### 4.4 Review
 
@@ -266,6 +292,40 @@ tuned on its grader cannot be graded by it.
 
 Every bullet is keyed to its source items, so a profile change regenerates only
 what it touches, and a hand-edited bullet is locked.
+
+### 4.5 Context and references
+
+What breaks a CV assembled from a pool is a bullet that leans on something the
+reader has not been told. In the probe, five of the seven bullets the candidate
+marked wrong at the first reading did that: "the solution" named nothing, "the
+new stack" was never said, or the context came after the claim. A bullet can
+lean on three things, and each has its own carrier:
+
+| Leans on | Example | Carrier | Checked by |
+|---|---|---|---|
+| a fact of the job | "the results system" | the role summary, printed with every full experience | code, when the pool is built |
+| an earlier point of its own story | "During the port, ..." | a group, printed whole and in order | code, when the pool is built |
+| another story | "Responsible also for ...", "On the same platform, ..." | the varnish, once the order is final | the varnish's guards |
+
+Each piece lists the items it states and the items it leans on without stating
+them, keyed by item id. Code checks, when the pool is built, that a single
+bullet leans only on what the role summary states, and that a group's bullet
+leans only on that and on its group's earlier bullets. Selection does not need
+to know.
+
+Between stories, two different things happen:
+- **Connectives** ("also", "in parallel", "after the go-live") depend on what is
+  printed just before, which only the varnish knows. A connective is added for
+  one CV and never saved to the pool.
+- **Presuppositions** (one story assumes a fact another introduced) are not
+  allowed in the pool. The fact either belongs to the experience, where the role
+  summary says it, or the story states it. When the introducing story is
+  printed right before, the varnish may shorten the second to lean on it, for
+  that CV only, removing words and never adding a fact.
+
+A dependency-aware selection, where a bullet may lean on another story when
+that story is printed first, is left out for now (see
+[section 12](#12-alternatives-considered)).
 
 ## 5. Per job description
 
@@ -316,8 +376,8 @@ takes the move with the best gain per line under the objective of
 experience with its two best slots at any rung, add one in compact form. It
 goes on with the least-loss move while one fits, so the page is filled; then
 a refill pass drops the weakest slot and runs again, keeping the result if it
-scores higher. Inside a job, bullets go most relevant first, except that a
-story introducing the job's system comes before stories that assume it.
+scores higher. Inside a job, bullets go most relevant first. The role summary
+introduces the job's system, so no story has to come first to explain it.
 
 Each of the first three rules is a correction from the probe: a stop-at-no-gain
 rule left one CV at 31 of 71 lines; opening an experience with two one-line
@@ -350,6 +410,9 @@ A model reads the assembled CV as a whole and:
 - **flags two slots that tell the same fact;** code replaces one with the
   selector's next candidate. Shared context is not a repeat: that was every
   flag the probe raised;
+- **joins the stories:** connectives, and shortenings that lean on the story
+  printed just before ([section 4.5](#45-context-and-references)), for this CV
+  only, never saved, never adding a fact;
 - **regenerates a bullet it cannot use,** in three tiers: a tool returns the
   story's other stored bullets with the same line count; failing that, a small
   local edit (a reference the role summary already explains, "the" for a thing
@@ -388,21 +451,22 @@ one, and give each requirement a share of the CV close to its share of the job
 [2]. A sum of this shape is monotone submodular, the class for which greedy
 selection under a budget is the standard method [1].
 
-**The human score** has five terms:
+**The human score is the narrative score:** how much of the career's important
+work the CV tells. Each experience counts its share of the career's months. That
+share is multiplied by the weighted share of its duties the CV shows: each duty
+counts its narrative weight times the share of its action and result items that
+are printed. A compact line counts for the items it uses. Skipping a long
+experience therefore costs in proportion to its length, and leaving out a
+duty's main work costs more than leaving out a one-off.
 
-| Term | Counted from |
-|---|---|
-| continuity | each experience left out costs its share of the career's years |
-| completeness | the action and result items the CV covers, over the whole career |
-| rhythm | the mix of 1-, 2- and 3-line bullets |
-| context | the pre-scored context of the chosen bullets |
-| success | their pre-scored success |
+The weights are judged once per duty, on three levels, when the store is
+compiled, where the candidate can read and correct them. Nothing is judged per
+job: a model scoring on a fine scale is inconsistent from one call to the next
+[3], and v1's scores were multiples of 5 in 99.9% of cases.
 
-The first three are counted in code on the selection. The last two are judged
-once per bullet when the pool is compiled, where the candidate can read and
-correct them. Nothing is judged per job: a model scoring on a fine scale is
-inconsistent from one call to the next [3], and v1's scores were multiples of 5
-in 99.9% of cases.
+The probe's human score had five terms (continuity, completeness, rhythm, and
+pre-scored context and success). It stayed within 0.04 across every plan and
+every mix, so the lever moved the CV little; the narrative score replaces them.
 
 **The mix** is a table in the client's `cv.toml`, sent with each request as
 `pages` already is:
@@ -411,35 +475,34 @@ in 99.9% of cases.
 [mix]
 ats = 0.5           # 0 = human only, 1 = keyword score only
 literal = 0.5       # inside the keyword score: the job's own words against proven coverage
-continuity = 1.0    # the human terms, relative to each other
-completeness = 1.0
-context = 1.0
-success = 1.0
-rhythm = 0.5
 ```
 
-In the probe the human score stayed within 0.04 across every plan and every
-mix, so the lever moved the CV little: context and success as means penalize
-every added bullet. The weights stay internal until the evaluation shows they
-matter, and the two pre-scored terms are to be reworked as page-normalized
-sums.
+The weights stay internal until the evaluation shows they move the CV.
 
-## 7. What gets deleted
+## 7. What v2 does without
+
+v1 stays, served at `/v1`. v2 has none of v1's:
 
 - **`profile_scoring`** and the `|3-80,7-40` score suffixes.
 - **`format_selection`** and the formats.
-- **The per-experience writers** and their validation rounds.
-- **The highlight call.**
+- **Per-experience writers** and their validation rounds.
+- **Highlight call.**
 - **`capped_coverage`.**
-- **The two meta requirements** added to every job, "success stories" and
-  "concrete examples": they become the pool's success and context scores.
+- **Two meta requirements** added to every job, "success stories" and
+  "concrete examples".
 
 ## 8. How v2 keeps the house rules
 
 - **The pipeline is a library.** Points, selection, fit and highlight are pure
   functions of values. The store arrives with the request.
+- **One server, several pipelines.** v1 and v2, and later the 0.5 line, are
+  packages side by side in one project (`src/pipeline_v1`, `src/pipeline_v2`),
+  each with its own resources and model roles, each served under its own path
+  behind the same facade. v2 uses v1's model, logging and error modules, never
+  its steps.
 - **No hidden global state.** The mix and the page geometry are arguments.
-- **Contracts.** The store gets a pydantic model in `cv_contracts`.
+- **Contracts.** Unchanged. The store's pydantic model lives in the v2 pipeline:
+  the client stores and sends the store's files without reading them.
 - **Tests.** The pure functions get unit tests on hand-made values; the graph
   test keeps the fake HTTP client inside a real `ModelSelector`; the golden
   render stays.
@@ -455,7 +518,9 @@ sums.
   career fell from 62% to 6%, headlines naming the job's kind of role from 66%
   to 36%, the summary grew from 528 to 734 characters, and bullets referring to
   another rose from 0.2% to 1.9%. v2 passes most of these by construction, so
-  they guard against regressions more than they measure progress.
+  they guard against regressions more than they measure progress. The last one
+  also says whether the checks of [section 4.5](#45-context-and-references) are
+  enough.
 - **The human score has no ground truth** beyond the candidate's own reading.
   Three checks, in this order: blind pairwise reading of CVs built at different
   mixes, which also sets the weights; a direction check on CVs already sent,
@@ -505,21 +570,24 @@ Then the build, one sub-plan each:
 
 | | Sub-plan | Output |
 |---|---|---|
-| S1 | Base items and stories | the decomposition prompt, the source check, item types; context at the experience level; stories by system and phase |
+| R | Repository layout | one project: `src/pipeline_v1` (today's pipeline), `src/cv_server`, `resources/v1`, `resources/docker`, `terraform/`; v1 unchanged |
+| S1 | Base items and stories | the decomposition prompt, the source check, item types; shared context at the experience level; stories by piece of work, with anchors; narrative weights; code in `src/pipeline_v2` |
 | S2 | Competence tree | the corpus sample, the shape and attach prompts, `proven` on more than one weak attachment, the alias check, ghost leaves, the held-out test |
-| S3 | Pool | role summary first, ladder, wordings, groups, compact lines, skill phrases on strong leaves, summary frames with checks, pre-scores |
-| S4 | Review and store | the pool review prompt, edits refused over the limit, the marking loop, file format, lock rules, the compile endpoint and client command |
+| S3 | Pool | role summary first, ladder, wordings, up to three group views per long story, what each piece leans on and its check, compact lines, skill phrases on strong leaves, summary frames with checks |
+| S4 | Review and store | the pool review prompt, edits refused over the limit, the marking loop, the store as cache items, lock rules |
+| H | One server, several pipelines | each pipeline under its own path; the client names the pipeline per server; the 0.5 line as `src/pipeline_v0` |
 | S5 | Allocation | the prompt, relations, point rules, English literal terms, the unmatched report, pending aliases |
-| S6 | Selector and scores | the objective, the mix, fill and refill, bullet order, the plan report |
+| S6 | Selector and scores | the objective, the narrative score, the mix, fill and refill, bullet order, the plan report |
 | S7 | Geometry and render | line constants from calibration; compact experience and skills block in the template |
-| S8 | Varnish | the job's words in, the pick, the repeat check, regeneration tiers one and two, headline and sentence |
+| S8 | Varnish | the job's words in, the pick, the repeat check, connectives between stories, regeneration tiers one and two, headline and sentence |
 | S9 | Highlight | marked spans, rules in code |
-| S10 | Protocol, client, deletion of v1 | request parts, the mix, artifacts, docs |
+| S10 | Serving `/v2` | the mix, artifacts, docs; v1 stays at `/v1` |
 | S11 | Evaluation | the new columns; a thorough run of v1 against v2; the reading checks in short sessions |
 | S12 | Regeneration, tier three | a new sentence written on demand |
 
-The wire changes (a compile endpoint, the store and the mix as request parts,
-the model roles) are decided in S4 and S10. v2 is 2.0.0.
+Order: R, S1, S2, S3, then H before S4, then S4 to S12. The store needs no new
+endpoint: protocol 2 already carries the cache items it travels as. What H adds
+to the wire is the pipeline's path in the client's server section.
 
 ## 12. Alternatives considered
 
@@ -552,18 +620,32 @@ the model roles) are decided in S4 and S10. v2 is 2.0.0.
   sit between them, and the varnish edits the job's words into the frame.
 - **A hard rule against career gaps.** An irrelevant job may be left out; it
   costs in proportion to its length.
+- **Selection that follows dependencies between stories.** Each piece would
+  declare what it needs said before it, and selection would print a bullet only
+  after the story it leans on, ordering stories and dropping dependents with
+  what they depend on. It would trust the model to label every dependency,
+  which is what the probe's writer missed, and it makes selection, fit and
+  ordering interdependent. Left out until the evaluation still finds dead
+  references with the checks of [section 4.5](#45-context-and-references) and
+  the varnish in place.
+- **One group per aspect of a story.** Groups instead give different views of
+  the whole story, each mixing its sides.
+- **Context and success scored per bullet.** They hardly moved the human score
+  in the probe; the narrative weights replace them.
+- **A separate deployment per pipeline version.** One server serves every
+  pipeline under its own path.
 
 ## 13. Open questions
 
-1. **Bullet order.** Most relevant first, or the story that explains the job's
-   system first? The probe tried the former with one exception rule.
-2. **Allocation.** One call that extracts and places (the probe's choice), or two?
-3. **Similarity.** A selection term with its own weight, a check on the
+1. **Allocation.** One call that extracts and places (the probe's choice), or two?
+2. **Similarity.** A selection term with its own weight, a check on the
    allocation, or evaluation only?
-4. **Geometry.** Constants in the client's configuration, or measured from a
+3. **Geometry.** Constants in the client's configuration, or measured from a
    calibration render of the template (the probe's choice)?
-5. **The human terms.** Means, sums normalized by the page, or something that
-   moves the CV when the mix moves?
+4. **Story size.** About ten action and result items at most, split by phase
+   above that, so three group views can tell a story?
+5. **Compile time.** The probe's compile took about an hour of model time, one
+   call after another: how it fits the protocol's request budget.
 
 ## Appendix A: how the numbers were measured
 

@@ -6,7 +6,7 @@
 - ``jobstore`` — where a CV job's session lives: a directory of events under
   ``ATS_WORK_DIR``.
 
-The work itself is :mod:`cv_pipeline`'s, called through its top level only.
+The work itself is :mod:`pipeline_v1`'s, called through its top level only.
 The wire format lives in :mod:`cv_contracts`, which both this and the client
 depend on; neither imports the other.
 """

@@ -8,13 +8,13 @@ from __future__ import annotations
 
 import os
 
-from cv_pipeline import configure_logging
+from pipeline_v1 import configure_logging
 
 
 def main() -> None:
     import uvicorn
 
-    configure_logging("cv_pipeline", "cv_server")
+    configure_logging("pipeline_v1", "cv_server")
     uvicorn.run(
         # An import string, not the app object: uvicorn needs it to spawn
         # workers.

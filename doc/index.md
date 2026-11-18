@@ -47,16 +47,16 @@ a CV job, its state and its result.
 | | |
 |---|---|
 | [ats-strike-client](https://github.com/gcontini/ats-strike-client) | The CLI, a repository of its own. Watches your clipboard or a folder, keeps your CV data local, files every result in a dated folder. |
-| `server/` | The HTTP API. Writes the CV in six steps, validates it, compiles the PDF, analyses postings, writes letters. |
-| `pipeline/` | Everything that makes a CV — model calls, LaTeX — as a library the server calls. |
-| `contracts/` | The shapes both sides agree on — the one thing each side imports, so neither imports the other. The ats-strike-contract repository, as a submodule here and in the client. |
+| `src/cv_server/` | The HTTP API. Writes the CV in six steps, validates it, compiles the PDF, analyses postings, writes letters. |
+| `src/pipeline_v1/` | Everything that makes a CV — model calls, LaTeX — as a library the server calls. |
+| `src/contracts/` | The shapes both sides agree on — the one thing each side imports, so neither imports the other. The ats-strike-contract repository, as a submodule here and in the client. |
 
 [ats-integration-tests](https://github.com/gcontini/ats-integration-tests)
 holds all three repositories as submodules, and the tests that need the client
 and the server together.
 
 The short quickstarts live in this repository's `README.md` and
-`server/README.md`, and in the client's
+[the server](server.md), and in the client's
 [`client/README.md`](https://github.com/gcontini/ats-strike-client/blob/main/client/README.md). These pages are the long form: what the system does,
 why it is built this way, and every parameter of both halves.
 

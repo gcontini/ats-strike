@@ -11,7 +11,7 @@ from pathlib import Path
 
 import httpx
 
-from cv_pipeline.models import MODEL_ROLES, ModelConfig, ModelSelector, ModelSpec
+from pipeline_v1.models import MODEL_ROLES, ModelConfig, ModelSelector, ModelSpec
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EXAMPLE_CANDIDATE = REPO_ROOT / "examples" / "candidate"

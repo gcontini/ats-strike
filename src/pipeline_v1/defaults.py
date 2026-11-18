@@ -25,7 +25,7 @@ SIGNATURE_FILE = "candidate_signature.png"
 @lru_cache(maxsize=1)
 def packaged_dir() -> Path:
     """The ``resources/`` folder inside the installed package."""
-    return Path(str(resources.files("cv_pipeline.resources")))
+    return Path(str(resources.files("pipeline_v1.resources")))
 
 
 def override_dir() -> Optional[Path]:

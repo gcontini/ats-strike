@@ -25,14 +25,14 @@ The first deploy goes as in *From scratch*, below. After that, a plan says
 
 ## Deploy
 
-A deploy is a release. The release workflow ([doc/release.md](../../doc/release.md))
+A deploy is a release. The release workflow ([doc/release.md](../doc/release.md))
 pushes the server image to Docker Hub and to this repository as `x.y.z`.
 Function Compute can only run an image from Container Registry in its own
 account and region, so it cannot use the Docker Hub copy. Once the release
 is done:
 
 ```bash
-cd server/terraform && terraform apply
+cd terraform && terraform apply
 ```
 
 It deploys the highest `x.y.z` image in the repository, by version and not by

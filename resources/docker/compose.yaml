@@ -4,19 +4,19 @@
 #     docker compose up --build
 #     cv clipboard --out ~/applications   # on your machine, not in here
 #
-# Build context is the repository root: the image needs contracts/ and
-# server/, which live above this file.
+# Build context is the repository root: the image needs src/ and resources/,
+# which live above this file.
 services:
   api:
     build:
-      context: ..
+      context: ../..
       dockerfile: Dockerfile
     image: ats-strike-server:latest
     init: true
 
     # The provider keys live here and nowhere else. The client never sees one.
     env_file:
-      - ../.env
+      - ../../.env
     environment:
       PORT: "8080"
       # Set a token to close the server; unset means anyone who can reach it

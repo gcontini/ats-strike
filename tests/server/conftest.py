@@ -3,7 +3,7 @@
 The server is the protocol and nothing else, so it is tested against a
 :class:`StubPipeline` that records what it was handed and answers with canned
 values: no key, no network, no model, no LaTeX. The real pipeline is tested
-in ``tests/pipeline``, and server, pipeline and client together in the
+in ``tests/pipeline_v1``, and server, pipeline and client together in the
 ats-integration-tests repository's ``tests/test_integration.py``.
 """
 

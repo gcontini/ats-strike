@@ -31,12 +31,12 @@ git clone --recurse-submodules https://github.com/gcontini/ats-strike-client
 (cd ats-strike-client && uv sync)
 ```
 
-`contracts/` is a git submodule (the ats-strike-contract repository) in both:
-in a clone made without `--recurse-submodules` it is empty until
-`git submodule update --init`, and after a `git pull` that moved it,
-`git submodule update` brings it along.
+The contracts are a git submodule (the ats-strike-contract repository) in
+both, at `src/contracts/` here and `contracts/` in the client: in a clone made
+without `--recurse-submodules` it is empty until `git submodule update --init`,
+and after a `git pull` that moved it, `git submodule update` brings it along.
 
-One `.venv` per checkout: `contracts/`, `pipeline/` and `server/` here,
+One `.venv` per checkout: the server and `src/contracts/` here,
 `contracts/` and `client/` in ats-strike-client. Add both folders to one VS
 Code workspace (*File → Add Folder to Workspace*), and point each folder's
 Python interpreter at its own `.venv/bin/python` if VS Code does not pick it
@@ -49,7 +49,7 @@ cp .env.example .env
 ```
 
 Fill in `MODEL_API_KEY` and `MODEL_BASE_URL` for the provider you use — see
-the "API keys" section of the repository's `server/README.md`.
+the "API keys" section of [the server](server.md).
 `cv_server` loads `.env` itself (`python-dotenv`), so nothing in
 launch.json needs to pass it along.
 
@@ -108,7 +108,7 @@ host:
 
 | Platform | What to install |
 |---|---|
-| Debian/Ubuntu | `sudo apt install texlive-latex-base cm-super`, then `sudo server/docker/install-fontawesome5.sh server/docker/vendor/fontawesome5.tar.xz` for the contact icons (see `server/docker/vendor/README.md`) |
+| Debian/Ubuntu | `sudo apt install texlive-latex-base cm-super`, then `sudo resources/docker/install-fontawesome5.sh resources/docker/vendor/fontawesome5.tar.xz` for the contact icons (see `resources/docker/vendor/README.md`) |
 | macOS | A full [MacTeX](https://tug.org/mactex/) install already includes `fontawesome5`; nothing to vendor |
 | Windows | [MiKTeX](https://miktex.org/) with "install packages on the fly" on — the first compile pulls what it needs |
 
@@ -133,7 +133,7 @@ except `/v1/cv` and `/v1/cv/render` still works — `/v1/jd/detect` and
 The site is `doc/` rendered by [MkDocs](https://www.mkdocs.org/) with the
 [Material](https://squidfunk.github.io/mkdocs-material/) theme, configured in
 `mkdocs.yml` at the repository root. Both are pinned in the `docs` dependency
-group of `pyproject.toml`, so they come with the workspace and not from your
+group of `pyproject.toml`, so they come with the project and not from your
 system Python:
 
 ```bash

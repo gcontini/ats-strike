@@ -1,7 +1,7 @@
 """What every request needs: the shared state, the token check, a job slot.
 
 The state is built once at startup and never mutated: the pipeline and one
-semaphore. Sharing a :class:`~cv_pipeline.Pipeline` across requests is safe —
+semaphore. Sharing a :class:`~pipeline_v1.Pipeline` across requests is safe —
 its chat models are built once and its HTTP clients are thread-safe.
 """
 
@@ -16,7 +16,7 @@ from threading import BoundedSemaphore
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from cv_contracts import StoreItem
-from cv_pipeline import Pipeline, current_run
+from pipeline_v1 import Pipeline, current_run
 from fastapi import Header, Request
 from starlette.concurrency import run_in_threadpool
 

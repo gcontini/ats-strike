@@ -1,16 +1,14 @@
-# The image needs the three packages it builds from and nothing else.
+# The image needs the packages it builds from and nothing else.
 *
 !pyproject.toml
 !uv.lock
 !README.md
-!contracts/pyproject.toml
-!contracts/src
-!pipeline/pyproject.toml
-!pipeline/src
-!pipeline/resources
-!server/pyproject.toml
-!server/src
-!server/docker
+!src
+src/contracts
+!src/contracts/pyproject.toml
+!src/contracts/src
+!resources/v1
+!resources/docker
 
 # Secrets and personal data never enter the build context. The server holds
 # no candidate data by design — it arrives with each request — so these are

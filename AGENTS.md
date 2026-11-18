@@ -7,13 +7,13 @@ because breaking it has a cost we have already paid once.
 
 - **One job per class.** If you cannot say what a class does in one sentence
   without "and", split it.
-- **One-way dependencies:** `contracts ← server → pipeline`. The pipeline
-  imports none of the others; `tests/test_architecture.py` enforces it. The
-  client is the ats-strike-client repository and meets the server over HTTP
-  only. The contracts package imports nothing but pydantic — it is loaded by a
+- **One-way dependencies:** `contracts ← cv_server → pipeline_v1`. The
+  pipeline imports none of the others; `tests/test_architecture.py` enforces
+  it. The client is the ats-strike-client repository and meets the server over
+  HTTP only. The contracts package imports nothing but pydantic — it is loaded by a
   web server and by the client's frozen executable, and has to stay cheap in
   both.
-- **The pipeline is a library.** Everything under `cv_pipeline`
+- **The pipeline is a library.** Everything under `pipeline_v1`
   takes its inputs in memory and returns its outputs. It reads no
   configuration, resolves no paths and writes nothing outside the scratch
   directory it is handed. That is what makes it safe to run per request.
@@ -59,7 +59,7 @@ because breaking it has a cost we have already paid once.
 - Fake at the boundary, not above it: the test double replaces the HTTP client
   *inside* a real `ModelSelector`, so request assembly, structured-output
   negotiation and usage logging stay under test.
-- `tests/pipeline/golden/cv_golden.tex` pins the whole render. An escaping
+- `tests/pipeline_v1/golden/cv_golden.tex` pins the whole render. An escaping
   regression is otherwise invisible until someone reads a bad PDF.
 - Tests that need `pdflatex` skip themselves; everything else always runs.
 
@@ -68,7 +68,7 @@ because breaking it has a cost we have already paid once.
 - `uv` for everything: `uv sync`, `uv run pytest`, `uv lock`.
 - Docker: **classic builder only**. No BuildKit features, no heredocs in a
   Dockerfile.
-- `contracts/` is a git submodule, the ats-strike-contract repository, shared
+- `src/contracts/` is a git submodule, the ats-strike-contract repository, shared
   with the 0.5 line and the client. Change it there, not as a copy; a change
   is a commit in that repository plus the new pointer here.
 - The client is ats-strike-client; the tests that need the client and the

@@ -33,7 +33,7 @@ from threading import Lock
 from typing import Any, Callable, Iterator, Optional, Set
 
 #: Root logger name; everything in the pipeline logs under it.
-LOGGER_ROOT = "cv_pipeline"
+LOGGER_ROOT = "pipeline_v1"
 
 #: Bounds, so one pathological run cannot produce an unbounded session.
 MAX_LOG_ENTRIES = 2000

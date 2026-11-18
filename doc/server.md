@@ -9,8 +9,8 @@ arrives with each request, as the *pack* of files the client sends from its
 server folder, and is thrown away when it ends. There is no database and no
 user accounts.
 
-It is two packages: `cv_server` speaks [protocol 2](../doc/protocol.md) —
-request reading, auth, sessions, the event stream — and `cv_pipeline` makes
+It is two packages: `cv_server` speaks [protocol 2](protocol.md) —
+request reading, auth, sessions, the event stream — and `pipeline_v1` makes
 the CV. The protocol knows no prompt, role or step, so the same `cv_server`
 runs in front of every pipeline version, and one client can use a 0.5 and a
 1.x server side by side.
@@ -84,7 +84,7 @@ doesn't need to change.
 | `validation` | Checking them against your profile, as replacements | the same, medium effort |
 | `highlight` | The `**bold**`/`*italic*` keyword pass | the same, medium effort |
 
-See [the CV pipeline](../doc/cv-pipeline.md) for what the six steps do.
+See [the CV pipeline](cv-pipeline.md) for what the six steps do.
 
 Each key of a role — `model`, `model_provider` (`standard` or `deepseek`),
 `api` (`chat_completions` or `responses`), `structured_output`,
@@ -137,7 +137,7 @@ to.
 ### Prompts and the template
 
 The prompts, the two JSON schemas the CV writer is shown and
-`resume.tex.jinja` ship inside the image (`pipeline/resources/`). To change
+`resume.tex.jinja` ship inside the image (`resources/v1/`). To change
 them permanently, mount a directory with your versions and set
 `ATS_RESOURCES`; anything missing there falls back to the built-in copy.
 To change them for one request, send them in the pack — that is what the
@@ -154,7 +154,7 @@ is only reasonable on a private network.
 
 ## The API
 
-The full specification is in [doc/protocol.md](../doc/protocol.md). In
+The full specification is in [doc/protocol.md](protocol.md). In
 short: every pipeline request is `multipart/form-data` with the same three
 parts — `pack` (the client's server folder, each file named by its relative
 path), `job` (`job_description.txt`, `analysis.json`, and what this server stored for the
@@ -220,7 +220,7 @@ answered. That is the one thing to plan around.
   client acknowledges it or it outlives `ATS_SESSION_TTL_DAYS`. The default
   is the system temp directory, which on most container platforms is RAM-backed
   and empty again after a redeploy. Mount a volume — or a bucket, as the
-  Alibaba deployment in `server/terraform` does — to have sessions outlive the
+  Alibaba deployment in `terraform/` does — to have sessions outlive the
   instance. Each event is a file written once, which is what a bucket mounted
   as a folder can do; LaTeX's scratch space stays on local disk.
 - **One process per work root.** `WEB_CONCURRENCY=1`. The job slots and the
@@ -276,17 +276,17 @@ the LaTeX log before it goes back.
 
 ```bash
 uv sync
-uv run pytest tests/server tests/pipeline   # no API key, no network
-uv run pytest                               # every package, plus the integration test
+uv run pytest tests/server tests/pipeline_v1   # no API key, no network
+uv run pytest                                  # every package, plus the integration test
 ```
 
 The LaTeX-dependent tests skip themselves when `pdflatex` is absent. Nothing
 in the suite calls a model. `tests/server` run the protocol against a stub
-pipeline; `tests/pipeline/pipeline_helpers.py` wires a real `ModelSelector`
+pipeline; `tests/pipeline_v1/pipeline_helpers.py` wires a real `ModelSelector`
 to a fake HTTP transport, so request assembly, structured output, retries and
 usage logging are all the production code paths — and the integration test
 runs two real servers on it.
 
 The layout is described in `src/cv_server/__init__.py` and
-`pipeline/src/cv_pipeline/__init__.py`; the rules the code follows are in
+`src/pipeline_v1/__init__.py`; the rules the code follows are in
 `AGENTS.md` at the repository root.

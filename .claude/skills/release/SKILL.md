@@ -46,8 +46,8 @@ bump commit and tag; everything else is left in the working tree for the user.
    the allow rule and is denied.
 
    ```bash
-   cd /home/gab/ats-strike/server/terraform && terraform plan -out=deploy.tfplan
-   cd /home/gab/ats-strike/server/terraform && terraform apply deploy.tfplan
+   cd /home/gab/ats-strike/terraform && terraform plan -out=deploy.tfplan
+   cd /home/gab/ats-strike/terraform && terraform apply deploy.tfplan
    ```
 
    main.tf picks the highest x.y.z tag in ACR. Read the plan before applying:
@@ -59,7 +59,7 @@ bump commit and tag; everything else is left in the working tree for the user.
    variable, never print it.
 
    ```bash
-   cd /home/gab/ats-strike/server/terraform && URL=$(terraform output -raw url) \
+   cd /home/gab/ats-strike/terraform && URL=$(terraform output -raw url) \
      && TOKEN=$(sed -nE 's/^api_token *= *"(.*)"/\1/p' terraform.tfvars) \
      && curl -s -H "Authorization: Bearer $TOKEN" "$URL/healthz"
    ```

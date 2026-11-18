@@ -3,5 +3,5 @@
 # out of the quality report so findings stay about the library, not the
 # fixtures that pin its behaviour.
 exclude_paths:
-  - 'contracts/tests/**'
+  - 'src/contracts/tests/**'
   - 'tests/**'

@@ -1,7 +1,7 @@
 name: Release
 
-# The server's version. You type it here; this writes it into the pipeline's
-# and the server's pyprojects and the lock, tags it, and builds the image and
+# The server's version. You type it here; this writes it into the
+# pyproject.toml and the lock, tags it, and builds the image and
 # the docs from that tag. The client is released from its own repository,
 # ats-strike-client, with its own version. See doc/release.md.
 on:
@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          submodules: true   # contracts/ is the ats-strike-contract submodule.
+          submodules: true   # src/contracts/ is the ats-strike-contract submodule.
           # The push below is a fast-forward of one commit; a shallow clone is
           # one more thing that can refuse it. This repository is small.
           fetch-depth: 0
@@ -59,14 +59,12 @@ jobs:
           VERSION: ${{ inputs.version }}
         run: |
           set -eux
-          sed -i "s/^version = \".*\"$/version = \"$VERSION\"/" \
-            pipeline/pyproject.toml server/pyproject.toml
-          # uv.lock records each member's version too. Leaving it stale would
-          # commit a lock that disagrees with the manifests, and `uv lock
+          sed -i "s/^version = \".*\"$/version = \"$VERSION\"/" pyproject.toml
+          # uv.lock records the project's version too. Leaving it stale would
+          # commit a lock that disagrees with the manifest, and `uv lock
           # --check` and `uv sync --locked` both refuse that.
           uv lock
-          grep -H '^version = ' \
-            pipeline/pyproject.toml server/pyproject.toml
+          grep -H '^version = ' pyproject.toml
 
       - name: Commit, tag and push
         id: push
@@ -76,7 +74,7 @@ jobs:
           set -eux
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add pipeline/pyproject.toml server/pyproject.toml uv.lock
+          git add pyproject.toml uv.lock
           git commit -m "release v$VERSION"
           git tag "v$VERSION"
           # --atomic: the branch and the tag land together, or neither does.
@@ -86,14 +84,14 @@ jobs:
   # The server image, from the same commit. Classic builder, linux/amd64,
   # plain docker push — see AGENTS.md. Docker Hub is the public copy; the
   # Alibaba registry is the one Function Compute deploys, because it can pull
-  # from nowhere else (server/terraform/README.md).
+  # from nowhere else (terraform/README.md).
   image:
     needs: tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
-          submodules: true   # contracts/ is the ats-strike-contract submodule.
+          submodules: true   # src/contracts/ is the ats-strike-contract submodule.
           ref: ${{ needs.tag.outputs.sha }}
 
       - name: Build it
@@ -165,7 +163,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          submodules: true   # contracts/ is the ats-strike-contract submodule.
+          submodules: true   # src/contracts/ is the ats-strike-contract submodule.
           ref: ${{ needs.tag.outputs.sha }}
           # mike commits onto gh-pages and needs the real history of it, not
           # the single commit a shallow clone would give it.

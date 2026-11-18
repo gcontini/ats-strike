@@ -6,8 +6,8 @@ import json
 
 import pytest
 
-from cv_pipeline import pack
-from cv_pipeline.errors import BadPartError, MissingPartError
+from pipeline_v1 import pack
+from pipeline_v1.errors import BadPartError, MissingPartError
 
 PROFILE = json.dumps({"skills": ["Go"]}).encode()
 DATA = json.dumps({"name": "Jordan Rivera"}).encode()

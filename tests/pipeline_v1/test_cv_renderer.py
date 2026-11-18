@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from cv_pipeline.cv_renderer import CVRenderer, check_pdf_pages
-from cv_pipeline.errors import LatexCompileError, LatexTimeoutError
+from pipeline_v1.cv_renderer import CVRenderer, check_pdf_pages
+from pipeline_v1.errors import LatexCompileError, LatexTimeoutError
 
 from pipeline_helpers import GOLDEN
 
@@ -205,7 +205,7 @@ def test_page_check_counts_only_the_lines_past_the_limit(monkeypatch, tmp_path):
         def __init__(self, pages): self.pages = pages
 
     def reader_with(*counts):
-        monkeypatch.setattr("cv_pipeline.cv_renderer.PdfReader",
+        monkeypatch.setattr("pipeline_v1.cv_renderer.PdfReader",
                             lambda p: FakeReader([FakePage(n) for n in counts]))
 
     reader_with(40, 40, 1)
@@ -227,7 +227,7 @@ def test_page_check_honors_a_custom_limit(monkeypatch, tmp_path):
         def __init__(self, pages): self.pages = pages
 
     monkeypatch.setattr(
-        "cv_pipeline.cv_renderer.PdfReader",
+        "pipeline_v1.cv_renderer.PdfReader",
         lambda p: FakeReader([FakePage(0), FakePage(1)]),
     )
     result = check_pdf_pages(tmp_path / "x.pdf", limit=1)

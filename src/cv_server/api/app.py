@@ -14,7 +14,7 @@ from typing import Optional
 from uuid import uuid4
 
 from cv_contracts import Failure
-from cv_pipeline import PipelineError, Run, configure_logging, use_run
+from pipeline_v1 import PipelineError, Run, configure_logging, use_run
 from fastapi import Depends, FastAPI
 from pydantic import ValidationError
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
@@ -28,7 +28,7 @@ from .settings import Settings
 logger = logging.getLogger("cv_server.api")
 
 #: The logger roots whose lines reach stdout and the request's run.
-LOGGER_ROOTS = ("cv_pipeline", "cv_server")
+LOGGER_ROOTS = ("pipeline_v1", "cv_server")
 
 API_PREFIX = "/v1"
 

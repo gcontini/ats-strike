@@ -13,7 +13,7 @@ import logging
 from typing import Tuple
 
 from cv_contracts import Envelope
-from cv_pipeline import PipelineError, current_run
+from pipeline_v1 import PipelineError, current_run
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError

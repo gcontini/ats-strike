@@ -1,12 +1,14 @@
 # Copilot Instructions — ats-strike
 
 **ats-strike** turns a job description into a tailored, two-page LaTeX CV and
-an optional cover letter. It is a `uv` workspace of three packages, split so
-each can be deployed and tested independently:
+an optional cover letter. It is one `uv` project, with the contracts as a
+path dependency:
 
 ```
-contracts/   cv_contracts  — pydantic models + envelope + the free JD guess
-server/      cv_server     — stateless FastAPI service: LLM calls + pdflatex
+src/contracts/     cv_contracts  — pydantic models + envelope + the free JD guess
+src/cv_server/     cv_server     — stateless FastAPI service: the protocol
+src/pipeline_v1/   pipeline_v1   — the CV pipeline: LLM calls + pdflatex
+resources/v1/                    — the pipeline's prompts, schemas, template
 ```
 
 The client (`cv_client`, the thing you run: clipboard/watch/submit/render) is
@@ -21,13 +23,13 @@ global state); this file is the file map and the day-to-day commands.
 
 ## Components (file map)
 
-**`contracts/src/cv_contracts/`** — the wire format, nothing else
+**`src/contracts/src/cv_contracts/`** — the wire format, nothing else
 - `payloads.py` — `CVStatus` (`status`: one of the six steps, `jd_evaluation`
   … `highlight`; `detail`: one line about the step before, no history),
   `RenderedCV` (`tex`, `pdf_base64`, `document`), `CoverLetter`,
   `ServerStatus`. The CV document is a raw flat dict with no schema — what the
   models wrote with your `candidate_data` merged over the top. What the writer
-  is asked for is described by the two JSON schemas in `server/resources/`,
+  is asked for is described by the two JSON schemas in `resources/v1/`,
   not here.
 - `jd.py` — `JDAnalysis` (the analysis endpoint's output), `JDDetection`
   (`is_job_description: bool`, nothing else — the reason lives in the log,
@@ -43,7 +45,7 @@ global state); this file is the file map and the day-to-day commands.
 - `guess.py` — `static_jd_guess(text) -> bool`, the free structural check
   (length band, no binary) both sides can run before paying for anything.
 
-**`server/src/cv_server/`** — personal data arrives per request; a CV
+**`src/cv_server/`** — personal data arrives per request; a CV
 job's session is the only thing kept
 - `api/app.py` — `create_app()`, the ASGI middleware that mints the request id
   (filtered: for a CV it names the session's directory) and sets the run
@@ -64,7 +66,9 @@ job's session is the only thing kept
   (acknowledge), `DELETE /v1/cv?all` (reset), `POST /v1/cv/render`.
 - `api/errors.py` — maps `PipelineError`/`ValidationError`/`openai.APIError`
   to a status and an `ok:false` envelope; never echoes the provider body.
-- `pipeline/cv_generator.py` — `CVGenerator`: adapticv-ai's six steps as a
+
+**`src/pipeline_v1/`** — everything that makes a CV; no HTTP
+- `cv_generator.py` — `CVGenerator`: adapticv-ai's six steps as a
   LangGraph `StateGraph` — `jd_evaluation` → `profile_scoring` →
   `format_selection` → `cv` → `validation` → `highlight` — with `Send` for
   the calls a step makes side by side (one per profile list, per experience),
@@ -73,19 +77,19 @@ job's session is the only thing kept
   memory, outputs returned, nothing read from a configured path; progress and
   step results leave through injected `progress(status, detail)` and
   `artifact(name, data)` callbacks, not a file.
-- `pipeline/cv_review.py` — the validation loop: the model reports each
+- `cv_review.py` — the validation loop: the model reports each
   violation as a `replace_in_body`/`replace_in_duties` tool call (schemas
   only), the code applies it and asks again, up to 5 rounds per document.
-- `pipeline/cv_renderer.py` — `CVRenderer`: Jinja (`\VAR{}`/`\BLOCK{}`
+- `cv_renderer.py` — `CVRenderer`: Jinja (`\VAR{}`/`\BLOCK{}`
   delimiters, `DictLoader` built fresh per request since the template can be
   client-supplied) → `pdflatex`, sandboxed (`-no-shell-escape`,
   `openin_any=p`/`openout_any=p`, no stdin, a timeout, its own scratch
   `mkdtemp` removed in a `finally`) → page count.
-- `pipeline/jd_validator.py`, `pipeline/letter_generator.py` — the other two
+- `jd_validator.py`, `letter_generator.py` — the other two
   LLM pipelines; same shape as `cv_generator.py`.
 - `models/` — `ModelSelector`: one LangChain chat model per role
   (`detect`/`analysis`/`letter` and the six CV steps) from
-  `resources/models.toml`, built by the role's `model_provider`
+  `resources/v1/models.toml`, built by the role's `model_provider`
   (`standard.py` on `ChatOpenAI`, `deepseek.py` on `ChatDeepSeek`), and two
   methods: `call_llm(role, type, system_prompt, messages)`, which returns a
   pydantic model, `bool`, `str` or a JSON `list`/`dict`, and
@@ -105,11 +109,11 @@ job's session is the only thing kept
   `LogEntry`s for the run. A CV job's `Run` has a `sink` — its session's
   append — and a running `total`; other requests' lines go to stdout only.
 
-**`server/resources/`** — the impersonal defaults baked into the image: four
+**`resources/v1/`** — the impersonal defaults baked into the image: four
 prompts, `resume.tex.jinja`, `models.toml`, a blank `candidate_signature.png`
 (the one image the stock template includes; a request's own images are merged
 over the defaults by file name).
-Packaged as `cv_server.resources` (see `server/pyproject.toml`) so
+Packaged as `pipeline_v1.resources` (see `pyproject.toml`) so
 `importlib.resources` still finds it despite living outside `src/`.
 
 **Shared**
@@ -161,13 +165,13 @@ Packaged as `cv_server.resources` (see `server/pyproject.toml`) so
 
 ## Conventions
 
-- Python 3.12, `uv` workspace (`pyproject.toml` at the root plus one per
-  package); `uv sync` installs all three in editable mode. Console scripts:
-  `ats-strike` (server), `cv` (client).
+- Python 3.12, one `uv` project (`pyproject.toml` at the root, the contracts
+  as a path dependency); `uv sync` installs both in editable mode. Console
+  scripts: `ats-strike` (server), `cv` (client).
 - LLM access via LangChain, to any OpenAI-compatible endpoint — one provider, one API key
   (`MODEL_API_KEY`/`MODEL_BASE_URL`; see `.env.example`), declared once in
   the `[provider]` table of
-  `server/resources/models.toml`. A role with `use_alternate_provider = N`
+  `resources/v1/models.toml`. A role with `use_alternate_provider = N`
   (N ≥ 2) calls provider N instead (`MODEL_API_KEY<N>`/`MODEL_BASE_URL<N>`).
   The roles
   (`detect`/`analysis`/`letter` and the six CV steps) each declare only
@@ -206,7 +210,7 @@ docker run --rm -p 8080:8080 --env-file .env ats-strike-server
 ```
 
 `pdflatex`-dependent tests skip themselves when it is not on `PATH`.
-`tests/pipeline/pipeline_helpers.py` wires a real `ModelSelector` to a fake HTTP
+`tests/pipeline_v1/pipeline_helpers.py` wires a real `ModelSelector` to a fake HTTP
 transport (`FakeLLM`), so request assembly, structured output and retries
 stay under test with no network call.
 
@@ -215,7 +219,7 @@ stay under test with no network call.
 - No test may need an API key, a network socket, or a terminal.
 - Fake at the transport boundary, not above it — inside `ModelSelector` —
   so the code that assembles a request is what actually runs under test.
-- `tests/pipeline/golden/cv_golden.tex` pins the whole render byte-for-byte; an
+- `tests/pipeline_v1/golden/cv_golden.tex` pins the whole render byte-for-byte; an
   escaping regression is otherwise invisible until someone reads a bad PDF.
 - ats-integration-tests' `tests/test_integration.py` is the one place client
   and server run together; keep it passing before touching either side's

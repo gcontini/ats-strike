@@ -1,1 +1,1 @@
-../contracts/PROTOCOL.md
+../src/contracts/PROTOCOL.md

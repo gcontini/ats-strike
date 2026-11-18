@@ -6,7 +6,7 @@ settings (see :mod:`.pack`) — and gives back values, or hands its outputs to a
 client keeps its files.
 
 Log lines and model-call costs flow through the active
-:class:`~cv_pipeline.observability.Run`, which the caller sets up. Every
+:class:`~pipeline_v1.observability.Run`, which the caller sets up. Every
 expected failure leaves as a :class:`PipelineError` with a ``kind``: a model
 endpoint's error becomes ``provider_timeout``, ``provider_unreachable`` or
 ``provider_error`` — its body never travels, it can carry the endpoint and the

@@ -23,13 +23,13 @@ and variables → Actions*:
 |---|---|---|
 | `DOCKERHUB_USERNAME` | secret | The Docker Hub account that owns `lmstch/ats-strike`. |
 | `DOCKERHUB_TOKEN` | secret | An access token for it, not the account password. |
-| `ACR_REPOSITORY` | variable | The Alibaba Container Registry repository Function Compute deploys from: `terraform output -raw push_repository` in `server/terraform`. |
+| `ACR_REPOSITORY` | variable | The Alibaba Container Registry repository Function Compute deploys from: `terraform output -raw push_repository` in `terraform/`. |
 | `ACR_USERNAME` | secret | Its registry username, from the console's *Access Credentials* page. |
 | `ACR_PASSWORD` | secret | Its fixed registry password. An AccessKey does not work. |
 
 Without them the `image` job fails at `docker login`, after the image has been
 built and checked — and because `release` waits on every job, no release
-page is published until they exist. `server/terraform/README.md` covers the Alibaba
+page is published until they exist. `terraform/README.md` covers the Alibaba
 side.
 
 **GitHub Pages**, once, under *Settings → Pages*: source **GitHub Actions**.
@@ -92,19 +92,19 @@ written in one place and everything else reads it:
 
 | Where | Who writes it |
 |---|---|
-| `pipeline/`, `server/` `pyproject.toml` | the workflow, with `sed` |
+| `pyproject.toml` | the workflow, with `sed` |
 | `uv.lock` | `uv lock`, in the same commit |
 | `/healthz` and the OpenAPI document | `importlib.metadata.version("ats-strike-server")` |
 
-`contracts/` is not: it is the ats-strike-contract submodule and keeps its
+`src/contracts/` is not: it is the ats-strike-contract submodule and keeps its
 own version there. A release ships whatever commit the submodule points at.
 
-`uv.lock` is in that list because it records each workspace member's version
-as well. A bump that did not regenerate it would commit a lock that disagrees
-with the manifests, which `uv lock --check` and `uv sync --locked` both refuse.
-The image itself would still be right — it installs the workspace members
-from source, so the manifest wins — but a repository whose lock contradicts
-its manifests is a trap for the next person.
+`uv.lock` is in that list because it records the project's version as well.
+A bump that did not regenerate it would commit a lock that disagrees with the
+manifest, which `uv lock --check` and `uv sync --locked` both refuse. The
+image itself would still be right — it installs the project from source, so
+the manifest wins — but a repository whose lock contradicts its manifest is a
+trap for the next person.
 
 What guards the version in the image is not the lock but the assertion: the
 image job reads `/healthz` from the container it just built, before it is

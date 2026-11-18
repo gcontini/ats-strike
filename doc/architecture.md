@@ -18,7 +18,7 @@ flowchart TB
 
     subgraph host["wherever you run it (one per server version)"]
         API["<b>cv_server</b><br/>the protocol: FastAPI, pack reader,<br/>sessions, SSE"]
-        PIPE["<b>cv_pipeline</b><br/>facade · pack · jd_validator · cv_generator (LangGraph)<br/>cv_review · cv_renderer · letter_generator"]
+        PIPE["<b>pipeline_v1</b><br/>facade · pack · jd_validator · cv_generator (LangGraph)<br/>cv_review · cv_renderer · letter_generator"]
         RES["resources<br/>prompts · schemas · resume.tex.jinja<br/>models.toml"]
         STORE["ATS_WORK_DIR<br/>one session per CV job"]
         API --> PIPE
@@ -40,7 +40,7 @@ flowchart TB
 `client → contracts ← server → pipeline`. The client and the server live in
 separate repositories and never import each other, the pipeline imports none
 of the others and knows no HTTP, and the server reaches the pipeline only
-through its top level (`from cv_pipeline import ...`);
+through its top level (`from pipeline_v1 import ...`);
 `tests/test_architecture.py`, here and in the client's repository, fails the
 build if any of that breaks. The contracts package depends on pydantic and nothing else: it
 is loaded both by a web server and by a frozen executable, and has to stay
@@ -49,16 +49,16 @@ cheap in both.
 | Package | Holds | Ships as |
 |---|---|---|
 | `client/` | Your server folders — profile, contact data, template, images — the output tree, the spreadsheet | A PyInstaller executable, ~1 file, from its own repository, [ats-strike-client](https://github.com/gcontini/ats-strike-client) |
-| `server/` | The protocol: request reading, auth, sessions, the event stream | Inside the container image |
-| `pipeline/` | Everything that makes a CV: the prompts and schemas, the models and their API keys, the LaTeX template and toolchain | Inside the container image, ~780 MB with TeX |
-| `contracts/` | The wire format: the envelope, the payloads, a thing to store, the protocol number, the free JD pre-check | A pydantic-only package with its own repository, [ats-strike-contract](https://github.com/gcontini/ats-strike-contract), checked out here as a git submodule |
+| `src/cv_server/` | The protocol: request reading, auth, sessions, the event stream | Inside the container image |
+| `src/pipeline_v1/`, `resources/v1/` | Everything that makes a CV: the prompts and schemas, the models and their API keys, the LaTeX template and toolchain | Inside the container image, ~780 MB with TeX |
+| `src/contracts/` | The wire format: the envelope, the payloads, a thing to store, the protocol number, the free JD pre-check | A pydantic-only package with its own repository, [ats-strike-contract](https://github.com/gcontini/ats-strike-contract), checked out here as a git submodule |
 
 The wire knows no pipeline: the client sends a **pack** — every file of a
 server folder — and stores what the server tells it to store. So one client
 talks to a 0.5, a 1.x and a 2.0 server, side by side on one posting, and
-`contracts/` is the same submodule and `server/src` the same files on every
+the contracts are the same submodule and `cv_server` the same code on every
 release line;
-only `pipeline/` differs. See [the protocol](protocol.md).
+only the pipeline differs. See [the protocol](protocol.md).
 
 ## What crosses the wire
 
@@ -116,7 +116,7 @@ events that are there.
 - **One semaphore.** `ATS_MAX_CONCURRENT_JOBS` (10) bounds requests in
   flight. A full server refuses immediately rather than queueing a caller for
   minutes.
-- **The pipeline is a library.** `cv_pipeline` takes the pack, the job and the
+- **The pipeline is a library.** `pipeline_v1` takes the pack, the job and the
   settings in memory and returns values, or hands its outputs to a sink; it
   resolves no paths and writes nothing outside the scratch directory it is
   handed. Its face is `Pipeline` (`detect`, `analyze`, `letter`, `cv`,
@@ -132,7 +132,7 @@ events that are there.
 ## The models
 
 One provider, one API key, one endpoint — declared once in the `[provider]`
-table of `pipeline/resources/models.toml`. Every role calls it, except a role that sets
+table of `resources/v1/models.toml`. Every role calls it, except a role that sets
 `use_alternate_provider = N` (N ≥ 2), which calls provider N instead — the
 `[provider]` variable names with N appended (`MODEL_API_KEY2` /
 `MODEL_BASE_URL2` for 2):
@@ -151,7 +151,7 @@ table of `pipeline/resources/models.toml`. Every role calls it, except a role th
 
 See [the CV pipeline](cv-pipeline.md) for how the last six fit together.
 
-Every call goes through `cv_pipeline.models`: one LangChain chat model per
+Every call goes through `pipeline_v1.models`: one LangChain chat model per
 role, built once at startup by the role's `model_provider` (`standard`, on
 `ChatOpenAI`, or `deepseek`, on `ChatDeepSeek`), and two methods.
 `ModelSelector.call_llm(role, type, system_prompt, messages)` returns the reply

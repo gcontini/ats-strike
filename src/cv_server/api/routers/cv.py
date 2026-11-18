@@ -24,7 +24,7 @@ from typing import AsyncIterator, List, Optional
 
 import anyio
 from cv_contracts import TERMINAL_EVENTS, Cleanup, CVSession, Envelope, Rendered
-from cv_pipeline import current_run
+from pipeline_v1 import current_run
 from fastapi import APIRouter, Header, Query, Request, UploadFile
 from fastapi.responses import StreamingResponse
 from starlette.concurrency import run_in_threadpool

@@ -21,7 +21,7 @@ from threading import Thread
 from typing import Any, Callable
 
 from cv_contracts import Done, Failure, Status
-from cv_pipeline import Run, Sink, use_run
+from pipeline_v1 import Run, Sink, use_run
 
 from ..jobstore import JobDir
 from .deps import AppState

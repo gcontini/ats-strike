@@ -16,9 +16,9 @@ from typing import Set
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = {
-    "contracts": REPO_ROOT / "contracts" / "src" / "cv_contracts",
-    "pipeline": REPO_ROOT / "pipeline" / "src" / "cv_pipeline",
-    "server": REPO_ROOT / "server" / "src" / "cv_server",
+    "contracts": REPO_ROOT / "src" / "contracts" / "src" / "cv_contracts",
+    "pipeline": REPO_ROOT / "src" / "pipeline_v1",
+    "server": REPO_ROOT / "src" / "cv_server",
 }
 
 
@@ -49,22 +49,22 @@ def test_the_pipeline_imports_none_of_the_others_and_knows_no_http():
 def test_the_server_carries_no_model_latex_or_templating_library():
     """Those are the pipeline's; the server is the protocol."""
     used = imports_of(PACKAGES["server"])
-    assert "cv_pipeline" in used, "the check must see the imports it is checking"
+    assert "pipeline_v1" in used, "the check must see the imports it is checking"
     assert not used & {"openai", "langgraph", "jinja2", "pypdf"}
     assert not [name for name in used if name.startswith("langchain")]
 
 
 def test_the_server_uses_only_the_pipelines_top_level():
-    """``from cv_pipeline import ...``, never a submodule: the facade is the
+    """``from pipeline_v1 import ...``, never a submodule: the facade is the
     whole interface, so a pipeline of another version can sit behind it."""
     reached = []
     for path in PACKAGES["server"].rglob("*.py"):
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
-                reached += [a.name for a in node.names if a.name.startswith("cv_pipeline.")]
+                reached += [a.name for a in node.names if a.name.startswith("pipeline_v1.")]
             elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
-                if node.module.startswith("cv_pipeline."):
+                if node.module.startswith("pipeline_v1."):
                     reached.append(node.module)
     assert reached == []
 

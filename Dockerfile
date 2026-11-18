@@ -7,8 +7,8 @@
 #     docker build -t ats-strike-server .
 #     docker run --rm -p 8080:8080 --env-file .env ats-strike-server
 #
-# Built from the repository root's contracts/, pipeline/ and server/ — the
-# whole workspace. The client is the ats-strike-client repository and shares
+# Built from the repository root's src/ (the contracts included) and
+# resources/. The client is the ats-strike-client repository and shares
 # nothing but the contracts package.
 #
 # Classic-builder safe: no BuildKit features and no heredocs.
@@ -26,21 +26,18 @@ ENV UV_COMPILE_BYTECODE=1 \
 WORKDIR /app
 
 # Dependencies first, so this layer is rebuilt only when the lock file changes.
-# The workspace members must be present for uv to resolve against the lock.
+# The contracts' pyproject must be present for uv to read against the lock;
+# the project and the contracts (a local path dependency) come next.
 COPY pyproject.toml uv.lock README.md ./
-COPY contracts/pyproject.toml ./contracts/
-COPY pipeline/pyproject.toml ./pipeline/
-COPY server/pyproject.toml ./server/
-RUN uv sync --frozen --no-dev --package ats-strike-server --no-install-workspace
+COPY src/contracts/pyproject.toml ./src/contracts/
+RUN uv sync --frozen --no-dev --no-install-project --no-install-local
 
 # Then the code, which changes on every commit. --no-editable copies the
 # packages into the venv instead of linking them back to /app/src, so the
 # runtime stage needs nothing but the venv itself.
-COPY contracts/src ./contracts/src
-COPY pipeline/src ./pipeline/src
-COPY pipeline/resources ./pipeline/resources
-COPY server/src ./server/src
-RUN uv sync --frozen --no-dev --package ats-strike-server --no-editable
+COPY src ./src
+COPY resources/v1 ./resources/v1
+RUN uv sync --frozen --no-dev --no-editable
 
 
 # ---------------------------------------------------------------------------
@@ -64,12 +61,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         cm-super \
     && rm -rf /var/lib/apt/lists/*
 
-# fontawesome5 is vendored (docker/vendor/, see the README there) rather than
+# fontawesome5 is vendored (resources/docker/vendor/, see the README there) rather than
 # pulled from the 1.7 GB texlive-fonts-extra or fetched from CTAN at build
 # time — no network access needed for this step. The shell lives in a script
 # file rather than a Dockerfile heredoc because heredocs need BuildKit, and
 # this has to build on the classic builder too.
-COPY server/docker/vendor/fontawesome5.tar.xz server/docker/install-fontawesome5.sh /tmp/
+COPY resources/docker/vendor/fontawesome5.tar.xz resources/docker/install-fontawesome5.sh /tmp/
 RUN /tmp/install-fontawesome5.sh /tmp/fontawesome5.tar.xz \
     && rm /tmp/fontawesome5.tar.xz /tmp/install-fontawesome5.sh
 
@@ -85,7 +82,7 @@ ENV PATH="/app/.venv/bin:$PATH" \
     TEXMFVAR=/tmp/texmf-var
 
 COPY --from=build /app/.venv /app/.venv
-COPY server/docker/entrypoint.sh /usr/local/bin/
+COPY resources/docker/entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh && mkdir -p /tmp/ats-strike
 
 EXPOSE 8080

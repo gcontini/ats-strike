@@ -5,8 +5,8 @@ import json
 import pytest
 from pydantic import ValidationError
 
-from cv_pipeline.schemas import JDAnalysis
-from cv_pipeline.jd_validator import JDValidator
+from pipeline_v1.schemas import JDAnalysis
+from pipeline_v1.jd_validator import JDValidator
 from pipeline_helpers import FakeLLM
 
 VALID = {

@@ -12,8 +12,8 @@ from dataclasses import replace
 import httpx
 import pytest
 
-from cv_pipeline.bundle import CandidateInputs
-from cv_pipeline.cv_generator import (
+from pipeline_v1.bundle import CandidateInputs
+from pipeline_v1.cv_generator import (
     ARTIFACTS,
     CVGenerator,
     capped_coverage,
@@ -22,8 +22,8 @@ from cv_pipeline.cv_generator import (
     scores_of,
     without_scores,
 )
-from cv_pipeline.cv_renderer import CVRenderer, RenderResult
-from cv_pipeline.errors import BudgetExceededError, ModelOutputError
+from pipeline_v1.cv_renderer import CVRenderer, RenderResult
+from pipeline_v1.errors import BudgetExceededError, ModelOutputError
 
 from pipeline_helpers import (
     KEY_POINTS,

@@ -9,8 +9,8 @@ import shutil
 import httpx
 import pytest
 
-from cv_pipeline import Output, Pipeline, PipelineError
-from cv_pipeline.cv_generator import ARTIFACTS
+from pipeline_v1 import Output, Pipeline, PipelineError
+from pipeline_v1.cv_generator import ARTIFACTS
 
 from pipeline_helpers import EXAMPLE_CANDIDATE, SAMPLE_BODY, script_cv
 
@@ -110,11 +110,11 @@ def test_a_cv_runs_on_its_own_roles_extra_bodies_only(pipeline, fake_llm, exampl
 @pytest.fixture
 def pipeline_lines():
     """Every line the pipeline logs, whether or not a server set logging up
-    (a server stops ``cv_pipeline`` propagating, so ``caplog`` would miss them)."""
+    (a server stops ``pipeline_v1`` propagating, so ``caplog`` would miss them)."""
     lines: list[str] = []
     handler = logging.Handler(logging.INFO)
     handler.emit = lambda record: lines.append(record.getMessage())
-    logger = logging.getLogger("cv_pipeline")
+    logger = logging.getLogger("pipeline_v1")
     level = logger.level
     logger.setLevel(logging.INFO)
     logger.addHandler(handler)

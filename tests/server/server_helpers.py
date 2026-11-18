@@ -13,12 +13,12 @@ from dataclasses import dataclass
 from types import SimpleNamespace
 from typing import Any, Dict, List, Optional, Union
 
-from cv_pipeline import PipelineError, current_run
+from pipeline_v1 import PipelineError, current_run
 
 #: A posting the free check lets through.
 POSTING = "Job posting. " * 120
 
-logger = logging.getLogger("cv_pipeline.stub")
+logger = logging.getLogger("pipeline_v1.stub")
 
 
 @dataclass(frozen=True)
@@ -49,7 +49,7 @@ def a_model_call() -> None:
 
 
 class StubPipeline:
-    """Stands in for :class:`cv_pipeline.Pipeline`: records each call and
+    """Stands in for :class:`pipeline_v1.Pipeline`: records each call and
     answers with canned values. No model, no LaTeX, no files.
 
     ``failure``, when set, is raised by the next long call after its model

@@ -63,7 +63,7 @@ docker run -d -p 8080:8080 \
 The second key is DeepSeek's: the six steps that write a CV run there.
 
 Any OpenAI-compatible provider works — see
-[`server/README.md`](server/README.md) for the other providers and the full
+[`doc/server.md`](doc/server.md) for the other providers and the full
 environment table. `curl localhost:8080/healthz` should report `pdflatex: true`.
 
 **2. Download the client** — a single executable, no Python required, from

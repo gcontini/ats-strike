@@ -11,7 +11,7 @@ import json
 
 import pytest
 
-from cv_pipeline.bundle import CandidateInputs, ResourceBundle, default_bundle
+from pipeline_v1.bundle import CandidateInputs, ResourceBundle, default_bundle
 
 from pipeline_helpers import EXAMPLE_CANDIDATE, GOLDEN, FakeLLM, sample_cv
 

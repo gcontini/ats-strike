@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          submodules: true   # contracts/ is the ats-strike-contract submodule.
+          submodules: true   # src/contracts/ is the ats-strike-contract submodule.
           # mike commits onto gh-pages and needs the real history of it, not
           # the single commit a shallow clone would give it.
           fetch-depth: 0

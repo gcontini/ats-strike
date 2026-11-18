@@ -3,9 +3,9 @@
 import json
 
 import pytest
-from cv_pipeline.schemas import JDAnalysis
+from pipeline_v1.schemas import JDAnalysis
 
-from cv_pipeline.models import Usage
+from pipeline_v1.models import Usage
 
 from pipeline_helpers import FakeLLM, completion
 
@@ -121,7 +121,7 @@ def test_deepseek_thinking_switch():
 
 
 def test_deepseek_function_calling_reads_the_tool_call():
-    from cv_pipeline.schemas import JDDetection
+    from pipeline_v1.schemas import JDDetection
 
     llm = FakeLLM(detect=dict(
         model_provider="deepseek", thinking="off", structured_output="function_calling",

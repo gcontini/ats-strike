@@ -2,7 +2,7 @@
 
 import pytest
 
-from cv_pipeline.letter_generator import MAX_WORDS, MIN_WORDS, LetterGenerator
+from pipeline_v1.letter_generator import MAX_WORDS, MIN_WORDS, LetterGenerator
 
 from pipeline_helpers import FakeLLM
 

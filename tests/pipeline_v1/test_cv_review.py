@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from cv_pipeline.models import Usage
-from cv_pipeline.cv_review import (
+from pipeline_v1.models import Usage
+from pipeline_v1.cv_review import (
     MAX_VALIDATIONS,
     ReplaceInBody,
     ReplaceInDuties,

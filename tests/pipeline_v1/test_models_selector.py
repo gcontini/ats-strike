@@ -3,12 +3,12 @@
 import httpx
 import openai
 import pytest
-from cv_pipeline.schemas import JDAnalysis, JDDetection
+from pipeline_v1.schemas import JDAnalysis, JDDetection
 
-from cv_pipeline.models import ATTEMPTS, Usage
-from cv_pipeline.observability import stage
-from cv_pipeline.cv_review import ReplaceInDuties
-from cv_pipeline.errors import ModelOutputError
+from pipeline_v1.models import ATTEMPTS, Usage
+from pipeline_v1.observability import stage
+from pipeline_v1.cv_review import ReplaceInDuties
+from pipeline_v1.errors import ModelOutputError
 
 from pipeline_helpers import FakeLLM, tool_completion
 
