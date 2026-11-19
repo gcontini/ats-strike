@@ -10,6 +10,10 @@ contracts, and no configuration read except at build time. It uses v1's infrastr
 - ``tree`` — :class:`TreeBuilder`: the tree shaped from the items and the market, and each
   experience's items linked to its leaves.
 - ``terms`` — pure text helpers: whole-word term matching, compound phrases, copy detection.
+- ``pool_store`` — the pool's shapes, its derived values (lines, leaves, terms, weight), checks and view.
+- ``pool`` — :class:`PoolWriter`: everything a CV prints from the experiences, written once — per
+  story a ladder of bullets and, for a long story, groups; per experience a role summary and a
+  compact line; for the profile, skill phrases and summary frames.
 
 Its prompts and its own ``models.toml`` are ``resources/v2``, packaged as
 ``pipeline_v2.resources``.
@@ -19,6 +23,8 @@ import importlib.resources
 from pathlib import Path
 
 from .items import ItemCompiler
+from .pool import PoolWriter
+from .pool_store import Pool, pool_checks, pool_dump, pool_markdown, validate_pool
 from .store import Items, items_markdown, validate
 from .tree import TreeBuilder
 from .tree_store import Market, Tree, leaf_status, tree_dump, tree_markdown, validate_tree
@@ -40,13 +46,19 @@ __all__ = [
     "ItemCompiler",
     "Items",
     "Market",
+    "Pool",
+    "PoolWriter",
     "Tree",
     "TreeBuilder",
     "items_markdown",
     "leaf_status",
+    "pool_checks",
+    "pool_dump",
+    "pool_markdown",
     "resources_dir",
     "tree_dump",
     "tree_markdown",
     "validate",
+    "validate_pool",
     "validate_tree",
 ]

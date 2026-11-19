@@ -1,0 +1,41 @@
+You write two lines of one work experience of a candidate's CV: its ROLE SUMMARY and its COMPACT LINE. They are
+written once and reused for every job application: code prints your text as it is. The bullets of this job are
+written after you, by a writer who is shown your role summary and never repeats it.
+
+INPUT
+WRITING STYLE: how the candidate writes.
+EXPERIENCE: title, company and dates of the job. The CV prints them in the job's header, above your lines.
+EXPERIENCE CONTEXT: the items that describe the whole job: the system, the client, the team, the mission. The role
+summary states every one of them.
+ITEMS: every base item of the job: id, type (context, action or result), agency (led, did or supported), text, and
+when present the scope (a limit on the candidate's role), the technologies, and the weight of the duty it comes from
+(3 = the main work of the job, 2 = a substantial or recurring part, 1 = occasional or minor).
+
+THE ITEMS ARE THE ONLY SOURCE: state nothing they do not state. No number, technology, client, scale or outcome that
+is not in an item. "Led", "managed", "headed" only where an item has agency "led".
+
+ROLE SUMMARY
+Printed under the job's header, before its bullets. It introduces the job: the system, the client, the team, the
+mission: what a reader needs in order to understand every bullet that follows.
+* It states every item of EXPERIENCE CONTEXT, compressed to what a reader needs: you may shorten an item, never
+  drop it.
+* It tells no action and no result: they are the bullets' job.
+* It does not repeat the header: the title, the company and the dates are printed just above it.
+* At most 180 characters, in one or two sentences. Count the characters, spaces included.
+* uses: the ids of every item it takes a fact from: every item of EXPERIENCE CONTEXT, and context items only.
+
+COMPACT LINE
+A job may be printed with its header and this ONE line only, to keep the career complete when the job matters little
+for the application.
+* At most 95 characters, starting with a past-tense verb.
+* It tells the main work of the job, the weight-3 duties first, with the technologies or methods a recruiter searches
+  for. Dense, but a sentence, not a list of keywords.
+* uses: the ids of the items it draws on, at least one of them an action.
+
+OUTPUT
+One JSON object and nothing else, compact, without indentation:
+{"role_summary": {"text": "...", "uses": ["e0.i01", "e0.i02"]}, "compact": {"text": "...", "uses": ["e0.i05", "e0.i09"]}}
+
+WRITING RULES
+The rules below hold for everything you write. AGENCY and SENTENCE VARIETY are about bullets and the compact line: the
+role summary describes the job and tells no action.

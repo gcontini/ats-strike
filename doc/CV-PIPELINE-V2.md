@@ -1,8 +1,9 @@
 # CV pipeline v2: design
 
-Status: draft, 2026-11-12, updated 2026-11-18. The probe of
+Status: draft, 2026-11-12, updated 2026-11-19. The probe of
 [section 11](#11-plan-of-work) has run: **go**, on the conditions listed there. The
-repository has the new layout, and v2's first step, the base items, is built. This
+repository has the new layout, and v2's first three steps, the base items, the
+competence tree and the pool, are built. This
 replaces the draft of 2026-11-10, which compiled the profile into facts and still
 wrote every CV with a model;
 [section 12](#12-alternatives-considered) says what was kept from it. v2 is a second
@@ -125,7 +126,9 @@ carries such items, so the store adds nothing to the wire.
 For the probe's profile (five experiences) the store came to 120 items in 27
 stories, a tree of 176 nodes, and a pool of 162 bullets, 5 compact lines, 5 role
 summaries, 39 skill phrases and 5 summary frames. Compiling it took about 30
-model calls.
+model calls. Built for the current profile so far: 114 items in 26 stories, a tree of 171
+nodes, and a pool of 165 bullets, 5 role summaries, 5 compact lines, 40 skill
+phrases and 6 summary frames.
 
 ### 4.1 Base items and stories
 
@@ -180,8 +183,10 @@ on a competence and a specific one on a leaf.
 
 It is built in this order:
 
-1. **Collect what the market asks.** Run the existing `jd_evaluation` on a
-   sample of job descriptions, spread over role families and languages.
+1. **Collect what the market asks,** in code, from data already on disk: the
+   requirements of the candidate's own applications, and the skills the job
+   search's analysis already lists for every job description it collected. The
+   test set's job descriptions, and the held-out ones, are left out.
 2. **Tag what the profile proves.** Each base item gets competence tags.
 3. **Join them.** A model drafts the tree from both lists. Each node takes the
    market's most frequent name and lists its aliases ("Kubernetes", "K8s"). A
@@ -224,13 +229,33 @@ What the probe taught about the tree:
   test set's job descriptions left out, since every one of them also sits in
   the corpus.
 
+Built (2026-11-19), with the probe's lessons applied:
+
+- **Leaf status is computed in code** on every load. A leaf is proven by a
+  level-3 link from an action or result item, by two such items, by a fixed
+  section, or by the candidate's confirmation; weak on a single weak link or on
+  context alone; a ghost otherwise. Two attach runs moved four leaves, none
+  between proven and ghost (the probe: six), and 87% of the links were in both
+  (the probe: 77%).
+- **Naming faults go back to the model** in the shape's one correction, with
+  the structural faults: no compound name was left (the probe: 35).
+- The market list counts 788 terms from 2,735 corpus job descriptions and 41
+  applications, with no model call. A part split off a compound skill is kept
+  only where it also stands alone.
+- On the ten held-out job descriptions, 81% of the requirements' importance
+  has a keyword the tree knows (the probe: 70%). Two allocations share 81.5% of
+  their points, and 0.35% of importance lands nowhere: G2 still passes. The job
+  furthest from the profile's centre rose from 66% to 73%; the paid sample of
+  job descriptions that was to widen the margins further was not built.
+- After the candidate's review: 119 leaves, 60 proven, 12 weak and 47 ghosts.
+
 The tree's names and aliases are also what gets printed in the skills block
 and in the summary's keyword slot. That is why the naming matters.
 
 ### 4.3 The pool
 
 - **Bullets on a ladder.** Each story is written at 1, 2 and 3 lines, to the
-  line grid, and each rung in 2 or 3 wordings. For the disaster recovery story
+  line grid, and each rung in 2 wordings. For the disaster recovery story
   of the example candidate:
 
   | Rung | Text |
@@ -269,6 +294,27 @@ Each bullet and group carries:
 - its nodes and how fully it proves each;
 - its line count and the terms it contains;
 - its narrative weight: the highest among the duties of the items it covers.
+
+Built (2026-11-19), for the current profile:
+
+- **18 model calls in about 9 minutes**, in two rounds: one call per experience
+  for its role summary and compact line, then the ladder calls (a long story
+  alone, the others up to four to a call) beside one call for the skill phrases
+  and frames. The probe took 10 calls and about 41 minutes. A changed experience
+  costs its own calls only: 3 in the check.
+- 165 bullets: 138 on ladders and 27 in 13 groups, which cover all six long
+  stories (the probe: 12 in 5). Median lengths per rung 88, 144 and 228
+  characters (the probe: 80, 141, 237). Every action and result item is covered
+  by some piece (the probe missed one of 82).
+- Each role summary states the whole of its experience's shared context in two
+  lines. No ladder bullet restates it; 82 of 138 lean on it, and code checks
+  that what a bullet leans on is stated there.
+- Every number in a summary frame is traced by code to an item or to the dates.
+- Model replies are parsed in code, so a reply whose JSON breaks goes back once
+  with the place it breaks. Asking for groups as a flat list, each bullet with
+  its group's number, stopped the breaks: a list of lists broke 6 of 17 calls.
+- Code drops what the rules refuse, with the reason: a group of a short story, a
+  fourth group, a bullet shorter than its rung.
 
 ### 4.4 Review
 
@@ -582,8 +628,8 @@ Then the build, one sub-plan each:
 |---|---|---|
 | R | Repository layout | done: one project, with `src/pipeline_v1` (the former pipeline package), `src/cv_server`, the contracts submodule in `src/contracts`, `resources/v1`, `resources/docker` and `terraform/`; v1 unchanged |
 | S1 | Base items and stories | done: the decomposition prompt, the source check, item types; shared context at the experience level; stories by piece of work, with anchors; narrative weights; code in `src/pipeline_v2` |
-| S2 | Competence tree | corpus terms (the test set's copies left out), the shape and attach prompts, `proven` on more than one weak attachment, the alias check, ghost leaves, the held-out test |
-| S3 | Pool | role summary first, ladder, wordings, up to three group views per long story, what each piece leans on and its check, compact lines, skill phrases on strong leaves, summary frames with checks |
+| S2 | Competence tree | done: the market list in code (the test set's copies left out), the shape and attach prompts, leaf status in code (proven, weak, ghost), two term lists per node, ghost leaves, the held-out test |
+| S3 | Pool | done: role summary first, ladder, wordings, up to three group views per long story, what each piece leans on and its check, compact lines, skill phrases on strong leaves, summary frames with checks |
 | S4 | Review and store | the pool review prompt, edits refused over the limit, the marking loop, the store as cache items, lock rules |
 | H | One server, several pipelines | each pipeline under its own path; the client names the pipeline per server; the 0.5 line as `src/pipeline_v0` |
 | S5 | Allocation | the prompt, relations, point rules, English literal terms, the unmatched report, pending aliases |

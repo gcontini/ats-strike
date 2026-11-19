@@ -53,7 +53,7 @@ cheap in both.
 | `client/` | Your server folders — profile, contact data, template, images — the output tree, the spreadsheet | A PyInstaller executable, ~1 file, from its own repository, [ats-strike-client](https://github.com/gcontini/ats-strike-client) |
 | `src/cv_server/` | The protocol: request reading, auth, sessions, the event stream | Inside the container image |
 | `src/pipeline_v1/`, `resources/v1/` | Everything that makes a CV: the prompts and schemas, the models and their API keys, the LaTeX template and toolchain | Inside the container image, ~780 MB with TeX |
-| `src/pipeline_v2/`, `resources/v2/` | CV pipeline 2.0, being built beside v1: a store compiled once per profile (so far its base items and stories, and a competence tree whose leaves are linked to the items), with its own prompts and `models.toml` | Inside the image too, but no endpoint serves it yet |
+| `src/pipeline_v2/`, `resources/v2/` | CV pipeline 2.0, being built beside v1: a store compiled once per profile (so far its base items and stories, a competence tree whose leaves are linked to the items, and the pool: everything a CV prints from the experiences, written once — per story a ladder of bullets at 1, 2 and 3 lines and up to three groups for a long one, per experience a role summary and a compact line, for the profile skill phrases and summary frames), with its own prompts and `models.toml` | Inside the image too, but no endpoint serves it yet |
 | `src/contracts/` | The wire format: the envelope, the payloads, a thing to store, the protocol number, the free JD pre-check | A pydantic-only package with its own repository, [ats-strike-contract](https://github.com/gcontini/ats-strike-contract), checked out here as a git submodule |
 
 The wire knows no pipeline: the client sends a **pack** — every file of a
@@ -161,7 +161,7 @@ same `ATS_<ROLE>_<FIELD>` overrides, and its own roles (`pipeline_v2.ROLES`);
 
 | Role | Used for | Shipped as |
 |---|---|---|
-| `compile` | Compiling the store once per profile: each experience cut into base items and stories, one call each; the competence tree shaped in one call from the items, the market list and the profile's fixed sections, then each experience's items linked to its leaves, one call each | `qwen3.8-max` on provider 4, thinking on, `thinking_budget` 8,000 |
+| `compile` | Compiling the store once per profile: each experience cut into base items and stories, one call each; the competence tree shaped in one call from the items, the market list and the profile's fixed sections, then each experience's items linked to its leaves, one call each; the pool in two fan-outs: one call per experience for its role summary and compact line, then side by side its ladder calls (a long story alone, the others four at most to a call, each shown the role summary and the experience's context) and one call for the skill phrases and summary frames | `qwen3.8-max` on provider 4, thinking on, `thinking_budget` 8,000 |
 
 Every call goes through `pipeline_v1.models`: one LangChain chat model per
 role, built once at startup by the role's `model_provider` (`standard`, on

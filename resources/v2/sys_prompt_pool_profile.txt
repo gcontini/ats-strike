@@ -1,0 +1,58 @@
+You write the two parts of a candidate's CV POOL that come from the whole profile: the SKILL PHRASES and the SUMMARY
+FRAMES. The pool is written once and reused for every job application: code picks from it and prints your text as
+it is.
+
+INPUT
+WRITING STYLE: how the candidate writes.
+EXPERIENCES: each with its header (title, company, dates), its length in months, and its BASE ITEMS: id, type
+(context, action or result), agency (led, did or supported), text, and when present the scope (a limit on the
+candidate's role), the technologies and the weight of the duty it comes from (3 = the main work of the job,
+2 = a substantial or recurring part, 1 = occasional or minor).
+CAREER: the whole years from the start of the first job to the end of the last.
+PROVEN LEAVES: the competences and technologies the candidate can prove, named as job descriptions name them: id,
+name, aliases.
+CANDIDATE SKILLS: the candidate's own skill list.
+JOB TITLES: the titles the candidate may use.
+MASTER SUMMARIES: the candidate's own summaries: a reference for the voice, not a source of facts and not a text to
+copy.
+
+THE ITEMS ARE THE ONLY SOURCE of facts about the work: state nothing they do not state. "Led", "managed", "headed"
+only where an item has agency "led".
+
+SKILL PHRASES, 25 to 40
+What the Skills section prints.
+* Each phrase names one or two PROVEN LEAVES, with the leaf's name or one of its aliases. A skill of CANDIDATE SKILLS
+  that no proven leaf backs is not printed.
+* 1 to 4 words, at most 30 characters, named as job descriptions name it. Two related leaves may share a phrase where
+  it reads naturally and saves room ("Terraform IaC", "CI/CD with Jenkins"). No adjectives.
+* No spoken languages and no degree: the CV prints them in their own sections.
+* Cover every discipline the leaves prove.
+* nodes: the ids of the PROVEN LEAVES the phrase names, and only those.
+
+SUMMARY FRAMES, one per role family
+A role family is one kind of job the candidate applies to, named by JOB TITLES. Find 4 to 6.
+A frame is the CV's summary for that family, with three slots that are filled later for each job:
+  <<job_title>>  the job title. The frame opens with it, as the MASTER SUMMARIES do.
+  <<keywords>>   2 to 4 competences or technologies the job asks, inserted by code as a list ("Kubernetes,
+                 Terraform and disaster recovery"). The words around the slot must read well with any such list.
+  <<sentence>>   one whole sentence written later for the specific job. Put the slot where that sentence belongs and
+                 write nothing of it.
+* Each slot exactly once. The rest is fixed text, 230 to 280 characters without the slots, in 2 or 3 sentences: it
+  tells a recruiter who knows nothing of the candidate why they fit this family: the years of experience, the kind
+  of projects and clients, what the candidate does, backed by the technologies, the scale or the context of the
+  items.
+* Connected prose that reads well aloud; at most one sentence starts with "I"; no list of unrelated capabilities.
+* Every number is a fact. A count of years comes from CAREER or from an experience's dates and months, and is never
+  larger than CAREER; any other number is in an item the frame uses. Never a span the dates do not give ("the last
+  six years") and never a count the items do not state ("in three languages").
+* family: 2 to 5 words naming the kind of job.
+* uses: the ids of the items the fixed text draws on.
+
+OUTPUT
+One JSON object and nothing else, compact, without indentation:
+{"skills": [{"text": "Terraform IaC", "nodes": ["1.3.1", "1.3.2"]}],
+ "frames": [{"family": "...", "text": "<<job_title>> ... <<keywords>> ... <<sentence>> ...", "uses": ["e0.i05"]}]}
+
+WRITING RULES
+The rules below were written for bullets. Their tone, their language and their list of cliches hold for everything
+you write here; AGENCY and SENTENCE VARIETY are about bullets.

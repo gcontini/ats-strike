@@ -1,0 +1,40 @@
+(These writing rules are sections 3 and 4 of v1's duties prompt, resources/v1/sys_prompt_cv_duties.txt, adapted for the pool.)
+
+3. TONE, LANGUAGE & AGENCY
+   * Tone: Natural, grounded, professional and concrete. No fabrications or exaggerations.
+   * Style & Language: follow WRITING STYLE when given. (If it is absent, default to C1 English: polished, direct, highly structured).
+   * Eliminate AI clichés:
+     - Avoid stacking buzzwords in the same sentence. Avoid buzzwords at all if possible: prohibited buzzwords: "spearheaded", "seasoned professional", "passionate", "dynamic", "significantly impact", "exceptional", "go-to", "known for", "proven expertise"...
+     - Verb Stacking: Redundant coupling of synonymous verbs (e.g., "Spearheaded and directed").
+     - Forbidden Abstract Nouns (Nominalizations): cross-team collaboration, vendor governance, strategic alignment, operational excellence, business value, thought leadership...
+     - Formulaic Action + Conjunction Pairs: E.g., [Grand Verb] + [Task] + ("thereby" / "resulting in" / "ensuring") + [Vague Benefit].
+     - Synthetic Metrics: Generic percentages or round numbers lacking a clear technical baseline or implementation context. Use the real data instead.
+     - Passive/Optimistic Framing: Prioritizing abstract corporate morale words ("maximizing efficiency", "fostering collaboration") over concrete technical actions ("refactored memory pool", "reduced CI latency").
+   * AGENCY: in EACH bullet the candidate or their team must be explicitly part of the action
+     ("I designed...", "My library...", "My team delivered...", "A JNI bridge I engineered...").
+     Quick check: if the bullet has a pronoun that refers to the candidate (I, me, my, we, our), it is OK.
+     A bullet that starts with a past-tense verb ("Designed...") or with an adjective of ownership ("Responsible
+     for...") has the candidate as its subject: it is OK too.
+   * SENTENCE VARIETY: the two wordings of a rung are read as alternatives, and the bullets of a group as one list, as a recruiter would: they must not sound the same.
+     - An opening phrase before the action is welcome when it tells a situation, a problem, a purpose or a method
+       (shapes h-l below). Do not open with a short phrase that only names a topic or a partner or a place
+       (eg: "For the payments project, I...", "With the client, I..."): put that after the action.
+     - The two wordings of a rung never start with the same word. Within a group, no two bullets start with the same word, and no two use the same main verb.
+     - Mix these shapes, choosing for each bullet the one that reads most naturally and that the other wording of its rung, or the previous bullet of its group, has NOT used; best to use one never used before [except for (a) shape that can be more frequent]:
+       a) Past-tense verb: "Moved the billing database to a managed cluster with no downtime."
+       b) I + verb: "I wrote the security requirements for the new network."
+       c) Possessive subject: "My team of four ran the cut-over in one weekend."
+       d) Adjective of ownership: "Responsible for the release pipeline of the payments platform...", "In charge of..."
+       e) Two sentences: "The nightly build took three hours. I split it into parallel jobs."
+       f) Result first: "Zero data lost in the yearly disaster test after my team rebuilt the backups."
+       g) Topic and colon: "Payments API: I designed the retry logic and the idempotency keys."
+       h) Context clause: "When traffic doubled, I scaled the platform to..."
+       i) Problem/Constraint first: "Facing strict memory bounds, I refactored..."
+       j) Purpose first: "To eliminate build bottlenecks, I introduced..."
+       k) Method first: "Leveraging custom template metaprogramming, I built..."
+       l) Scope/Role frame: "As lead architect, my responsibility covered..."
+       m) Only inside a group, never on a ladder: a reference to an earlier bullet of the same group, eg: "During that migration, I also...".
+     - Shapes from h to l looks similar, do not place them in consecutive bullets of a group. To introduce variations h,i,j can be expressed also using the two sentences pattern (e)
+
+4. FORMATTING
+   * Character Set: Use standard ASCII characters only. No special symbols, unicode, or non-ASCII characters.

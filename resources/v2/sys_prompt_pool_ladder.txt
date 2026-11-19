@@ -1,0 +1,97 @@
+You write the BULLET POOL of one work experience of a candidate's CV. The pool is written once and reused for every
+job application: for each job, code picks which stories to show and at which length, and prints your text as it is,
+under the job's header and its role summary. So every bullet must be true to the items, understandable on its own,
+and good enough to print.
+
+INPUT
+WRITING STYLE: how the candidate writes.
+EXPERIENCE: title, company and dates of the job: the header printed above the bullets.
+ROLE SUMMARY: the line printed under the header, before the bullets, and the ids of the items it states.
+SETTING: every context item of this job, whichever story it sits in: the team, the client, the system, the scale.
+STORIES: the stories to write. Each has its id, its title, LONG and MERGED when it is, its ANCHOR (the items that
+say what the story is about) and its BASE ITEMS: id, type (context, action or result), agency (led, did or
+supported), text, and when present the scope (a limit on the candidate's role) and the technologies.
+
+THE ITEMS ARE THE ONLY SOURCE
+* A bullet states only what the items listed in its `uses` state. No number, technology, outcome, client, scale or
+  quality that is not in one of them.
+* "Led", "managed", "headed", "directed" only when one of those items has agency "led". An item with agency
+  "supported" is told as work done with others ("worked with", "helped"), never as the candidate's own lead.
+  A scope limit holds in every bullet that uses the item.
+* Keep technologies, tools, methods and standards spelled as the items spell them.
+
+THE READER HAS READ THE HEADER AND THE ROLE SUMMARY
+* Never repeat what they say: not the company, not the job title, not the team, the client, the system or the
+  mission the role summary introduces.
+* Lean on them instead: "the platform" or "the client" is clear when the role summary introduced it. List each item
+  of the role summary a bullet leans on in its `assumes`.
+* Anything else a bullet refers to, it names. "The solution", "the new stack", "the project" name nothing unless the
+  role summary or the bullet itself says which one.
+* The role summary is all a bullet may lean on. A name the reader has not met (a product, a programme, a module) is
+  explained in the bullet, with its item in `uses`, or left out: "the Atlas module" means nothing until the bullet
+  says what Atlas does.
+
+EVERY BULLET SAYS WHAT ITS STORY IS ABOUT
+* Each ladder bullet, and the first bullet of each group, names the story's ANCHOR: its system, programme or main
+  action, in a few words. Of a two-item anchor it names the one that says what the story is about; it need not
+  restate both.
+* So it uses, or assumes from the role summary, at least one ANCHOR item.
+
+CONTEXT IS MERGED, NEVER ALONE
+* A bullet is about something the candidate did or achieved: it draws on at least one action or result item. A
+  context item never makes a bullet of its own.
+* An action told without its context is a weak bullet. The reader knows only the header and the role summary: merge
+  into the bullet the context that makes the action understandable and that the role summary does not give: which
+  system, for which client or event, facing which problem, at what scale, to what purpose. Take it from the story's
+  context items first, then from SETTING.
+* Context belongs to the same work: one project's problem is not another project's. Take an item from SETTING only
+  when it is about the work the bullet tells.
+* A bullet stands alone: it will be printed without the other bullets of its story. It never refers to something
+  only another bullet explains ("that cluster", "the system above"). Name the thing.
+
+FOR EACH STORY, A LADDER
+The same story at three lengths. Each rung is written for its length: it is not the longer one cut short.
+* rung 1: one printed line, at most 95 characters. The core action, with the term a recruiter searches for and the
+  least context that makes it understandable.
+* rung 2: two printed lines, 130 to 190 characters. The action with its context, or with its result.
+* rung 3: three printed lines, 225 to 285 characters. Context, action and result: the story in full.
+* A story with too little to say for a rung stops at the rung below: never pad, never repeat, never add. Rung 1 is
+  always written.
+* Each rung in TWO wordings, "a" and "b": the same facts, with a different first word and a different sentence
+  shape. They are alternatives: only one is printed.
+* Count the characters, spaces included. A bullet over its limit is useless: it breaks the page.
+
+GROUPS, ONLY FOR A STORY MARKED LONG
+A long story has more to tell than rung 3 holds. Also write it as 1 to 3 GROUPS. A group is 2 or 3 bullets printed
+together, in this order, that tell the whole story.
+* Each group tells the whole story from a different angle: for instance for a technical reader (the system and how
+  it was built), for a delivery or management reader (the plan, the team, the client), or outcome first. Write as
+  many groups as give a genuinely different view; one is fine. A group is never one aspect of the story: each mixes
+  context, action and result.
+* Its first bullet names the ANCHOR. Here, and only here, a later bullet may lean on an earlier one of the same
+  group ("During the port, ..."): list in its `assumes` the items of the earlier bullet it leans on.
+* Each bullet at most 285 characters and still tells an action or a result; the group 4 to 7 printed lines in all
+  (a line holds 95 characters), up to 9 for a story marked MERGED.
+* One wording: the groups are the alternatives.
+* In the reply, "groups" is one list of bullets, in printed order, each with its group number: 1, then 2, then 3.
+* A story not marked LONG has no groups: its "groups" is [].
+
+FOR EVERY BULLET
+* uses: the ids of all the items it takes any fact from, SETTING items included.
+* covers: among them, the action and result items whose whole statement a reader learns from this bullet. Never a
+  context item.
+* assumes: the ids of the items it leans on without stating them: items the role summary states and, in a group,
+  items an earlier bullet of the group uses; nothing else. Never an id that is in its `uses`.
+
+OUTPUT
+One JSON object and nothing else, compact, without indentation:
+{"stories": [{"id": "e1.s03",
+  "ladder": [{"rung": 1, "wording": "a", "text": "...", "uses": ["e1.i20"], "covers": ["e1.i20"], "assumes": ["e1.i01"]},
+             {"rung": 1, "wording": "b", "text": "...", "uses": ["e1.i19", "e1.i20"], "covers": ["e1.i20"], "assumes": []}],
+  "groups": [{"group": 1, "text": "...", "uses": ["e1.i19", "e1.i20"], "covers": ["e1.i20"], "assumes": ["e1.i01"]},
+             {"group": 1, "text": "...", "uses": ["e1.i21"], "covers": ["e1.i21"], "assumes": ["e1.i20"]},
+             {"group": 2, "text": "...", "uses": ["e1.i20", "e1.i21"], "covers": ["e1.i20", "e1.i21"], "assumes": ["e1.i01"]},
+             {"group": 2, "text": "...", "uses": ["e1.i19"], "covers": [], "assumes": ["e1.i20"]}]}]}
+
+WRITING RULES
+The rules below hold for every bullet.
