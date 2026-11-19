@@ -6,6 +6,7 @@ keyword score all find terms in text the same way, so the rule lives here once.
 
 from __future__ import annotations
 
+import functools
 import re
 from typing import FrozenSet, List, Tuple
 
@@ -25,12 +26,21 @@ def has_term(term: str, text: str) -> bool:
     word before ("non-functional" does not hold "functional", "pre-sales" not "sales"); one just
     after does not ("AI-driven" holds "AI").
     """
+    return count_term(term, text) > 0
+
+
+def count_term(term: str, text: str) -> int:
+    """How many times ``term`` is in ``text``, by the rule of :func:`has_term`."""
     term = term.strip()
     if not term:
-        return False
-    rx = re.compile(r"(?<![\w-])" + re.escape(term) + r"(?!\w)", re.I)
+        return 0
     short = len(term) <= SHORT
-    return any(not short or m.group() != m.group().lower() for m in rx.finditer(text))
+    return sum(1 for m in _term_rx(term).finditer(text) if not short or m.group() != m.group().lower())
+
+
+@functools.lru_cache(maxsize=4096)
+def _term_rx(term: str) -> "re.Pattern[str]":
+    return re.compile(r"(?<![\w-])" + re.escape(term) + r"(?!\w)", re.I)
 
 
 def split_compound(phrase: str) -> List[str]:
@@ -58,4 +68,4 @@ def jaccard(a: FrozenSet, b: FrozenSet) -> float:
     return len(a & b) / union if union else 0.0
 
 
-__all__ = ["has_term", "jaccard", "norm", "shingles", "split_compound"]
+__all__ = ["count_term", "has_term", "jaccard", "norm", "shingles", "split_compound"]

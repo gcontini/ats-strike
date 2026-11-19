@@ -69,6 +69,7 @@ from .pool_store import (
     item_weights,
     level_sha256,
     lines,
+    settle_ladder,
     shown_sha256,
     story_work,
 )
@@ -297,14 +298,14 @@ def build_story(story: Story, reply: ReplyStory, work: int) -> Tuple[StoryPool, 
     """One story's pool from its reply, with code's ids; and what code dropped, each with its reason:
     a second bullet for one rung and wording, an empty bullet, a group of a short story, a fourth
     group. A rung bullet that fills fewer lines than its rung moves down to the rung it fills, after
-    that rung's own wordings (c, d, ...). A group's bullets are those with its number, in reply
+    that rung's own wordings (c, d, ...), and does not hold its rung and wording against a second
+    bullet for them. A group's bullets are those with its number, in reply
     order; groups in the order their numbers first come."""
     dropped: List[dict] = []
     ladder: List[Rung] = []
-    down: List[Tuple[int, ReplyRung]] = []
     for r in sorted(reply.ladder, key=lambda r: (r.rung, r.wording)):
         rid, text = f"{story.id}.r{r.rung}.{r.wording}", squash(r.text)
-        if not text or any(x.id == rid for x in ladder):
+        if not text or any(x.id == rid and lines(x.text) >= x.rung for x in ladder):
             dropped.append(
                 {
                     "story": story.id,
@@ -313,14 +314,9 @@ def build_story(story: Story, reply: ReplyStory, work: int) -> Tuple[StoryPool, 
                     "reason": "an empty bullet" if not text else "a second bullet for this rung and wording",
                 }
             )
-        elif lines(text) < r.rung:
-            down.append((lines(text), r))
         else:
             ladder.append(_bullet(Rung, rid, r, rung=r.rung, wording=r.wording))
-    for rung, r in down:
-        wording = next(w for w in "abcdef" if all((x.rung, x.wording) != (rung, w) for x in ladder))
-        ladder.append(_bullet(Rung, f"{story.id}.r{rung}.{wording}", r, rung=rung, wording=wording))
-    ladder.sort(key=lambda x: (x.rung, x.wording))
+    ladder, _ = settle_ladder(story.id, ladder)
     by_number: Dict[int, List[ReplyGroupBullet]] = {}
     for b in reply.groups:
         by_number.setdefault(b.group, []).append(b)

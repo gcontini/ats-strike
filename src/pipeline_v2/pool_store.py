@@ -302,6 +302,21 @@ def ladder_and_group_bullets(block: ExperiencePool) -> List[Bullet]:
     return [b for s in block.stories for b in [*s.ladder, *(x for g in s.groups for x in g.bullets)]]
 
 
+def settle_ladder(story: str, ladder: Sequence[Rung]) -> Tuple[List[Rung], List[Tuple[str, str]]]:
+    """The ladder with every bullet that fills fewer lines than its rung moved down to the rung it
+    fills, as the first free wording there after that rung's own (c, d, ...), its id following;
+    sorted by rung and wording. Also each move, (old id, new id)."""
+    kept = [r for r in ladder if lines(r.text) >= r.rung]
+    moves: List[Tuple[str, str]] = []
+    for r in sorted((r for r in ladder if lines(r.text) < r.rung), key=lambda r: (r.rung, r.wording)):
+        rung = lines(r.text)
+        wording = next(w for w in "abcdef" if all((x.rung, x.wording) != (rung, w) for x in kept))
+        moved = r.model_copy(update={"id": f"{story}.r{rung}.{wording}", "rung": rung, "wording": wording})
+        kept.append(moved)
+        moves.append((r.id, moved.id))
+    return sorted(kept, key=lambda x: (x.rung, x.wording)), moves
+
+
 # --- checks --------------------------------------------------------------------------------------
 def pool_checks(pool: Pool, items: Items, tree: Tree, profile: Mapping[str, Any], today: date) -> Dict[str, List[dict]]:
     """What the gate should look at: each check a list of ``{"id", "detail"}``, empty when nothing
@@ -782,6 +797,7 @@ __all__ = [
     "pool_checks",
     "pool_dump",
     "pool_markdown",
+    "settle_ladder",
     "shown_sha256",
     "story_work",
     "validate_pool",

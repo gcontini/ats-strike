@@ -28,6 +28,7 @@ from pipeline_v2 import (
     validate_pool,
 )
 from pipeline_v2.pool import batches, json_object
+from pipeline_v2.pool_review import dumps
 from pipeline_v2.pool_store import (
     Bullet,
     ExperiencePool,
@@ -746,6 +747,24 @@ def test_a_rung_that_fills_fewer_lines_moves_down_to_the_rung_it_fills(long_item
     assert e0.dropped == []
 
 
+def test_a_second_bullet_for_a_rung_is_kept_when_the_first_moves_down(long_items, long_tree, long_profile):
+    def twice(body):
+        if kind(body) != "ladder":
+            return answer(body)
+        reply = json.loads(ladder_reply(body))
+        for s in reply["stories"]:
+            if s["id"] == "e0.s02":
+                first = next(r for r in s["ladder"] if (r["rung"], r["wording"]) == (2, "a"))
+                s["ladder"].append(dict(first, text=sized("Ran", 150)))  # a second r2.a, 2 lines
+                first["text"] = sized("Ran", 90)  # the first r2.a fills 1 line
+        return json.dumps(reply)
+
+    e0 = write(fake(twice), long_items, long_tree, long_profile).experiences[0]
+    ladder = {r.id: r.text for r in e0.stories[1].ladder}
+    assert (ladder["e0.s02.r1.c"], ladder["e0.s02.r2.a"]) == (sized("Ran", 90), sized("Ran", 150))
+    assert e0.dropped == []
+
+
 def test_the_wordings_check_compares_every_pair_of_a_rung(long_items, long_tree, long_profile):
     pool = clean_pool(long_items, long_tree)
     ladder = pool.experiences[0].stories[1].ladder
@@ -867,13 +886,13 @@ def reviewing(replacements: list) -> FakeLLM:
 
 def review(llm, items, tree, profile):
     prompt = (resources_dir() / "sys_prompt_pool_review.txt").read_text(encoding="utf-8")
-    return PoolReviewer(llm=llm, prompt=prompt).review(clean_pool(items, tree), items, profile)
+    return PoolReviewer(llm=llm, prompt=prompt).review(clean_pool(items, tree), profile)
 
 
 def test_a_replacement_is_applied_to_the_piece_and_nothing_else(long_items, long_tree, long_profile):
     fix = {"old": "Moved a bank's", "new": "Took a bank's", "duty": 1, "reason": "Syntax: x"}
     llm = reviewing([fix])
-    pool, calls = review(llm, long_items, long_tree, long_profile)
+    pool, calls, moves = review(llm, long_items, long_tree, long_profile)
     before = clean_pool(long_items, long_tree)
 
     assert pool.experiences[0].compact.text == "Took a bank's payments platform to Kubernetes."
@@ -896,6 +915,7 @@ def test_a_replacement_is_applied_to_the_piece_and_nothing_else(long_items, long
                     "after": "Took a bank's payments platform to Kubernetes.",
                 }
             ],
+            "refused": [],
         }
     ]
     first = next(
@@ -903,24 +923,64 @@ def test_a_replacement_is_applied_to_the_piece_and_nothing_else(long_items, long
     )
     shown = user_text(first)
     assert '"duty_ids": [\n    "e0.compact",\n    "e0.s01.r1.a"' in shown
-    assert '"id": "e0.i04"' in shown and "e1.i02" not in shown  # its own items as the evidence
+    assert dumps(long_profile["experiences"][0]) in shown and "Example Shop" not in shown  # its own experience
     assert first["tools"][0]["function"]["name"] == "replace_in_duties"
     assert len(llm["validation"].calls) == 3  # e0 twice (the fix, then OK), e1 once
-    assert "- **e0.compact** (round 1)" in review_markdown(calls)
+    assert moves == []
+    assert "- **e0.compact** (round 1)" in review_markdown(calls, moves)
 
 
-def test_a_replacement_that_changes_the_line_count_is_refused_and_goes_back(long_items, long_tree, long_profile):
-    one_line = clean_pool(long_items, long_tree).experiences[0].stories[0].ladder[0]
-    assert one_line.id == "e0.s01.r1.a" and lines(one_line.text) == 1
-    fix = {"old": "Moved the platform work", "new": "Moved the platform work" + " of the bank" * 4, "duty": 2}
-    llm = reviewing([fix])
-    pool, calls = review(llm, long_items, long_tree, long_profile)
+def test_a_replacement_is_refused_on_each_piece_whose_line_count_it_changes(long_items, long_tree, long_profile):
+    """Without a duty the call hits every wording a of e0: each rung 1 would fill 2 lines and keeps its
+    text; rungs 2 and 3 and the group bullet still fit and change. The refusal goes back to the model."""
+    old = "Moved the platform work"
+    llm = reviewing([{"old": old, "new": old + " for the retail bank"}])
+    pool, calls, moves = review(llm, long_items, long_tree, long_profile)
 
-    assert pool.experiences[0].stories[0].ladder[0].text == one_line.text
-    assert calls[0]["error"] == (
-        "'Moved the platform work' refused: duty 2 would fill 2 printed line(s), not 1 (128 characters, 98 a line)"
+    def texts(block) -> dict:
+        return {b.id: b.text for s in block.stories for b in [*s.ladder, *(x for g in s.groups for x in g.bullets)]}
+
+    before, after = texts(clean_pool(long_items, long_tree).experiences[0]), texts(pool.experiences[0])
+    assert sorted(i for i in after if after[i] != before[i]) == [
+        "e0.s01.g1.1",
+        "e0.s01.r2.a",
+        "e0.s01.r3.a",
+        "e0.s02.r2.a",
+        "e0.s02.r3.a",
+    ]
+    assert [r["id"] for r in calls[0]["refused"]] == ["e0.s01.r1.a", "e0.s02.r1.a", "e0.s03.r1.a"]
+    assert calls[0]["error"].startswith(
+        "'Moved the platform work' refused in duty 2: it would fill 2 printed line(s), more than 1 "
+        "(100 characters, 98 a line); duty 10: "
     )
     retry = next(c for c in llm["validation"].calls if "ATTEMPT: 2\n" in user_text(c))
-    assert "FAILED REPLACEMENTS:\n'Moved the platform work' refused: duty 2 would fill 2" in user_text(retry)
-    view = review_markdown(calls)
-    assert "0 applied" in view and "- **e0.s01.r1.a** (round 1)" in view and "refused text (128 ch)" in view
+    assert (
+        "FAILED REPLACEMENTS:\n'Moved the platform work' refused in duty 2: "
+        "it would fill 2 printed line(s), more than 1" in user_text(retry)
+    )
+    view = review_markdown(calls, moves)
+    assert "3 piece replacement(s) refused for the line count" in view
+    assert "- **e0.s01.r1.a, e0.s02.r1.a, e0.s03.r1.a** (round 1)" in view and "refused text (100 ch)" in view
+
+
+def test_a_bullet_a_replacement_shortens_moves_down_to_the_rung_it_fills(long_items, long_tree, long_profile):
+    """Only more lines are refused. e0.s02.r2.a cut to one line goes in, and at the end of the review
+    it moves to rung 1 as its first free wording, c, by the writer's rule."""
+    two_lines = clean_pool(long_items, long_tree).experiences[0].stories[1].ladder[2]
+    assert two_lines.id == "e0.s02.r2.a" and lines(two_lines.text) == 2
+    llm = reviewing([{"old": two_lines.text[23:], "new": ".", "duty": 12}])
+    pool, calls, moves = review(llm, long_items, long_tree, long_profile)
+
+    assert (calls[0]["error"], calls[0]["refused"]) == (None, [])
+    ladder = pool.experiences[0].stories[1].ladder
+    assert [r.id for r in ladder] == [
+        "e0.s02.r1.a",
+        "e0.s02.r1.b",
+        "e0.s02.r1.c",
+        "e0.s02.r2.b",
+        "e0.s02.r3.a",
+        "e0.s02.r3.b",
+    ]
+    assert (ladder[2].text, ladder[2].rung, ladder[2].uses) == ("Moved the platform work.", 1, two_lines.uses)
+    assert moves == [("e0.s02.r2.a", "e0.s02.r1.c")]
+    assert "- e0.s02.r2.a → **e0.s02.r1.c**" in review_markdown(calls, moves)

@@ -17,10 +17,22 @@ Input:
   synthesis), and fix it with a call without duty.
 - FAILED REPLACEMENTS (optional): your fixes from the previous attempt whose old text was not found.
 
-** Mindset** : attempt 1: be strict on facts and grammar.
+** Mindset** : attempt 1: check facts and grammar, and report only what fails the INTERVIEW DEFENDABILITY TEST.
                from attempt 2 onward: the GENERATED EXPERIENCE should pass (contain no violations),
                report only the outstanding issues eg. syntax errors, garbled sentences, NO stylistic.
 
+
+## INTERVIEW DEFENDABILITY TEST (apply it to every violation before you report it)
+Picture the candidate in a job interview, the line on the screen, and an interviewer who has read EXPERIENCE asking
+about it. If the candidate can explain the line with what EXPERIENCE says, without being caught in an undeniable lie,
+the line passes: do NOT flag it.
+* Exaggeration and Logic. These pass: a cause or a motive the context makes plain; a verb that sums up tasks the
+  candidate did ("owned", "ran", "handled" for work EXPERIENCE gives to the candidate); another word for the same fact.
+  These fail: leadership EXPERIENCE does not give ("Led", "Managed" with no people or ownership behind it), and a
+  number, a technology, a result or a scope EXPERIENCE does not back.
+* Syntax. CV shorthand passes: a sentence with no subject ("In 2019, migrated the cluster"), a dropped article
+  ("as liaison between teams"), a compressed phrase ("on-premise and cloud"). Flag only a sentence a recruiter would
+  misread or cannot parse.
 
 Analyze GENERATED EXPERIENCE and REPORT violations in the following categories (all the violations are relative to GENERATED EXPERIENCE content):
 
@@ -35,7 +47,7 @@ Analyze GENERATED EXPERIENCE and REPORT violations in the following categories (
     - Check that the scope of the achievement is backed by EXPERIENCE. Broadening the scope is Exaggeration. Eg. EXPERIENCE says "I guided my team in doing XXX" the cv says "I guided XXX" this is an expansion of scope (XXX can involve multiple teams) and must be flagged.
 * **Excessive synthesis, vagueness:** Check that every duty stays concrete and tells an understandable story, excessive synthesis and generalization (eg. mixing two different duties in one very abstract line) must be flagged.
     - In every GENERATED EXPERIENCE->duties check that the candidate or its team is mentioned. (eg. my team, my library, or it is the subject of at least one sentence in the duty).
-      A duty that starts with a past-tense verb ("Designed...") has the candidate as its subject: it is OK.
+      A duty that starts with a past-tense verb ("Designed...", "In 2019, designed...") has the candidate as its subject: it is OK.
 
 ## 2. Syntax
 * Incomplete sentences, half-finished thoughts, fragmented text, garbled phrases, or clear grammatical errors in GENERATED EXPERIENCE (this is IMPORTANT).
@@ -49,7 +61,7 @@ Analyze GENERATED EXPERIENCE and REPORT violations in the following categories (
 ## FLAGGING RULES
 * Flag only errors related to the categories above: do not invent extra violations, reasonings or criteria.
   - If you are thinking "this is not an error", "this is a minor stretch", "this may be acceptable (Interview Defendability Test)", "No fix needed" do NOT flag it.
-  - The Interview Defendability Test: Ask yourself: "Could the candidate reasonably defend this statement in a job interview without being caught in an undeniable lie?" If YES, DO NOT flag it.
+  - The INTERVIEW DEFENDABILITY TEST (above): if the line passes it, DO NOT flag it.
   - Only flag undeniable, material errors. Ignore adaptations that can be inferred directly by the role/situation.
   - Standard resume polishing, active phrasing, and reasonable synthesis of context are valid and must not be flagged.
 * Batch a repeated defect into ONE violation: If the SAME defect appears in more than two duties -- the same stray prefix or leftover marker, the same non-ASCII character throughout, the same banned word reused -- report it exactly once, with ONE replace_in_duties call without duty (it replaces in every duty and in the role_summary).

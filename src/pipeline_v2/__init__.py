@@ -15,7 +15,13 @@ models, the observability, the errors) and imports nothing from ``pipeline_v1``.
   story a ladder of bullets and, for a long story, groups; per experience a role summary and a
   compact line; for the profile, skill phrases and summary frames.
 - ``pool_review`` — :class:`PoolReviewer`: v1's duties validation of the pool, one experience at a
-  time; code refuses a replacement that changes a piece's printed lines.
+  time; code refuses a replacement that adds printed lines to a piece, and moves a bullet that
+  gets shorter down to the rung it fills.
+- ``allocate`` — :class:`Allocator`: a job description's requirements placed on the tree in one
+  call, code's rules on the reply, and each node's points.
+- ``select`` — the selection for one job, no model: which experiences are full or compact, which
+  story at which rung or group, the skills, the summary frame, the headline, and the scores
+  (keywords and narrative); the greedy fills the page, then a refill pass.
 
 Its prompts and its own ``models.toml`` are ``resources/v2``, packaged as
 ``pipeline_v2.resources``.
@@ -24,16 +30,18 @@ Its prompts and its own ``models.toml`` are ``resources/v2``, packaged as
 import importlib.resources
 from pathlib import Path
 
+from .allocate import Allocation, Allocator, allocation_markdown, points
 from .items import ItemCompiler
 from .pool import PoolWriter
 from .pool_review import PoolReviewer, review_markdown
 from .pool_store import Pool, pool_checks, pool_dump, pool_markdown, validate_pool
+from .select import Plan, plan_markdown
 from .store import Items, items_markdown, validate
 from .tree import TreeBuilder
 from .tree_store import Market, Tree, leaf_status, tree_dump, tree_markdown, validate_tree
 
 #: The model roles of ``resources/v2/models.toml``, growing with each sub-plan.
-ROLES = ("compile", "validation")
+ROLES = ("compile", "validation", "allocate")
 
 
 def resources_dir() -> Path:
@@ -46,16 +54,22 @@ def resources_dir() -> Path:
 
 __all__ = [
     "ROLES",
+    "Allocation",
+    "Allocator",
     "ItemCompiler",
     "Items",
     "Market",
+    "Plan",
     "Pool",
     "PoolReviewer",
     "PoolWriter",
     "Tree",
     "TreeBuilder",
+    "allocation_markdown",
     "items_markdown",
     "leaf_status",
+    "plan_markdown",
+    "points",
     "pool_checks",
     "pool_dump",
     "pool_markdown",

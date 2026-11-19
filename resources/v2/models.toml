@@ -10,6 +10,8 @@
 #             summary frames (S3)
 #   validation  reviews the pool against its items, as v1's validation of an
 #             experience (S4)
+#   allocate  places a job description's requirements on the competence tree
+#             (S5)
 #
 # Every key of a [models.<role>] table can be overridden with an env var,
 # ATS_<ROLE>_<FIELD> (ATS_COMPILE_MODEL, ATS_COMPILE_EXTRA_BODY, ...), as in v1.
@@ -37,3 +39,11 @@ model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "medium"
+
+# Places a job description's requirements on the tree, one call per JD (S5). The S0 probe's and
+# S2's settings for the same call (out/s2/allocate_models.toml): DeepSeek's own API, xhigh.
+[models.allocate]
+model                  = "deepseek-flash"
+model_provider         = "deepseek"
+use_alternate_provider = 2
+reasoning_effort       = "xhigh"

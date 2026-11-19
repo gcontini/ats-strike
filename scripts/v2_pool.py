@@ -11,11 +11,13 @@ frames.
 ``--experiences`` writes those experience ids again even when unchanged; ``--profile`` writes the
 skill phrases and frames again. Writes ``<out>/pool.json`` and ``<out>/pool.md``. ``md`` makes no
 model call: it checks a hand-edited ``pool.json`` and rebuilds ``pool.md``. ``review`` reviews
-``pool.json`` against its items on the ``validation`` role, edits it in place, rebuilds ``pool.md``
-and writes ``<out>/review.md``: every change, before and after, and every refused replacement.
+``pool.json`` against the profile's experiences on the ``validation`` role, edits it in place, rebuilds ``pool.md``
+and writes ``<out>/review.md``: every change, before and after, every bullet moved down a rung,
+and every refused replacement.
 
-The ``compile`` and ``validation`` roles are v2's ``models.toml``; their providers' keys and URLs come from ``.env``. Only
-the pipelines' own log lines are shown, never the HTTP client's, which name the endpoint.
+The ``compile`` and ``validation`` roles are v2's ``models.toml``; their providers' keys and URLs
+come from ``.env``. Only the pipelines' own log lines are shown, never the HTTP client's, which
+name the endpoint.
 For the real profile, ``--out`` must be a git-ignored folder (``out/v2-store``).
 Deleted in S10, with the other ``v2_*.py``.
 """
@@ -96,14 +98,14 @@ def main() -> int:
             llm=llm, prompt=(resources_dir() / "sys_prompt_pool_review.txt").read_text(encoding="utf-8")
         )
         started = time.monotonic()
-        pool, calls = reviewer.review(previous, items, profile)
+        pool, calls, moves = reviewer.review(previous, profile)
         u = reviewer.usage
         print(
             f"\n{u.calls} call(s), {time.monotonic() - started:.0f}s wall, {u.seconds:.0f}s in calls, "
             f"tokens {u.input_tokens} in, {u.thinking_tokens} thinking, {u.output_tokens} out"
         )
         pool_path.write_text(pool_dump(pool), encoding="utf-8")
-        (args.out / "review.md").write_text(review_markdown(calls), encoding="utf-8")
+        (args.out / "review.md").write_text(review_markdown(calls, moves), encoding="utf-8")
     else:
 
         def prompt(name: str) -> str:

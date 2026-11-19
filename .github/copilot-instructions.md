@@ -7,8 +7,12 @@ path dependency:
 ```
 src/contracts/     cv_contracts  — pydantic models + envelope + the free JD guess
 src/cv_server/     cv_server     — stateless FastAPI service: the protocol
-src/pipeline_v1/   pipeline_v1   — the CV pipeline: LLM calls + pdflatex
-resources/v1/                    — the pipeline's prompts, schemas, template
+src/pipeline_v1/   pipeline_v1   — the CV pipeline: its steps, prompts and validation
+src/common/        common        — what the pipelines share: models, observability, renderer
+src/pipeline_v2/   pipeline_v2   — CV pipeline 2.0, being built beside v1
+resources/v1/                    — the pipeline's prompts, schemas, template, models.toml
+resources/v2/                    — pipeline 2.0's prompts and models.toml
+resources/common/                — the highlighter's prompt
 ```
 
 The client (`cv_client`, the thing you run: clipboard/watch/submit/render) is
@@ -80,16 +84,19 @@ job's session is the only thing kept
 - `cv_review.py` — the validation loop: the model reports each
   violation as a `replace_in_body`/`replace_in_duties` tool call (schemas
   only), the code applies it and asks again, up to 5 rounds per document.
-- `cv_renderer.py` — `CVRenderer`: Jinja (`\VAR{}`/`\BLOCK{}`
-  delimiters, `DictLoader` built fresh per request since the template can be
-  client-supplied) → `pdflatex`, sandboxed (`-no-shell-escape`,
-  `openin_any=p`/`openout_any=p`, no stdin, a timeout, its own scratch
-  `mkdtemp` removed in a `finally`) → page count.
 - `jd_validator.py`, `letter_generator.py` — the other two
   LLM pipelines; same shape as `cv_generator.py`.
+- `bundle.py` — `ResourceBundle` (impersonal: prompts, the writer's two
+  schemas, template, image assets keyed by file name — built once at startup,
+  `with_overrides()` per request) vs. `CandidateInputs` (personal: profile,
+  preferences and candidate data — always per-request, never cached). Only
+  the template reads the candidate data; no model is shown it.
+
+**`src/common/`** — what every pipeline is built on; no HTTP, imports no pipeline
 - `models/` — `ModelSelector`: one LangChain chat model per role
-  (`detect`/`analysis`/`letter` and the six CV steps) from
-  `resources/v1/models.toml`, built by the role's `model_provider`
+  (v1's `detect`/`analysis`/`letter` and the six CV steps; v2's `compile`
+  and `validation`) from the `models.toml` a pipeline passes in
+  (`resources/v1/`, `resources/v2/`), built by the role's `model_provider`
   (`standard.py` on `ChatOpenAI`, `deepseek.py` on `ChatDeepSeek`), and two
   methods: `call_llm(role, type, system_prompt, messages)`, which returns a
   pydantic model, `bool`, `str` or a JSON `list`/`dict`, and
@@ -99,15 +106,25 @@ job's session is the only thing kept
   supersedes all of that role's settings. Every call logs one line with model, duration and
   input/thinking/output tokens, adds them to the `Usage` it is handed, and
   reports them to the current `Run` (a CV job's `usage` event and total).
-- `bundle.py` — `ResourceBundle` (impersonal: prompts, the writer's two
-  schemas, template, image assets keyed by file name — built once at startup,
-  `with_overrides()` per request) vs. `CandidateInputs` (personal: profile,
-  preferences and candidate data — always per-request, never cached). Only
-  the template reads the candidate data; no model is shown it.
 - `observability.py` — `Run`/`NULL_RUN`, `current_run` contextvar, `stage()`
   context manager, the logging handler that turns log records into
   `LogEntry`s for the run. A CV job's `Run` has a `sink` — its session's
   append — and a running `total`; other requests' lines go to stdout only.
+- `highlight.py` — `Highlighter`: the CV's keywords bold, its stacks italic
+  (its prompt is `resources/common/`).
+- `cv_renderer.py` — `CVRenderer`: Jinja (`\VAR{}`/`\BLOCK{}`
+  delimiters, `DictLoader` built fresh per request since the template can be
+  client-supplied) → `pdflatex`, sandboxed (`-no-shell-escape`,
+  `openin_any=p`/`openout_any=p`, no stdin, a timeout, its own scratch
+  `mkdtemp` removed in a `finally`) → page count.
+- `errors.py`, `parsing.py` — the failures a pipeline raises (each with a
+  kind and a stage), and a rejected reply logged short.
+
+**`src/pipeline_v2/`, `resources/v2/`** — CV pipeline 2.0, being built beside
+v1 and taking only `common`: a store compiled once per profile (items,
+competence tree, pool and its review) and, per job description, the
+allocation of its requirements on the tree and the selection of what the
+CV shows (code only), with its own prompts and `models.toml`. No endpoint serves it yet; `scripts/v2_*.py` run it.
 
 **`resources/v1/`** — the impersonal defaults baked into the image: four
 prompts, `resume.tex.jinja`, `models.toml`, a blank `candidate_signature.png`
@@ -171,7 +188,7 @@ Packaged as `pipeline_v1.resources` (see `pyproject.toml`) so
 - LLM access via LangChain, to any OpenAI-compatible endpoint — one provider, one API key
   (`MODEL_API_KEY`/`MODEL_BASE_URL`; see `.env.example`), declared once in
   the `[provider]` table of
-  `resources/v1/models.toml`. A role with `use_alternate_provider = N`
+  each pipeline's `models.toml` (`resources/v1/`, `resources/v2/`). A role with `use_alternate_provider = N`
   (N ≥ 2) calls provider N instead (`MODEL_API_KEY<N>`/`MODEL_BASE_URL<N>`).
   The roles
   (`detect`/`analysis`/`letter` and the six CV steps) each declare only

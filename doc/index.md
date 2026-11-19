@@ -48,7 +48,9 @@ a CV job, its state and its result.
 |---|---|
 | [ats-strike-client](https://github.com/gcontini/ats-strike-client) | The CLI, a repository of its own. Watches your clipboard or a folder, keeps your CV data local, files every result in a dated folder. |
 | `src/cv_server/` | The HTTP API. Writes the CV in six steps, validates it, compiles the PDF, analyses postings, writes letters. |
-| `src/pipeline_v1/` | Everything that makes a CV — model calls, LaTeX — as a library the server calls. |
+| `src/pipeline_v1/` | Everything that makes a CV — its steps, prompts and validation — as a library the server calls. |
+| `src/common/` | What the pipelines are built on: the models (one chat model per role), the observability, the errors, the highlighter and the LaTeX renderer. |
+| `src/pipeline_v2/` | CV pipeline 2.0, being built beside v1 on `common` alone; no endpoint serves it yet. |
 | `src/contracts/` | The shapes both sides agree on — the one thing each side imports, so neither imports the other. The ats-strike-contract repository, as a submodule here and in the client. |
 
 [ats-integration-tests](https://github.com/gcontini/ats-integration-tests)

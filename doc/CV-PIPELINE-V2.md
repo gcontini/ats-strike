@@ -557,7 +557,7 @@ v1 stays, served at `/v1`. v2 has none of v1's:
   one project (`src/pipeline_v1`, `src/pipeline_v2`), each with its own
   resources and model roles, each served under its own path behind the same
   facade. What both use sits in `src/common`: the model layer, logging, errors,
-  the LaTeX renderer, the review loop and the highlighter. v2 imports nothing
+  the LaTeX renderer and the highlighter. v2 imports nothing
   from v1. The 0.5 line keeps its own server.
 - **No hidden global state.** The mix and the page geometry are arguments.
 - **Contracts.** Unchanged. The store's pydantic model lives in the v2 pipeline:
@@ -633,10 +633,10 @@ Then the build, one sub-plan each:
 | S1 | Base items and stories | done: the decomposition prompt, the source check, item types; shared context at the experience level; stories by piece of work, with anchors; narrative weights; code in `src/pipeline_v2` |
 | S2 | Competence tree | done: the market list in code (the test set's copies left out), the shape and attach prompts, leaf status in code (proven, weak, ghost), two term lists per node, ghost leaves, the held-out test |
 | S3 | Pool | done: role summary first, ladder, wordings, up to three group views per long story, what each piece leans on and its check, compact lines, skill phrases on strong leaves, summary frames with checks |
-| S4 | Review and store | the pool review prompt, edits refused over the limit, the marking loop, the store as cache items, lock rules |
+| S4 | Pool review | done: one model review per experience against the profile, with an interview defendability test; an edit may not add printed lines, and a bullet it shortens moves down a rung |
 | H | One server, several pipelines | done: each pipeline under its own path, and the client's server URL names it; a `common` package with the model layer, the renderer, the review and the highlighter. The 0.5 line stays on its own server |
-| S5 | Allocation | the prompt, relations, point rules, English literal terms, the unmatched report, pending aliases |
-| S6 | Selector and scores | the objective, the narrative score, the mix, fill and refill, bullet order, the plan report |
+| S5 | Allocation | done: one call places the job's requirements on the tree (v1's job evaluation prompt plus placement); keywords are the literal terms; ten dev jobs share 81% of their points with the earlier check's runs, 80% of importance lands on proven skills, none nowhere |
+| S6 | Selector and scores | done: the selection in code, scored on keywords and on the narrative score (the career's years told) at a fixed half-and-half mix; it fills the page, then a refill pass; bullets most relevant first; on ten dev jobs every plan fills 70.8 to 71.1 of 71.2 lines, and the refill gains in four |
 | S7 | Geometry and render | line constants from calibration; compact experience and skills block in the template |
 | S8 | Varnish | the job's words in, the pick, the repeat check, connectives between stories, regeneration tiers one and two, headline and sentence |
 | S9 | Highlight | the shared highlighter, fed the allocation's keywords |
