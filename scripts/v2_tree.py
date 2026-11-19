@@ -1,4 +1,4 @@
-"""Dev runner of S2: a profile's competence tree, until the store travels as cache items (S4).
+"""Dev runner of S2: a profile's competence tree, until the store travels as cache items (S10).
 
     uv run python scripts/v2_tree.py <server folder> --out <dir> [--reshape] [--experiences 1 3]
     uv run python scripts/v2_tree.py <server folder> --out <dir> md
@@ -14,7 +14,7 @@ model call: it checks a hand-edited ``tree.json`` and rebuilds ``tree.md``.
 The ``compile`` role is v2's ``models.toml``; its provider's key and URL come from ``.env``. Only
 the pipelines' own log lines are shown, never the HTTP client's, which name the endpoint.
 For the real profile, ``--out`` must be a git-ignored folder (``out/v2-store``).
-Deleted in S4, with ``v2_items.py`` and ``v2_market.py``.
+Deleted in S10, with ``v2_items.py`` and ``v2_market.py``.
 """
 
 from __future__ import annotations

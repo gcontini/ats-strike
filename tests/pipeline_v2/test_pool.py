@@ -1,4 +1,5 @@
-"""The pool (S3): derived values, checks, validation, the view, the file, and the writer's two fan-outs.
+"""The pool (S3): derived values, checks, validation, the view, the file, and the writer's two fan-outs;
+and its review (S4).
 
 No key, no network, no terminal: the writer runs on :class:`FakeLLM`, whose fake transport sits
 inside a real ``ModelSelector``. Everything runs on the hand-made store of ``conftest.py`` with one
@@ -14,7 +15,18 @@ from datetime import date
 import pytest
 
 from common.errors import ModelOutputError
-from pipeline_v2 import ROLES, Pool, PoolWriter, pool_checks, pool_dump, pool_markdown, resources_dir, validate_pool
+from pipeline_v2 import (
+    ROLES,
+    Pool,
+    PoolReviewer,
+    PoolWriter,
+    pool_checks,
+    pool_dump,
+    pool_markdown,
+    resources_dir,
+    review_markdown,
+    validate_pool,
+)
 from pipeline_v2.pool import batches, json_object
 from pipeline_v2.pool_store import (
     Bullet,
@@ -40,7 +52,7 @@ from pipeline_v2.pool_store import (
 )
 from pipeline_v2.store import Items
 
-from pipeline_helpers import FakeLLM, user_text
+from pipeline_helpers import FakeLLM, tool_completion, user_text
 
 TODAY = date(2026, 11, 19)
 
@@ -835,3 +847,80 @@ def test_a_failed_call_is_counted_too(long_items, long_tree, long_profile):
     with pytest.raises(ModelOutputError):
         w.write(long_items, long_tree, long_profile, today=TODAY)
     assert w.usage.calls >= 2 + 2  # the experience calls, the profile call twice
+
+
+# --- the review (S4) -----------------------------------------------------------------------------------
+def reviewing(replacements: list) -> FakeLLM:
+    """The validation role: on e0's first round, ``replacements`` (duty 1 is the compact line, duty 2
+    e0.s01.r1.a); every other round, and e1, "OK"."""
+    llm = FakeLLM(roles=ROLES)
+
+    def answer(body: dict):
+        text = user_text(body)
+        if "Example Bank" in text and "ATTEMPT: 1\n" in text:
+            return tool_completion("fake-validation", [("replace_in_duties", r) for r in replacements])
+        return "OK"
+
+    llm["validation"].replies = [answer]
+    return llm
+
+
+def review(llm, items, tree, profile):
+    prompt = (resources_dir() / "sys_prompt_pool_review.txt").read_text(encoding="utf-8")
+    return PoolReviewer(llm=llm, prompt=prompt).review(clean_pool(items, tree), items, profile)
+
+
+def test_a_replacement_is_applied_to_the_piece_and_nothing_else(long_items, long_tree, long_profile):
+    fix = {"old": "Moved a bank's", "new": "Took a bank's", "duty": 1, "reason": "Syntax: x"}
+    llm = reviewing([fix])
+    pool, calls = review(llm, long_items, long_tree, long_profile)
+    before = clean_pool(long_items, long_tree)
+
+    assert pool.experiences[0].compact.text == "Took a bank's payments platform to Kubernetes."
+    assert pool.experiences[0].compact.uses == before.experiences[0].compact.uses
+    assert pool.experiences[0].stories == before.experiences[0].stories
+    assert pool.experiences[1] == before.experiences[1]
+    assert calls == [
+        {
+            "experience": 0,
+            "round": 1,
+            "duty": 1,
+            "old": "Moved a bank's",
+            "new": "Took a bank's",
+            "reason": "Syntax: x",
+            "error": None,
+            "changes": [
+                {
+                    "id": "e0.compact",
+                    "before": "Moved a bank's payments platform to Kubernetes.",
+                    "after": "Took a bank's payments platform to Kubernetes.",
+                }
+            ],
+        }
+    ]
+    first = next(
+        c for c in llm["validation"].calls if "Example Bank" in user_text(c) and "ATTEMPT: 1\n" in user_text(c)
+    )
+    shown = user_text(first)
+    assert '"duty_ids": [\n    "e0.compact",\n    "e0.s01.r1.a"' in shown
+    assert '"id": "e0.i04"' in shown and "e1.i02" not in shown  # its own items as the evidence
+    assert first["tools"][0]["function"]["name"] == "replace_in_duties"
+    assert len(llm["validation"].calls) == 3  # e0 twice (the fix, then OK), e1 once
+    assert "- **e0.compact** (round 1)" in review_markdown(calls)
+
+
+def test_a_replacement_that_changes_the_line_count_is_refused_and_goes_back(long_items, long_tree, long_profile):
+    one_line = clean_pool(long_items, long_tree).experiences[0].stories[0].ladder[0]
+    assert one_line.id == "e0.s01.r1.a" and lines(one_line.text) == 1
+    fix = {"old": "Moved the platform work", "new": "Moved the platform work" + " of the bank" * 4, "duty": 2}
+    llm = reviewing([fix])
+    pool, calls = review(llm, long_items, long_tree, long_profile)
+
+    assert pool.experiences[0].stories[0].ladder[0].text == one_line.text
+    assert calls[0]["error"] == (
+        "'Moved the platform work' refused: duty 2 would fill 2 printed line(s), not 1 (128 characters, 98 a line)"
+    )
+    retry = next(c for c in llm["validation"].calls if "ATTEMPT: 2\n" in user_text(c))
+    assert "FAILED REPLACEMENTS:\n'Moved the platform work' refused: duty 2 would fill 2" in user_text(retry)
+    view = review_markdown(calls)
+    assert "0 applied" in view and "- **e0.s01.r1.a** (round 1)" in view and "refused text (128 ch)" in view

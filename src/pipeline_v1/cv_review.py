@@ -20,8 +20,8 @@ from typing import Any, Callable, Dict, List, Mapping, Optional, Type
 
 from pydantic import BaseModel, ConfigDict
 
-from .models import ModelSelector, Usage
-from .observability import LOGGER_ROOT
+from common.models import ModelSelector, Usage
+from common.observability import LOGGER_ROOT
 
 logger = logging.getLogger(f"{LOGGER_ROOT}.review")
 

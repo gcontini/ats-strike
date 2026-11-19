@@ -14,6 +14,8 @@ models, the observability, the errors) and imports nothing from ``pipeline_v1``.
 - ``pool`` — :class:`PoolWriter`: everything a CV prints from the experiences, written once — per
   story a ladder of bullets and, for a long story, groups; per experience a role summary and a
   compact line; for the profile, skill phrases and summary frames.
+- ``pool_review`` — :class:`PoolReviewer`: v1's duties validation of the pool, one experience at a
+  time; code refuses a replacement that changes a piece's printed lines.
 
 Its prompts and its own ``models.toml`` are ``resources/v2``, packaged as
 ``pipeline_v2.resources``.
@@ -24,13 +26,14 @@ from pathlib import Path
 
 from .items import ItemCompiler
 from .pool import PoolWriter
+from .pool_review import PoolReviewer, review_markdown
 from .pool_store import Pool, pool_checks, pool_dump, pool_markdown, validate_pool
 from .store import Items, items_markdown, validate
 from .tree import TreeBuilder
 from .tree_store import Market, Tree, leaf_status, tree_dump, tree_markdown, validate_tree
 
 #: The model roles of ``resources/v2/models.toml``, growing with each sub-plan.
-ROLES = ("compile",)
+ROLES = ("compile", "validation")
 
 
 def resources_dir() -> Path:
@@ -47,6 +50,7 @@ __all__ = [
     "Items",
     "Market",
     "Pool",
+    "PoolReviewer",
     "PoolWriter",
     "Tree",
     "TreeBuilder",
@@ -56,6 +60,7 @@ __all__ = [
     "pool_dump",
     "pool_markdown",
     "resources_dir",
+    "review_markdown",
     "tree_dump",
     "tree_markdown",
     "validate",

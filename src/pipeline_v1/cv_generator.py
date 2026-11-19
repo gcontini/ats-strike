@@ -18,7 +18,7 @@ The method is adapticv-ai's, one model role per step:
     experience on its own.
 ``validation``
     The body and each experience checked against the profile, as
-    replacements the code applies (:mod:`common.cv_review`).
+    replacements the code applies (:mod:`.cv_review`).
 ``highlight``
     ``**bold**`` on the key points' keywords, ``*italics*`` on the stacks
     (:mod:`common.highlight`).
@@ -55,7 +55,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
 
 from common.cv_renderer import CVRenderer, RenderResult
-from common.cv_review import ReplaceInBody, ReplaceInDuties, apply_body, apply_duties, review
+from .cv_review import ReplaceInBody, ReplaceInDuties, apply_body, apply_duties, review
 from common.errors import BudgetExceededError
 from common.highlight import SCORES, Highlighter
 from common.models import ModelSelector, Usage

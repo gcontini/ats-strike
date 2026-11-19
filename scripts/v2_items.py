@@ -1,4 +1,4 @@
-"""Dev runner of S1: a profile's base items and stories, until the store travels as cache items (S4).
+"""Dev runner of S1: a profile's base items and stories, until the store travels as cache items (S10).
 
     uv run python scripts/v2_items.py <server folder> --out <dir> [--experiences 1 3]
     uv run python scripts/v2_items.py <server folder> --out <dir> md

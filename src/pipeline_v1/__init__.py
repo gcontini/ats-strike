@@ -8,12 +8,13 @@ outside the scratch directory it is handed.
   :class:`Output` / :class:`Sink` it reports through.
 - ``pack`` — what the request's files and settings mean, as pure functions.
 - ``cv_generator``, ``jd_validator``, ``letter_generator`` — the work itself.
+- ``cv_review`` — a document validated as text replacements the model calls.
 - ``bundle`` / ``defaults`` — the shipped defaults, and the per-request split
   between them and the personal inputs.
 
 It is built on :mod:`common`: the models (one long-lived chat model per role,
 from ``resources/v1/models.toml``), the run's observability, the errors, the
-highlighter, the validation loop and the renderer. :class:`PipelineError`,
+highlighter and the renderer. :class:`PipelineError`,
 :class:`Run`, :func:`use_run`, :func:`current_run` and
 :func:`configure_logging` are re-exported from there.
 

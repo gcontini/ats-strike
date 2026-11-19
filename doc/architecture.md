@@ -18,8 +18,8 @@ flowchart TB
 
     subgraph host["wherever you run it (one per server version)"]
         API["<b>cv_server</b><br/>the protocol: FastAPI, pack reader,<br/>sessions, SSE"]
-        PIPE["<b>pipeline_v1</b><br/>facade · pack · jd_validator · cv_generator (LangGraph)<br/>letter_generator"]
-        COMMON["<b>common</b><br/>models · observability · errors<br/>highlight · cv_review · cv_renderer"]
+        PIPE["<b>pipeline_v1</b><br/>facade · pack · jd_validator · cv_generator (LangGraph)<br/>cv_review · letter_generator"]
+        COMMON["<b>common</b><br/>models · observability · errors<br/>highlight · cv_renderer"]
         RES["resources<br/>prompts · schemas · resume.tex.jinja<br/>models.toml"]
         STORE["ATS_WORK_DIR<br/>one session per CV job"]
         API -->|"/v1/..."| PIPE
@@ -44,8 +44,8 @@ client and the server live in separate repositories and never import each
 other, the pipelines import none of the others and know no HTTP, and the
 server reaches the pipeline only through its top level
 (`from pipeline_v1 import ...`). `common` holds what the pipelines share —
-the models, the observability, the errors, the highlighter, the validation
-loop and the renderer — and imports no pipeline. `pipeline_v2` follows the
+the models, the observability, the errors, the highlighter and the
+renderer — and imports no pipeline. `pipeline_v2` follows the
 same rules and takes only `common`, never v1; v1 never imports v2;
 `tests/test_architecture.py`, here and in the client's repository, fails the
 build if any of that breaks. The contracts package depends on pydantic and nothing else: it
@@ -56,7 +56,7 @@ cheap in both.
 |---|---|---|
 | `client/` | Your server folders — profile, contact data, template, images — the output tree, the spreadsheet | A PyInstaller executable, ~1 file, from its own repository, [ats-strike-client](https://github.com/gcontini/ats-strike-client) |
 | `src/cv_server/` | The protocol: request reading, auth, sessions, the event stream; one set of routes per pipeline, under its prefix (`/v1/...`) | Inside the container image |
-| `src/common/`, `resources/common/` | What every pipeline is built on: the models, the observability, the errors, the highlighter and its prompt, the validation loop, the renderer and its LaTeX sandbox | Inside the container image |
+| `src/common/`, `resources/common/` | What every pipeline is built on: the models, the observability, the errors, the highlighter and its prompt, the renderer and its LaTeX sandbox | Inside the container image |
 | `src/pipeline_v1/`, `resources/v1/` | Everything that makes a CV: the prompts and schemas, the models and their API keys, the LaTeX template and toolchain | Inside the container image, ~780 MB with TeX |
 | `src/pipeline_v2/`, `resources/v2/` | CV pipeline 2.0, being built beside v1: a store compiled once per profile (so far its base items and stories, a competence tree whose leaves are linked to the items, and the pool: everything a CV prints from the experiences, written once — per story a ladder of bullets at 1, 2 and 3 lines and up to three groups for a long one, per experience a role summary and a compact line, for the profile skill phrases and summary frames), with its own prompts and `models.toml` | Inside the image too, but no endpoint serves it yet |
 | `src/contracts/` | The wire format: the envelope, the payloads, a thing to store, the protocol number, the free JD pre-check | A pydantic-only package with its own repository, [ats-strike-contract](https://github.com/gcontini/ats-strike-contract), checked out here as a git submodule |

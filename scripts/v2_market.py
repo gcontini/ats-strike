@@ -20,7 +20,7 @@ descriptions (``--exclude-jds``, 8-word shingle Jaccard >= 0.5) and of the held-
   the rarest corpus terms are cut first.
 
 Everything it writes is derived from the data folder: ``--out`` must be a git-ignored folder.
-Deleted in S4, with ``v2_items.py`` and ``v2_tree.py``.
+Deleted in S10, with ``v2_items.py`` and ``v2_tree.py``.
 """
 
 from __future__ import annotations

@@ -12,7 +12,6 @@ outside the scratch directory it is handed.
 - ``parsing`` — a rejected reply, logged short.
 - ``highlight`` — :class:`Highlighter`: a CV's keywords marked bold, its
   stacks italic.
-- ``cv_review`` — a document validated as text replacements the model calls.
 - ``cv_renderer`` — structured CV data in, a compiled PDF out, in a sandbox.
 
 Its one prompt is ``resources/common``, packaged as ``common.resources``.

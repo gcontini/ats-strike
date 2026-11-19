@@ -5,7 +5,7 @@ import openai
 import pytest
 from pipeline_v1.schemas import JDAnalysis, JDDetection
 
-from common.cv_review import ReplaceInDuties
+from pipeline_v1.cv_review import ReplaceInDuties
 from common.errors import ModelOutputError
 from common.models import ATTEMPTS, Usage
 from common.observability import stage

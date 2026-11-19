@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from common.models import Usage
-from common.cv_review import (
+from pipeline_v1.cv_review import (
     MAX_VALIDATIONS,
     ReplaceInBody,
     ReplaceInDuties,

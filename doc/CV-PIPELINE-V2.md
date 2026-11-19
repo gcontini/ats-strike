@@ -485,9 +485,11 @@ call still yields a CV.
 
 ### 5.5 Highlight
 
-In code, from spans marked in the pool: the job's terms in bold, heaviest
-first, a few per CV, taken from the allocation's English keywords (the job's
-own words gave an Italian job none).
+v1's highlighter, shared by both pipelines: one model call marks the job's
+key-point terms in bold and the technical stacks in italics, and code keeps the
+original of any text whose words the model changed. For v2 the key points come
+from the allocation's English keywords (the job's own words gave an Italian job
+none).
 
 ## 6. Scoring and the mix
 
@@ -549,13 +551,14 @@ v1 stays, served at `/v1`. v2 has none of v1's:
 
 ## 8. How v2 keeps the house rules
 
-- **The pipeline is a library.** Points, selection, fit and highlight are pure
+- **The pipeline is a library.** Points, selection and fit are pure
   functions of values. The store arrives with the request.
-- **One server, several pipelines.** v1 and v2, and later the 0.5 line, are
-  packages side by side in one project (`src/pipeline_v1`, `src/pipeline_v2`),
-  each with its own resources and model roles, each served under its own path
-  behind the same facade. v2 uses v1's model, logging and error modules, and
-  later its LaTeX renderer and review loop; never its other steps.
+- **One server, several pipelines.** v1 and v2 are packages side by side in
+  one project (`src/pipeline_v1`, `src/pipeline_v2`), each with its own
+  resources and model roles, each served under its own path behind the same
+  facade. What both use sits in `src/common`: the model layer, logging, errors,
+  the LaTeX renderer, the review loop and the highlighter. v2 imports nothing
+  from v1. The 0.5 line keeps its own server.
 - **No hidden global state.** The mix and the page geometry are arguments.
 - **Contracts.** Unchanged. The store's pydantic model lives in the v2 pipeline:
   the client stores and sends the store's files without reading them.
@@ -631,12 +634,12 @@ Then the build, one sub-plan each:
 | S2 | Competence tree | done: the market list in code (the test set's copies left out), the shape and attach prompts, leaf status in code (proven, weak, ghost), two term lists per node, ghost leaves, the held-out test |
 | S3 | Pool | done: role summary first, ladder, wordings, up to three group views per long story, what each piece leans on and its check, compact lines, skill phrases on strong leaves, summary frames with checks |
 | S4 | Review and store | the pool review prompt, edits refused over the limit, the marking loop, the store as cache items, lock rules |
-| H | One server, several pipelines | each pipeline under its own path; the client names the pipeline per server; the 0.5 line as `src/pipeline_v0` |
+| H | One server, several pipelines | done: each pipeline under its own path, and the client's server URL names it; a `common` package with the model layer, the renderer, the review and the highlighter. The 0.5 line stays on its own server |
 | S5 | Allocation | the prompt, relations, point rules, English literal terms, the unmatched report, pending aliases |
 | S6 | Selector and scores | the objective, the narrative score, the mix, fill and refill, bullet order, the plan report |
 | S7 | Geometry and render | line constants from calibration; compact experience and skills block in the template |
 | S8 | Varnish | the job's words in, the pick, the repeat check, connectives between stories, regeneration tiers one and two, headline and sentence |
-| S9 | Highlight | marked spans, rules in code |
+| S9 | Highlight | the shared highlighter, fed the allocation's keywords |
 | S10 | Serving `/v2` | the mix, artifacts, docs; v1 stays at `/v1` |
 | S11 | Evaluation | the new columns; a thorough run of v1 against v2; the reading checks in short sessions |
 | S12 | Regeneration, tier three | a new sentence written on demand |
