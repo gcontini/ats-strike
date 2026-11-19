@@ -12,6 +12,11 @@
 #             experience (S4)
 #   allocate  places a job description's requirements on the competence tree
 #             (S5)
+#   varnish   one CV's three finishing calls: a wording per slot and a title
+#             per experience, the headline and the summary's sentence, the
+#             job's missing terms into the summary and the bullets (S8)
+#   highlight the **bold**/*italic* keyword pass, common's highlighter and
+#             prompt, as in v1 (S9)
 #
 # Every key of a [models.<role>] table can be overridden with an env var,
 # ATS_<ROLE>_<FIELD> (ATS_COMPILE_MODEL, ATS_COMPILE_EXTRA_BODY, ...), as in v1.
@@ -47,3 +52,20 @@ model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "xhigh"
+
+# A CV's three finishing calls, one after the other (S8): pick, headline and sentence, terms in. The S0
+# probe's pick settings (out/probe-s0/probe_models.toml; doc/model-configurations.md), chosen by the user
+# on 2026-11-19 over the headline's qwen3.8-max: DeepSeek's own API, xhigh.
+[models.varnish]
+model                  = "deepseek-flash"
+model_provider         = "deepseek"
+use_alternate_provider = 2
+reasoning_effort       = "xhigh"
+
+# The **bold**/*italic* pass, one call per CV after the varnish (S9): common's highlighter and its prompt,
+# with v1's settings for the same role (resources/v1/models.toml).
+[models.highlight]
+model                  = "deepseek-flash"
+model_provider         = "deepseek"
+use_alternate_provider = 2
+reasoning_effort       = "medium"

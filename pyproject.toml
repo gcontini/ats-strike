@@ -12,7 +12,7 @@
 #                       container; one set of routes per pipeline (/v1/...)
 #   resources/common/   the highlighter's prompt
 #   resources/v1/       the pipeline's prompts, schemas, template and models
-#   resources/v2/       pipeline 2.0's prompts and models
+#   resources/v2/       pipeline 2.0's prompts, template and models
 #   resources/docker/   the image's scripts and vendored fonts, compose.yaml
 #
 # The client is the ats-strike-client repository, and the tests that run the
@@ -90,7 +90,7 @@ packages = [
 [tool.setuptools.package-data]
 "common.resources" = ["*.txt"]
 "pipeline_v1.resources" = ["*.txt", "*.json", "*.toml", "*.jinja", "*.png"]
-"pipeline_v2.resources" = ["*.txt", "*.toml"]
+"pipeline_v2.resources" = ["*.txt", "*.toml", "*.jinja"]
 
 [dependency-groups]
 dev = [

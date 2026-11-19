@@ -238,6 +238,9 @@ class CVRenderer:
                 cwd=str(self.work_dir),
                 capture_output=True,
                 text=True,
+                # TeX logs an overfull line in the font's encoding, not
+                # UTF-8 (a bullet is byte 0x88): decode what it can.
+                errors="replace",
                 timeout=self.latex_timeout,
                 # nonstopmode still prompts "Enter file name:" for a missing
                 # include; with an inherited stdin that is a request that

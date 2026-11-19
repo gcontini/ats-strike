@@ -26,14 +26,16 @@ from .store import DATES, MONTHS, Item, Items, _plain, _sha256, _Strict, is_work
 from .terms import has_term
 from .tree_store import Node, Tree, leaf_links, leaf_status, level, terms_of
 
-#: Characters a printed line holds: a bullet's, a role summary's.
-BULLET_LINE = 98
-ROLE_LINE = 99
-#: Accepted lengths; the prompts state a little less (95; 130-190; 225-285; 180; 95; 285).
-RUNG_MAX = {1: 98, 2: 196, 3: 294}
-ROLE_SUMMARY_MAX = 198
+#: Characters a printed line holds: a bullet's, and a paragraph's (role summary, compact line).
+#: Measured on resources/v2/resume.tex.jinja by S7 (2026-11-19): 96 miscounts 1 of the pool's 165
+#: bullets, where 98 counted 3 a line short.
+BULLET_LINE = 96
+ROLE_LINE = 100
+#: Accepted lengths, whole lines; the prompts state a little less (95; 130-190; 225-285; 180; 95; 285).
+RUNG_MAX = {k: k * BULLET_LINE for k in (1, 2, 3)}
+ROLE_SUMMARY_MAX = 2 * ROLE_LINE
 COMPACT_MAX = 98
-GROUP_BULLET_MAX = 294
+GROUP_BULLET_MAX = 3 * BULLET_LINE
 #: A group: 2 or 3 bullets, 4 to 7 printed lines, 9 for a merged story.
 GROUP_BULLETS = (2, 3)
 GROUP_LINES = (4, 7)

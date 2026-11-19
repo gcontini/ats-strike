@@ -6,6 +6,8 @@ stories each, one leaf per experience.
 
 from __future__ import annotations
 
+from datetime import date
+
 import pytest
 
 from pipeline_v2 import select as sel
@@ -101,7 +103,7 @@ def store():
 @pytest.fixture
 def ctx():
     items, tree, pool, allocation = store()
-    return sel.context(items, tree, pool, allocation, ["Platform Engineer"])
+    return sel.context(items, tree, pool, allocation, ["Platform Engineer"], {})
 
 
 @pytest.fixture
@@ -133,6 +135,24 @@ def test_a_duty_tells_its_years_by_the_share_of_its_items_printed(ctx):
     # a compact line counts the items it uses: e2's uses its duty 0's action
     draft = {"forms": {2: "compact"}, "slots": {}}
     assert sel.narrative(draft, ctx) == pytest.approx(5 * 0.9 / 2 / career)
+
+
+def test_older_months_weigh_less():
+    experiences = [
+        {"id": 0, "dates": "November 2026 -- present"},  # this month: age 0
+        {"id": 1, "dates": "November 2023 -- November 2023"},  # one month, a half-life old: half
+        {"id": 2, "dates": "November 2017 -- November 2023"},  # 9 to 3 years old
+        {"id": 3, "dates": "sometime"},
+    ]
+    assert sel.HALF_LIFE_YEARS == 3
+    w = sel.recency(experiences, date(2026, 11, 19))
+    assert w[0] == 1.0 and w[1] == pytest.approx(0.5) and w[3] == 1.0
+    assert 0.125 < w[2] < 0.5  # the mean over its 73 months
+    items, tree, pool, allocation = store()
+    ctx = sel.context(items, tree, pool, allocation, ["Platform Engineer"], {2: 0.5})
+    # e2's 5 years count 2.5, in what it tells and in the career (2 + 3 + 2.5)
+    draft = {"forms": {2: "compact"}, "slots": {}}
+    assert sel.narrative(draft, ctx) == pytest.approx(2.5 * 0.9 / 2 / 7.5)
 
 
 # --- the greedy and the refill pass -----------------------------------------------------------------

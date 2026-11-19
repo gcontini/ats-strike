@@ -2,8 +2,9 @@
 
 Status: draft, 2026-11-12, updated 2026-11-19. The probe of
 [section 11](#11-plan-of-work) has run: **go**, on the conditions listed there. The
-repository has the new layout, and v2's first three steps, the base items, the
-competence tree and the pool, are built. This
+repository has the new layout, and v2 is built through the varnish: the store
+(base items, competence tree, reviewed pool) and, per job, allocation,
+selection, render and varnish. Highlight, serving and evaluation remain. This
 replaces the draft of 2026-11-10, which compiled the profile into facts and still
 wrote every CV with a model;
 [section 12](#12-alternatives-considered) says what was kept from it. v2 is a second
@@ -450,38 +451,37 @@ first render, with one to four lines to spare.
 
 ### 5.4 Varnish
 
-A model reads the assembled CV as a whole and:
+Three model calls after the selection, before the render:
 
-- **puts the job's words in,** in the summary first and then in the bullets,
-  through the existing `replace_in_*` tools. Code refuses an edit that adds a
-  number, a technology or a line, and the existing validation prompt checks
-  the result. This is the step the probe made mandatory: selection alone
-  reached 35% literal coverage against v1's 62%, and the body review rightly
-  strips terms the profile does not back;
-- **picks one stored wording per slot,** for varied openers, rhythm and the
-  job's words;
-- **flags two slots that tell the same fact;** code replaces one with the
-  selector's next candidate. Shared context is not a repeat: that was every
-  flag the probe raised;
-- **joins the stories:** connectives, and shortenings that lean on the story
-  printed just before ([section 4.5](#45-context-and-references)), for this CV
-  only, never saved, never adding a fact;
-- **regenerates a bullet it cannot use,** in three tiers: a tool returns the
-  story's other stored bullets with the same line count; failing that, a small
-  local edit (a reference the role summary already explains, "the" for a thing
-  not yet introduced), saved and applied at once, checked for its line count;
-  failing that, a new sentence from a model that sees the profile, the pool,
-  the story, the requested edit and the scores, which waits for the candidate's
-  approval before it joins the pool. The last tier comes last in the build.
+- **pick:** one stored wording per slot, and one title per experience from the
+  titles the profile lists for that job;
+- **headline and sentence:** the job title under the name and the summary's one
+  sentence. The prompt aims the summary at 450 characters; code accepts 500
+  and refuses a number that neither the summary nor the experiences hold;
+- **the job's words in.** This is the step the probe made mandatory: selection
+  alone reached 35% literal coverage against v1's 62%. Code offers the keywords
+  of each requirement that lands on a proven or weakly proven skill and that the
+  CV does not yet name. The model replaces text in the summary first, then in
+  the bullets, under an interview defendability test: a term goes in only where
+  the bullet's facts back it. Code applies a replacement only if a bullet keeps
+  its printed lines, the summary stays within 500 characters, no number is
+  added, and every keyword it brings was offered.
 
-A separate call writes the **headline** and the summary's one **sentence**. The
-headline is the job's title when the profile's titles license it; otherwise it
-is written from the job, the experiences shown and the allowed titles. In the
-probe every headline stayed within the titles held or allowed.
+On ten development jobs literal coverage rose from 43-45% before the varnish to
+58-61% after, against v1's 62%; on the allocation's own keywords, 76-80%
+against v1's 50-54%. Every CV fitted two pages, at about 170 seconds and three
+calls per CV.
 
-The model chooses between reviewed sentences, so it cannot exaggerate or
-garble. Code checks each reply and falls back to a default wording, so a failed
-call still yields a CV.
+The model chooses between reviewed sentences and edits only where code lets it,
+so it cannot add a number or a line. Next, code will also refuse a replacement
+that takes a job keyword out of the text it edits, or that changes the job
+title at the head of the summary.
+
+Not built, to keep the step small: a repeat check between slots, connectives
+and shortenings between stories ([section 4.5](#45-context-and-references)),
+saved local edits, a final validation call, and the alias swap. A new sentence
+written on request, waiting for the candidate's approval, comes last in the
+build.
 
 ### 5.5 Highlight
 
@@ -514,6 +514,11 @@ years. A duty counts its years times the share of its action and result items
 that are printed; a compact line counts for the items it uses. Skipping a long
 experience therefore costs in proportion to its length, and, within a job,
 leaving out main work costs nine times as much as leaving out a one-off.
+
+**Older months weigh less:** each month of a job counts half as much for every
+three years of age, in the years told and in the career's years alike. Without
+it, the two oldest jobs took about 40% of the experience lines; with it, a
+fifth, and the earliest job usually prints as one compact line.
 
 The weights are judged once per duty, on three levels, when the store is
 compiled, where the candidate can read and correct them. Nothing is judged per
@@ -636,10 +641,10 @@ Then the build, one sub-plan each:
 | S4 | Pool review | done: one model review per experience against the profile, with an interview defendability test; an edit may not add printed lines, and a bullet it shortens moves down a rung |
 | H | One server, several pipelines | done: each pipeline under its own path, and the client's server URL names it; a `common` package with the model layer, the renderer, the review and the highlighter. The 0.5 line stays on its own server |
 | S5 | Allocation | done: one call places the job's requirements on the tree (v1's job evaluation prompt plus placement); keywords are the literal terms; ten dev jobs share 81% of their points with the earlier check's runs, 80% of importance lands on proven skills, none nowhere |
-| S6 | Selector and scores | done: the selection in code, scored on keywords and on the narrative score (the career's years told) at a fixed half-and-half mix; it fills the page, then a refill pass; bullets most relevant first; on ten dev jobs every plan fills 70.8 to 71.1 of 71.2 lines, and the refill gains in four |
-| S7 | Geometry and render | line constants from calibration; compact experience and skills block in the template |
-| S8 | Varnish | the job's words in, the pick, the repeat check, connectives between stories, regeneration tiers one and two, headline and sentence |
-| S9 | Highlight | the shared highlighter, fed the allocation's keywords |
+| S6 | Selector and scores | done: code picks the slots for the page; on ten dev jobs every plan fills the page and shows every job; the human score is the share of career years told |
+| S7 | Geometry and render | done: the v2 template with a compact form, a document built from the plan, render and fit; the line model recalibrated; ten dev CVs fit two pages at the first render |
+| S8 | Varnish | done: three calls after the plan — a stored wording per slot and a title per experience, the headline and the summary's sentence, the job's missing terms into the summary and bullets under code's guards; older months weigh less in the selection (half-life three years). On ten dev jobs literal coverage goes from 43-45% to 58-61% (v1 62%); connectives, saved edits and the repeat check cut |
+| S9 | Highlight | built, gate pending: a guard so a terms-in replacement keeps the job terms and the job title it touches; the shared highlighter, unchanged, fed the allocation's requirements, each bullet's proof scores and the items behind it. On ten dev jobs: 2 skills and 4-5 bullet phrases bold, all on 2 pages, about 80 s per CV |
 | S10 | Serving `/v2` | the mix, artifacts, docs; v1 stays at `/v1` |
 | S11 | Evaluation | the new columns; a thorough run of v1 against v2; the reading checks in short sessions |
 | S12 | Regeneration, tier three | a new sentence written on demand |

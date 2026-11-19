@@ -160,8 +160,8 @@ def details(found: dict, check: str) -> list:
 
 # --- derived values ------------------------------------------------------------------------------------
 def test_lines_of_a_bullet_and_of_a_role_summary():
-    assert (lines("x" * 98), lines("x" * 99), lines("x" * 196), lines("x" * 197)) == (1, 2, 2, 3)
-    assert lines("x" * 99, 99) == 1
+    assert (lines("x" * 96), lines("x" * 97), lines("x" * 192), lines("x" * 193)) == (1, 2, 2, 3)
+    assert lines("x" * 100, 100) == 1 and lines("x" * 101, 100) == 2
 
 
 def test_nodes_take_the_highest_level_with_context_clamped(long_items, long_tree):
@@ -218,14 +218,14 @@ def test_a_clean_pool_passes_every_check(long_items, long_tree, long_profile):
 def test_length_lines_and_a_missing_rung_1(long_items, long_tree, long_profile):
     pool = clean_pool(long_items, long_tree)
     s02 = pool.experiences[0].stories[1]
-    s02.ladder[0].text = sized("Moved", 99)  # r1.a over 98
+    s02.ladder[0].text = sized("Moved", 99)  # r1.a over 96
     s02.ladder[2].text = sized("Moved", 90)  # r2.a fills one line
     pool.experiences[0].stories[2].ladder = []  # e0.s03: no rung 1
     pool.skills[0].text = "Kubernetes container orchestration"  # 34 characters, 3 words
     pool.skills[1].text = "Docker on any old laptop"  # 5 words
     found = pool_checks(pool, long_items, long_tree, long_profile, TODAY)
     assert details(found, "length") == [
-        "e0.s02.r1.a: 99 characters, over 98",
+        "e0.s02.r1.a: 99 characters, over 96",
         "k01: 34 characters, over 30",
         "k02: 5 words, over 4",
     ]
@@ -951,7 +951,7 @@ def test_a_replacement_is_refused_on_each_piece_whose_line_count_it_changes(long
     assert [r["id"] for r in calls[0]["refused"]] == ["e0.s01.r1.a", "e0.s02.r1.a", "e0.s03.r1.a"]
     assert calls[0]["error"].startswith(
         "'Moved the platform work' refused in duty 2: it would fill 2 printed line(s), more than 1 "
-        "(100 characters, 98 a line); duty 10: "
+        "(100 characters, 96 a line); duty 10: "
     )
     retry = next(c for c in llm["validation"].calls if "ATTEMPT: 2\n" in user_text(c))
     assert (

@@ -70,7 +70,7 @@ def pieces_of(block: ExperiencePool) -> List[Piece]:
     e = block.experience
     out: List[Piece] = [
         {"id": f"e{e}.role", "text": block.role_summary.text, "width": ROLE_LINE},
-        {"id": f"e{e}.compact", "text": block.compact.text, "width": BULLET_LINE},
+        {"id": f"e{e}.compact", "text": block.compact.text, "width": ROLE_LINE},  # a paragraph
     ]
     for s in block.stories:
         out += [{"id": r.id, "text": r.text, "width": BULLET_LINE} for r in s.ladder]

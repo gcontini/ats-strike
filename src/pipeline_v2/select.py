@@ -9,7 +9,8 @@ No model call. The S0 probe's selector, ported to the pool (S3) and the allocati
   points (weight 1, 2, 3 counts 1, 3, 9 points; a duty with no action or result item is left
   out); a duty tells its years times the share of its action and result items that are printed
   (a bullet's ``covers``, a compact line's ``uses``). The score is the years told over the
-  career's years.
+  career's years. In both, each month of a job counts ``0.5 ** (its age / HALF_LIFE_YEARS)``, its
+  age taken from the CV's date (:func:`recency`): a job long ago weighs less however long it lasted.
 - **Objective** = ``ATS_WEIGHT`` x ATS + the rest x narrative. The mix is code, not a setting.
 
 The greedy starts from the most recent and the earliest experience in compact form (both always
@@ -28,24 +29,26 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Callable, Dict, FrozenSet, List, Mapping, Optional, Sequence, Tuple, Union
+from datetime import date
+from typing import Any, Callable, Dict, FrozenSet, List, Mapping, Optional, Sequence, Tuple, Union
 
 from .allocate import Allocation, Requirement, points
-from .pool_store import ROLE_LINE, Bullet, Frame, Line, Pool, Skill, item_leaves, lines, piece_nodes
-from .store import Items, _Strict, is_work
+from .pool_store import ROLE_LINE, Bullet, Frame, Line, Pool, Skill, _month_span, item_leaves, lines, piece_nodes
+from .store import Items, _plain, _Strict, is_work
 from .terms import count_term
 from .tree_store import Tree, leaf_status, level, parent
 
-# --- the page: S0's geometry.json, in points (S7 recalibrates) -----------------------------------
+# --- the page: measured on resources/v2/resume.tex.jinja (S7's calibration of 2026-11-19), in points
 PITCH_PT = 11.96
-ITEM_GAP_PT = 3.97
-FULL_HEADER_PT = 45.87
+ITEM_GAP_PT = 3.98
+FULL_HEADER_PT = 46.11
 COMPACT_PT = 54.09
 #: What the experiences may take, with a summary of TOP_SUMMARY_LINES lines.
-CAPACITY_PT = 827.4
+CAPACITY_PT = 827.63
 TOP_SUMMARY_LINES = 7
 SUMMARY_LINE_CHARS = 102
-SKILLS_LINE_CHARS = 96
+#: What a skills line holds after its word breaks (S0 read 96; Unipol's 192 characters took 3 lines).
+SKILLS_LINE_CHARS = 91
 #: The summary the selection plans room for.
 SUMMARY_CHARS = 500
 #: Skill phrases, on 2 lines.
@@ -56,6 +59,9 @@ ATS_WEIGHT = 0.5
 LITERAL_WEIGHT = 0.5
 #: A duty's points by its weight.
 DUTY_POINTS = {1: 1, 2: 3, 3: 9}
+#: A month of a job counts 0.5 ** (its age in years / HALF_LIFE_YEARS) in the narrative (the user's choice of
+#: 2026-11-19, after 3, 5 and 8 were simulated on the dev JDs).
+HALF_LIFE_YEARS = 3.0
 
 #: A slot's rung: 1-3 on the ladder, or a group "g1".."g3".
 RungKey = Union[int, str]
@@ -80,8 +86,8 @@ class Context:
     points: Mapping[str, float]
     status: Mapping[str, str]
     experiences: Tuple[int, ...]  # profile order, most recent first
-    years: Mapping[int, float]
-    duties: Mapping[Tuple[int, int], Tuple[float, FrozenSet[str]]]  # (exp, duty) -> years, A/R items
+    years: Mapping[int, float]  # weighted by recency
+    duties: Mapping[Tuple[int, int], Tuple[float, FrozenSet[str]]]  # (exp, duty) -> years (weighted), A/R items
     ladder: Mapping[str, Mapping[int, Tuple[Piece, ...]]]  # story -> rung -> wordings, a first
     groups: Mapping[str, Mapping[str, Tuple[Piece, ...]]]  # story -> "g1" -> bullets in order
     story_exp: Mapping[str, int]
@@ -117,9 +123,32 @@ def duty_years(items: Items) -> Dict[Tuple[int, int], Tuple[float, FrozenSet[str
     return out
 
 
-def context(items: Items, tree: Tree, pool: Pool, allocation: Allocation, titles: Sequence[str]) -> Context:
-    """Everything the scores and the selection read for one job."""
+def recency(experiences: Sequence[Mapping[str, Any]], today: date) -> Dict[int, float]:
+    """Experience id -> the weight of its years: the mean over its months of
+    ``0.5 ** (age / HALF_LIFE_YEARS)``, a month's age being the years from it to ``today`` (the CV's
+    date). 1 for unreadable dates."""
+    now = today.year * 12 + today.month
+    out = {}
+    for e in experiences:
+        span = _month_span(_plain(e.get("dates")), today)
+        months = range(span[0], span[1] + 1) if span else range(0)
+        decay = [0.5 ** ((now - m) / 12 / HALF_LIFE_YEARS) for m in months]
+        out[e["id"]] = sum(decay) / len(decay) if decay else 1.0
+    return out
+
+
+def context(
+    items: Items,
+    tree: Tree,
+    pool: Pool,
+    allocation: Allocation,
+    titles: Sequence[str],
+    weights: Mapping[int, float],
+) -> Context:
+    """Everything the scores and the selection read for one job. ``weights`` are :func:`recency`'s;
+    a job it does not name weighs 1."""
     leaves = item_leaves(tree, items)
+    weight = {x.id: weights.get(x.id, 1.0) for x in items.experiences}
     ladder: Dict[str, Dict[int, Tuple[Piece, ...]]] = {}
     groups: Dict[str, Dict[str, Tuple[Piece, ...]]] = {}
     story_exp: Dict[str, int] = {}
@@ -142,8 +171,8 @@ def context(items: Items, tree: Tree, pool: Pool, allocation: Allocation, titles
         points=points(tree, allocation.requirements),
         status=status,
         experiences=tuple(x.id for x in items.experiences),
-        years={x.id: (x.months or 0) / 12 for x in items.experiences},
-        duties=duty_years(items),
+        years={x.id: (x.months or 0) / 12 * weight[x.id] for x in items.experiences},
+        duties={k: (y * weight[k[0]], work) for k, (y, work) in duty_years(items).items()},
         ladder=ladder,
         groups=groups,
         story_exp=story_exp,
@@ -391,6 +420,27 @@ def refill(ctx: Context, draft: Draft, log: Optional[Callable[[str], None]] = No
         draft = cand
 
 
+def fit(draft: Draft, ctx: Context) -> Optional[Draft]:
+    """One step towards a shorter CV (S0's): the step down that loses least objective per line
+    saved (a group to its story's top rung, a rung to the one below); only when no story can step
+    down, the removal that loses least. None when nothing is left to take away."""
+    base, used = objective(draft, ctx), height(draft, ctx)
+
+    def cost(cand: Draft) -> float:
+        saved = used - height(cand, ctx)
+        return (base - objective(cand, ctx)) / saved if saved > 0 else math.inf
+
+    downs, removals = [], []
+    for s, r in draft["slots"].items():
+        ladder = list(ctx.ladder[s])
+        below = ladder[-1] if isinstance(r, str) else next((k for k in reversed(ladder) if k < r), None)
+        if below is not None:
+            downs.append(_with(draft, slots={s: below}))
+        removals.append(tidy(_with(draft, drop=(s,)), ctx))
+    options = [c for c in (downs or removals) if cost(c) < math.inf]
+    return min(options, key=cost) if options else None
+
+
 # --- skills, frame, headline -----------------------------------------------------------------------
 def skills(draft: Draft, ctx: Context) -> List[str]:
     """Skill phrases on 2 lines, taken one at a time by the literal score they add, then by the
@@ -529,16 +579,14 @@ def scores(draft: Draft, ctx: Context) -> Scores:
     )
 
 
-def select(ctx: Context, log: Optional[Callable[[str], None]] = None) -> Plan:
-    """The plan for one job: the greedy, the refill pass, then skills, frame and headline."""
-    ids = ctx.experiences
-    first = greedy(ctx, {"forms": {ids[0]: "compact", ids[-1]: "compact"}, "slots": {}}, log)
-    best = finish(refill(ctx, first, log), ctx)
+def plan_of(draft: Draft, ctx: Context, greedy_objective: float) -> Plan:
+    """The plan of a draft, finished with its skills, frame and headline."""
+    best = finish(draft, ctx)
     return Plan(
         title=ctx.title,
         experiences=[
             Shown(experience=e, form=best["forms"][e], slots=_slots(best, ctx, e) if best["forms"][e] == "full" else [])
-            for e in ids
+            for e in ctx.experiences
             if e in best["forms"]
         ],
         skills=best["skills"],
@@ -546,10 +594,25 @@ def select(ctx: Context, log: Optional[Callable[[str], None]] = None) -> Plan:
         keywords=best["keywords"],
         headline=best["headline"],
         scores=scores(best, ctx),
-        greedy_objective=round(objective(finish(first, ctx), ctx), 4),
+        greedy_objective=greedy_objective,
         lines=round(height(best, ctx) / PITCH_PT, 1),
         budget_lines=round(budget() / PITCH_PT, 1),
     )
+
+
+def draft_of(plan: Plan) -> Draft:
+    """A plan's forms and slots, as the moves and :func:`fit` take them."""
+    return {
+        "forms": {x.experience: x.form for x in plan.experiences},
+        "slots": {s.story: s.rung for x in plan.experiences for s in x.slots},
+    }
+
+
+def select(ctx: Context, log: Optional[Callable[[str], None]] = None) -> Plan:
+    """The plan for one job: the greedy, the refill pass, then skills, frame and headline."""
+    ids = ctx.experiences
+    first = greedy(ctx, {"forms": {ids[0]: "compact", ids[-1]: "compact"}, "slots": {}}, log)
+    return plan_of(refill(ctx, first, log), ctx, round(objective(finish(first, ctx), ctx), 4))
 
 
 def plan_markdown(plan: Plan, pool: Pool) -> str:
@@ -597,11 +660,15 @@ __all__ = [
     "Context",
     "Plan",
     "context",
+    "draft_of",
     "duty_years",
+    "fit",
     "greedy",
     "narrative",
     "objective",
     "plan_markdown",
+    "plan_of",
+    "recency",
     "refill",
     "select",
 ]

@@ -196,6 +196,16 @@ def test_a_looping_template_hits_the_timeout(tmp_path):
         tex_renderer(tex, tmp_path, latex_timeout=5.0).compile_tex(tex)
 
 
+
+@needs_latex
+def test_a_log_line_that_is_not_utf8_does_not_break_the_compile(tmp_path):
+    """TeX logs an overfull line in the font's own encoding: a bullet is byte 0x88 there."""
+    tex = (
+        r"\documentclass{article}\usepackage[T1]{fontenc}\usepackage{textcomp}\begin{document}"
+        r"\noindent word {\textbullet} " + "/".join(["Linux", "Windows", "Solaris"] * 8) + r"\end{document}"
+    )
+    assert tex_renderer(tex, tmp_path).compile_tex(tex).pages == 1
+
 # --- the page check ---------------------------------------------------------
 def test_page_check_counts_only_the_lines_past_the_limit(monkeypatch, tmp_path):
     """The overflow is what spilled over, added up across every extra page."""

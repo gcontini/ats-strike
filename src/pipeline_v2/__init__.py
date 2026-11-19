@@ -22,8 +22,17 @@ models, the observability, the errors) and imports nothing from ``pipeline_v1``.
 - ``select`` — the selection for one job, no model: which experiences are full or compact, which
   story at which rung or group, the skills, the summary frame, the headline, and the scores
   (keywords and narrative); the greedy fills the page, then a refill pass.
+- ``document`` — a plan into the template's namespace: the frame filled in, each experience full
+  or compact. Pure.
+- ``varnish`` — :class:`Varnisher`: three calls between the plan and the render: one wording per
+  slot and one title per experience, the headline and the summary's sentence, and the job's
+  missing terms put into the summary and the bullets; code's guards on each reply.
+- ``highlight`` — the inputs ``common``'s highlighter reads (key points, the CV with each bullet's
+  scores, the evidence), built from the varnished document, and its markers laid back. Pure.
+- ``render`` — the document compiled by ``common``'s renderer; while over two pages, a story
+  steps down a rung (or one goes) and it renders again; the page's lines read back.
 
-Its prompts and its own ``models.toml`` are ``resources/v2``, packaged as
+Its prompts, its template and its own ``models.toml`` are ``resources/v2``, packaged as
 ``pipeline_v2.resources``.
 """
 
@@ -39,9 +48,10 @@ from .select import Plan, plan_markdown
 from .store import Items, items_markdown, validate
 from .tree import TreeBuilder
 from .tree_store import Market, Tree, leaf_status, tree_dump, tree_markdown, validate_tree
+from .varnish import Varnish, Varnisher, varnish_markdown
 
 #: The model roles of ``resources/v2/models.toml``, growing with each sub-plan.
-ROLES = ("compile", "validation", "allocate")
+ROLES = ("compile", "validation", "allocate", "varnish", "highlight")
 
 
 def resources_dir() -> Path:
@@ -65,6 +75,8 @@ __all__ = [
     "PoolWriter",
     "Tree",
     "TreeBuilder",
+    "Varnish",
+    "Varnisher",
     "allocation_markdown",
     "items_markdown",
     "leaf_status",
@@ -80,4 +92,5 @@ __all__ = [
     "validate",
     "validate_pool",
     "validate_tree",
+    "varnish_markdown",
 ]

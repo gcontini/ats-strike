@@ -11,7 +11,7 @@ src/pipeline_v1/   pipeline_v1   — the CV pipeline: its steps, prompts and val
 src/common/        common        — what the pipelines share: models, observability, renderer
 src/pipeline_v2/   pipeline_v2   — CV pipeline 2.0, being built beside v1
 resources/v1/                    — the pipeline's prompts, schemas, template, models.toml
-resources/v2/                    — pipeline 2.0's prompts and models.toml
+resources/v2/                    — pipeline 2.0's prompts, template and models.toml
 resources/common/                — the highlighter's prompt
 ```
 
@@ -94,8 +94,8 @@ job's session is the only thing kept
 
 **`src/common/`** — what every pipeline is built on; no HTTP, imports no pipeline
 - `models/` — `ModelSelector`: one LangChain chat model per role
-  (v1's `detect`/`analysis`/`letter` and the six CV steps; v2's `compile`
-  and `validation`) from the `models.toml` a pipeline passes in
+  (v1's `detect`/`analysis`/`letter` and the six CV steps; v2's `compile`,
+  `validation`, `allocate`, `varnish` and `highlight`) from the `models.toml` a pipeline passes in
   (`resources/v1/`, `resources/v2/`), built by the role's `model_provider`
   (`standard.py` on `ChatOpenAI`, `deepseek.py` on `ChatDeepSeek`), and two
   methods: `call_llm(role, type, system_prompt, messages)`, which returns a
@@ -123,8 +123,9 @@ job's session is the only thing kept
 **`src/pipeline_v2/`, `resources/v2/`** — CV pipeline 2.0, being built beside
 v1 and taking only `common`: a store compiled once per profile (items,
 competence tree, pool and its review) and, per job description, the
-allocation of its requirements on the tree and the selection of what the
-CV shows (code only), with its own prompts and `models.toml`. No endpoint serves it yet; `scripts/v2_*.py` run it.
+allocation of its requirements on the tree, the selection of what the
+CV shows (code only), the varnish (picks, headline and sentence, the job's
+missing terms in), the highlight (`common`'s, fed v2's inputs) and its render to two pages, with its own prompts, template and `models.toml`. No endpoint serves it yet; `scripts/v2_*.py` run it.
 
 **`resources/v1/`** — the impersonal defaults baked into the image: four
 prompts, `resume.tex.jinja`, `models.toml`, a blank `candidate_signature.png`
