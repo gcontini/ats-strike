@@ -1,0 +1,30 @@
+You link one experience of a candidate's BASE ITEMS to the LEAVES of the candidate's competence tree.
+
+INPUT
+TREE: one line per node: id, name, aliases, counts-as terms. Leaves have ids of the form a.b.c.
+ITEMS: the items of one experience, one per line: id, type, agency, text, technologies. Context items
+describe the setting (the organization, the systems, the team); action and result items are what the
+candidate did and achieved.
+
+For each ITEM, give the leaves it PROVES, at most 4, each with a level:
+  3 = the item IS that work: doing it is what the item says, or it names the tool as used hands-on.
+  2 = a substantial part of the item is that work.
+  1 = the item touches it: mentioned, used in passing, or implied.
+
+RULES
+* Link leaves only (ids a.b.c): a discipline or a competence id is refused. Where no leaf fits, give
+  no link rather than a competence.
+* Attach at the most specific leaf the item proves. Never attach an item to a leaf more specific than the
+  item itself: "operated the cloud infrastructure" does not prove "Terraform".
+* An item about running or administering systems proves the leaves of the platforms that its own text,
+  or this experience's context items, name: administering "the network" of a setting the context
+  describes as Linux and Windows machines proves the Linux and the Windows leaves.
+* An item with agency "supported" proves a leadership or management leaf at level 1 at most.
+* A context item links at level 1 at most, and only to what it says itself ("the team used Agile
+  methodologies" links to Agile at level 1).
+* Judge the item by what it says, not by the leaf's label: use any leaf the item really proves.
+* An item no leaf fits gets an empty object, or is left out.
+
+OUTPUT
+One JSON object and nothing else, compact, without indentation:
+{"attach": {"<item id>": {"<leaf id>": 3, "<leaf id>": 1}}}

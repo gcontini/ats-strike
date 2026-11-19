@@ -4,8 +4,8 @@ Each call sees one experience (title, company, dates, context, role summary and 
 duties) and nothing else of the profile. Its reply is plain JSON, validated here: a reply that
 does not validate goes back once with what was wrong, then fails. Code then numbers the items,
 checks every source span against the profile, drops what it cannot trust (each with its reason),
-puts experience-level context in the experience's list and dissolves a story that holds no
-action or result. What is wrong but harmless stays, for :func:`~.store.validate` to report.
+puts experience-level context in the experience's list and dissolves a story the reply gave no
+action or result (one that lost them to drops is kept, and reported). What is wrong but harmless stays, for :func:`~.store.validate` to report.
 
 An experience whose profile JSON has not changed since ``previous`` was compiled is copied as it
 is, hand edits included; a changed one is compiled again, and the hand edits of its old version
@@ -105,6 +105,13 @@ def shown(exp: Mapping[str, Any]) -> Dict[str, Any]:
     return {key: exp.get(key, "") for key in SHOWN}
 
 
+def add_usage(total: Usage, usage: Usage, lock: Lock) -> None:
+    """Add one call's usage to a total that calls running side by side share."""
+    with lock:
+        for f in fields(Usage):
+            setattr(total, f.name, getattr(total, f.name) + getattr(usage, f.name))
+
+
 def in_order(answers: List[Tuple[int, Any]]) -> List[Any]:
     """A fanned-out step's answers, back in the order they were sent."""
     return [answer for _, answer in sorted(answers, key=lambda pair: pair[0])]
@@ -136,7 +143,7 @@ def build_experience(exp: Mapping[str, Any], reply: Union[Reply, Mapping[str, An
 
     Items and stories are numbered in reply order, kept ones only. A story's items are its
     context first, then its actions and results, each in profile order. ``story: 0`` and the
-    context of a story with no action or result go to the experience's context list.
+    context of a story to which the reply gave no action or result go to the experience's context list.
     """
     reply = Reply.model_validate(reply)
     e = exp["id"]
@@ -151,12 +158,16 @@ def build_experience(exp: Mapping[str, Any], reply: Union[Reply, Mapping[str, An
         else:
             kept.append((raw, raw.story))
 
-    # A story with no action or result left is dissolved into the experience context.
-    has_work = {s for raw, s in kept if raw.type in ("action", "result")}
+    # A story to which the reply gave no action or result is dissolved into the experience context.
+    # One that lost them to drops is kept, with its items, for validate() to report.
+    has_work = {raw.story for raw in reply.items if raw.type in ("action", "result")}
     kept = [(raw, s if s in has_work else 0) for raw, s in kept]
     stories = [s for s in reply.stories if s.n in has_work]
     story_id = {s.n: f"e{e}.s{k:02d}" for k, s in enumerate(stories, 1)}
     item_id = {raw.n: f"e{e}.i{k:02d}" for k, (raw, _) in enumerate(kept, 1)}
+    for d in dropped:
+        if d["story"] in story_id:
+            d["story_id"] = story_id[d["story"]]
 
     items = [
         Item(id=item_id[raw.n], experience=e, duty=raw.duty, type=raw.type, text=raw.text,
@@ -193,12 +204,14 @@ def build_experience(exp: Mapping[str, Any], reply: Union[Reply, Mapping[str, An
 
 
 def hand_edits(old: ExperienceItems, old_items: List[Item], new: ExperienceItems) -> List[dict]:
-    """What the user changed in the old version of a recompiled experience: items marked
-    ``edited``, weights the new compile does not repeat, merged stories."""
+    """What the user changed in the old version of a recompiled experience: items and weights
+    marked ``edited`` (a weight with the new compile's beside it), merged stories.
+
+    A weight the model changed on its own is not a hand edit, so it is not listed."""
     edits: List[dict] = [{"what": "item", **i.model_dump()} for i in old_items if i.edited]
     now = {w.duty: w.weight for w in new.weights}
     edits += [{"what": "weight", "duty": w.duty, "weight": w.weight, "why": w.why, "new": now.get(w.duty)}
-              for w in old.weights if now.get(w.duty) != w.weight]
+              for w in old.weights if w.edited]
     edits += [{"what": "story", "id": s.id, "title": s.title, "merged": s.merged}
               for s in old.stories if s.merged]
     return edits
@@ -281,7 +294,7 @@ class ItemCompiler:
             with stage(STAGE):
                 built = build_experience(exp, self._ask(exp, usage), task["today"])
         finally:
-            self._count(usage)
+            add_usage(self.usage, usage, self._lock)
         entry, items = built
         self._report(
             f"e{exp['id']}: {len(items)} items, {len(entry.stories)} stories, "
@@ -313,16 +326,10 @@ class ItemCompiler:
         raise ModelOutputError(f"{ROLE}: experience {exp['id']}: the reply does not validate:\n{problem}",
                                stage=STAGE)
 
-    def _count(self, usage: Usage) -> None:
-        """Add one experience's calls to the compiler's total; the calls run side by side."""
-        with self._lock:
-            for f in fields(Usage):
-                setattr(self.usage, f.name, getattr(self.usage, f.name) + getattr(usage, f.name))
-
     def _report(self, line: str) -> None:
         logger.info("%s", line)
         if self.progress is not None:
             self.progress(STAGE, line)
 
 
-__all__ = ["ItemCompiler", "Reply", "build_experience", "hand_edits", "in_order", "shown"]
+__all__ = ["ItemCompiler", "Reply", "add_usage", "build_experience", "hand_edits", "in_order", "shown"]

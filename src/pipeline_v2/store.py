@@ -73,6 +73,7 @@ class DutyWeight(_Strict):
     duty: int
     weight: Literal[1, 2, 3]
     why: str                 # a few words, for the gate
+    edited: bool = False     # set by hand
 
 
 class ExperienceItems(_Strict):
@@ -232,8 +233,9 @@ def _check_experience(exp: Mapping[str, Any], x: ExperienceItems, own: List[Item
         elif item.type != "context":
             problems.append(f"{iid}: in the experience context, but it is an {item.type}")
 
+    lost = {d.get("story_id") for d in x.dropped if d.get("type") in ("action", "result")}
     for s in x.stories:
-        problems += _check_story(s, by_id)
+        problems += _check_story(s, by_id, s.id in lost)
 
     for item in own:
         if placed[item.id] == 0:
@@ -254,14 +256,16 @@ def _check_experience(exp: Mapping[str, Any], x: ExperienceItems, own: List[Item
     return problems
 
 
-def _check_story(s: Story, by_id: Mapping[str, Item]) -> List[str]:
+def _check_story(s: Story, by_id: Mapping[str, Item], lost_work: bool = False) -> List[str]:
+    """One story's problems; ``lost_work``: an action or result of it was dropped at compile time."""
     problems: List[str] = []
     members = [by_id[iid] for iid in s.items if iid in by_id]
     problems += [f"{s.id}: lists {iid}, which does not exist" for iid in s.items if iid not in by_id]
     problems += [f"{i.id}: listed in {s.id}, but its story is {i.story}" for i in members if i.story != s.id]
     work = sum(map(is_work, members))
     if work == 0:
-        problems.append(f"{s.id}: no action or result item")
+        problems.append(f"{s.id}: no action or result left: its items were dropped" if lost_work
+                        else f"{s.id}: no action or result item")
     elif work > MAX_STORY_WORK:
         problems.append(f"{s.id}: {work} action and result items (limit {MAX_STORY_WORK})")
     if not 1 <= len(s.anchor) <= MAX_ANCHOR:
@@ -322,7 +326,7 @@ def _previous_line(edit: Mapping[str, Any]) -> str:
     if what == "item":
         return f"- item {edit.get('id')} (edited): {edit.get('text')}"
     if what == "weight":
-        return (f"- duty {edit.get('duty')}: weight was {edit.get('weight')} ({edit.get('why')}), "
+        return (f"- duty {edit.get('duty')}: weight set by hand to {edit.get('weight')} ({edit.get('why')}), "
                 f"the recompile gave {edit.get('new')}")
     if what == "story":
         return f"- story {edit.get('id')} {edit.get('title')!r} was merged from {edit.get('merged')}"
@@ -358,7 +362,7 @@ def items_markdown(profile: Mapping[str, Any], items: Items) -> str:
         out += ["**Narrative**", ""]
         for d, duty in enumerate(exp.get("duties") or []):
             w = weights.get(d)
-            mark = f"**{w.weight}** · {w.why}" if w else "**no weight**"
+            mark = (f"**{w.weight}** · {w.why}" + (" (edited)" if w.edited else "")) if w else "**no weight**"
             out.append(f"- duty {d}: {mark} — {_first_words(duty)}")
         out.append("")
 

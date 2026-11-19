@@ -1,0 +1,73 @@
+You design the COMPETENCE TREE of one candidate. Job descriptions will later be placed on this tree and
+the CV's bullets selected by it. So the tree must be named the way job descriptions name things, and must
+separate what job descriptions separate.
+
+INPUT
+ITEMS: the candidate's base items, one per line: id, type (context, action or result), text, competence
+tags and technologies.
+FIXED SECTIONS: the candidate's skills list, certifications and languages line, as the CV prints them. A
+thing listed there that job descriptions name gets a leaf.
+MARKET TERMS: terms real job descriptions ask, one per line. `jobs` is how many of the sampled job
+descriptions list the term as a requirement keyword; `asked` is the percentage of the job descriptions
+whose analysis lists it as a hard skill; `share` is the percentage of the job descriptions whose text
+contains it literally.
+MARKET REQUIREMENTS: requirement names taken from the sampled job descriptions.
+
+THE TREE
+* Three levels.
+  - Level 1, DISCIPLINE: 6 to 10 broad areas of work ("Cloud infrastructure", "Software engineering",
+    "Project management").
+  - Level 2, COMPETENCE: what a job description asks as a capability ("Container orchestration",
+    "Vendor management", "Disaster recovery"). 3 to 8 per discipline.
+  - Level 3, LEAF: what a recruiter types in a search box, or what a job description lists as one item:
+    a tool, a platform, a language, a method, a standard, or one specific responsibility ("Kubernetes",
+    "Terraform", "RFQ authoring", "Client presentations").
+* NAMES
+  - name: one plain term, the one job descriptions use most (see `jobs`, `asked` and `share`), not the
+    profile's wording. English. Never two things joined: no "&", no "and", no "/" between two words in a
+    name ("DevOps", not "DevOps & CI/CD"; "Monitoring", not "Monitoring and Observability"). A term that
+    is itself written with a slash, like "CI/CD", is one term.
+  - A term the market asks often (a high `jobs`, `asked` or `share`) must be some node's name or alias.
+  - No name or term on two nodes, and one thing in one place: "Python" and "Python scripting" are one
+    leaf, not two. A leaf never repeats its competence's name or aliases: a competence "Vendor
+    management" has leaves such as "Supplier selection" and "Contract management", not a leaf "Vendor
+    management".
+* TWO TERM LISTS per node
+  - aliases: other spellings and exact synonyms of the SAME thing that job descriptions use, in English
+    and Italian ("K8s" for "Kubernetes", "gestione fornitori" for "Vendor management"). Only the same
+    thing: a later step may swap an alias for a job description's word, so an alias must be true
+    wherever the name is.
+  - counts_as: narrower things, products or methods that prove the node without being it ("Scrum" and
+    "Kanban" for "Agile"; "Jenkins" for "CI/CD"; "PostgreSQL" for "Relational databases"). They are never
+    swapped for the name.
+  - Another product of the same kind, or a broader thing, is another node, never an alias or a
+    counts-as term ("AWS" is not an alias of "Cloud computing").
+  - A thing that has a node of its own is in no other node's lists: a leaf is already under its
+    competence, so the competence does not list it again.
+* proven: true when you expect at least one ITEM to show the candidate did it or used it. Otherwise false.
+  It is only an expectation: the links decide later.
+* GHOST LEAVES: with proven=false, add the leaves job descriptions ask most that no ITEM shows, under the
+  competence where they belong (another cloud platform beside the ones the candidate used, a framework of
+  the same family). 30 to 50 of them, the most asked first. When the market often asks a whole competence
+  the candidate has nothing for, add it with its leaves, all proven=false.
+* GRANULARITY
+  - A competence that job descriptions ask in many phrasings (stakeholder management, project management,
+    architecture, cloud) is split into leaves along the distinctions job descriptions make. No leaf may be
+    so broad that most ITEMS prove it.
+  - Margins: where the MARKET REQUIREMENTS split a competence that the ITEMS touch only at its edge
+    (integration, governance, compliance, data), give it the leaves those job descriptions name, so that
+    each of their requirements has a node of its own.
+  - A technology the candidate used that job descriptions rarely name stays a leaf, under a competence
+    that job descriptions do ask.
+  - Every ITEM of type action or result has at least one leaf it proves: check each item's tags and tech.
+  - Spoken languages, and domains (public sector, international events, banking), are disciplines of their
+    own when the items, the fixed sections or the market show them. Each language or domain is a leaf,
+    under a competence: "Languages" > "Spoken languages" > "English".
+* id: "1", "2" for disciplines; "1.1" for competences; "1.1.1" for leaves. Every discipline has at least
+  one competence and every competence at least one leaf: what job descriptions ask lives on leaves.
+
+OUTPUT
+One JSON object and nothing else, compact, without indentation, parents before children:
+{"nodes": [{"id": "1", "name": "...", "aliases": [], "counts_as": [], "proven": true},
+           {"id": "1.1", "name": "...", "aliases": ["..."], "counts_as": [], "proven": true},
+           {"id": "1.1.1", "name": "...", "aliases": ["..."], "counts_as": ["..."], "proven": false}]}

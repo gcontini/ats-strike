@@ -19,6 +19,7 @@ from pipeline_v2.items import build_experience
 from pipeline_v2.store import (Item, check_sources, coverage, experience_sha256, months)
 
 from pipeline_helpers import FakeLLM, section, user_text
+from v2_helpers import cut, raw
 
 TODAY = date(2026, 11, 18)
 
@@ -40,11 +41,6 @@ EXP = {
 
 def item(duty: int, *source: str, **fields) -> Item:
     return Item(id="e2.i01", experience=2, duty=duty, type="action", text="t", source=list(source), **fields)
-
-
-def raw(n, duty, type_, source, story, **fields) -> dict:
-    return {"n": n, "duty": duty, "type": type_, "text": f"text {n}", "source": source, "story": story,
-            "agency": "" if type_ == "context" else "did", "tags": ["billing"], **fields}
 
 
 def reply(items, stories, duties=None) -> dict:
@@ -268,22 +264,6 @@ def test_the_view_joins_a_title_given_several_ways():
 
 
 # --- the graph ---------------------------------------------------------------------------------------
-def cut(body: dict) -> str:
-    """The compile reply for the experience in the request: the role summary as experience context,
-    each duty one action spanning all its text, two duties per story, every duty weighing 2."""
-    exp = section(body, "EXPERIENCE")
-    items = [raw(1, -1, "context", [exp["role_summary"]], 0)] if exp["role_summary"] else []
-    for d, duty in enumerate(exp["duties"]):
-        items.append({**raw(len(items) + 1, d, "action", [duty], 1 + d // 2), "text": duty})
-    stories = sorted({i["story"] for i in items if i["story"]})
-    return json.dumps({
-        "items": items,
-        "stories": [{"n": s, "title": f"Piece of work {s}",
-                     "anchor": [next(i["n"] for i in items if i["story"] == s)]} for s in stories],
-        "duties": [{"duty": d, "weight": 2, "why": "recurring"} for d in range(len(exp["duties"]))],
-    })
-
-
 def compiler(llm) -> ItemCompiler:
     prompt = (resources_dir() / "sys_prompt_items.txt").read_text(encoding="utf-8")
     return ItemCompiler(llm=llm, system_prompt=prompt)
@@ -392,7 +372,8 @@ def test_one_changed_experience_makes_one_call_and_lists_its_previous_edits(prof
         edited = next(i for i in first.items if i.experience == exp_id and i.duty == 0)
         edited.text, edited.edited = edited.text + " (by hand)", True
     e0 = first.experiences[0]
-    e0.weights[1].weight, e0.weights[1].why = 3, "my main work"
+    e0.weights[1].weight, e0.weights[1].why, e0.weights[1].edited = 3, "my main work", True
+    e0.weights[2].weight = 1                 # changed with nobody marking it: not a hand edit
     e0.stories[0].merged = ["e0.s09"]
     kept = {x.id: x.model_dump_json() for x in first.experiences}
 
@@ -413,4 +394,33 @@ def test_one_changed_experience_makes_one_call_and_lists_its_previous_edits(prof
     assert not any(i.edited for i in again.items if i.experience == 0)
     page = items_markdown(profile, again)
     assert "**Previous hand edits, to re-apply**" in page
-    assert "- duty 1: weight was 3 (my main work), the recompile gave 2" in page
+    assert "- duty 1: weight set by hand to 3 (my main work), the recompile gave 2" in page
+
+
+# --- S1 carry-overs ------------------------------------------------------------------------------
+def test_a_story_that_lost_its_work_to_drops_is_kept_and_reported():
+    """Only a story the reply gave no action or result is dissolved; story 3's one action is dropped."""
+    lost = [r for r in PORTING if r["n"] != 7] + [raw(7, 2, "action", ["Presented it to the board"], 3),
+                                                 raw(8, 2, "context", ["Presented the plan"], 3)]
+    entry, items = build_experience(EXP, reply(lost, STORIES), TODAY)
+    assert [s.title for s in entry.stories] == ["Billing engine porting to Java",
+                                                 "Plan presentation to management"]
+    kept = entry.stories[1]
+    assert [next(i.text for i in items if i.id == iid) for iid in kept.items] == ["text 8"]
+    assert entry.dropped[0]["story_id"] == kept.id
+    problems = validate({"experiences": [EXP]}, Items(profile_sha256="", experiences=[entry], items=items))
+    assert f"{kept.id}: no action or result left: its items were dropped" in problems
+    # the context-only story 2 is still dissolved
+    assert next(i for i in items if i.text == "text 6").story is None
+
+
+def test_an_edited_weight_is_marked_in_the_view_and_old_files_load():
+    store = built()
+    old = json.loads(store.model_dump_json())
+    for w in old["experiences"][0]["weights"]:
+        del w["edited"]
+    assert not any(w.edited for w in Items.model_validate(old).experiences[0].weights)
+    store.experiences[0].weights[0].edited = True
+    page = items_markdown({"experiences": [EXP]}, store)
+    assert "- duty 0: **2** · w (edited) — Ported the billing engine" in page
+    assert "(edited)" not in page.split("- duty 1:")[1].split("\n")[0]
