@@ -1,7 +1,7 @@
 """Where the server's impersonal defaults come from.
 
-Two sources, in order: the directory named by ``$ATS_RESOURCES`` (so a
-deployment can mount edited prompts or a different template without a
+Two sources, in order: ``$ATS_RESOURCES/v1/``, mirroring ``resources/v1``
+(so a deployment can mount edited prompts or a different template without a
 rebuild), then the copy shipped inside the package. A file present in neither
 is a packaging bug, so it raises.
 
@@ -29,11 +29,11 @@ def packaged_dir() -> Path:
 
 
 def override_dir() -> Optional[Path]:
-    """``$ATS_RESOURCES``, when set to an existing directory."""
+    """``$ATS_RESOURCES/v1``, when it is an existing directory."""
     raw = os.getenv("ATS_RESOURCES")
     if not raw:
         return None
-    path = Path(raw).expanduser()
+    path = Path(raw).expanduser() / "v1"
     return path if path.is_dir() else None
 
 

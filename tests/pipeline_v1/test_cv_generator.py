@@ -17,13 +17,12 @@ from pipeline_v1.cv_generator import (
     ARTIFACTS,
     CVGenerator,
     capped_coverage,
-    keep_words,
     score_targets,
     scores_of,
     without_scores,
 )
-from pipeline_v1.cv_renderer import CVRenderer, RenderResult
-from pipeline_v1.errors import BudgetExceededError, ModelOutputError
+from common.cv_renderer import CVRenderer, RenderResult
+from common.errors import BudgetExceededError, ModelOutputError
 
 from pipeline_helpers import (
     KEY_POINTS,
@@ -49,8 +48,12 @@ def renders(monkeypatch):
         seen.append(document)
         duties = sum(len(e["duties"]) for e in document["experiences"])
         pages = 1 + duties // 5
-        return RenderResult(tex="\\documentclass", pdf=b"%PDF", pages=pages,
-                            overflow_lines=(pages - self.page_limit) * 10 if pages > self.page_limit else 0)
+        return RenderResult(
+            tex="\\documentclass",
+            pdf=b"%PDF",
+            pages=pages,
+            overflow_lines=(pages - self.page_limit) * 10 if pages > self.page_limit else 0,
+        )
 
     monkeypatch.setattr(CVRenderer, "render_document", fake_render)
     return seen
@@ -64,9 +67,15 @@ def run(bundle, candidate, tmp_path, llm=None, **kw):
     """The whole run on a scripted fake, with what it reported."""
     llm = llm or script_cv(FakeLLM())
     progress, artifacts = [], []
-    out = generator(bundle, candidate, tmp_path, llm, **kw,
-                    progress=lambda s, d: progress.append((s, d)),
-                    artifact=lambda name, data: artifacts.append((name, data))).generate("A JD")
+    out = generator(
+        bundle,
+        candidate,
+        tmp_path,
+        llm,
+        **kw,
+        progress=lambda s, d: progress.append((s, d)),
+        artifact=lambda name, data: artifacts.append((name, data)),
+    ).generate("A JD")
     return out, progress, dict(artifacts), [name for name, _ in artifacts], llm
 
 
@@ -90,9 +99,7 @@ def test_the_document_has_no_scores_and_your_data_over_the_top(bundle, candidate
     assert all(document["name"] == candidate.data["name"] for document in renders)
 
 
-def test_each_step_is_reported_with_what_the_one_before_produced_and_cost(
-    bundle, candidate, tmp_path, renders
-):
+def test_each_step_is_reported_with_what_the_one_before_produced_and_cost(bundle, candidate, tmp_path, renders):
     _, progress, *_ = run(bundle, candidate, tmp_path)
     assert [step for step, _ in progress] == STEPS
     details = dict(progress)
@@ -123,16 +130,16 @@ def test_every_list_of_the_profile_is_scored_in_a_call_of_its_own(bundle, candid
     assert sum("EXPERIENCE:" in text for text in contexts) == 5
 
 
-def test_the_scores_land_on_their_own_list_whatever_order_the_calls_finish(
-    bundle, candidate, tmp_path, renders
-):
+def test_the_scores_land_on_their_own_list_whatever_order_the_calls_finish(bundle, candidate, tmp_path, renders):
     """Each list gets a score of its own; the long lists answer first."""
+
     def by_length(body):
         items = section(body, "ITEMS")
         time.sleep(0.2 / len(items))
         score = 30 + len(items)
-        return json.dumps([{"reason": "r", "matches": [{"key_point": 2, "score": score, "evidence": "e"}]}
-                           for _ in items])
+        return json.dumps(
+            [{"reason": "r", "matches": [{"key_point": 2, "score": score, "evidence": "e"}]} for _ in items]
+        )
 
     llm = script_cv(FakeLLM())
     llm["profile_scoring"].replies = [by_length]
@@ -148,8 +155,9 @@ def test_the_scores_land_on_their_own_list_whatever_order_the_calls_finish(
 
 def test_a_failure_in_a_parallel_call_fails_the_run_with_its_cause(bundle, candidate, tmp_path, renders):
     llm = script_cv(FakeLLM())
-    llm["profile_scoring"].replies = [lambda body: score_items(body)
-                                      if "EXPERIENCE:" in user_text(body) else "not json"]
+    llm["profile_scoring"].replies = [
+        lambda body: score_items(body) if "EXPERIENCE:" in user_text(body) else "not json"
+    ]
     with pytest.raises(ModelOutputError) as caught:
         run(bundle, candidate, tmp_path, llm)
     assert caught.value.stage == "cv.profile_scoring"
@@ -195,14 +203,13 @@ def test_the_format_choice_sees_the_formats_and_the_scored_experiences(bundle, c
     assert shown[0]["duties"][0].endswith("|1-80")
 
 
-def test_the_writer_gets_the_body_and_each_chosen_experience_with_its_evidence(
-    bundle, candidate, tmp_path, renders
-):
+def test_the_writer_gets_the_body_and_each_chosen_experience_with_its_evidence(bundle, candidate, tmp_path, renders):
     *_, llm = run(bundle, candidate, tmp_path)
     body = [user_text(call) for call in llm["cv"].calls]
-    duties = sorted((user_text(call) for call in llm["duties"].calls),
-                    key=lambda text: section({"messages": [{"role": "user", "content": text}]},
-                                             "EXPERIENCE")["id"])
+    duties = sorted(
+        (user_text(call) for call in llm["duties"].calls),
+        key=lambda text: section({"messages": [{"role": "user", "content": text}]}, "EXPERIENCE")["id"],
+    )
     assert len(body) == 1 and "CANDIDATE_PROFILE:" in body[0] and "WRITING STYLE:" in body[0]
     assert f"SCHEMA:\n{bundle.cv_body_schema}" in body[0]
     assert len(duties) == 3 and all("DUTY CAP: 2" in text for text in duties)
@@ -229,9 +236,12 @@ def test_the_validators_fix_what_they_find(bundle, candidate, tmp_path, renders)
     def finds(body):
         text = user_text(body)
         if f'"company": "{second}"' in text and "ATTEMPT: 1" in text and "GENERATED EXPERIENCE" in text:
-            return tool_completion("fake-validation", [
-                ("replace_in_duties", {"old": first_duty[:10], "new": "FIXED", "duty": 1}),
-            ])
+            return tool_completion(
+                "fake-validation",
+                [
+                    ("replace_in_duties", {"old": first_duty[:10], "new": "FIXED", "duty": 1}),
+                ],
+            )
         return "OK"
 
     llm = script_cv(FakeLLM())
@@ -290,8 +300,7 @@ def test_a_highlighter_whose_endpoint_fails_leaves_the_cv_unmarked(bundle, candi
 
 # --- your data ------------------------------------------------------------------
 def test_no_model_is_ever_shown_your_candidate_data(bundle, candidate, tmp_path, renders):
-    mine = CandidateInputs(profile=candidate.profile,
-                           data={**candidate.data, "email": "SENTINEL@nowhere.invalid"})
+    mine = CandidateInputs(profile=candidate.profile, data={**candidate.data, "email": "SENTINEL@nowhere.invalid"})
     (document, *_), *_, llm = run(bundle, mine, tmp_path)
     for role in llm.roles.values():
         assert "SENTINEL" not in json.dumps([call["messages"] for call in role.calls])
@@ -307,17 +316,25 @@ def test_an_overlong_cv_loses_its_least_useful_duties_until_it_fits(bundle, cand
     assert [len(e["duties"]) for e in document["experiences"]] == [5, 3, 1]
     assert "6 duty(s) removed to fit" in summary
     assert [1 + sum(len(e["duties"]) for e in d["experiences"]) // 5 for d in renders] == [
-        4, 3, 3, 3, 3, 3, 2,
+        4,
+        3,
+        3,
+        3,
+        3,
+        3,
+        2,
     ]
 
 
 def test_only_an_experiences_last_duty_is_ever_removed(bundle, candidate, tmp_path, renders):
     """A later duty may refer to an earlier one, so the cut never leaves it dangling: the least useful duty of all
     sits in the middle of the first experience and stays; the second experience's last duty, worth more, goes."""
-    resume = {"experiences": [
-        {"company": "New", "duties": ["a|1-90", "b|1-90", "useless|2-1", "c|1-90", "d|2-60"]},
-        {"company": "Old", "duties": ["e|2-50", "f|2-40"]},
-    ]}
+    resume = {
+        "experiences": [
+            {"company": "New", "duties": ["a|1-90", "b|1-90", "useless|2-1", "c|1-90", "d|2-60"]},
+            {"company": "Old", "duties": ["e|2-50", "f|2-40"]},
+        ]
+    }
     state = {"highlighted_resume": resume, "key_points": KEY_POINTS}
     gen = generator(bundle, candidate, tmp_path, FakeLLM(), page_limit=1)
     document, _, removed = gen._render(state)
@@ -358,34 +375,21 @@ def test_scores_are_read_and_removed():
     assert scores_of("Led the team.|3-80,7-40") == {3: 80, 7: 40}
     assert scores_of("No scores here.") == {}
     assert without_scores({"duties": ["Led the team.|3-80"], "score": "3-80", "n": 1}) == {
-        "duties": ["Led the team."], "n": 1,
+        "duties": ["Led the team."],
+        "n": 1,
     }
 
 
 def test_coverage_counts_a_key_points_two_best_duties_up_to_twice_its_importance():
     importance = {1: 50, 2: 100}
-    assert capped_coverage(["a|1-80", "b|1-70", "c|1-60"], importance) == 100   # capped at 2 x 50
-    assert capped_coverage(["a|2-40", "b|2-30", "c|2-20"], importance) == 70    # two best only
-    assert capped_coverage(["a|9-90"], importance) == 0                          # no such key point
-
-
-def test_keep_words_takes_markers_and_nothing_else():
-    old = {"summary": "A Kubernetes engineer.", "duties": ["Ran Go.|1-80"]}
-    marked = {"summary": "A **Kubernetes** engineer.", "duties": ["Ran *Go*.|1-80"]}
-    assert keep_words(marked, old) == marked
-    assert keep_words({"summary": "A K8s engineer.", "duties": ["Ran *Go*.|1-80"]}, old)["summary"] == (
-        "A Kubernetes engineer."
-    )
-    assert keep_words({"summary": "A engineer.", "duties": ["Ran Go.|1-80|2-10"]}, old)["duties"] == [
-        "Ran Go.|1-80"
-    ]
-    assert keep_words({"summary": "x"}, old)["duties"] == old["duties"]
+    assert capped_coverage(["a|1-80", "b|1-70", "c|1-60"], importance) == 100  # capped at 2 x 50
+    assert capped_coverage(["a|2-40", "b|2-30", "c|2-20"], importance) == 70  # two best only
+    assert capped_coverage(["a|9-90"], importance) == 0  # no such key point
 
 
 @pytest.mark.skipif(shutil.which("pdflatex") is None, reason="pdflatex not installed")
 def test_end_to_end_with_a_real_compile(bundle, candidate, tmp_path):
-    document, tex, pdf, summary = generator(bundle, candidate, tmp_path,
-                                            script_cv(FakeLLM())).generate("A JD")
+    document, tex, pdf, summary = generator(bundle, candidate, tmp_path, script_cv(FakeLLM())).generate("A JD")
     assert pdf.startswith(b"%PDF")
     assert candidate.data["name"] in tex
     assert "\\textbf{" in tex, "the bold summary reached the LaTeX"

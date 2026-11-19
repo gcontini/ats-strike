@@ -14,7 +14,7 @@ from pipeline_v1 import configure_logging
 def main() -> None:
     import uvicorn
 
-    configure_logging("pipeline_v1", "cv_server")
+    configure_logging("common", "pipeline_v1", "cv_server")
     uvicorn.run(
         # An import string, not the app object: uvicorn needs it to spawn
         # workers.

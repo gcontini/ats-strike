@@ -127,9 +127,7 @@ class CVRenderer:
         }
         # Longest keys first so multi-character tokens are matched before
         # single chars.
-        regex = re.compile(
-            "|".join(re.escape(k) for k in sorted(chars, key=len, reverse=True))
-        )
+        regex = re.compile("|".join(re.escape(k) for k in sorted(chars, key=len, reverse=True)))
 
         def _escape(part: str) -> str:
             escaped = regex.sub(lambda match: chars[match.group(0)], part)
@@ -180,13 +178,9 @@ class CVRenderer:
         try:
             return self.jinja_env.get_template(self.template_name).render(**data)
         except TemplateError as exc:
-            raise LatexCompileError(
-                f"template error: {type(exc).__name__}: {exc}", stage="render"
-            ) from exc
+            raise LatexCompileError(f"template error: {type(exc).__name__}: {exc}", stage="render") from exc
 
-    def render_document(
-        self, document: Mapping[str, Any], *, stem: str = "cv"
-    ) -> RenderResult:
+    def render_document(self, document: Mapping[str, Any], *, stem: str = "cv") -> RenderResult:
         """Render one flat namespace of CV data and compile it.
 
         The date is added here rather than stored in the document, so a
@@ -252,13 +246,9 @@ class CVRenderer:
                 env=env,
             )
         except subprocess.TimeoutExpired as exc:
-            raise LatexTimeoutError(
-                f"pdflatex exceeded {self.latex_timeout:.0f}s", stage="compile"
-            ) from exc
+            raise LatexTimeoutError(f"pdflatex exceeded {self.latex_timeout:.0f}s", stage="compile") from exc
         except FileNotFoundError as exc:
-            raise LatexCompileError(
-                "pdflatex is not installed on this server", stage="compile"
-            ) from exc
+            raise LatexCompileError("pdflatex is not installed on this server", stage="compile") from exc
 
         if result.returncode != 0:
             # The tail goes with the error as well as to the log: a failed
@@ -274,11 +264,8 @@ class CVRenderer:
 
         pdf_path = self.work_dir / f"{tex_path.stem}.pdf"
         if not pdf_path.is_file():
-            raise LatexCompileError(
-                "pdflatex reported success but produced no PDF", stage="compile"
-            )
-        logger.info("  [Tool Executed] Compiled PDF: %s (%d bytes)",
-                    pdf_path.name, pdf_path.stat().st_size)
+            raise LatexCompileError("pdflatex reported success but produced no PDF", stage="compile")
+        logger.info("  [Tool Executed] Compiled PDF: %s (%d bytes)", pdf_path.name, pdf_path.stat().st_size)
         return pdf_path
 
     def _scrub(self, text: str) -> str:
@@ -312,8 +299,12 @@ def check_pdf_pages(pdf_path: Path, limit: int = PAGE_LIMIT) -> Dict[str, Any]:
         overflow += len(lines)
     result["overflow_lines"] = overflow
 
-    logger.info("  [Tool Executed] Checked '%s': %d pages, %d line(s) past the limit",
-                pdf_path.name, pages, result["overflow_lines"])
+    logger.info(
+        "  [Tool Executed] Checked '%s': %d pages, %d line(s) past the limit",
+        pdf_path.name,
+        pages,
+        result["overflow_lines"],
+    )
     return result
 
 

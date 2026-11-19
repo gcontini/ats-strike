@@ -7,21 +7,23 @@ outside the scratch directory it is handed.
 - ``facade`` — :class:`Pipeline`, the only thing a server calls, and the
   :class:`Output` / :class:`Sink` it reports through.
 - ``pack`` — what the request's files and settings mean, as pure functions.
-- ``cv_generator``, ``cv_review``, ``cv_renderer``, ``jd_validator``,
-  ``letter_generator`` — the work itself.
-- ``models`` — one long-lived chat model per role, from
-  ``resources/models.toml``.
+- ``cv_generator``, ``jd_validator``, ``letter_generator`` — the work itself.
 - ``bundle`` / ``defaults`` — the shipped defaults, and the per-request split
   between them and the personal inputs.
-- ``observability`` — what a run says about itself (every log line, every
-  model call) and where it goes: :class:`Run`, set up by the caller.
+
+It is built on :mod:`common`: the models (one long-lived chat model per role,
+from ``resources/v1/models.toml``), the run's observability, the errors, the
+highlighter, the validation loop and the renderer. :class:`PipelineError`,
+:class:`Run`, :func:`use_run`, :func:`current_run` and
+:func:`configure_logging` are re-exported from there.
 
 A server imports from here and never from a submodule.
 """
 
-from .errors import PipelineError
+from common.errors import PipelineError
+from common.observability import Run, configure_logging, current_run, use_run
+
 from .facade import Output, Pipeline, Sink
-from .observability import Run, configure_logging, current_run, use_run
 
 __all__ = [
     "Pipeline",

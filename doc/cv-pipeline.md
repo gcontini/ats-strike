@@ -5,8 +5,10 @@ of its own, then a render that trims the CV until it fits. The method is the
 one adapticv-ai worked out.
 
 The code is `src/pipeline_v1/cv_generator.py`
-(`CVGenerator`, the steps as a LangGraph graph), `cv_review.py` (the
-validation loop) and `cv_renderer.py` (the compile and the page count).
+(`CVGenerator`, the steps as a LangGraph graph), and three modules every
+pipeline shares, in `src/common/`: `highlight.py` (the highlighter),
+`cv_review.py` (the validation loop) and `cv_renderer.py` (the compile and the
+page count).
 
 ## The steps
 
@@ -127,9 +129,9 @@ final PDF is sent, in the result.
 
 | Guard | Limit | Set by | On exhaustion |
 |---|---|---|---|
-| Calls per model request (empty, cut off, or not the JSON asked for) | 3 | `ATTEMPTS` in `models/selector.py` | `502 model_output`, except for the highlight |
+| Calls per model request (empty, cut off, or not the JSON asked for) | 3 | `ATTEMPTS` in `common/models/selector.py` | `502 model_output`, except for the highlight |
 | Highlight | the same | the same | a warning; the CV is delivered unmarked |
-| Validation rounds per document | 5 | `MAX_VALIDATIONS` in `cv_review.py` | the CV goes on with the last edits |
+| Validation rounds per document | 5 | `MAX_VALIDATIONS` in `common/cv_review.py` | the CV goes on with the last edits |
 | Wall clock for the whole run | 1200 s | `ATS_REQUEST_BUDGET_SECONDS` | `504 budget_exceeded`, checked before each step |
 | One `pdflatex` compile | 120 s | `ATS_LATEX_TIMEOUT` | `504 latex_timeout` |
 

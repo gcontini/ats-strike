@@ -18,10 +18,12 @@ flowchart TB
 
     subgraph host["wherever you run it (one per server version)"]
         API["<b>cv_server</b><br/>the protocol: FastAPI, pack reader,<br/>sessions, SSE"]
-        PIPE["<b>pipeline_v1</b><br/>facade · pack · jd_validator · cv_generator (LangGraph)<br/>cv_review · cv_renderer · letter_generator"]
+        PIPE["<b>pipeline_v1</b><br/>facade · pack · jd_validator · cv_generator (LangGraph)<br/>letter_generator"]
+        COMMON["<b>common</b><br/>models · observability · errors<br/>highlight · cv_review · cv_renderer"]
         RES["resources<br/>prompts · schemas · resume.tex.jinja<br/>models.toml"]
         STORE["ATS_WORK_DIR<br/>one session per CV job"]
-        API --> PIPE
+        API -->|"/v1/..."| PIPE
+        PIPE --> COMMON
         RES --> PIPE
         API --> STORE
     end
@@ -33,16 +35,18 @@ flowchart TB
     API -->|"JSON envelope<br/>CV: server-sent events"| CLI
     CLI -.imports.-> CT
     API -.imports.-> CT
-    PIPE --> PROV
-    PIPE --> TEX
+    COMMON --> PROV
+    COMMON --> TEX
 ```
 
-`client → contracts ← server → pipeline`. The client and the server live in
-separate repositories and never import each other, the pipeline imports none
-of the others and knows no HTTP, and the server reaches the pipeline only
-through its top level (`from pipeline_v1 import ...`). `pipeline_v2` follows
-the same rules, and of v1 it imports only the infrastructure (`models`,
-`observability`, `errors`), never a step; v1 never imports v2;
+`client → contracts ← server → pipeline_v1 → common ← pipeline_v2`. The
+client and the server live in separate repositories and never import each
+other, the pipelines import none of the others and know no HTTP, and the
+server reaches the pipeline only through its top level
+(`from pipeline_v1 import ...`). `common` holds what the pipelines share —
+the models, the observability, the errors, the highlighter, the validation
+loop and the renderer — and imports no pipeline. `pipeline_v2` follows the
+same rules and takes only `common`, never v1; v1 never imports v2;
 `tests/test_architecture.py`, here and in the client's repository, fails the
 build if any of that breaks. The contracts package depends on pydantic and nothing else: it
 is loaded both by a web server and by a frozen executable, and has to stay
@@ -51,7 +55,8 @@ cheap in both.
 | Package | Holds | Ships as |
 |---|---|---|
 | `client/` | Your server folders — profile, contact data, template, images — the output tree, the spreadsheet | A PyInstaller executable, ~1 file, from its own repository, [ats-strike-client](https://github.com/gcontini/ats-strike-client) |
-| `src/cv_server/` | The protocol: request reading, auth, sessions, the event stream | Inside the container image |
+| `src/cv_server/` | The protocol: request reading, auth, sessions, the event stream; one set of routes per pipeline, under its prefix (`/v1/...`) | Inside the container image |
+| `src/common/`, `resources/common/` | What every pipeline is built on: the models, the observability, the errors, the highlighter and its prompt, the validation loop, the renderer and its LaTeX sandbox | Inside the container image |
 | `src/pipeline_v1/`, `resources/v1/` | Everything that makes a CV: the prompts and schemas, the models and their API keys, the LaTeX template and toolchain | Inside the container image, ~780 MB with TeX |
 | `src/pipeline_v2/`, `resources/v2/` | CV pipeline 2.0, being built beside v1: a store compiled once per profile (so far its base items and stories, a competence tree whose leaves are linked to the items, and the pool: everything a CV prints from the experiences, written once — per story a ladder of bullets at 1, 2 and 3 lines and up to three groups for a long one, per experience a role summary and a compact line, for the profile skill phrases and summary frames), with its own prompts and `models.toml` | Inside the image too, but no endpoint serves it yet |
 | `src/contracts/` | The wire format: the envelope, the payloads, a thing to store, the protocol number, the free JD pre-check | A pydantic-only package with its own repository, [ats-strike-contract](https://github.com/gcontini/ats-strike-contract), checked out here as a git submodule |
@@ -119,7 +124,8 @@ events that are there.
 - **One semaphore.** `ATS_MAX_CONCURRENT_JOBS` (10) bounds requests in
   flight. A full server refuses immediately rather than queueing a caller for
   minutes.
-- **The pipeline is a library.** `pipeline_v1` takes the pack, the job and the
+- **The pipeline is a library.** So are `pipeline_v2` and `common`.
+  `pipeline_v1` takes the pack, the job and the
   settings in memory and returns values, or hands its outputs to a sink; it
   resolves no paths and writes nothing outside the scratch directory it is
   handed. Its face is `Pipeline` (`detect`, `analyze`, `letter`, `cv`,
@@ -156,14 +162,15 @@ See [the CV pipeline](cv-pipeline.md) for how the last six fit together.
 
 Pipeline 2.0 has its own `resources/v2/models.toml`, with the same keys and the
 same `ATS_<ROLE>_<FIELD>` overrides, and its own roles (`pipeline_v2.ROLES`);
-`load_model_config` and `build_selector` take the list of roles to build.
+`load_model_config` and `build_selector` take the `models.toml` to read and the
+list of roles to build, so `common` knows neither pipeline's.
 `$ATS_RESOURCES` does not reach it yet.
 
 | Role | Used for | Shipped as |
 |---|---|---|
 | `compile` | Compiling the store once per profile: each experience cut into base items and stories, one call each; the competence tree shaped in one call from the items, the market list and the profile's fixed sections, then each experience's items linked to its leaves, one call each; the pool in two fan-outs: one call per experience for its role summary and compact line, then side by side its ladder calls (a long story alone, the others four at most to a call, each shown the role summary and the experience's context) and one call for the skill phrases and summary frames | `qwen3.8-max` on provider 4, thinking on, `thinking_budget` 8,000 |
 
-Every call goes through `pipeline_v1.models`: one LangChain chat model per
+Every call goes through `common.models`: one LangChain chat model per
 role, built once at startup by the role's `model_provider` (`standard`, on
 `ChatOpenAI`, or `deepseek`, on `ChatDeepSeek`), and two methods.
 `ModelSelector.call_llm(role, type, system_prompt, messages)` returns the reply

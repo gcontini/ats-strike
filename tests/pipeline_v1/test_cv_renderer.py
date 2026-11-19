@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from pipeline_v1.cv_renderer import CVRenderer, check_pdf_pages
-from pipeline_v1.errors import LatexCompileError, LatexTimeoutError
+from common.cv_renderer import CVRenderer, check_pdf_pages
+from common.errors import LatexCompileError, LatexTimeoutError
 
 from pipeline_helpers import GOLDEN
 
@@ -85,9 +85,7 @@ def test_render_matches_the_golden_tex(renderer, fixture_document):
     that cannot be pinned is the date printed on the CV: nothing stamps the
     document any more, so it is always the day of the render.
     """
-    expected = (GOLDEN / "cv_golden.tex").read_text().replace(
-        "2026/01/15", date.today().strftime("%Y/%m/%d")
-    )
+    expected = (GOLDEN / "cv_golden.tex").read_text().replace("2026/01/15", date.today().strftime("%Y/%m/%d"))
     assert renderer.render_tex(_context(fixture_document)) == expected
 
 
@@ -113,8 +111,11 @@ def test_an_experience_with_no_duties_has_no_list(renderer, sample_document):
 
 # --- assets -----------------------------------------------------------------
 def test_assets_land_next_to_the_tex(tmp_path):
-    renderer = tex_renderer(r"\documentclass{article}\begin{document}x\end{document}",
-                            tmp_path, assets={"candidate_signature.png": b"\x89PNG-mine"})
+    renderer = tex_renderer(
+        r"\documentclass{article}\begin{document}x\end{document}",
+        tmp_path,
+        assets={"candidate_signature.png": b"\x89PNG-mine"},
+    )
     renderer._write_assets()
     assert (tmp_path / "candidate_signature.png").read_bytes() == b"\x89PNG-mine"
 
@@ -146,9 +147,7 @@ def test_compile_tex_takes_source_directly(renderer, sample_document, tmp_path):
 def test_a_broken_template_is_reported_without_leaking_paths(tmp_path, caplog):
     """The TeX log is kilobytes, so it is logged rather than returned; the
     scratch path must not survive into either."""
-    renderer = tex_renderer(
-        r"\documentclass{article}\begin{document}\undefinedmacro\end{document}", tmp_path
-    )
+    renderer = tex_renderer(r"\documentclass{article}\begin{document}\undefinedmacro\end{document}", tmp_path)
     with caplog.at_level(logging.ERROR), pytest.raises(LatexCompileError) as excinfo:
         renderer.compile_tex(r"\documentclass{article}\begin{document}\undefinedmacro\end{document}")
 
@@ -168,8 +167,10 @@ def test_a_template_error_is_a_compile_error(tmp_path):
 def test_shell_escape_is_refused(tmp_path):
     """A client-supplied template must not be able to run commands."""
     marker = tmp_path / "pwned"
-    tex = (r"\documentclass{article}\begin{document}"
-           rf"\immediate\write18{{touch {marker}}}x\end{{document}}")
+    tex = (
+        r"\documentclass{article}\begin{document}"
+        rf"\immediate\write18{{touch {marker}}}x\end{{document}}"
+    )
     try:
         tex_renderer(tex, tmp_path).compile_tex(tex)
     except LatexCompileError:
@@ -186,9 +187,11 @@ def test_reading_outside_the_work_dir_is_refused(tmp_path):
 
 @needs_latex
 def test_a_looping_template_hits_the_timeout(tmp_path):
-    tex = (r"\documentclass{article}\begin{document}"
-           r"\newcount\n \loop \advance\n by 1 \ifnum\n>0 \repeat"
-           r"\end{document}")
+    tex = (
+        r"\documentclass{article}\begin{document}"
+        r"\newcount\n \loop \advance\n by 1 \ifnum\n>0 \repeat"
+        r"\end{document}"
+    )
     with pytest.raises(LatexTimeoutError):
         tex_renderer(tex, tmp_path, latex_timeout=5.0).compile_tex(tex)
 
@@ -198,15 +201,18 @@ def test_page_check_counts_only_the_lines_past_the_limit(monkeypatch, tmp_path):
     """The overflow is what spilled over, added up across every extra page."""
 
     class FakePage:
-        def __init__(self, n): self.n = n
-        def extract_text(self): return "\n".join(f"line {i}" for i in range(self.n))
+        def __init__(self, n):
+            self.n = n
+
+        def extract_text(self):
+            return "\n".join(f"line {i}" for i in range(self.n))
 
     class FakeReader:
-        def __init__(self, pages): self.pages = pages
+        def __init__(self, pages):
+            self.pages = pages
 
     def reader_with(*counts):
-        monkeypatch.setattr("pipeline_v1.cv_renderer.PdfReader",
-                            lambda p: FakeReader([FakePage(n) for n in counts]))
+        monkeypatch.setattr("common.cv_renderer.PdfReader", lambda p: FakeReader([FakePage(n) for n in counts]))
 
     reader_with(40, 40, 1)
     assert check_pdf_pages(tmp_path / "x.pdf")["overflow_lines"] == 1
@@ -220,14 +226,18 @@ def test_page_check_honors_a_custom_limit(monkeypatch, tmp_path):
     """A caller asking for fewer pages gets the overflow measured from that limit."""
 
     class FakePage:
-        def __init__(self, n): self.n = n
-        def extract_text(self): return "\n".join(f"line {i}" for i in range(self.n))
+        def __init__(self, n):
+            self.n = n
+
+        def extract_text(self):
+            return "\n".join(f"line {i}" for i in range(self.n))
 
     class FakeReader:
-        def __init__(self, pages): self.pages = pages
+        def __init__(self, pages):
+            self.pages = pages
 
     monkeypatch.setattr(
-        "pipeline_v1.cv_renderer.PdfReader",
+        "common.cv_renderer.PdfReader",
         lambda p: FakeReader([FakePage(0), FakePage(1)]),
     )
     result = check_pdf_pages(tmp_path / "x.pdf", limit=1)

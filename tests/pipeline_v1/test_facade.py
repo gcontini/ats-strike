@@ -18,12 +18,23 @@ needs_latex = pytest.mark.skipif(shutil.which("pdflatex") is None, reason="pdfla
 STEPS = ["jd_evaluation", "profile_scoring", "format_selection", "cv", "validation", "highlight"]
 LETTER = " ".join(["word"] * 200)
 ANALYSIS = {
-    "match_percentage": 82, "match_rationale": "Strong overlap.",
-    "job_title": "Head of IT", "work_location": "Milan, Italy", "work_mode": "hybrid",
-    "expected_salary": None, "max_salary": -1, "salary_match": None,
-    "hard_skills": ["AWS"], "soft_skills": ["Communication"], "company_name": "Acme Corp",
-    "posting_url": None, "gaps": "No SAP.", "pers_preferences": "Hybrid is fine.",
-    "pers_preference_score": 1.5, "should_apply": "YES", "should_apply_reason": "Strong match.",
+    "match_percentage": 82,
+    "match_rationale": "Strong overlap.",
+    "job_title": "Head of IT",
+    "work_location": "Milan, Italy",
+    "work_mode": "hybrid",
+    "expected_salary": None,
+    "max_salary": -1,
+    "salary_match": None,
+    "hard_skills": ["AWS"],
+    "soft_skills": ["Communication"],
+    "company_name": "Acme Corp",
+    "posting_url": None,
+    "gaps": "No SAP.",
+    "pers_preferences": "Hybrid is fine.",
+    "pers_preference_score": 1.5,
+    "should_apply": "YES",
+    "should_apply_reason": "Strong match.",
 }
 
 
@@ -84,9 +95,7 @@ def test_a_written_cv_stores_each_step_then_the_document_the_tex_and_the_pdf(
 
 
 @needs_latex
-def test_a_stored_step_is_indented_json_with_its_accents_kept(
-    pipeline, fake_llm, example_pack, tmp_path
-):
+def test_a_stored_step_is_indented_json_with_its_accents_kept(pipeline, fake_llm, example_pack, tmp_path):
     script_cv(fake_llm, body={**SAMPLE_BODY, "summary": "Ingénieur"})
     sink = Recorder()
     pipeline.cv(example_pack, {"job_description.txt": b"x" * 1200}, {}, tmp_path, sink)
@@ -130,8 +139,7 @@ def test_pages_reaches_the_page_count(pipeline, fake_llm, example_pack, tmp_path
     assert any("past page 1" in line for line in pipeline_lines)
 
 
-def test_a_missing_pack_file_fails_before_any_model_call(pipeline, fake_llm, example_pack,
-                                                         tmp_path):
+def test_a_missing_pack_file_fails_before_any_model_call(pipeline, fake_llm, example_pack, tmp_path):
     script_cv(fake_llm)
     pack = {k: v for k, v in example_pack.items() if k != "candidate_data.json"}
     with pytest.raises(PipelineError) as failure:
@@ -143,9 +151,7 @@ def test_a_missing_pack_file_fails_before_any_model_call(pipeline, fake_llm, exa
 # --- rendering ----------------------------------------------------------------
 @needs_latex
 @pytest.mark.parametrize("call", ["render", "cv"])
-def test_a_document_is_rendered_into_a_tex_and_a_pdf(
-    pipeline, fake_llm, example_pack, tmp_path, sample_document, call
-):
+def test_a_document_is_rendered_into_a_tex_and_a_pdf(pipeline, fake_llm, example_pack, tmp_path, sample_document, call):
     job = {"job_description.txt": b"x" * 1200, "cv.json": json.dumps(sample_document).encode()}
     sink = Recorder()
     if call == "render":
@@ -198,9 +204,7 @@ def test_an_analysis_comes_back_as_a_plain_object(pipeline, fake_llm, example_pa
     assert example_pack["candidate_preferences.md"].decode()[:40] in prompt
 
 
-def test_an_analysis_takes_its_prompt_and_its_extra_body_from_the_request(
-    pipeline, fake_llm, example_pack
-):
+def test_an_analysis_takes_its_prompt_and_its_extra_body_from_the_request(pipeline, fake_llm, example_pack):
     fake_llm["analysis"].replies = [json.dumps(ANALYSIS)]
     pack = {**example_pack, "sys_prompt_analysis.txt": b"SCORE IT STRICTLY"}
     settings = {"extra_body": {"analysis": {"top_p": 0.5}, "cv": {"top_p": 0.9}}}
@@ -230,13 +234,14 @@ def test_a_letter_draws_on_the_analysis_and_the_pack_prompt(pipeline, fake_llm, 
 
 
 # --- failing ------------------------------------------------------------------
-@pytest.mark.parametrize("error, kind", [
-    (httpx.ConnectError("http://provider.invalid is down"), "provider_unreachable"),
-    (httpx.ReadTimeout("http://provider.invalid is slow"), "provider_timeout"),
-])
-def test_a_provider_error_leaves_as_a_pipeline_error_without_its_body(
-    pipeline, fake_llm, error, kind
-):
+@pytest.mark.parametrize(
+    "error, kind",
+    [
+        (httpx.ConnectError("http://provider.invalid is down"), "provider_unreachable"),
+        (httpx.ReadTimeout("http://provider.invalid is slow"), "provider_timeout"),
+    ],
+)
+def test_a_provider_error_leaves_as_a_pipeline_error_without_its_body(pipeline, fake_llm, error, kind):
     """LangChain raises its own subclasses: the message names the type, never the body."""
     fake_llm["detect"].error = error
     with pytest.raises(PipelineError) as failure:

@@ -12,12 +12,13 @@ import logging
 from datetime import date
 from typing import Any, Dict, List, Mapping, Optional
 
-from .models import ModelSelector
-from .observability import LOGGER_ROOT, stage
-from .errors import ModelOutputError
+from common.errors import ModelOutputError
+from common.models import ModelSelector
+from common.observability import stage
+
 from .parsing import strip_fences
 
-logger = logging.getLogger(f"{LOGGER_ROOT}.letter")
+logger = logging.getLogger("pipeline_v1.letter")
 
 #: The letter must read as a letter: bounds catch a stub and a runaway alike.
 MIN_WORDS = 180
@@ -104,10 +105,7 @@ class LetterGenerator:
         """
         word_count = len(text.split())
         if not (MIN_WORDS <= word_count <= MAX_WORDS):
-            raise ValueError(
-                f"Letter is {word_count} words; must be between {MIN_WORDS} "
-                f"and {MAX_WORDS} words."
-            )
+            raise ValueError(f"Letter is {word_count} words; must be between {MIN_WORDS} and {MAX_WORDS} words.")
         for open_tok, close_tok in (("[", "]"), ("<<", ">>")):
             if open_tok in text and close_tok in text:
                 raise ValueError(
@@ -137,19 +135,17 @@ class LetterGenerator:
         enough to write a letter, it just makes for a less targeted one.
         """
         logger.info("--- cover letter ---")
-        messages: List[Dict[str, Any]] = [{
-            "role": "user",
-            "content": self._build_user_message(
-                job_description, profile, candidate_data, dict(analysis or {})
-            ),
-        }]
+        messages: List[Dict[str, Any]] = [
+            {
+                "role": "user",
+                "content": self._build_user_message(job_description, profile, candidate_data, dict(analysis or {})),
+            }
+        ]
 
         for attempt in range(MAX_ATTEMPTS):
             with stage("letter.generate"):
                 # Asked for plain text, a model still wraps it in a fence now and then.
-                text = strip_fences(
-                    self.llm.call_llm("letter", str, self.system_prompt, messages)
-                )
+                text = strip_fences(self.llm.call_llm("letter", str, self.system_prompt, messages))
             try:
                 self._validate_letter(text)
                 logger.info("  ✓ Letter validated (attempt %d)", attempt + 1)
@@ -157,7 +153,9 @@ class LetterGenerator:
             except ValueError as e:
                 logger.error(
                     "  ✗ Validation failed (attempt %d): %s: %s",
-                    attempt + 1, type(e).__name__, e,
+                    attempt + 1,
+                    type(e).__name__,
+                    e,
                 )
                 messages.append({"role": "assistant", "content": text})
                 messages.append(

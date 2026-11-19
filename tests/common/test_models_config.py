@@ -3,7 +3,8 @@
 import pytest
 from pydantic import ValidationError
 
-from pipeline_v1.models import MODEL_ROLES, load_model_config
+from common.models import load_model_config
+from pipeline_v1.facade import MODEL_ROLES
 
 TOML = """
 [provider]
@@ -45,7 +46,8 @@ model = "highlight-1"
 def load(tmp_path):
     def load(toml=TOML):
         (tmp_path / "models.toml").write_text(toml)
-        return load_model_config(tmp_path)
+        return load_model_config(tmp_path / "models.toml", MODEL_ROLES)
+
     return load
 
 
@@ -54,7 +56,10 @@ def test_parses_every_role_with_its_defaults(load):
     assert tuple(config.models) == MODEL_ROLES
     detect = config.models["detect"]
     assert (detect.model_provider, detect.api, detect.structured_output, detect.thinking) == (
-        "standard", "chat_completions", "json_mode", "auto"
+        "standard",
+        "chat_completions",
+        "json_mode",
+        "auto",
     )
     assert config.models["cv"].extra_body == {"thinking_budget": 6000}
     assert config.defaults["max_output_tokens"] == 8000

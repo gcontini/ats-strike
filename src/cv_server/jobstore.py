@@ -117,9 +117,7 @@ class JobDir:
         except OSError:
             return []
         return sorted(
-            (int(match.group(1)), self._events / name)
-            for name in names
-            if (match := _EVENT_FILE.match(name))
+            (int(match.group(1)), self._events / name) for name in names if (match := _EVENT_FILE.match(name))
         )
 
 

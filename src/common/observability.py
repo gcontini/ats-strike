@@ -32,8 +32,8 @@ from datetime import datetime, timezone
 from threading import Lock
 from typing import Any, Callable, Iterator, Optional, Set
 
-#: Root logger name; everything in the pipeline logs under it.
-LOGGER_ROOT = "pipeline_v1"
+#: Root logger name of this package; each pipeline logs under its own.
+LOGGER_ROOT = "common"
 
 #: Bounds, so one pathological run cannot produce an unbounded session.
 MAX_LOG_ENTRIES = 2000
@@ -99,9 +99,7 @@ class Run:
             lines = self._lines
         if lines > MAX_LOG_ENTRIES:
             if lines == MAX_LOG_ENTRIES + 1:
-                self._emit("log", self._entry(
-                    "WARNING", "run", f"further log lines dropped (cap {MAX_LOG_ENTRIES})"
-                ))
+                self._emit("log", self._entry("WARNING", "run", f"further log lines dropped (cap {MAX_LOG_ENTRIES})"))
             return
         self._emit("log", self._entry(level, stage, message[:MAX_MESSAGE_CHARS]))
 
@@ -199,9 +197,7 @@ def configure_logging(*roots: str, level: Optional[str] = None) -> None:
         logger.propagate = False
 
         stream = logging.StreamHandler(sys.stdout)
-        stream.setFormatter(
-            logging.Formatter("%(asctime)s %(levelname)-7s [%(request_id)s] %(name)s: %(message)s")
-        )
+        stream.setFormatter(logging.Formatter("%(asctime)s %(levelname)-7s [%(request_id)s] %(name)s: %(message)s"))
         stream.addFilter(_RequestIdFilter())
         logger.addHandler(stream)
         logger.addHandler(RunCollectingHandler())

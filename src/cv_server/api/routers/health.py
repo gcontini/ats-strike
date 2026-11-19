@@ -18,7 +18,7 @@ async def healthz(request: Request) -> dict:
     nothing here is a secret — model names and whether LaTeX is installed.
     """
     state = get_state(request)
-    info = state.pipeline.info()
+    info = state.pipelines["v1"].info()
     from importlib.metadata import version
 
     try:

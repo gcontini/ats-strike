@@ -15,9 +15,7 @@ class PipelineError(RuntimeError):
 
     kind = "pipeline"
 
-    def __init__(
-        self, message: str, *, stage: Optional[str] = None, detail: Optional[Dict[str, Any]] = None
-    ) -> None:
+    def __init__(self, message: str, *, stage: Optional[str] = None, detail: Optional[Dict[str, Any]] = None) -> None:
         super().__init__(message)
         self.stage = stage
         self.detail = detail or {}

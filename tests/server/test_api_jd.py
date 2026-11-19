@@ -71,9 +71,7 @@ def test_analysis_carries_its_log_lines_then_the_total(client):
     lines = logs(items)
     assert all(item["location"] == "CV" for item in items)
     assert "[stub] stub-model 0.5s" in lines[0]
-    assert lines[-1].endswith(
-        "INFO    [run] Σ 1 model call(s), 0.5s | input=11, thinking=2, output=20"
-    )
+    assert lines[-1].endswith("INFO    [run] Σ 1 model call(s), 0.5s | input=11, thinking=2, output=20")
 
 
 def test_a_log_line_is_dated_levelled_and_staged(client):
@@ -96,9 +94,7 @@ def test_a_missing_file_the_pipeline_needs_is_a_400(client, stub):
     stub.failure = Failing("missing_part", "file 'candidate_preferences.md' is required")
     response = client.post("/v1/jd/analysis", files=a_job())
     assert response.status_code == 400
-    assert response.json()["error"] == (
-        "missing_part: file 'candidate_preferences.md' is required"
-    )
+    assert response.json()["error"] == ("missing_part: file 'candidate_preferences.md' is required")
 
 
 def test_a_bad_analysis_is_a_502_naming_its_stage(client, stub):

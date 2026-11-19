@@ -124,7 +124,7 @@ to.
 | `PORT` / `HOST` | `8080` / `0.0.0.0` | Where uvicorn listens |
 | `WEB_CONCURRENCY` | `1` | uvicorn worker processes |
 | `ATS_API_TOKEN` | unset | Bearer token clients must send. **Unset means no auth.** |
-| `ATS_RESOURCES` | baked in | Directory of replacement prompts/template/`models.toml` |
+| `ATS_RESOURCES` | baked in | Directory of replacement prompts/template/`models.toml`, one sub-folder per pipeline (`v1/`) |
 | `ATS_WORK_DIR` | system temp | Where CV sessions are kept, one directory of events each |
 | `ATS_SESSION_TTL_DAYS` | `1` | Days a session nobody acknowledged is kept after its last event |
 | `ATS_MAX_CONCURRENT_JOBS` | `10` | Requests in flight; the rest get `429` |
@@ -139,9 +139,21 @@ to.
 The prompts, the two JSON schemas the CV writer is shown and
 `resume.tex.jinja` ship inside the image (`resources/v1/`). To change
 them permanently, mount a directory with your versions and set
-`ATS_RESOURCES`; anything missing there falls back to the built-in copy.
-To change them for one request, send them in the pack — that is what the
-client does with every file in its server folder.
+`ATS_RESOURCES` to it; v1 reads its files from its `v1/` sub-folder, laid out
+as `resources/v1`:
+
+```text
+$ATS_RESOURCES/
+└── v1/
+    ├── sys_prompt_cv_body.txt
+    ├── resume.tex.jinja
+    └── models.toml
+```
+
+Anything missing there falls back to the built-in copy. The highlight prompt
+is shared by every pipeline (`resources/common/`) and is not read from there.
+To change any of them for one request, send them in the pack — that is what
+the client does with every file in its server folder.
 
 ### Auth
 

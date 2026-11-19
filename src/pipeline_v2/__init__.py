@@ -1,8 +1,8 @@
 """ats-strike's CV pipeline 2.0: a store compiled once per profile, and a CV per job from it.
 
 A library, as v1 is: it takes its inputs in memory and returns its outputs; no HTTP, no
-contracts, and no configuration read except at build time. It uses v1's infrastructure
-(``pipeline_v1.models``, ``.observability``, ``.errors``) and none of v1's steps.
+contracts, and no configuration read except at build time. It is built on :mod:`common` (the
+models, the observability, the errors) and imports nothing from ``pipeline_v1``.
 
 - ``store`` — the items' shapes, the checks a valid one passes, and the view the user reads.
 - ``items`` — :class:`ItemCompiler`: the profile's experiences cut into base items and stories.

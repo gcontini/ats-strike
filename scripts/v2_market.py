@@ -41,11 +41,11 @@ from pipeline_v2.tree_store import MarketRequirement, MarketTerm
 
 #: Requirements v1 added to every job; they are not the job's.
 META = {"success stories", "concrete examples"}
-COPY = 0.5            # shingle Jaccard of a copy
-MATCH = 40            # analyses at or above this match_percentage give corpus terms
-MIN_JOBS = 2          # build runs
-MIN_ANALYSES = 3      # corpus analyses at or above MATCH
-TOKENS = 30_000       # the shape call's input, at most about
+COPY = 0.5  # shingle Jaccard of a copy
+MATCH = 40  # analyses at or above this match_percentage give corpus terms
+MIN_JOBS = 2  # build runs
+MIN_ANALYSES = 3  # corpus analyses at or above MATCH
+TOKENS = 30_000  # the shape call's input, at most about
 CHARS_PER_TOKEN = 3.3  # S2's example shape input: 87,578 characters, 26,426 tokens
 
 
@@ -130,8 +130,9 @@ def main() -> int:
         for kp in read_json(run / "steps" / "key_points.json") or []:
             if kp["requirement"].strip().lower() in META:
                 continue
-            requirements.append(MarketRequirement(name=kp["requirement"], importance=kp["importance"],
-                                                  keywords=kp["keywords"]))
+            requirements.append(
+                MarketRequirement(name=kp["requirement"], importance=kp["importance"], keywords=kp["keywords"])
+            )
             for word in kp["keywords"]:
                 keyword_runs[norm(word)].add(run)
                 spelling[norm(word)][word.strip()] += 1
@@ -140,7 +141,7 @@ def main() -> int:
     analysed = 0
     asked_all: Counter = Counter()
     asked_near: Counter = Counter()
-    whole: set = set()          # hard skills as the analyses write them, unsplit
+    whole: set = set()  # hard skills as the analyses write them, unsplit
     for run, _ in jds:
         analysis = read_json(run / "analysis.json")
         if not analysis:
@@ -172,24 +173,36 @@ def main() -> int:
     def alone(k: str) -> bool:
         return k in whole or k in keyword_runs
 
-    kept = {k for k in spelling if k and (len(keyword_runs.get(k, ())) >= MIN_JOBS or k in own
-                                          or (asked_near[k] >= MIN_ANALYSES and alone(k)))}
-    fragments = sum(1 for k in spelling if asked_near[k] >= MIN_ANALYSES and not alone(k)
-                    and len(keyword_runs.get(k, ())) < MIN_JOBS and k not in own)
+    kept = {
+        k
+        for k in spelling
+        if k and (len(keyword_runs.get(k, ())) >= MIN_JOBS or k in own or (asked_near[k] >= MIN_ANALYSES and alone(k)))
+    }
+    fragments = sum(
+        1
+        for k in spelling
+        if asked_near[k] >= MIN_ANALYSES and not alone(k) and len(keyword_runs.get(k, ())) < MIN_JOBS and k not in own
+    )
     texts = [(squash(text), squash(text).lower()) for _, text in jds]
     terms = []
     for k in kept:
         word = squash(spelling[k].most_common(1)[0][0])
         hits = sum(1 for text, low in texts if k in low and has_term(word, text))
-        terms.append(MarketTerm(term=word, jobs=len(keyword_runs.get(k, ())),
-                                asked=round(asked_all[k] / analysed, 4) if analysed else 0.0,
-                                share=round(hits / len(texts), 4) if texts else 0.0))
+        terms.append(
+            MarketTerm(
+                term=word,
+                jobs=len(keyword_runs.get(k, ())),
+                asked=round(asked_all[k] / analysed, 4) if analysed else 0.0,
+                share=round(hits / len(texts), 4) if texts else 0.0,
+            )
+        )
     terms.sort(key=lambda t: (-t.share, -t.jobs, -t.asked, t.term.lower()))
 
     # --- the cut: the rarest corpus-only terms go first
     def market(with_terms: List[MarketTerm]) -> Market:
-        return Market(build_jobs=len(builds), corpus_jobs=len(jds), excluded=excluded,
-                      terms=with_terms, requirements=requirements)
+        return Market(
+            build_jobs=len(builds), corpus_jobs=len(jds), excluded=excluded, terms=with_terms, requirements=requirements
+        )
 
     prompt = (resources_dir() / "sys_prompt_tree_shape.txt").read_text(encoding="utf-8")
     empty = Items(profile_sha256="", experiences=[], items=[])
@@ -199,12 +212,13 @@ def main() -> int:
         return int((len(prompt) + len(text)) / CHARS_PER_TOKEN)
 
     protected = {norm(t.term) for t in terms if t.jobs >= MIN_JOBS or norm(t.term) in own}
-    cuttable = sorted((t for t in terms if norm(t.term) not in protected),
-                      key=lambda t: (asked_near[norm(t.term)], t.asked, t.share))
+    cuttable = sorted(
+        (t for t in terms if norm(t.term) not in protected), key=lambda t: (asked_near[norm(t.term)], t.asked, t.share)
+    )
     cut: List[MarketTerm] = []
     while tokens(market(terms)) > TOKENS and cuttable:
-        drop = cuttable[:max(1, len(cuttable) // 20)]
-        cuttable = cuttable[len(drop):]
+        drop = cuttable[: max(1, len(cuttable) // 20)]
+        cuttable = cuttable[len(drop) :]
         cut += drop
         gone = {id(t) for t in drop}
         terms = [t for t in terms if id(t) not in gone]
@@ -213,15 +227,21 @@ def main() -> int:
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "market.json").write_text(result.model_dump_json(indent=1) + "\n", encoding="utf-8")
 
-    print(f"corpus {len(jds)} unique JDs ({analysed} with an analysis); excluded: {excluded['test']} test copies, "
-          f"{excluded['held_out']} held-out copies, {excluded['duplicates']} duplicates")
-    print(f"build runs {len(builds)} ({len(held_runs)} held out, {skipped_test} test copies skipped), "
-          f"{len(requirements)} requirements, {len(keyword_runs)} distinct keywords")
-    print(f"terms: {len(spelling)} seen, {len(kept)} kept by the rules "
-          f"({sum(len(keyword_runs.get(k, ())) >= MIN_JOBS for k in kept)} asked by 2+ build runs, "
-          f"{sum(asked_near[k] >= MIN_ANALYSES for k in kept)} in 3+ analyses, {len(own & kept)} from the profile; "
-          f"{fragments} split parts in 3+ analyses that never stand alone left out), "
-          f"{len(cut)} cut for the token budget, {len(terms)} in the list")
+    print(
+        f"corpus {len(jds)} unique JDs ({analysed} with an analysis); excluded: {excluded['test']} test copies, "
+        f"{excluded['held_out']} held-out copies, {excluded['duplicates']} duplicates"
+    )
+    print(
+        f"build runs {len(builds)} ({len(held_runs)} held out, {skipped_test} test copies skipped), "
+        f"{len(requirements)} requirements, {len(keyword_runs)} distinct keywords"
+    )
+    print(
+        f"terms: {len(spelling)} seen, {len(kept)} kept by the rules "
+        f"({sum(len(keyword_runs.get(k, ())) >= MIN_JOBS for k in kept)} asked by 2+ build runs, "
+        f"{sum(asked_near[k] >= MIN_ANALYSES for k in kept)} in 3+ analyses, {len(own & kept)} from the profile; "
+        f"{fragments} split parts in 3+ analyses that never stand alone left out), "
+        f"{len(cut)} cut for the token budget, {len(terms)} in the list"
+    )
     if cut:
         print("  cut, rarest first: " + ", ".join(t.term for t in cut[:15]) + (" ..." if len(cut) > 15 else ""))
     print(f"shape input about {tokens(result):,} tokens (budget {TOKENS:,})")

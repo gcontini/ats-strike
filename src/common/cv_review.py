@@ -23,7 +23,7 @@ from pydantic import BaseModel, ConfigDict
 from .models import ModelSelector, Usage
 from .observability import LOGGER_ROOT
 
-logger = logging.getLogger(f"{LOGGER_ROOT}.cv")
+logger = logging.getLogger(f"{LOGGER_ROOT}.review")
 
 #: Rounds per document. After the last one the CV goes on with the last edits.
 MAX_VALIDATIONS = 5
@@ -107,19 +107,23 @@ def review(
     """
     failed: List[str] = []
     for attempt in range(1, MAX_VALIDATIONS + 1):
-        text = text_for(doc, attempt) + (
-            "\n\nFAILED REPLACEMENTS:\n" + "\n".join(failed) if failed else ""
-        )
-        calls = llm.call_tools("validation", tool, prompt, [{"role": "user", "content": text}],
-                               usage=usage)
+        text = text_for(doc, attempt) + ("\n\nFAILED REPLACEMENTS:\n" + "\n".join(failed) if failed else "")
+        calls = llm.call_tools("validation", tool, prompt, [{"role": "user", "content": text}], usage=usage)
         failed = []
         if not calls:
             logger.info("[%s] attempt %d: OK", label, attempt)
             return doc
         for args in calls:
             where = f"duty {args['duty']}" if args.get("duty") else args.get("field") or "all"
-            logger.info("[%s] attempt %d: %s %r -> %r (%s)", label, attempt, where,
-                        args["old"], args["new"], args.get("reason", ""))
+            logger.info(
+                "[%s] attempt %d: %s %r -> %r (%s)",
+                label,
+                attempt,
+                where,
+                args["old"],
+                args["new"],
+                args.get("reason", ""),
+            )
             if error := apply(doc, args):
                 logger.info("[%s]   %s", label, error)
                 failed.append(f"{error} (your fix: {args['new']!r})")

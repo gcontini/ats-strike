@@ -36,7 +36,5 @@ def test_rejects_non_ascii():
 def test_strips_code_fences_the_model_adds_anyway():
     llm = FakeLLM()
     llm["letter"].replies = ["```\n" + letter(MIN_WORDS + 10) + "\n```"]
-    text = LetterGenerator(llm, system_prompt="write").generate(
-        "a posting", profile={}, candidate_data={}
-    )
+    text = LetterGenerator(llm, system_prompt="write").generate("a posting", profile={}, candidate_data={})
     assert text == letter(MIN_WORDS + 10)

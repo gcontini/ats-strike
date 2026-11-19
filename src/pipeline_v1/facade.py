@@ -6,7 +6,7 @@ settings (see :mod:`.pack`) — and gives back values, or hands its outputs to a
 client keeps its files.
 
 Log lines and model-call costs flow through the active
-:class:`~pipeline_v1.observability.Run`, which the caller sets up. Every
+:class:`~common.observability.Run`, which the caller sets up. Every
 expected failure leaves as a :class:`PipelineError` with a ``kind``: a model
 endpoint's error becomes ``provider_timeout``, ``provider_unreachable`` or
 ``provider_error`` — its body never travels, it can carry the endpoint and the
@@ -26,21 +26,39 @@ from typing import Any, Dict, Iterator, Mapping, Protocol, Union
 
 from openai import APIConnectionError, APIError, APITimeoutError
 
-from . import pack as packs
-from .bundle import ResourceBundle, default_bundle
-from .cv_generator import CVGenerator
-from .cv_renderer import DEFAULT_LATEX_TIMEOUT, CVRenderer
-from .errors import (
+from common.cv_renderer import DEFAULT_LATEX_TIMEOUT, CVRenderer
+from common.errors import (
     MissingPartError,
     ProviderError,
     ProviderTimeoutError,
     ProviderUnreachableError,
 )
+from common.models import ModelSelector, build_selector
+
+from . import pack as packs
+from .bundle import ResourceBundle, default_bundle
+from .cv_generator import CVGenerator
+from .defaults import default_path
 from .jd_validator import JDValidator
 from .letter_generator import LetterGenerator
-from .models import ModelSelector, build_selector
 
 Files = Mapping[str, bytes]
+
+#: The jobs v1 has a model for, in the order a run uses them: the JD check,
+#: its analysis and the letter, then the six steps of a CV; the writing step
+#: has two roles, ``cv`` for the body and ``duties`` for the experiences.
+MODEL_ROLES = (
+    "detect",
+    "analysis",
+    "letter",
+    "jd_evaluation",
+    "profile_scoring",
+    "format_selection",
+    "cv",
+    "duties",
+    "validation",
+    "highlight",
+)
 
 #: Wall-clock budget for one CV run, checked before each step.
 DEFAULT_BUDGET_SECONDS = 1200.0
@@ -76,8 +94,10 @@ def _provider_errors() -> Iterator[None]:
     except APIError as exc:
         # A timeout is a connection error too, so it is asked first.
         failure = (
-            ProviderTimeoutError if isinstance(exc, APITimeoutError)
-            else ProviderUnreachableError if isinstance(exc, APIConnectionError)
+            ProviderTimeoutError
+            if isinstance(exc, APITimeoutError)
+            else ProviderUnreachableError
+            if isinstance(exc, APIConnectionError)
             else ProviderError
         )
         raise failure(f"the model endpoint failed: {type(exc).__name__}") from exc
@@ -104,12 +124,10 @@ class Pipeline:
     def build(cls) -> "Pipeline":
         """``models.toml`` and the environment, once at startup."""
         return cls(
-            llm=build_selector(),
+            llm=build_selector(default_path("models.toml"), MODEL_ROLES),
             bundle=default_bundle(),
             latex_timeout=float(os.getenv("ATS_LATEX_TIMEOUT") or DEFAULT_LATEX_TIMEOUT),
-            budget_seconds=float(
-                os.getenv("ATS_REQUEST_BUDGET_SECONDS") or DEFAULT_BUDGET_SECONDS
-            ),
+            budget_seconds=float(os.getenv("ATS_REQUEST_BUDGET_SECONDS") or DEFAULT_BUDGET_SECONDS),
         )
 
     def info(self) -> Dict[str, Any]:

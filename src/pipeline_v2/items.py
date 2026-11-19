@@ -20,19 +20,29 @@ import operator
 from dataclasses import fields
 from datetime import date
 from threading import Lock
-from typing import (Annotated, Any, Callable, Dict, Iterable, List, Literal, Mapping, Optional,
-                    Tuple, TypedDict, Union)
+from typing import Annotated, Any, Callable, Dict, Iterable, List, Literal, Mapping, Optional, Tuple, TypedDict, Union
 
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
 from pydantic import BaseModel, ValidationError, model_validator
 
-from pipeline_v1.errors import ModelOutputError
-from pipeline_v1.models import ModelSelector, Usage
-from pipeline_v1.observability import stage
+from common.errors import ModelOutputError
+from common.models import ModelSelector, Usage
+from common.observability import stage
 
-from .store import (DutyWeight, ExperienceItems, Item, Items, Story, check_sources, coverage,
-                    experience_sha256, is_work, months, profile_sha256)
+from .store import (
+    DutyWeight,
+    ExperienceItems,
+    Item,
+    Items,
+    Story,
+    check_sources,
+    coverage,
+    experience_sha256,
+    is_work,
+    months,
+    profile_sha256,
+)
 
 logger = logging.getLogger("pipeline_v2.items")
 
@@ -62,7 +72,7 @@ class ReplyItem(BaseModel):
     scope: str = ""
     tech: List[str] = []
     tags: List[str] = []
-    story: int                # 0 = experience context
+    story: int  # 0 = experience context
 
 
 class ReplyStory(BaseModel):
@@ -95,8 +105,7 @@ class Reply(BaseModel):
 
 def _describe(error: ValidationError) -> str:
     """One line per problem, worded for the model."""
-    return "\n".join(f"- {'.'.join(map(str, e['loc'])) or '(whole reply)'}: {e['msg']}"
-                     for e in error.errors())
+    return "\n".join(f"- {'.'.join(map(str, e['loc'])) or '(whole reply)'}: {e['msg']}" for e in error.errors())
 
 
 # --- pure ---------------------------------------------------------------------------
@@ -137,8 +146,7 @@ def _drop_reason(exp: Mapping[str, Any], raw: ReplyItem, stories: Iterable[int])
     return None
 
 
-def build_experience(exp: Mapping[str, Any], reply: Union[Reply, Mapping[str, Any]],
-                     today: date) -> Built:
+def build_experience(exp: Mapping[str, Any], reply: Union[Reply, Mapping[str, Any]], today: date) -> Built:
     """One experience's store entry and items, from the model's reply.
 
     Items and stories are numbered in reply order, kept ones only. A story's items are its
@@ -149,7 +157,7 @@ def build_experience(exp: Mapping[str, Any], reply: Union[Reply, Mapping[str, An
     e = exp["id"]
     story_ns = [s.n for s in reply.stories]
 
-    kept: List[Tuple[ReplyItem, int]] = []   # (item, its story's n; 0 = experience context)
+    kept: List[Tuple[ReplyItem, int]] = []  # (item, its story's n; 0 = experience context)
     dropped: List[dict] = []
     for raw in reply.items:
         reason = _drop_reason(exp, raw, story_ns)
@@ -170,9 +178,19 @@ def build_experience(exp: Mapping[str, Any], reply: Union[Reply, Mapping[str, An
             d["story_id"] = story_id[d["story"]]
 
     items = [
-        Item(id=item_id[raw.n], experience=e, duty=raw.duty, type=raw.type, text=raw.text,
-             source=raw.source, agency=raw.agency, scope=raw.scope, tech=raw.tech, tags=raw.tags,
-             story=story_id.get(s))
+        Item(
+            id=item_id[raw.n],
+            experience=e,
+            duty=raw.duty,
+            type=raw.type,
+            text=raw.text,
+            source=raw.source,
+            agency=raw.agency,
+            scope=raw.scope,
+            tech=raw.tech,
+            tags=raw.tags,
+            story=story_id.get(s),
+        )
         for raw, s in kept
     ]
 
@@ -182,12 +200,16 @@ def build_experience(exp: Mapping[str, Any], reply: Union[Reply, Mapping[str, An
     built_stories = []
     for s in stories:
         members = [i for i in items if i.story == story_id[s.n]]
-        built_stories.append(Story(
-            id=story_id[s.n], experience=e, title=s.title,
-            items=profile_order([i for i in members if not is_work(i)])
-            + profile_order([i for i in members if is_work(i)]),
-            anchor=[item_id[n] for n in s.anchor if n in item_id],
-        ))
+        built_stories.append(
+            Story(
+                id=story_id[s.n],
+                experience=e,
+                title=s.title,
+                items=profile_order([i for i in members if not is_work(i)])
+                + profile_order([i for i in members if is_work(i)]),
+                anchor=[item_id[n] for n in s.anchor if n in item_id],
+            )
+        )
 
     weights: Dict[int, DutyWeight] = {}
     for d in reply.duties:
@@ -195,10 +217,14 @@ def build_experience(exp: Mapping[str, Any], reply: Union[Reply, Mapping[str, An
             weights[d.duty] = DutyWeight(duty=d.duty, weight=d.weight, why=d.why)
 
     entry = ExperienceItems(
-        id=e, sha256=experience_sha256(exp), months=months(exp.get("dates", ""), today),
+        id=e,
+        sha256=experience_sha256(exp),
+        months=months(exp.get("dates", ""), today),
         weights=[weights[d] for d in sorted(weights)],
         context=profile_order([i for i in items if i.story is None]),
-        stories=built_stories, coverage=round(coverage(exp, items), 3), dropped=dropped,
+        stories=built_stories,
+        coverage=round(coverage(exp, items), 3),
+        dropped=dropped,
     )
     return entry, items
 
@@ -210,10 +236,12 @@ def hand_edits(old: ExperienceItems, old_items: List[Item], new: ExperienceItems
     A weight the model changed on its own is not a hand edit, so it is not listed."""
     edits: List[dict] = [{"what": "item", **i.model_dump()} for i in old_items if i.edited]
     now = {w.duty: w.weight for w in new.weights}
-    edits += [{"what": "weight", "duty": w.duty, "weight": w.weight, "why": w.why, "new": now.get(w.duty)}
-              for w in old.weights if w.edited]
-    edits += [{"what": "story", "id": s.id, "title": s.title, "merged": s.merged}
-              for s in old.stories if s.merged]
+    edits += [
+        {"what": "weight", "duty": w.duty, "weight": w.weight, "why": w.why, "new": now.get(w.duty)}
+        for w in old.weights
+        if w.edited
+    ]
+    edits += [{"what": "story", "id": s.id, "title": s.title, "merged": s.merged} for s in old.stories if s.merged]
     return edits
 
 
@@ -230,8 +258,7 @@ class ItemsState(TypedDict, total=False):
 class ItemCompiler:
     """Cuts a profile's experiences into base items and stories."""
 
-    def __init__(self, *, llm: ModelSelector, system_prompt: str,
-                 progress: Optional[ProgressFn] = None) -> None:
+    def __init__(self, *, llm: ModelSelector, system_prompt: str, progress: Optional[ProgressFn] = None) -> None:
         self.llm = llm
         self.system_prompt = system_prompt
         self.progress = progress
@@ -239,8 +266,9 @@ class ItemCompiler:
         self.usage = Usage()
         self._lock = Lock()
 
-    def compile(self, profile: Mapping[str, Any], *, today: date,
-                previous: Optional[Items] = None, force: Iterable[int] = ()) -> Items:
+    def compile(
+        self, profile: Mapping[str, Any], *, today: date, previous: Optional[Items] = None, force: Iterable[int] = ()
+    ) -> Items:
         """The store's items for ``profile``: unchanged experiences of ``previous`` copied, the
         others (and those in ``force``, by experience id) compiled, one call each, side by side."""
         force = set(force)
@@ -284,8 +312,9 @@ class ItemCompiler:
         return graph.compile()
 
     def _each_experience(self, state: ItemsState) -> List[Send]:
-        return [Send("compile", {"position": n, "experience": exp, "today": state["today"]})
-                for n, exp in state["todo"]]
+        return [
+            Send("compile", {"position": n, "experience": exp, "today": state["today"]}) for n, exp in state["todo"]
+        ]
 
     def _compile(self, task: dict) -> dict:
         exp = task["experience"]
@@ -309,8 +338,7 @@ class ItemCompiler:
 
     def _ask(self, exp: Mapping[str, Any], usage: Usage) -> Reply:
         """The reply for one experience; one that does not validate goes back once."""
-        messages = [{"role": "user",
-                     "content": "EXPERIENCE:\n" + json.dumps(shown(exp), ensure_ascii=False, indent=1)}]
+        messages = [{"role": "user", "content": "EXPERIENCE:\n" + json.dumps(shown(exp), ensure_ascii=False, indent=1)}]
         for attempt in (1, 2):
             raw = self.llm.call_llm(ROLE, dict, self.system_prompt, messages, usage=usage)
             try:
@@ -320,11 +348,13 @@ class ItemCompiler:
             logger.warning("  ✗ [%s] e%s: reply %d/2 does not validate:\n%s", ROLE, exp["id"], attempt, problem)
             messages += [
                 {"role": "assistant", "content": json.dumps(raw, ensure_ascii=False)},
-                {"role": "user", "content": f"Your previous reply was rejected:\n{problem}\n\n"
-                                            "Reply again with the complete, corrected output only."},
+                {
+                    "role": "user",
+                    "content": f"Your previous reply was rejected:\n{problem}\n\n"
+                    "Reply again with the complete, corrected output only.",
+                },
             ]
-        raise ModelOutputError(f"{ROLE}: experience {exp['id']}: the reply does not validate:\n{problem}",
-                               stage=STAGE)
+        raise ModelOutputError(f"{ROLE}: experience {exp['id']}: the reply does not validate:\n{problem}", stage=STAGE)
 
     def _report(self, line: str) -> None:
         logger.info("%s", line)

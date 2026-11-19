@@ -5,10 +5,10 @@ import openai
 import pytest
 from pipeline_v1.schemas import JDAnalysis, JDDetection
 
-from pipeline_v1.models import ATTEMPTS, Usage
-from pipeline_v1.observability import stage
-from pipeline_v1.cv_review import ReplaceInDuties
-from pipeline_v1.errors import ModelOutputError
+from common.cv_review import ReplaceInDuties
+from common.errors import ModelOutputError
+from common.models import ATTEMPTS, Usage
+from common.observability import stage
 
 from pipeline_helpers import FakeLLM, tool_completion
 
@@ -20,7 +20,8 @@ def test_str_is_returned_as_is_after_the_system_prompt():
     llm["letter"].replies = ["  Dear team,  "]
     assert llm.call_llm("letter", str, "be brief", USER) == "  Dear team,  "
     assert llm["letter"].calls[0]["messages"] == [
-        {"role": "system", "content": "be brief"}, {"role": "user", "content": "the text"},
+        {"role": "system", "content": "be brief"},
+        {"role": "user", "content": "the text"},
     ]
 
 
@@ -78,16 +79,17 @@ def test_json_mode_puts_the_schema_in_the_system_prompt_and_lists_what_failed():
 def test_a_valid_reply_comes_back_as_the_model():
     llm = FakeLLM()
     llm["detect"].replies = ['{"is_job_description": true}']
-    assert llm.call_llm("detect", JDDetection, "is it?", USER) == JDDetection(
-        is_job_description=True
-    )
+    assert llm.call_llm("detect", JDDetection, "is it?", USER) == JDDetection(is_job_description=True)
 
 
-@pytest.mark.parametrize("reply", [
-    '[{"id": 1}]',
-    '```json\n[{"id": 1}]\n```',
-    'Here they are:\n```json\n[{"id": 1}]\n```',
-])
+@pytest.mark.parametrize(
+    "reply",
+    [
+        '[{"id": 1}]',
+        '```json\n[{"id": 1}]\n```',
+        'Here they are:\n```json\n[{"id": 1}]\n```',
+    ],
+)
 def test_a_json_list_is_parsed_fenced_or_not(reply):
     """Parsed as LangChain's JSON output parser does: no schema, no response_format."""
     llm = FakeLLM()
@@ -113,13 +115,17 @@ def test_a_reply_that_is_no_json_is_retried_then_given_up():
 
 def test_tool_calls_come_back_as_their_arguments_in_order():
     llm = FakeLLM()
-    llm["validation"].replies = [tool_completion("fake-validation", [
-        ("replace_in_duties", {"old": "a", "new": "b", "duty": 1, "reason": "Syntax"}),
-        ("replace_in_duties", {"old": "c", "new": "d"}),
-    ])]
+    llm["validation"].replies = [
+        tool_completion(
+            "fake-validation",
+            [
+                ("replace_in_duties", {"old": "a", "new": "b", "duty": 1, "reason": "Syntax"}),
+                ("replace_in_duties", {"old": "c", "new": "d"}),
+            ],
+        )
+    ]
     calls = llm.call_tools("validation", ReplaceInDuties, "check", USER)
-    assert calls == [{"old": "a", "new": "b", "duty": 1, "reason": "Syntax"},
-                     {"old": "c", "new": "d"}]
+    assert calls == [{"old": "a", "new": "b", "duty": 1, "reason": "Syntax"}, {"old": "c", "new": "d"}]
     sent = llm["validation"].calls[0]
     assert sent["tools"][0]["function"]["name"] == "replace_in_duties"
     assert sent["parallel_tool_calls"] is True
@@ -143,9 +149,7 @@ def test_usage_counts_every_attempt():
     llm, usage = FakeLLM(), Usage()
     llm["detect"].replies = ["", "NO"]
     llm.call_llm("detect", bool, "is it?", USER, usage=usage)
-    assert (usage.calls, usage.input_tokens, usage.thinking_tokens, usage.output_tokens) == (
-        2, 22, 4, 40
-    )
+    assert (usage.calls, usage.input_tokens, usage.thinking_tokens, usage.output_tokens) == (2, 22, 4, 40)
     assert (usage - Usage(calls=1)).calls == 1
 
 
@@ -154,8 +158,9 @@ def test_the_structured_wrapper_is_built_once():
     assert llm._wrapper("analysis", JDAnalysis) is llm._wrapper("analysis", JDAnalysis)
 
 
-SETTINGS = dict(temperature=0.2, thinking="on", reasoning_effort="high",
-                max_output_tokens=900, extra_body={"thinking_budget": 100})
+SETTINGS = dict(
+    temperature=0.2, thinking="on", reasoning_effort="high", max_output_tokens=900, extra_body={"thinking_budget": 100}
+)
 
 
 def test_an_extra_body_supersedes_every_setting_of_its_role():
@@ -164,8 +169,7 @@ def test_an_extra_body_supersedes_every_setting_of_its_role():
     llm.with_extra_body({"cv": {"top_p": 0.9}}).call_llm("cv", str, "", USER)
     sent = llm["cv"].calls[0]
     assert sent["top_p"] == 0.9
-    for setting in ("temperature", "reasoning_effort", "max_completion_tokens",
-                    "enable_thinking", "thinking_budget"):
+    for setting in ("temperature", "reasoning_effort", "max_completion_tokens", "enable_thinking", "thinking_budget"):
         assert setting not in sent, setting
 
 

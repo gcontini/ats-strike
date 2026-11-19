@@ -32,10 +32,10 @@ _COMPOUND = re.compile(r"\s&\s|\sand\s|(?<=\w{4})/(?=\w{4})", re.I)
 
 # --- the market ---------------------------------------------------------------------
 class MarketTerm(_Strict):
-    term: str            # the most common spelling
-    jobs: int            # build runs whose key points list it
-    asked: float         # share of corpus analyses listing it
-    share: float         # share of corpus JD texts containing it (has_term)
+    term: str  # the most common spelling
+    jobs: int  # build runs whose key points list it
+    asked: float  # share of corpus analyses listing it
+    share: float  # share of corpus JD texts containing it (has_term)
 
 
 class MarketRequirement(_Strict):
@@ -47,34 +47,34 @@ class MarketRequirement(_Strict):
 class Market(_Strict):
     build_jobs: int
     corpus_jobs: int
-    excluded: Dict[str, int]     # {"test": 50, "held_out": 10, "duplicates": n}
+    excluded: Dict[str, int]  # {"test": 50, "held_out": 10, "duplicates": n}
     terms: List[MarketTerm]
     requirements: List[MarketRequirement]
 
 
 # --- the tree -----------------------------------------------------------------------
 class Node(_Strict):
-    id: str                       # "4", "4.1", "4.1.2"
-    name: str                     # one plain market term, English
-    aliases: List[str] = []       # the same thing, English and Italian
-    counts_as: List[str] = []     # narrower things that prove it; never swapped
-    shape_proven: bool = False    # what the shape call expected: a check, not a status
-    outside: str = ""             # where the profile shows it outside the experiences
-    confirmed: bool = False       # set by hand: the user backs a weak leaf
+    id: str  # "4", "4.1", "4.1.2"
+    name: str  # one plain market term, English
+    aliases: List[str] = []  # the same thing, English and Italian
+    counts_as: List[str] = []  # narrower things that prove it; never swapped
+    shape_proven: bool = False  # what the shape call expected: a check, not a status
+    outside: str = ""  # where the profile shows it outside the experiences
+    confirmed: bool = False  # set by hand: the user backs a weak leaf
 
 
 class ExperienceLinks(_Strict):
     experience: int
-    items_sha256: str                   # of the experience's items as attached
-    links: Dict[str, Dict[str, int]]    # item id -> {leaf id: level 1-3}
-    dropped: List[dict] = []            # links refused, each with its reason
-    edited: bool = False                # set by hand
-    previous: List[dict] = []           # links of a hand-edited block that was re-attached
+    items_sha256: str  # of the experience's items as attached
+    links: Dict[str, Dict[str, int]]  # item id -> {leaf id: level 1-3}
+    dropped: List[dict] = []  # links refused, each with its reason
+    edited: bool = False  # set by hand
+    previous: List[dict] = []  # links of a hand-edited block that was re-attached
 
 
 class Tree(_Strict):
-    market_sha256: str            # of the market list the shape was built from
-    nodes: List[Node]             # parents before children
+    market_sha256: str  # of the market list the shape was built from
+    nodes: List[Node]  # parents before children
     experiences: List[ExperienceLinks]
 
 
@@ -102,7 +102,7 @@ def items_sha256(items: Items, experience: int) -> str:
 
 
 def is_compound(name: str) -> bool:
-    """" & ", " and ", or a "/" between two words longer than 3 characters ("CI/CD" passes)."""
+    """ " & ", " and ", or a "/" between two words longer than 3 characters ("CI/CD" passes)."""
     return bool(_COMPOUND.search(name))
 
 
@@ -158,8 +158,9 @@ def leaf_status(tree: Tree, items: Items) -> Dict[str, str]:
 
 
 # --- outside (decision 6) ---------------------------------------------------------------
-def propose_outside(nodes: Iterable[Node], skills: Sequence[str], certifications: Sequence[str],
-                    languages: str) -> Dict[str, str]:
+def propose_outside(
+    nodes: Iterable[Node], skills: Sequence[str], certifications: Sequence[str], languages: str
+) -> Dict[str, str]:
     """leaf id -> where the profile shows it outside the experiences: a leaf whose name or alias
     occurs in the skills list, a certification's name, or the languages line."""
     out: Dict[str, str] = {}
@@ -183,8 +184,7 @@ def unasked(nodes: Iterable[Node], market: Market) -> List[MarketTerm]:
     """Market terms asked often (``share`` >= 5% or ``jobs`` >= 3) that equal no node's name, alias
     or counts-as term, case and spaces normalized."""
     carried = {norm(t) for n in nodes for t in terms_of(n)}
-    return [t for t in market.terms
-            if (t.share >= OFTEN_SHARE or t.jobs >= OFTEN_JOBS) and norm(t.term) not in carried]
+    return [t for t in market.terms if (t.share >= OFTEN_SHARE or t.jobs >= OFTEN_JOBS) and norm(t.term) not in carried]
 
 
 def _market_by_term(market: Market) -> Dict[str, MarketTerm]:
@@ -206,16 +206,23 @@ def checks(tree: Tree, items: Items, market: Market) -> Dict[str, list]:
     def twice(term: str, ids: List[str]) -> bool:
         """On two nodes, except a node's term repeated in an ancestor's counts-as list: redundant,
         not wrong (the node already proves its ancestor)."""
-        own = [i for i in ids if norm(term) in {norm(t) for t in terms_of(by_node[i], counts_as=False)}
-               or not any(j != i and j.startswith(i + ".") for j in ids)]
+        own = [
+            i
+            for i in ids
+            if norm(term) in {norm(t) for t in terms_of(by_node[i], counts_as=False)}
+            or not any(j != i and j.startswith(i + ".") for j in ids)
+        ]
         return len(own) > 1
 
     named: List[dict] = []
     for leaf in leaves:
         if status[leaf.id] != "ghost":
             continue
-        hits = [i.id for i in items.items
-                if any(has_term(t, " | ".join([i.text, *i.tech, *i.tags])) for t in terms_of(leaf, counts_as=False))]
+        hits = [
+            i.id
+            for i in items.items
+            if any(has_term(t, " | ".join([i.text, *i.tech, *i.tags])) for t in terms_of(leaf, counts_as=False))
+        ]
         if hits:
             named.append({"leaf": leaf.id, "items": hits})
 
@@ -229,8 +236,11 @@ def checks(tree: Tree, items: Items, market: Market) -> Dict[str, list]:
         "ghosts_expected": [n.id for n in leaves if status[n.id] == "ghost" and n.shape_proven],
         "ghosts_named": named,
         "weak": [n.id for n in leaves if status[n.id] == "weak"],
-        "market_changed": ([] if tree.market_sha256 == market_sha256(market)
-                           else ["the market list changed since the shape: reshape to use it"]),
+        "market_changed": (
+            []
+            if tree.market_sha256 == market_sha256(market)
+            else ["the market list changed since the shape: reshape to use it"]
+        ),
     }
 
 
@@ -244,12 +254,18 @@ def structure_faults(nodes: Sequence[Node]) -> List[str]:
         if node.id in seen:
             faults.append(f"{node.id}: two nodes have this id")
         if not re.fullmatch(r"[1-9]\d*(\.[1-9]\d*){0,2}", node.id):
-            faults.append(f"{node.id}: not an id of the form 4, 4.1 or 4.1.2" if node.id.count(".") < 3
-                          else f"{node.id}: deeper than three levels")
+            faults.append(
+                f"{node.id}: not an id of the form 4, 4.1 or 4.1.2"
+                if node.id.count(".") < 3
+                else f"{node.id}: deeper than three levels"
+            )
         elif parent(node.id) is not None and parent(node.id) not in seen:
             ids = {n.id for n in nodes}
-            faults.append(f"{node.id}: listed before its parent {parent(node.id)}" if parent(node.id) in ids
-                          else f"{node.id}: no parent {parent(node.id)}")
+            faults.append(
+                f"{node.id}: listed before its parent {parent(node.id)}"
+                if parent(node.id) in ids
+                else f"{node.id}: no parent {parent(node.id)}"
+            )
         seen.add(node.id)
     has_children = {parent(n.id) for n in nodes}
     faults += [f"{n.id} {n.name}: no children" for n in nodes if level(n.id) < 3 and n.id not in has_children]
@@ -339,10 +355,13 @@ def tree_markdown(tree: Tree, items: Items, market: Market) -> str:
         return f"{iid} ({item.type}) {item.text}" if item else f"{iid} (unknown item)"
 
     count = {s: sum(status[n.id] == s for n in leaves) for s in STATUSES}
-    out = [GATE,
-           f"{sum(level(n.id) == 1 for n in tree.nodes)} disciplines, "
-           f"{sum(level(n.id) == 2 for n in tree.nodes)} competences, {len(leaves)} leaves: "
-           f"{count['proven']} proven, {count['weak']} weak, {count['ghost']} ghost.", ""]
+    out = [
+        GATE,
+        f"{sum(level(n.id) == 1 for n in tree.nodes)} disciplines, "
+        f"{sum(level(n.id) == 2 for n in tree.nodes)} competences, {len(leaves)} leaves: "
+        f"{count['proven']} proven, {count['weak']} weak, {count['ghost']} ghost.",
+        "",
+    ]
     if problems:
         out += ["**Problems**", "", *[f"- {p}" for p in problems], ""]
 
@@ -370,8 +389,10 @@ def tree_markdown(tree: Tree, items: Items, market: Market) -> str:
 
     out += ["### Names", ""]
     out += [f"- compound name: {_label(nodes[i])}" for i in found["compound_names"]]
-    out += [f"- on two nodes: {t['term']!r} on " + ", ".join(_label(nodes[i]) for i in t["nodes"])
-            for t in found["two_nodes"]]
+    out += [
+        f"- on two nodes: {t['term']!r} on " + ", ".join(_label(nodes[i]) for i in t["nodes"])
+        for t in found["two_nodes"]
+    ]
     out += [f"- asked, no node carries it: {t['term']} ({_asked(MarketTerm(**t))})" for t in found["unasked"]]
     if not (found["compound_names"] or found["two_nodes"] or found["unasked"]):
         out.append("- nothing found")
@@ -381,10 +402,15 @@ def tree_markdown(tree: Tree, items: Items, market: Market) -> str:
     other += [f"- too broad ({len(linked[i])} items): {_label(nodes[i])}" for i in found["broad"]]
     other += [f"- {m}" for m in found["market_changed"]]
     for block in tree.experiences:
-        other += [f"- e{block.experience}: dropped link {d.get('item')} -> {d.get('leaf')} ({d.get('reason')})"
-                  for d in block.dropped]
-        other += [f"- e{block.experience}: hand-edited link before the re-attach: {d.get('item')} -> "
-                  f"{d.get('leaf')} at level {d.get('level')}" for d in block.previous]
+        other += [
+            f"- e{block.experience}: dropped link {d.get('item')} -> {d.get('leaf')} ({d.get('reason')})"
+            for d in block.dropped
+        ]
+        other += [
+            f"- e{block.experience}: hand-edited link before the re-attach: {d.get('item')} -> "
+            f"{d.get('leaf')} at level {d.get('level')}"
+            for d in block.previous
+        ]
     out += ["### Other", "", *(other or ["- nothing found"]), ""]
 
     out += ["## The tree", ""]
@@ -395,8 +421,9 @@ def tree_markdown(tree: Tree, items: Items, market: Market) -> str:
             for leaf in (n for n in tree.nodes if parent(n.id) == c.id):
                 asked = _asked(_best_market(leaf, by_term))
                 mark = status[leaf.id].upper() if status[leaf.id] != "proven" else "proven"
-                notes = [x for x in (leaf.outside and f"outside: {leaf.outside}",
-                                     leaf.confirmed and "confirmed", asked) if x]
+                notes = [
+                    x for x in (leaf.outside and f"outside: {leaf.outside}", leaf.confirmed and "confirmed", asked) if x
+                ]
                 out.append(f"  - {_label(leaf)} · {mark}" + _also(leaf) + (f" · {'; '.join(notes)}" if notes else ""))
                 for iid, lvl in sorted(linked.get(leaf.id, {}).items(), key=lambda p: (-p[1], p[0])):
                     out.append(f"    - {lvl} · {text(iid)}")
@@ -417,8 +444,10 @@ def tree_dump(tree: Tree) -> str:
     """The file's text: one node per line, so a hand edit and a diff stay readable."""
     nodes = ",\n".join("  " + json.dumps(n.model_dump(), ensure_ascii=False) for n in tree.nodes)
     blocks = json.dumps([b.model_dump() for b in tree.experiences], ensure_ascii=False, indent=1)
-    return (f'{{\n "market_sha256": {json.dumps(tree.market_sha256)},\n "nodes": [\n{nodes}\n ],\n'
-            f' "experiences": {blocks}\n}}\n')
+    return (
+        f'{{\n "market_sha256": {json.dumps(tree.market_sha256)},\n "nodes": [\n{nodes}\n ],\n'
+        f' "experiences": {blocks}\n}}\n'
+    )
 
 
 __all__ = [

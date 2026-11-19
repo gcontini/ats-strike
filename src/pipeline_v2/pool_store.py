@@ -50,16 +50,39 @@ FRAME_MAX = 300
 SLOTS = ("<<job_title>>", "<<keywords>>", "<<sentence>>")
 
 LED = re.compile(r"\b(led|managed|headed)\b", re.I)
-_WORDS = {w: n for n, w in enumerate(
-    "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen "
-    "sixteen seventeen eighteen nineteen twenty".split())}
+_WORDS = {
+    w: n
+    for n, w in enumerate(
+        "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen "
+        "sixteen seventeen eighteen nineteen twenty".split()
+    )
+}
 _NUMBER = re.compile(r"(?<![A-Za-z0-9.,])\d+(?:[.,]\d+)*|\b(?:" + "|".join(_WORDS) + r")\b", re.I)
 _YEARS = re.compile(r"(?<![A-Za-z0-9.,])(\d+|" + "|".join(_WORDS) + r")\+?\s+years?\b", re.I)
 
 #: The checks, in the order the view lists them.
-CHECKS = ("length", "lines", "rung1", "foreign_items", "numbers", "led", "context_only", "covers",
-          "assumes", "anchor", "wordings", "groups", "uncovered", "role_summary", "compact", "skills",
-          "skill_count", "frames", "frame_count", "stale")
+CHECKS = (
+    "length",
+    "lines",
+    "rung1",
+    "foreign_items",
+    "numbers",
+    "led",
+    "context_only",
+    "covers",
+    "assumes",
+    "anchor",
+    "wordings",
+    "groups",
+    "uncovered",
+    "role_summary",
+    "compact",
+    "skills",
+    "skill_count",
+    "frames",
+    "frame_count",
+    "stale",
+)
 
 
 # --- shapes -------------------------------------------------------------------------------
@@ -68,27 +91,27 @@ class Line(_Strict):
 
     text: str
     uses: List[str]
-    edited: bool = False             # set by hand
+    edited: bool = False  # set by hand
 
 
 class Bullet(_Strict):
-    id: str                          # "e1.s03.r2.a" on a ladder, "e1.s03.g1.2" in a group
+    id: str  # "e1.s03.r2.a" on a ladder, "e1.s03.g1.2" in a group
     text: str
     uses: List[str]
     covers: List[str]
     assumes: List[str] = []
-    edited: bool = False             # set by hand
+    edited: bool = False  # set by hand
 
 
 class Rung(Bullet):
     rung: Literal[1, 2, 3]
-    wording: Literal["a", "b", "c", "d", "e", "f"]   # the model writes a and b; code moves a bullet
-                                                     # that fills fewer lines down a rung, as c, d, ...
+    wording: Literal["a", "b", "c", "d", "e", "f"]  # the model writes a and b; code moves a bullet
+    # that fills fewer lines down a rung, as c, d, ...
 
 
 class Group(_Strict):
-    id: str                          # "e1.s03.g1"
-    bullets: List[Bullet]            # printed whole, in this order
+    id: str  # "e1.s03.g1"
+    bullets: List[Bullet]  # printed whole, in this order
 
 
 class StoryPool(_Strict):
@@ -99,31 +122,31 @@ class StoryPool(_Strict):
 
 class ExperiencePool(_Strict):
     experience: int
-    items_sha256: str                # shown_sha256 of the items and stories it was written from
+    items_sha256: str  # shown_sha256 of the items and stories it was written from
     role_summary: Line
     compact: Line
     stories: List[StoryPool]
-    dropped: List[dict] = []         # groups code refused, with the reason
-    previous: List[dict] = []        # hand-edited pieces of a block written again
+    dropped: List[dict] = []  # groups code refused, with the reason
+    previous: List[dict] = []  # hand-edited pieces of a block written again
 
 
 class Skill(_Strict):
-    id: str                          # "k01"
+    id: str  # "k01"
     text: str
     nodes: List[str]
-    edited: bool = False             # set by hand
+    edited: bool = False  # set by hand
 
 
 class Frame(_Strict):
-    id: str                          # "f1"
+    id: str  # "f1"
     family: str
-    text: str                        # with the three slots
+    text: str  # with the three slots
     uses: List[str]
-    edited: bool = False             # set by hand
+    edited: bool = False  # set by hand
 
 
 class Pool(_Strict):
-    level_sha256: str                # what the skills and frames were written from
+    level_sha256: str  # what the skills and frames were written from
     experiences: List[ExperiencePool]
     skills: List[Skill]
     frames: List[Frame]
@@ -211,8 +234,12 @@ def shown_sha256(items: Items, experience: int) -> str:
     one's id, type, text, agency, scope and technologies) and of its stories (id, title, items and
     anchor). A changed scope, or a story cut again from the same texts, writes the block again."""
     x = next((x for x in items.experiences if x.id == experience), None)
-    return _sha256([[[i.id, i.type, i.text, i.agency, i.scope, i.tech] for i in items.items if i.experience == experience],
-                    [[s.id, s.title, s.items, s.anchor] for s in (x.stories if x else [])]])
+    return _sha256(
+        [
+            [[i.id, i.type, i.text, i.agency, i.scope, i.tech] for i in items.items if i.experience == experience],
+            [[s.id, s.title, s.items, s.anchor] for s in (x.stories if x else [])],
+        ]
+    )
 
 
 def level_sha256(items: Items, tree: Tree) -> str:
@@ -230,8 +257,9 @@ def fixed_text(frame: Frame) -> str:
     return squash(text)
 
 
-def frame_numbers(frame: Frame, items: Items, profile: Mapping[str, Any], today: date
-                  ) -> List[Tuple[str, Optional[str]]]:
+def frame_numbers(
+    frame: Frame, items: Items, profile: Mapping[str, Any], today: date
+) -> List[Tuple[str, Optional[str]]]:
     """Every number of a frame's fixed text, with where code found it; None where it found it nowhere.
 
     A number passes when it is in an item the frame uses, in an experience's dates, or is a count of
@@ -243,11 +271,14 @@ def frame_numbers(frame: Frame, items: Items, profile: Mapping[str, Any], today:
     years = {str(_WORDS.get(m.group(1).lower(), m.group(1))) for m in _YEARS.finditer(text)}
     out: List[Tuple[str, Optional[str]]] = []
     for written, value in numbers(text):
-        where = next((f"item {iid}" for iid in frame.uses if iid in by_id and value in _values(_source(by_id[iid]))),
-                     None)
+        where = next(
+            (f"item {iid}" for iid in frame.uses if iid in by_id and value in _values(_source(by_id[iid]))), None
+        )
         if where is None:
-            where = next((f"dates of e{e['id']}" for e in profile["experiences"]
-                          if value in _values(_plain(e.get("dates")))), None)
+            where = next(
+                (f"dates of e{e['id']}" for e in profile["experiences"] if value in _values(_plain(e.get("dates")))),
+                None,
+            )
         if where is None and value in years and value.isdigit() and int(value) <= career:
             where = f"a count of years, the career has {career}"
         out.append((written, where))
@@ -262,8 +293,9 @@ def _source(item: Item) -> str:
 def story_work(items: Items) -> Dict[str, int]:
     """story id -> its action and result items."""
     by_id = {i.id: i for i in items.items}
-    return {s.id: sum(is_work(by_id[iid]) for iid in s.items if iid in by_id)
-            for x in items.experiences for s in x.stories}
+    return {
+        s.id: sum(is_work(by_id[iid]) for iid in s.items if iid in by_id) for x in items.experiences for s in x.stories
+    }
 
 
 def ladder_and_group_bullets(block: ExperiencePool) -> List[Bullet]:
@@ -271,8 +303,7 @@ def ladder_and_group_bullets(block: ExperiencePool) -> List[Bullet]:
 
 
 # --- checks --------------------------------------------------------------------------------------
-def pool_checks(pool: Pool, items: Items, tree: Tree, profile: Mapping[str, Any], today: date
-                ) -> Dict[str, List[dict]]:
+def pool_checks(pool: Pool, items: Items, tree: Tree, profile: Mapping[str, Any], today: date) -> Dict[str, List[dict]]:
     """What the gate should look at: each check a list of ``{"id", "detail"}``, empty when nothing
     is found. Nothing is changed."""
     found: Dict[str, List[dict]] = {k: [] for k in CHECKS}
@@ -283,12 +314,20 @@ def pool_checks(pool: Pool, items: Items, tree: Tree, profile: Mapping[str, Any]
     by_id = {i.id: i for i in items.items}
     exps = {x.id: x for x in items.experiences}
     stories = {s.id: s for x in items.experiences for s in x.stories}
-    headers = {e["id"]: " ".join(_plain(e.get(k)) for k in ("title", "company", "dates"))
-               for e in profile["experiences"]}
+    headers = {
+        e["id"]: " ".join(_plain(e.get(k)) for k in ("title", "company", "dates")) for e in profile["experiences"]
+    }
     work = story_work(items)
 
-    def grounded(pid: str, e: int, text: str, uses: Sequence[str], covers: Sequence[str] = (),
-                 assumes: Sequence[str] = (), limit: Optional[int] = None) -> None:
+    def grounded(
+        pid: str,
+        e: int,
+        text: str,
+        uses: Sequence[str],
+        covers: Sequence[str] = (),
+        assumes: Sequence[str] = (),
+        limit: Optional[int] = None,
+    ) -> None:
         """The checks every piece written from one experience's items shares."""
         if limit is not None and len(text) > limit:
             add("length", pid, f"{len(text)} characters, over {limit}")
@@ -366,10 +405,13 @@ def pool_checks(pool: Pool, items: Items, tree: Tree, profile: Mapping[str, Any]
             for rung in (1, 2, 3):
                 same = [r for r in s.ladder if r.rung == rung]
                 for k, x in enumerate(same):
-                    for y in same[k + 1:]:
+                    for y in same[k + 1 :]:
                         if _first_word(x.text) == _first_word(y.text):
-                            add("wordings", f"{s.story}.r{rung}",
-                                f'{x.wording} and {y.wording} both open with "{_first_word(x.text)}"')
+                            add(
+                                "wordings",
+                                f"{s.story}.r{rung}",
+                                f'{x.wording} and {y.wording} both open with "{_first_word(x.text)}"',
+                            )
 
             most = MERGED_GROUP_LINES if stories.get(s.story) and stories[s.story].merged else GROUP_LINES[1]
             for g in s.groups:
@@ -430,8 +472,7 @@ def pool_checks(pool: Pool, items: Items, tree: Tree, profile: Mapping[str, Any]
         add("frame_count", "frames", f"{len(pool.frames)} frames, not {FRAMES[0]} to {FRAMES[1]}")
 
     if (pool.skills or pool.frames) and pool.level_sha256 != level_sha256(items, tree):
-        add("stale", "skills and frames",
-            "written before the items or the tree changed: run with --profile")
+        add("stale", "skills and frames", "written before the items or the tree changed: run with --profile")
     return found
 
 
@@ -533,8 +574,9 @@ def pool_markdown(pool: Pool, items: Items, tree: Tree, profile: Mapping[str, An
         if item is None:
             return f"> **{iid}** (unknown item)  "
         what = (["anchor"] if anchor else []) + [item.type] + ([item.agency] if item.agency else [])
-        return (f"> **{iid}** ({', '.join(what)}) {item.text}" + (f" _(scope: {item.scope})_" if item.scope else "")
-                + "  ")
+        return (
+            f"> **{iid}** ({', '.join(what)}) {item.text}" + (f" _(scope: {item.scope})_" if item.scope else "") + "  "
+        )
 
     def check_lines(pid: str, pad: str = "  ") -> List[str]:
         return [f"{pad}- CHECK {f}" for f in faults.get(pid, [])]
@@ -548,15 +590,21 @@ def pool_markdown(pool: Pool, items: Items, tree: Tree, profile: Mapping[str, An
         weight = piece_weight(b.covers, weights)
         size += f", weight {weight}" if weight else ""
         size += ", edited" if b.edited else ""
-        out = [f"- **{b.id}** ({size}) {b.text}",
-               f"  - uses {_ids(b.uses)} · covers {_ids(b.covers)} · assumes {_ids(b.assumes)} · "
-               f"leaves: {leaf_text(b.uses)}"]
+        out = [
+            f"- **{b.id}** ({size}) {b.text}",
+            f"  - uses {_ids(b.uses)} · covers {_ids(b.covers)} · assumes {_ids(b.assumes)} · "
+            f"leaves: {leaf_text(b.uses)}",
+        ]
         return out + check_lines(b.id)
 
     def group_lines(story: str, g: Group) -> List[str]:
         merged = bool(stories.get(story) and stories[story].merged)
-        out = [f"Group **{g.id}**, {sum(lines(b.text) for b in g.bullets)} lines"
-               + (" (merged story: up to 9)" if merged else "") + ", printed together:", ""]
+        out = [
+            f"Group **{g.id}**, {sum(lines(b.text) for b in g.bullets)} lines"
+            + (" (merged story: up to 9)" if merged else "")
+            + ", printed together:",
+            "",
+        ]
         out += check_lines(g.id, "")
         for b in g.bullets:
             out += bullet_lines(b)
@@ -567,26 +615,32 @@ def pool_markdown(pool: Pool, items: Items, tree: Tree, profile: Mapping[str, An
     n_groups = sum(len(s.groups) for block in pool.experiences for s in block.stories)
     rungs = Counter(r.rung for block in pool.experiences for s in block.stories for r in s.ladder)
     failures = sum(map(len, found.values()))
-    out = [GATE,
-           f"{len(bullets)} bullets: {len(bullets) - in_groups} on ladders (rung 1 {rungs[1]}, rung 2 {rungs[2]}, "
-           f"rung 3 {rungs[3]}), {in_groups} in {n_groups} groups; {len(pool.experiences)} role summaries and "
-           f"compact lines, {len(pool.skills)} skill phrases, {len(pool.frames)} summary frames. "
-           f"{failures} code-check failure(s).", ""]
+    out = [
+        GATE,
+        f"{len(bullets)} bullets: {len(bullets) - in_groups} on ladders (rung 1 {rungs[1]}, rung 2 {rungs[2]}, "
+        f"rung 3 {rungs[3]}), {in_groups} in {n_groups} groups; {len(pool.experiences)} role summaries and "
+        f"compact lines, {len(pool.skills)} skill phrases, {len(pool.frames)} summary frames. "
+        f"{failures} code-check failure(s).",
+        "",
+    ]
     if problems:
         out += ["**Problems**", "", *[f"- {p}" for p in problems], ""]
 
     out += ["## To check", "", "### 1. Role summaries", ""]
     for block in pool.experiences:
         x, role = exps.get(block.experience), block.role_summary
-        out += [f"**{head(block.experience)}**", "",
-                f"- role summary ({lines(role.text, ROLE_LINE)} lines, {len(role.text)} ch"
-                + (", edited" if role.edited else "") + f"): {role.text}",
-                f"  - states {_ids(role.uses)}; the experience context is {_ids(x.context if x else [])}"]
+        out += [
+            f"**{head(block.experience)}**",
+            "",
+            f"- role summary ({lines(role.text, ROLE_LINE)} lines, {len(role.text)} ch"
+            + (", edited" if role.edited else "")
+            + f"): {role.text}",
+            f"  - states {_ids(role.uses)}; the experience context is {_ids(x.context if x else [])}",
+        ]
         out += check_lines(f"e{block.experience}.role")
         out += [""] + [item_line(i) for i in (x.context if x else [])] + [""]
 
-    longest = sorted((s for block in pool.experiences for s in block.stories),
-                     key=lambda s: -work.get(s.story, 0))[:2]
+    longest = sorted((s for block in pool.experiences for s in block.stories), key=lambda s: -work.get(s.story, 0))[:2]
     out += ["### 2. Groups of the two longest stories", ""]
     for s in longest:
         story = stories.get(s.story)
@@ -602,11 +656,15 @@ def pool_markdown(pool: Pool, items: Items, tree: Tree, profile: Mapping[str, An
     career = career_years(profile, today)
     out += [f"The career: {career} whole years.", ""]
     for f in pool.frames:
-        out.append(f"- **{f.id}** · {f.family} ({len(fixed_text(f))} ch of fixed text"
-                   + (", edited" if f.edited else "") + f"): {f.text}")
+        out.append(
+            f"- **{f.id}** · {f.family} ({len(fixed_text(f))} ch of fixed text"
+            + (", edited" if f.edited else "")
+            + f"): {f.text}"
+        )
         found_numbers = frame_numbers(f, items, profile, today)
-        out.append("  - numbers: " + ("; ".join(f'"{w}" ({where or "found nowhere"})' for w, where in found_numbers)
-                                      or "none"))
+        out.append(
+            "  - numbers: " + ("; ".join(f'"{w}" ({where or "found nowhere"})' for w, where in found_numbers) or "none")
+        )
         out.append(f"  - uses {_ids(f.uses)}")
         out += check_lines(f.id)
     out.append("")
@@ -629,10 +687,17 @@ def pool_markdown(pool: Pool, items: Items, tree: Tree, profile: Mapping[str, An
 
     other: List[str] = []
     for block in pool.experiences:
-        other += [f"- e{block.experience}: dropped {d.get('what', 'piece')} of {d.get('story')} ({d.get('reason')}): "
-                  f"{d.get('text', '')}" for d in block.dropped]
-        other += [f"- e{block.experience}: hand-edited {d.get('what')} before the rewrite"
-                  + (f" {d['id']}" if d.get("id") else "") + f": {d.get('text')}" for d in block.previous]
+        other += [
+            f"- e{block.experience}: dropped {d.get('what', 'piece')} of {d.get('story')} ({d.get('reason')}): "
+            f"{d.get('text', '')}"
+            for d in block.dropped
+        ]
+        other += [
+            f"- e{block.experience}: hand-edited {d.get('what')} before the rewrite"
+            + (f" {d['id']}" if d.get("id") else "")
+            + f": {d.get('text')}"
+            for d in block.previous
+        ]
     if other:
         out += ["### Other", "", *other, ""]
 
@@ -641,18 +706,28 @@ def pool_markdown(pool: Pool, items: Items, tree: Tree, profile: Mapping[str, An
         e, x = block.experience, exps.get(block.experience)
         out += [f"## {head(e)}" + (f" · {x.months} months" if x and x.months else ""), ""]
         role, compact = block.role_summary, block.compact
-        out += [f"- role summary ({lines(role.text, ROLE_LINE)} lines, {len(role.text)} ch): {role.text}",
-                f"  - uses {_ids(role.uses)}"]
+        out += [
+            f"- role summary ({lines(role.text, ROLE_LINE)} lines, {len(role.text)} ch): {role.text}",
+            f"  - uses {_ids(role.uses)}",
+        ]
         out += check_lines(f"e{e}.role")
-        out += [f"- compact ({len(compact.text)} ch, weight {piece_weight(compact.uses, weights)}): {compact.text}",
-                f"  - uses {_ids(compact.uses)} · leaves: {leaf_text(compact.uses)}"]
+        out += [
+            f"- compact ({len(compact.text)} ch, weight {piece_weight(compact.uses, weights)}): {compact.text}",
+            f"  - uses {_ids(compact.uses)} · leaves: {leaf_text(compact.uses)}",
+        ]
         out += check_lines(f"e{e}.compact")
         out.append("")
         for s in block.stories:
             story = stories.get(s.story)
-            marks = [m for m in ("LONG" if work.get(s.story, 0) >= LONG else "",
-                                 "MERGED" if story and story.merged else "") if m]
-            out += [f"### {s.story} · {story.title if story else '?'}" + (f" ({', '.join(marks)})" if marks else ""), ""]
+            marks = [
+                m
+                for m in ("LONG" if work.get(s.story, 0) >= LONG else "", "MERGED" if story and story.merged else "")
+                if m
+            ]
+            out += [
+                f"### {s.story} · {story.title if story else '?'}" + (f" ({', '.join(marks)})" if marks else ""),
+                "",
+            ]
             out += [item_line(i, i in story.anchor) for i in story.items] if story else []
             out.append("")
             out += check_lines(s.story, "")

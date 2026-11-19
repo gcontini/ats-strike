@@ -14,17 +14,12 @@ from pydantic import BaseModel, Field
 
 class JDAnalysis(BaseModel):
     """Structured summary of a job description vs. the master profile."""
+
     match_percentage: int = Field(description="0-100 how well the JD fits the profile")
-    match_rationale: str = Field(
-        description="One-line reason for the match score"
-    )
+    match_rationale: str = Field(description="One-line reason for the match score")
     job_title: str = Field(description="Job title extracted from the JD")
-    work_location: Optional[str] = Field(
-        None, description="Work location stated in the JD, e.g. 'Milan, Italy'"
-    )
-    work_mode: str = Field(
-        description="full_remote | hybrid | on_site | not_specified"
-    )
+    work_location: Optional[str] = Field(None, description="Work location stated in the JD, e.g. 'Milan, Italy'")
+    work_mode: str = Field(description="full_remote | hybrid | on_site | not_specified")
     expected_salary: Optional[str] = Field(
         None, description="Expected salary if stated, e.g. 'EUR 60k-80k'; null if absent"
     )
@@ -43,21 +38,11 @@ class JDAnalysis(BaseModel):
             "rule fails to apply"
         ),
     )
-    hard_skills: List[str] = Field(
-        description="Up to 4 hard/technical skills required by the JD"
-    )
-    soft_skills: List[str] = Field(
-        description="Up to 4 soft skills required by the JD"
-    )
-    company_name: str = Field(
-        description="The company that posted the job (or the headhunter agency)"
-    )
-    posting_url: Optional[str] = Field(
-        None, description="URL of the job posting, if present in the JD; else null"
-    )
-    gaps: str = Field(
-        description="Describe the gaps between the candidate and the job description"
-    )
+    hard_skills: List[str] = Field(description="Up to 4 hard/technical skills required by the JD")
+    soft_skills: List[str] = Field(description="Up to 4 soft skills required by the JD")
+    company_name: str = Field(description="The company that posted the job (or the headhunter agency)")
+    posting_url: Optional[str] = Field(None, description="URL of the job posting, if present in the JD; else null")
+    gaps: str = Field(description="Describe the gaps between the candidate and the job description")
     pers_preferences: str = Field(
         description="Textual analysis of the gaps between the CANDIDATE_PREFERENCES and the job description"
     )

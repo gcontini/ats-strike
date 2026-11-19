@@ -13,10 +13,10 @@ from datetime import date
 
 import pytest
 
-from pipeline_v1.errors import ModelOutputError
+from common.errors import ModelOutputError
 from pipeline_v2 import ROLES, ItemCompiler, Items, items_markdown, resources_dir, validate
 from pipeline_v2.items import build_experience
-from pipeline_v2.store import (Item, check_sources, coverage, experience_sha256, months)
+from pipeline_v2.store import Item, check_sources, coverage, experience_sha256, months
 
 from pipeline_helpers import FakeLLM, section, user_text
 from v2_helpers import cut, raw
@@ -44,8 +44,11 @@ def item(duty: int, *source: str, **fields) -> Item:
 
 
 def reply(items, stories, duties=None) -> dict:
-    return {"items": items, "stories": stories,
-            "duties": duties if duties is not None else [{"duty": d, "weight": 2, "why": "w"} for d in range(3)]}
+    return {
+        "items": items,
+        "stories": stories,
+        "duties": duties if duties is not None else [{"duty": d, "weight": 2, "why": "w"} for d in range(3)],
+    }
 
 
 # --- check_sources and coverage --------------------------------------------------------
@@ -63,8 +66,10 @@ def test_a_span_from_another_duty_of_the_same_experience_passes():
 
 
 def test_a_span_from_nowhere_is_reported():
-    assert check_sources(EXP, item(0, "Ported the engine", "Led a team of 40")) == ["Ported the engine",
-                                                                                   "Led a team of 40"]
+    assert check_sources(EXP, item(0, "Ported the engine", "Led a team of 40")) == [
+        "Ported the engine",
+        "Led a team of 40",
+    ]
 
 
 def test_coverage_counts_the_duties_characters_under_a_span():
@@ -119,12 +124,14 @@ PORTING = [
     raw(3, 0, "action", ["Ported the billing engine from notebooks to a Java service."], 1),
     raw(4, 0, "result", ["It halved the nightly run time."], 1),
     raw(5, 0, "context", ["billing engine"], 1),
-    raw(6, 2, "context", ["the plan"], 2),          # a story with context only: dissolved
+    raw(6, 2, "context", ["the plan"], 2),  # a story with context only: dissolved
     raw(7, 2, "action", ["Presented the plan to management once."], 3),
 ]
-STORIES = [{"n": 1, "title": "Billing engine porting to Java", "anchor": [5, 3]},
-           {"n": 2, "title": "The plan", "anchor": [6]},
-           {"n": 3, "title": "Plan presentation to management", "anchor": [7]}]
+STORIES = [
+    {"n": 1, "title": "Billing engine porting to Java", "anchor": [5, 3]},
+    {"n": 2, "title": "The plan", "anchor": [6]},
+    {"n": 3, "title": "Plan presentation to management", "anchor": [7]},
+]
 
 
 def test_ids_are_numbered_in_reply_order_and_story_items_put_context_first():
@@ -145,24 +152,30 @@ def test_story_0_and_a_story_with_no_action_or_result_go_to_the_experience_conte
     by_text = {i.text: i for i in items}
     assert entry.context == [by_text["text 1"].id, by_text["text 6"].id]
     assert by_text["text 1"].story is None and by_text["text 6"].story is None
-    assert [s.title for s in entry.stories] == ["Billing engine porting to Java",
-                                                 "Plan presentation to management"]
+    assert [s.title for s in entry.stories] == ["Billing engine porting to Java", "Plan presentation to management"]
     assert entry.stories[1].items == [by_text["text 7"].id]
 
 
 def test_the_anchor_keeps_an_item_outside_its_story_for_the_view_and_loses_a_dropped_one():
-    stories = [{"n": 1, "title": "Billing engine porting to Java", "anchor": [7, 99]},
-               {"n": 3, "title": "Plan presentation to management", "anchor": [7]}]
+    stories = [
+        {"n": 1, "title": "Billing engine porting to Java", "anchor": [7, 99]},
+        {"n": 3, "title": "Plan presentation to management", "anchor": [7]},
+    ]
     entry, items = build_experience(EXP, reply([r for r in PORTING if r["story"] != 2], stories), TODAY)
     presentation = next(i for i in items if i.text == "text 7").id
     assert entry.stories[0].anchor == [presentation]
-    assert f"e2.s01: anchor {presentation} is not in the story" in validate({"experiences": [EXP]},
-                                                                             Items(profile_sha256="", experiences=[entry], items=items))
+    assert f"e2.s01: anchor {presentation} is not in the story" in validate(
+        {"experiences": [EXP]}, Items(profile_sha256="", experiences=[entry], items=items)
+    )
 
 
 def test_one_weight_per_duty_the_first_given():
-    duties = [{"duty": 0, "weight": 3, "why": "the main work"}, {"duty": 0, "weight": 1, "why": "again"},
-              {"duty": 1, "weight": 2, "why": "recurring"}, {"duty": 7, "weight": 1, "why": "no such duty"}]
+    duties = [
+        {"duty": 0, "weight": 3, "why": "the main work"},
+        {"duty": 0, "weight": 1, "why": "again"},
+        {"duty": 1, "weight": 2, "why": "recurring"},
+        {"duty": 7, "weight": 1, "why": "no such duty"},
+    ]
     entry, items = build_experience(EXP, reply(PORTING, STORIES, duties), TODAY)
     assert [(w.duty, w.weight, w.why) for w in entry.weights] == [(0, 3, "the main work"), (1, 2, "recurring")]
     problems = validate({"experiences": [EXP]}, Items(profile_sha256="", experiences=[entry], items=items))
@@ -182,8 +195,13 @@ def test_what_cannot_be_trusted_is_dropped_with_its_reason():
     entry, items = build_experience(EXP, reply(PORTING + bad, STORIES), TODAY)
     assert len(items) == 7
     assert [d["reason"] for d in entry.dropped] == [
-        "no source", "span not verbatim: ['Led a team of 40']", "unknown story 5", "bad type 'outcome'",
-        "bad agency 'owned'", "an action outside any story", "unknown duty 9",
+        "no source",
+        "span not verbatim: ['Led a team of 40']",
+        "unknown story 5",
+        "bad type 'outcome'",
+        "bad agency 'owned'",
+        "an action outside any story",
+        "unknown duty 9",
     ]
     assert [d["text"] for d in entry.dropped] == [f"text {n}" for n in range(8, 15)]
 
@@ -202,6 +220,7 @@ def test_hard_limits_are_reported_never_truncated():
 
 def test_a_reply_that_does_not_validate_raises():
     from pydantic import ValidationError
+
     with pytest.raises(ValidationError):
         build_experience(EXP, {"items": PORTING, "stories": STORIES}, TODAY)
 
@@ -220,7 +239,7 @@ def test_validate_reports_hand_edits_that_break_the_store_and_keeps_them():
     store = built()
     reports = store.items[1]
     reports.text, reports.source, reports.edited = "Rewrote the yearly reports.", ["rewrote the yearly reports"], True
-    store.items[3].story = "e2.s02"                     # moved in the item, not in the story lists
+    store.items[3].story = "e2.s02"  # moved in the item, not in the story lists
     store.experiences[0].weights = store.experiences[0].weights[:2]
     problems = validate({"experiences": [EXP]}, store)
     assert problems == [
@@ -239,10 +258,12 @@ def test_validate_reports_a_changed_experience_and_unreadable_dates():
 
 
 def test_the_view_lists_weights_context_anchors_and_drops():
-    duties = [{"duty": 0, "weight": 3, "why": "the main work"}, {"duty": 1, "weight": 2, "why": "recurring"},
-              {"duty": 2, "weight": 1, "why": "once"}]
-    entry, items = build_experience(EXP, reply(PORTING + [raw(8, 0, "action", ["Led 40"], 1)], STORIES, duties),
-                                    TODAY)
+    duties = [
+        {"duty": 0, "weight": 3, "why": "the main work"},
+        {"duty": 1, "weight": 2, "why": "recurring"},
+        {"duty": 2, "weight": 1, "why": "once"},
+    ]
+    entry, items = build_experience(EXP, reply(PORTING + [raw(8, 0, "action", ["Led 40"], 1)], STORIES, duties), TODAY)
     page = items_markdown({"experiences": [EXP]}, Items(profile_sha256="", experiences=[entry], items=items))
     assert "## e2 · Engineer, Acme · March 2016 -- May 2021 · 63 months" in page
     assert "- duty 0: **3** · the main work — Ported the billing engine from notebooks" in page
@@ -294,6 +315,7 @@ def test_one_call_per_experience_shown_only_that_experience(profile, candidate_d
 
 def test_the_answers_land_on_their_own_experience_whatever_order_the_calls_finish(profile):
     """The earliest experiences answer last."""
+
     def slow_first(body):
         exp = section(body, "EXPERIENCE")
         position = next(n for n, e in enumerate(profile["experiences"]) if e["duties"] == exp["duties"])
@@ -373,7 +395,7 @@ def test_one_changed_experience_makes_one_call_and_lists_its_previous_edits(prof
         edited.text, edited.edited = edited.text + " (by hand)", True
     e0 = first.experiences[0]
     e0.weights[1].weight, e0.weights[1].why, e0.weights[1].edited = 3, "my main work", True
-    e0.weights[2].weight = 1                 # changed with nobody marking it: not a hand edit
+    e0.weights[2].weight = 1  # changed with nobody marking it: not a hand edit
     e0.stories[0].merged = ["e0.s09"]
     kept = {x.id: x.model_dump_json() for x in first.experiences}
 
@@ -400,11 +422,12 @@ def test_one_changed_experience_makes_one_call_and_lists_its_previous_edits(prof
 # --- S1 carry-overs ------------------------------------------------------------------------------
 def test_a_story_that_lost_its_work_to_drops_is_kept_and_reported():
     """Only a story the reply gave no action or result is dissolved; story 3's one action is dropped."""
-    lost = [r for r in PORTING if r["n"] != 7] + [raw(7, 2, "action", ["Presented it to the board"], 3),
-                                                 raw(8, 2, "context", ["Presented the plan"], 3)]
+    lost = [r for r in PORTING if r["n"] != 7] + [
+        raw(7, 2, "action", ["Presented it to the board"], 3),
+        raw(8, 2, "context", ["Presented the plan"], 3),
+    ]
     entry, items = build_experience(EXP, reply(lost, STORIES), TODAY)
-    assert [s.title for s in entry.stories] == ["Billing engine porting to Java",
-                                                 "Plan presentation to management"]
+    assert [s.title for s in entry.stories] == ["Billing engine porting to Java", "Plan presentation to management"]
     kept = entry.stories[1]
     assert [next(i.text for i in items if i.id == iid) for iid in kept.items] == ["text 8"]
     assert entry.dropped[0]["story_id"] == kept.id

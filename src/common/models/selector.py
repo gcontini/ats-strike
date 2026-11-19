@@ -34,7 +34,7 @@ from ..observability import LOGGER_ROOT, ModelCall, current_run, current_stage
 from ..errors import ModelOutputError
 from ..parsing import raw_excerpt
 from .base import Provider
-from .config import MODEL_ROLES, ModelConfig, load_model_config
+from .config import ModelConfig, load_model_config
 from .deepseek import DeepSeekProvider
 from .standard import StandardProvider
 
@@ -82,10 +82,7 @@ def _describe(error: Exception) -> str:
     payload; a model shown that resends the same object unchanged.
     """
     if isinstance(error, ValidationError):
-        return "\n".join(
-            f"- {'.'.join(map(str, e['loc'])) or '(whole object)'}: {e['msg']}"
-            for e in error.errors()
-        )
+        return "\n".join(f"- {'.'.join(map(str, e['loc'])) or '(whole object)'}: {e['msg']}" for e in error.errors())
     return f"- {type(error).__name__}: {error}"
 
 
@@ -130,10 +127,13 @@ class ModelSelector:
             return self
         cleared = {"temperature": None, "reasoning_effort": None, "max_tokens": None}
         new = copy.copy(self)
-        new._chat = {**self._chat, **{
-            role: self._chat[role].model_copy(update={**cleared, "extra_body": dict(body)})
-            for role, body in bodies.items()
-        }}
+        new._chat = {
+            **self._chat,
+            **{
+                role: self._chat[role].model_copy(update={**cleared, "extra_body": dict(body)})
+                for role, body in bodies.items()
+            },
+        }
         new._wrapped = {key: value for key, value in self._wrapped.items() if key[0] not in bodies}
         return new
 
@@ -177,8 +177,7 @@ class ModelSelector:
         provider errors propagate unchanged.
         """
         runnable, instructions = self._wrapper(model_name, output_type)
-        return self._ask(model_name, runnable, output_type, system_prompt + instructions,
-                         messages, usage, tools=False)
+        return self._ask(model_name, runnable, output_type, system_prompt + instructions, messages, usage, tools=False)
 
     def call_tools(
         self,
@@ -201,40 +200,57 @@ class ModelSelector:
         if key not in self._wrapped:
             bound = self._chat[role].bind_tools([tool], parallel_tool_calls=True)
             self._wrapped[key] = (bound, "")
-        return self._ask(role, self._wrapped[key][0], list, system_prompt, messages, usage,
-                         tools=True)
+        return self._ask(role, self._wrapped[key][0], list, system_prompt, messages, usage, tools=True)
 
     def _ask(
-        self, role: str, runnable: Any, output_type: Any, system: str,
-        messages: List[Dict[str, str]], usage: Optional[Usage], *, tools: bool,
+        self,
+        role: str,
+        runnable: Any,
+        output_type: Any,
+        system: str,
+        messages: List[Dict[str, str]],
+        usage: Optional[Usage],
+        *,
+        tools: bool,
     ) -> Any:
         """The calls of one request: the first, and a correction per unusable reply."""
         usage = usage if usage is not None else Usage()
         history = ([{"role": "system", "content": system}] if system else []) + list(messages)
         for attempt in range(1, ATTEMPTS + 1):
-            value, reply, problem = self._attempt(role, runnable, history, output_type, usage,
-                                                  tools=tools)
+            value, reply, problem = self._attempt(role, runnable, history, output_type, usage, tools=tools)
             if problem is None:
                 return value
             logger.warning(
                 "  ✗ [%s] reply %d/%d rejected:\n%s\n    reply: %s",
-                role, attempt, ATTEMPTS, problem, raw_excerpt(reply),
+                role,
+                attempt,
+                ATTEMPTS,
+                problem,
+                raw_excerpt(reply),
             )
             if reply:
                 history.append({"role": "assistant", "content": reply})
-            history.append({
-                "role": "user",
-                "content": f"Your previous reply was rejected:\n{problem}\n\n"
-                "Reply again with the complete, corrected output only.",
-            })
+            history.append(
+                {
+                    "role": "user",
+                    "content": f"Your previous reply was rejected:\n{problem}\n\n"
+                    "Reply again with the complete, corrected output only.",
+                }
+            )
         raise ModelOutputError(
             f"{role}: no usable reply in {ATTEMPTS} attempts:\n{problem}",
             stage=current_stage(),
         )
 
     def _attempt(
-        self, role: str, runnable: Any, history: List[Dict[str, str]], output_type: Any,
-        usage: Usage, *, tools: bool,
+        self,
+        role: str,
+        runnable: Any,
+        history: List[Dict[str, str]],
+        output_type: Any,
+        usage: Usage,
+        *,
+        tools: bool,
     ) -> Tuple[Any, str, Optional[str]]:
         """One call: ``(value, reply, problem)``, ``problem`` ``None`` when ``value`` is usable."""
         chat = self._chat[role]
@@ -245,9 +261,16 @@ class ModelSelector:
         logger.info(
             "  → [%s] %s | api=%s, structured_output=%s, max_output_tokens=%s, temperature=%s, "
             "reasoning_effort=%s, extra_body=%s, input=%d msgs/%d chars",
-            role, chat.model_name, self.specs[role].api, asked,
-            chat.max_tokens, chat.temperature, chat.reasoning_effort,
-            chat.extra_body, len(history), sum(len(m["content"]) for m in history),
+            role,
+            chat.model_name,
+            self.specs[role].api,
+            asked,
+            chat.max_tokens,
+            chat.temperature,
+            chat.reasoning_effort,
+            chat.extra_body,
+            len(history),
+            sum(len(m["content"]) for m in history),
         )
         logger.debug("  → [%s] messages: %s", role, history)
 
@@ -293,12 +316,23 @@ class ModelSelector:
                 reply = raw.text
         logger.info(
             "  ⏱ [%s] %s %.1fs | input=%d, thinking=%d, output=%d, finish=%s, content=%d chars",
-            role, chat.model_name, seconds, *tokens, finish, len(reply),
+            role,
+            chat.model_name,
+            seconds,
+            *tokens,
+            finish,
+            len(reply),
         )
-        current_run().add_call(ModelCall(
-            role=role, model=chat.model_name, seconds=seconds,
-            input_tokens=tokens[0], thinking_tokens=tokens[1], output_tokens=tokens[2],
-        ))
+        current_run().add_call(
+            ModelCall(
+                role=role,
+                model=chat.model_name,
+                seconds=seconds,
+                input_tokens=tokens[0],
+                thinking_tokens=tokens[1],
+                output_tokens=tokens[2],
+            )
+        )
         logger.debug("  ↩ [%s] content: %s", role, reply)
 
         if isinstance(error, ValidationError):
@@ -337,9 +371,7 @@ class ModelSelector:
         return reply, reply, None
 
 
-def build_selector(
-    resources_dir: Optional[Path] = None, roles: Iterable[str] = MODEL_ROLES
-) -> ModelSelector:
-    """The selector the server runs on: ``.env`` loaded, then every role in ``roles`` built."""
+def build_selector(path: Path, roles: Iterable[str]) -> ModelSelector:
+    """A pipeline's selector: ``.env`` loaded, then every role in ``roles`` of the ``models.toml`` at ``path`` built."""
     load_dotenv()
-    return ModelSelector(load_model_config(resources_dir, roles))
+    return ModelSelector(load_model_config(path, roles))

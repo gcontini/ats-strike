@@ -12,7 +12,8 @@ from typing import Iterable
 
 import httpx
 
-from pipeline_v1.models import MODEL_ROLES, ModelConfig, ModelSelector, ModelSpec
+from common.models import ModelConfig, ModelSelector, ModelSpec
+from pipeline_v1.facade import MODEL_ROLES
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 EXAMPLE_CANDIDATE = REPO_ROOT / "examples" / "candidate"
@@ -118,9 +119,7 @@ class FakeLLM(ModelSelector):
         config = ModelConfig(
             provider={"api_key_env": "ATS_FAKE_KEY", "base_url": "http://fake.invalid/v1"},
             defaults={},
-            models={
-                role: ModelSpec(model=f"fake-{role}", **specs.get(role, {})) for role in self.roles
-            },
+            models={role: ModelSpec(model=f"fake-{role}", **specs.get(role, {})) for role in self.roles},
         )
         transport = httpx.MockTransport(self._answer)
         super().__init__(config, http_client=httpx.Client(transport=transport))
@@ -147,13 +146,21 @@ class FakeLLM(ModelSelector):
 def completion(model: str, content: str, finish_reason: str = "stop") -> dict:
     """A chat.completion body: 11 tokens in, 22 out, 2 of them thinking."""
     return {
-        "id": "fake", "object": "chat.completion", "created": 0, "model": model,
-        "choices": [{
-            "index": 0, "finish_reason": finish_reason,
-            "message": {"role": "assistant", "content": content},
-        }],
+        "id": "fake",
+        "object": "chat.completion",
+        "created": 0,
+        "model": model,
+        "choices": [
+            {
+                "index": 0,
+                "finish_reason": finish_reason,
+                "message": {"role": "assistant", "content": content},
+            }
+        ],
         "usage": {
-            "prompt_tokens": 11, "completion_tokens": 22, "total_tokens": 33,
+            "prompt_tokens": 11,
+            "completion_tokens": 22,
+            "total_tokens": 33,
             "completion_tokens_details": {"reasoning_tokens": 2},
         },
     }
@@ -163,8 +170,7 @@ def tool_completion(model: str, calls: list[tuple[str, dict]]) -> dict:
     """A chat.completion body that calls tools: ``[(name, arguments), ...]``."""
     body = completion(model, None, "tool_calls")
     body["choices"][0]["message"]["tool_calls"] = [
-        {"id": f"call_{n}", "type": "function",
-         "function": {"name": name, "arguments": json.dumps(arguments)}}
+        {"id": f"call_{n}", "type": "function", "function": {"name": name, "arguments": json.dumps(arguments)}}
         for n, (name, arguments) in enumerate(calls)
     ]
     return body
@@ -184,10 +190,12 @@ def section(body: dict, name: str):
 
 def score_items(body: dict) -> str:
     """profile_scoring: every item matches key point 1, at 80."""
-    return json.dumps([
-        {"reason": "it matches", "matches": [{"key_point": 1, "score": 80, "evidence": "it"}]}
-        for _ in section(body, "ITEMS")
-    ])
+    return json.dumps(
+        [
+            {"reason": "it matches", "matches": [{"key_point": 1, "score": 80, "evidence": "it"}]}
+            for _ in section(body, "ITEMS")
+        ]
+    )
 
 
 def write_part(body: dict, written_body: dict | None = None) -> str:
@@ -198,11 +206,17 @@ def write_part(body: dict, written_body: dict | None = None) -> str:
         return json.dumps(written_body or SAMPLE_BODY)
     experience = section(body, "EXPERIENCE")
     cap = int(re.search(r"DUTY CAP: (\d+)", text).group(1))
-    return json.dumps({
-        "title": experience["title"], "company": experience["company"],
-        "location": experience["location"], "dates": experience["dates"], "project_name": "",
-        "role_summary": experience["role_summary"][:200], "duties": experience["duties"][:cap],
-    })
+    return json.dumps(
+        {
+            "title": experience["title"],
+            "company": experience["company"],
+            "location": experience["location"],
+            "dates": experience["dates"],
+            "project_name": "",
+            "role_summary": experience["role_summary"][:200],
+            "duties": experience["duties"][:cap],
+        }
+    )
 
 
 def bold_summary(body: dict) -> str:
@@ -215,8 +229,7 @@ def bold_summary(body: dict) -> str:
 def script_cv(llm, *, ids=(0, 1, 2), caps=(2, 2, 2), fmt="A", body=None):
     """Every CV role answers, consistently, whatever order its calls come in:
     the validators find nothing to fix."""
-    choice = {"reason": "the newest", "format": fmt,
-              "experience_ids": list(ids), "duty_caps": list(caps)}
+    choice = {"reason": "the newest", "format": fmt, "experience_ids": list(ids), "duty_caps": list(caps)}
     llm["jd_evaluation"].replies = [json.dumps(KEY_POINTS)]
     llm["profile_scoring"].replies = [score_items]
     llm["format_selection"].replies = [json.dumps(choice)]

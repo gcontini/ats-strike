@@ -107,9 +107,7 @@ def describe_failure(exc: Exception) -> Tuple[int, str]:
         return 422, "validation_error: the uploaded document does not match the expected schema"
     # A bare TimeoutError is still the thing behind us being slow; anything
     # left over is a bug here.
-    return (504 if isinstance(exc, TimeoutError) else 500), (
-        f"internal_error: {type(exc).__name__}: {exc}"
-    )
+    return (504 if isinstance(exc, TimeoutError) else 500), (f"internal_error: {type(exc).__name__}: {exc}")
 
 
 def failure_response(request_id: str, status: int, message: str) -> JSONResponse:

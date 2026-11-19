@@ -34,7 +34,7 @@ def has_term(term: str, text: str) -> bool:
 
 
 def split_compound(phrase: str) -> List[str]:
-    """"docker and kubernetes" -> ["docker", "kubernetes"]; "IaC(Terraform)" -> ["IaC", "Terraform"].
+    """ "docker and kubernetes" -> ["docker", "kubernetes"]; "IaC(Terraform)" -> ["IaC", "Terraform"].
 
     The parts keep their case and lose surrounding spaces; empty parts are dropped.
     """
@@ -49,7 +49,7 @@ def norm(term: str) -> str:
 def shingles(text: str, n: int = 8) -> FrozenSet[Tuple[str, ...]]:
     """The word ``n``-grams of ``text``, lower case: what the copy check compares."""
     words = re.findall(r"\w+", text.lower())
-    return frozenset(tuple(words[k:k + n]) for k in range(len(words) - n + 1))
+    return frozenset(tuple(words[k : k + n]) for k in range(len(words) - n + 1))
 
 
 def jaccard(a: FrozenSet, b: FrozenSet) -> float:

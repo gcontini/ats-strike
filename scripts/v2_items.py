@@ -24,7 +24,7 @@ import time
 from datetime import date
 from pathlib import Path
 
-from pipeline_v1.models import build_selector
+from common.models import build_selector
 from pipeline_v2 import ROLES, ItemCompiler, Items, items_markdown, resources_dir, validate
 
 
@@ -32,8 +32,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("folder", type=Path, help="the server folder holding candidate_profile.json")
     parser.add_argument("--out", type=Path, required=True, help="where items.json and items.md go")
-    parser.add_argument("--experiences", type=int, nargs="+", default=[], metavar="ID",
-                        help="experience ids to compile again even when unchanged")
+    parser.add_argument(
+        "--experiences",
+        type=int,
+        nargs="+",
+        default=[],
+        metavar="ID",
+        help="experience ids to compile again even when unchanged",
+    )
     parser.add_argument("command", nargs="?", choices=["md"], help="md: check items.json, rebuild items.md")
     args = parser.parse_args()
 
@@ -46,18 +52,20 @@ def main() -> int:
             sys.exit(f"{store_path} does not exist")
         store = previous
     else:
-        for name in ("pipeline_v1", "pipeline_v2"):
+        for name in ("common", "pipeline_v2"):
             log = logging.getLogger(name)
             log.setLevel(logging.INFO)
             log.addHandler(logging.StreamHandler(sys.stdout))
-        llm = build_selector(resources_dir(), ROLES)
+        llm = build_selector(resources_dir() / "models.toml", ROLES)
         prompt = (resources_dir() / "sys_prompt_items.txt").read_text(encoding="utf-8")
         compiler = ItemCompiler(llm=llm, system_prompt=prompt)
         started = time.monotonic()
         store = compiler.compile(profile, today=date.today(), previous=previous, force=args.experiences)
         u = compiler.usage
-        print(f"\n{u.calls} call(s), {time.monotonic() - started:.0f}s wall, {u.seconds:.0f}s in calls, "
-              f"tokens {u.input_tokens} in, {u.thinking_tokens} thinking, {u.output_tokens} out")
+        print(
+            f"\n{u.calls} call(s), {time.monotonic() - started:.0f}s wall, {u.seconds:.0f}s in calls, "
+            f"tokens {u.input_tokens} in, {u.thinking_tokens} thinking, {u.output_tokens} out"
+        )
 
     args.out.mkdir(parents=True, exist_ok=True)
     if args.command != "md":
@@ -67,11 +75,15 @@ def main() -> int:
     print()
     for x in store.experiences:
         n = sum(1 for i in store.items if i.experience == x.id)
-        print(f"e{x.id}: {n} items, {len(x.context)} experience context, {len(x.stories)} stories, "
-              f"{len(x.dropped)} dropped, {x.coverage:.0%} covered, {x.months} months")
+        print(
+            f"e{x.id}: {n} items, {len(x.context)} experience context, {len(x.stories)} stories, "
+            f"{len(x.dropped)} dropped, {x.coverage:.0%} covered, {x.months} months"
+        )
     problems = validate(profile, store)
-    print(f"\n{len(store.items)} items, {sum(len(x.stories) for x in store.experiences)} stories, "
-          f"{sum(len(x.dropped) for x in store.experiences)} dropped; {len(problems)} problem(s)")
+    print(
+        f"\n{len(store.items)} items, {sum(len(x.stories) for x in store.experiences)} stories, "
+        f"{sum(len(x.dropped) for x in store.experiences)} dropped; {len(problems)} problem(s)"
+    )
     for p in problems:
         print(f"  - {p}")
     print(f"wrote {page_path}" if args.command == "md" else f"wrote {store_path} and {page_path}")

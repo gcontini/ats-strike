@@ -19,9 +19,10 @@ from dataclasses import fields
 from pathlib import PurePosixPath
 from typing import Any, Dict, Iterable, Mapping, Optional
 
+from common.errors import BadPartError, MissingPartError
+
 from .bundle import CandidateInputs, ResourceBundle
 from .defaults import TEMPLATE_FILE
-from .errors import BadPartError, MissingPartError
 
 Files = Mapping[str, bytes]
 
@@ -43,7 +44,13 @@ IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg")
 ANALYSIS_ROLES = ("analysis",)
 LETTER_ROLES = ("letter",)
 CV_ROLES = (
-    "jd_evaluation", "profile_scoring", "format_selection", "cv", "duties", "validation", "highlight",
+    "jd_evaluation",
+    "profile_scoring",
+    "format_selection",
+    "cv",
+    "duties",
+    "validation",
+    "highlight",
 )
 
 JD_FILE = "job_description.txt"
@@ -88,14 +95,11 @@ def json_file(files: Files, name: str, *, required: bool = False) -> Optional[Di
 def bundle_overrides(pack: Files) -> Dict[str, Any]:
     """The pack's replacements for the shipped bundle, as
     :meth:`ResourceBundle.with_overrides` takes them: ``None`` keeps a default."""
-    overrides: Dict[str, Any] = {
-        name: text_file(pack, f"{name}.txt") for name in PROMPT_FIELDS
-    }
+    overrides: Dict[str, Any] = {name: text_file(pack, f"{name}.txt") for name in PROMPT_FIELDS}
     overrides.update({name: text_file(pack, f"{name}.json") for name in SCHEMA_FIELDS})
     overrides["template_source"] = text_file(pack, TEMPLATE_FILE)
     overrides["images"] = {
-        name: blob for name, blob in pack.items()
-        if "/" not in name and PurePosixPath(name).suffix in IMAGE_SUFFIXES
+        name: blob for name, blob in pack.items() if "/" not in name and PurePosixPath(name).suffix in IMAGE_SUFFIXES
     }
     return overrides
 

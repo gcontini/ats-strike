@@ -8,8 +8,17 @@ from pipeline_helpers import section
 
 
 def raw(n, duty, type_, source, story, **fields) -> dict:
-    return {"n": n, "duty": duty, "type": type_, "text": f"text {n}", "source": source, "story": story,
-            "agency": "" if type_ == "context" else "did", "tags": ["billing"], **fields}
+    return {
+        "n": n,
+        "duty": duty,
+        "type": type_,
+        "text": f"text {n}",
+        "source": source,
+        "story": story,
+        "agency": "" if type_ == "context" else "did",
+        "tags": ["billing"],
+        **fields,
+    }
 
 
 def cut(body: dict) -> str:
@@ -20,9 +29,13 @@ def cut(body: dict) -> str:
     for d, duty in enumerate(exp["duties"]):
         items.append({**raw(len(items) + 1, d, "action", [duty], 1 + d // 2), "text": duty})
     stories = sorted({i["story"] for i in items if i["story"]})
-    return json.dumps({
-        "items": items,
-        "stories": [{"n": s, "title": f"Piece of work {s}",
-                     "anchor": [next(i["n"] for i in items if i["story"] == s)]} for s in stories],
-        "duties": [{"duty": d, "weight": 2, "why": "recurring"} for d in range(len(exp["duties"]))],
-    })
+    return json.dumps(
+        {
+            "items": items,
+            "stories": [
+                {"n": s, "title": f"Piece of work {s}", "anchor": [next(i["n"] for i in items if i["story"] == s)]}
+                for s in stories
+            ],
+            "duties": [{"duty": d, "weight": 2, "why": "recurring"} for d in range(len(exp["duties"]))],
+        }
+    )

@@ -44,9 +44,7 @@ class PipelineRequest:
 
 def _safe_name(name: str) -> bool:
     """Relative, ``/``-separated, inside the folder it names a file of."""
-    return bool(name) and not name.startswith("/") and "\\" not in name and (
-        ".." not in name.split("/")
-    )
+    return bool(name) and not name.startswith("/") and "\\" not in name and (".." not in name.split("/"))
 
 
 async def _files(uploads: List[UploadFile], *, part: str, max_bytes: int) -> Dict[str, bytes]:

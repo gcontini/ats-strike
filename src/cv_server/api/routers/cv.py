@@ -31,7 +31,7 @@ from starlette.concurrency import run_in_threadpool
 
 from ...jobstore import JobDir
 from .. import jobs
-from ..deps import claim_slot, envelope_for, envelope_of, execute, get_state
+from ..deps import claim_slot, envelope_for, envelope_of, execute, get_pipeline, get_state
 from ..errors import ApiError, JobNotReady, UnknownRequest
 from ..multipart import JOB, PACK, SETTINGS, read_request
 
@@ -43,8 +43,7 @@ FOLLOW_SECONDS = 1.0
 PING_SECONDS = 15.0
 
 
-@router.post("/cv", status_code=202, response_model=Envelope[CVSession],
-             response_model_exclude_none=True)
+@router.post("/cv", status_code=202, response_model=Envelope[CVSession], response_model_exclude_none=True)
 async def create_cv(
     request: Request,
     pack: List[UploadFile] = PACK,
@@ -52,11 +51,11 @@ async def create_cv(
     settings: Optional[str] = SETTINGS,
 ) -> dict:
     """Start one CV job, or find the one this id already has."""
-    state = get_state(request)
+    state, pipeline = get_state(request), get_pipeline(request)
     parts = await read_request(pack, job, settings, max_bytes=state.settings.max_part_bytes)
 
     def work(scratch, sink) -> str:
-        return state.pipeline.cv(parts.pack, parts.job, parts.settings, scratch, sink)
+        return pipeline.cv(parts.pack, parts.job, parts.settings, scratch, sink)
 
     run = current_run()
     store = state.jobs
@@ -73,25 +72,24 @@ async def create_cv(
 
 @router.get("/cv/{request_id}/events", response_class=StreamingResponse)
 async def cv_events(
-    request: Request, request_id: str,
+    request: Request,
+    request_id: str,
     last_event_id: int = Header(0, description="Send only the events after this one"),
 ) -> StreamingResponse:
     """The session as server-sent events: everything after ``Last-Event-ID``,
     then each new event as it is written, until the job's last one."""
     job = _session(request, request_id)
-    return StreamingResponse(_follow(job, last_event_id), media_type="text/event-stream",
-                             headers={"Cache-Control": "no-cache"})
+    return StreamingResponse(
+        _follow(job, last_event_id), media_type="text/event-stream", headers={"Cache-Control": "no-cache"}
+    )
 
 
-@router.delete("/cv/{request_id}", response_model=Envelope[None],
-               response_model_exclude_none=True)
+@router.delete("/cv/{request_id}", response_model=Envelope[None], response_model_exclude_none=True)
 async def acknowledge(request: Request, request_id: str) -> dict:
     """The client has everything: delete the session."""
     job = _session(request, request_id)
     if job.running:
-        raise JobNotReady(
-            f"job {request_id} is still running; acknowledge it once its last event is in"
-        )
+        raise JobNotReady(f"job {request_id} is still running; acknowledge it once its last event is in")
     await run_in_threadpool(job.delete)
     return envelope_for(request_id, None)
 
@@ -143,8 +141,7 @@ async def _follow(job: JobDir, after: int) -> AsyncIterator[str]:
         quiet += FOLLOW_SECONDS
 
 
-@router.post("/cv/render", response_model=Envelope[Rendered],
-             response_model_exclude_none=True)
+@router.post("/cv/render", response_model=Envelope[Rendered], response_model_exclude_none=True)
 async def render_cv(
     request: Request,
     pack: List[UploadFile] = PACK,
@@ -152,11 +149,11 @@ async def render_cv(
     settings: Optional[str] = SETTINGS,
 ) -> dict:
     """Compile the job's ``cv.json`` (or a hand-edited ``cv.tex``) into a PDF."""
-    state = get_state(request)
+    state, pipeline = get_state(request), get_pipeline(request)
     parts = await read_request(pack, job, settings, max_bytes=state.settings.max_part_bytes)
 
     def render(work, sink) -> None:
-        state.pipeline.render(parts.pack, parts.job, work, sink)
+        pipeline.render(parts.pack, parts.job, work, sink)
 
     _, items = await execute(state, render, work_dir=True)
     return envelope_of(Rendered(items=items))

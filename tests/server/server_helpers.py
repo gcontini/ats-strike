@@ -18,7 +18,8 @@ from pipeline_v1 import PipelineError, current_run
 #: A posting the free check lets through.
 POSTING = "Job posting. " * 120
 
-logger = logging.getLogger("pipeline_v1.stub")
+#: Where a model call logs its line, so the run must carry it.
+logger = logging.getLogger("common.models")
 
 
 @dataclass(frozen=True)
@@ -42,10 +43,16 @@ class Failing(PipelineError):
 def a_model_call() -> None:
     """What a model call leaves behind: a line, and its cost in the run."""
     logger.info("  ⏱ [stub] stub-model 0.5s | input=11, thinking=2, output=20")
-    current_run().add_call(SimpleNamespace(
-        role="stub", model="stub-model", seconds=0.5,
-        input_tokens=11, thinking_tokens=2, output_tokens=20,
-    ))
+    current_run().add_call(
+        SimpleNamespace(
+            role="stub",
+            model="stub-model",
+            seconds=0.5,
+            input_tokens=11,
+            thinking_tokens=2,
+            output_tokens=20,
+        )
+    )
 
 
 class StubPipeline:
@@ -118,10 +125,9 @@ class StubPipeline:
 # --- a request ----------------------------------------------------------------
 def files(pack: Optional[dict] = None, job: Optional[dict] = None) -> list:
     """The pack and the job as httpx multipart files."""
-    return (
-        [("pack", (name, content)) for name, content in (pack or {}).items()]
-        + [("job", (name, content)) for name, content in (job or {}).items()]
-    )
+    return [("pack", (name, content)) for name, content in (pack or {}).items()] + [
+        ("job", (name, content)) for name, content in (job or {}).items()
+    ]
 
 
 def a_job(text: str = POSTING, **more) -> list:
@@ -130,8 +136,9 @@ def a_job(text: str = POSTING, **more) -> list:
 
 
 # --- a CV session -------------------------------------------------------------
-def start_cv(client, *, request_id: Optional[str] = None, parts: Optional[list] = None,
-             settings: Optional[dict] = None) -> str:
+def start_cv(
+    client, *, request_id: Optional[str] = None, parts: Optional[list] = None, settings: Optional[dict] = None
+) -> str:
     """POST /v1/cv and return the session id."""
     headers = {"X-Request-Id": request_id} if request_id else {}
     data = {"settings": json.dumps(settings)} if settings is not None else {}
@@ -146,8 +153,7 @@ def read_events(client, request_id: str, *, after: int = 0) -> list[tuple[int, s
     The stream ends with the job's last event, so this waits for the job; the
     stub answers at once, and a closed gate gives up after ten seconds.
     """
-    return [event for event in raw_events(client, request_id, after=after)
-            if event[1] != "ping"]
+    return [event for event in raw_events(client, request_id, after=after) if event[1] != "ping"]
 
 
 def raw_events(client, request_id: str, *, after: int = 0) -> list[tuple[int, str, dict]]:

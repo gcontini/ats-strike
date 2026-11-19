@@ -1,6 +1,6 @@
 """What every request needs: the shared state, the token check, a job slot.
 
-The state is built once at startup and never mutated: the pipeline and one
+The state is built once at startup and never mutated: the pipelines and one
 semaphore. Sharing a :class:`~pipeline_v1.Pipeline` across requests is safe —
 its chat models are built once and its HTTP clients are thread-safe.
 """
@@ -27,13 +27,17 @@ from .settings import Settings
 
 logger = logging.getLogger("cv_server.api")
 
+#: The pipelines served, by the first segment of their paths (``/v1/cv``).
+PIPELINES = {"v1": Pipeline}
+
 
 @dataclass
 class AppState:
-    """Built once in the lifespan, read-only afterwards."""
+    """Built once in the lifespan, read-only afterwards. The job store, the
+    job slots and the settings are shared by every pipeline."""
 
     settings: Settings
-    pipeline: Pipeline
+    pipelines: Dict[str, Pipeline]
     job_slots: BoundedSemaphore
 
     @property
@@ -43,14 +47,12 @@ class AppState:
 
     @classmethod
     def build(cls, settings: Settings) -> "AppState":
-        pipeline = Pipeline.build()
-        if not pipeline.info()["pdflatex"]:
-            logger.warning(
-                "  ⚠ pdflatex is not on PATH — /v1/cv and /v1/cv/render will fail"
-            )
+        pipelines = {name: kind.build() for name, kind in PIPELINES.items()}
+        if not pipelines["v1"].info()["pdflatex"]:
+            logger.warning("  ⚠ pdflatex is not on PATH — /v1/cv and /v1/cv/render will fail")
         return cls(
             settings=settings,
-            pipeline=pipeline,
+            pipelines=pipelines,
             job_slots=BoundedSemaphore(settings.max_concurrent_jobs),
         )
 
@@ -60,9 +62,12 @@ def get_state(request: Request) -> AppState:
     return request.app.state.cv
 
 
-def require_token(
-    request: Request, authorization: Optional[str] = Header(None)
-) -> None:
+def get_pipeline(request: Request) -> Pipeline:
+    """The pipeline the path names by its first segment (``/v1/cv`` → ``v1``)."""
+    return get_state(request).pipelines[request.url.path.split("/")[1]]
+
+
+def require_token(request: Request, authorization: Optional[str] = Header(None)) -> None:
     """Bearer check. No token configured means the server is open on purpose."""
     expected = get_state(request).settings.api_token
     if not expected:
@@ -80,9 +85,7 @@ def claim_slot(state: AppState) -> None:
     thread, which is why this is not a context manager.
     """
     if not state.job_slots.acquire(blocking=False):
-        raise TooManyJobs(
-            f"all {state.settings.max_concurrent_jobs} job slots are busy; retry shortly"
-        )
+        raise TooManyJobs(f"all {state.settings.max_concurrent_jobs} job slots are busy; retry shortly")
 
 
 class Collected:
@@ -104,9 +107,7 @@ class Collected:
             self.items.append(log_item(payload))
 
 
-async def execute(
-    state: AppState, fn: Callable[..., Any], *, work_dir: bool = False
-) -> Tuple[Any, List[StoreItem]]:
+async def execute(state: AppState, fn: Callable[..., Any], *, work_dir: bool = False) -> Tuple[Any, List[StoreItem]]:
     """Run one blocking pipeline call off the event loop: its value, and what
     it produced to store.
 
@@ -146,9 +147,11 @@ def envelope_of(data: Any) -> Dict[str, Any]:
 
 
 __all__ = [
+    "PIPELINES",
     "AppState",
     "Collected",
     "get_state",
+    "get_pipeline",
     "require_token",
     "claim_slot",
     "execute",

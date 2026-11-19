@@ -18,9 +18,10 @@ The method is adapticv-ai's, one model role per step:
     experience on its own.
 ``validation``
     The body and each experience checked against the profile, as
-    replacements the code applies (:mod:`.cv_review`).
+    replacements the code applies (:mod:`common.cv_review`).
 ``highlight``
-    ``**bold**`` on the key points' keywords, ``*italics*`` on the stacks.
+    ``**bold**`` on the key points' keywords, ``*italics*`` on the stacks
+    (:mod:`common.highlight`).
 
 The steps are a LangGraph graph. A step that makes several calls fans them
 out with ``Send`` — one per profile list, per experience — and a node in
@@ -46,26 +47,23 @@ import copy
 import json
 import logging
 import operator
-import re
 import time
 from pathlib import Path
 from typing import Annotated, Any, Callable, Dict, List, Mapping, Optional, Tuple, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
-from openai import APIError
+
+from common.cv_renderer import CVRenderer, RenderResult
+from common.cv_review import ReplaceInBody, ReplaceInDuties, apply_body, apply_duties, review
+from common.errors import BudgetExceededError
+from common.highlight import SCORES, Highlighter
+from common.models import ModelSelector, Usage
+from common.observability import stage
 
 from .bundle import CandidateInputs, ResourceBundle
-from .models import ModelSelector, Usage
-from .observability import LOGGER_ROOT, stage
-from .cv_renderer import CVRenderer, RenderResult
-from .cv_review import ReplaceInBody, ReplaceInDuties, apply_body, apply_duties, review
-from .errors import BudgetExceededError, ModelOutputError
 
-logger = logging.getLogger(f"{LOGGER_ROOT}.cv")
-
-#: The "|3-80,7-40" suffix of a scored text: key point id - score.
-SCORES = re.compile(r"\|((?:\d+-\d+,?)*)$")
+logger = logging.getLogger("pipeline_v1.cv")
 #: A key point counts up to COVERAGE_CAP x its importance in duty score
 #: points, and only its COVERAGE_BEST best duty scores count. The duties
 #: prompt says the same in words ("2 best scores", "2 x its importance").
@@ -83,8 +81,15 @@ STEPS = (
 )
 #: What the client is handed as the steps finish, by state key.
 ARTIFACTS = (
-    "key_points", "scored_profile", "score_reasons", "format_selection", "cv_body",
-    "cv_experiences", "checked_body", "checked_experiences", "highlighted_resume",
+    "key_points",
+    "scored_profile",
+    "score_reasons",
+    "format_selection",
+    "cv_body",
+    "cv_experiences",
+    "checked_body",
+    "checked_experiences",
+    "highlighted_resume",
 )
 
 #: Called as the run moves on: the step starting now, and one line about the
@@ -150,28 +155,6 @@ def capped_coverage(duties: List[str], importance: Mapping[int, int]) -> int:
                 scores[k].append(score)
     best = {k: sum(sorted(s, reverse=True)[:COVERAGE_BEST]) for k, s in scores.items()}
     return sum(min(best[k], COVERAGE_CAP * importance[k]) for k in importance)
-
-
-def unmarked(text: str) -> str:
-    """text without the **bold** and *italics* markers."""
-    return re.sub(r"\*\*([^*]+)\*\*|\*([^*]+)\*", r"\1\2", text)
-
-
-def keep_words(new: Any, old: Any) -> Any:
-    """new where it only adds markers to old, outside any "|3-80,7-40" suffix (same structure, same words); old otherwise."""
-    if isinstance(old, str):
-        score = SCORES.search(old)
-        if isinstance(new, str) and unmarked(new) == old and (not score or new.endswith(score.group())):
-            return new
-        logger.info("highlight: kept the original of %r...", old[:60])
-        return old
-    if isinstance(old, list):
-        if isinstance(new, list) and len(new) == len(old):
-            return [keep_words(n, o) for n, o in zip(new, old)]
-        return old
-    if isinstance(old, dict):
-        return {k: keep_words(new.get(k), v) for k, v in old.items()} if isinstance(new, dict) else old
-    return old
 
 
 def score_targets(profile: Dict[str, Any]) -> List[Tuple[str, Dict[str, Any], str, Optional[dict]]]:
@@ -397,8 +380,13 @@ class CVGenerator:
         )
         with stage("cv.format_selection"):
             choice = self._ask("format_selection", dict, self.bundle.sys_prompt_format_selection, text)
-            logger.info("format %s: experiences %s, duties %s\n  %s", choice["format"],
-                        choice["experience_ids"], choice["duty_caps"], choice["reason"])
+            logger.info(
+                "format %s: experiences %s, duties %s\n  %s",
+                choice["format"],
+                choice["experience_ids"],
+                choice["duty_caps"],
+                choice["reason"],
+            )
         return {"format_selection": choice}
 
     # --- cv -----------------------------------------------------------------
@@ -414,7 +402,10 @@ class CVGenerator:
     def _write_body(self, state: CVState) -> dict:
         """The CV fields outside the work experiences, as in the body schema."""
         profile = {k: v for k, v in state["scored_profile"].items() if k != "writing_style"}
-        text = key_points_and_style(state) + f"SCHEMA:\n{self.bundle.cv_body_schema}\n\nCANDIDATE_PROFILE:\n{dumps(profile)}"
+        text = (
+            key_points_and_style(state)
+            + f"SCHEMA:\n{self.bundle.cv_body_schema}\n\nCANDIDATE_PROFILE:\n{dumps(profile)}"
+        )
         with stage("cv.cv"):
             return {"cv_body": self._ask("cv", dict, self.bundle.sys_prompt_cv_body, text)}
 
@@ -447,12 +438,23 @@ class CVGenerator:
         profile = {k: v for k, v in self.candidate.profile.items() if k != "writing_style"}
 
         def text_for(doc: dict, attempt: int) -> str:
-            return (writing_style(self.candidate.profile) + f"CANDIDATE_PROFILE:\n{dumps(profile)}\n\n"
-                    + f"ATTEMPT: {attempt}\n\nGENERATED CV BODY:\n{dumps(doc)}")
+            return (
+                writing_style(self.candidate.profile)
+                + f"CANDIDATE_PROFILE:\n{dumps(profile)}\n\n"
+                + f"ATTEMPT: {attempt}\n\nGENERATED CV BODY:\n{dumps(doc)}"
+            )
 
         with stage("cv.validation"):
-            doc = review(self.llm, ReplaceInBody, apply_body, self.bundle.sys_prompt_validation_body,
-                         copy.deepcopy(state["cv_body"]), text_for, "body", usage=self.usage)
+            doc = review(
+                self.llm,
+                ReplaceInBody,
+                apply_body,
+                self.bundle.sys_prompt_validation_body,
+                copy.deepcopy(state["cv_body"]),
+                text_for,
+                "body",
+                usage=self.usage,
+            )
         return {"checked_body": doc}
 
     def _validate_duties(self, task: dict) -> dict:
@@ -462,13 +464,24 @@ class CVGenerator:
         source = next(e for e in self.candidate.profile["experiences"] if e["id"] == exp_id)
 
         def text_for(doc: dict, attempt: int) -> str:
-            return (writing_style(self.candidate.profile) + f"EXPERIENCE:\n{dumps(source)}\n\n"
-                    + f"ATTEMPT: {attempt}\n\nGENERATED EXPERIENCE:\n{dumps(doc)}")
+            return (
+                writing_style(self.candidate.profile)
+                + f"EXPERIENCE:\n{dumps(source)}\n\n"
+                + f"ATTEMPT: {attempt}\n\nGENERATED EXPERIENCE:\n{dumps(doc)}"
+            )
 
         doc = copy.deepcopy(task["cv_experiences"][n])
         with stage("cv.validation"):
-            doc = review(self.llm, ReplaceInDuties, apply_duties, self.bundle.sys_prompt_validation_duties,
-                         doc, text_for, doc["company"], usage=self.usage)
+            doc = review(
+                self.llm,
+                ReplaceInDuties,
+                apply_duties,
+                self.bundle.sys_prompt_validation_duties,
+                doc,
+                text_for,
+                doc["company"],
+                usage=self.usage,
+            )
         return {"checked": [(n, doc)]}
 
     def _collect_validation(self, state: CVState) -> dict:
@@ -476,27 +489,15 @@ class CVGenerator:
 
     # --- highlight ----------------------------------------------------------
     def _highlight(self, state: CVState) -> dict:
-        """Marks the KEY POINTS keywords with **bold** and the technical stacks with *italics*: CVRenderer turns them
-        into LaTeX. The prompt says what to mark; a text whose words the model changed keeps its original.
-
-        The model is shown the CV the models wrote — never your candidate data, which goes over the top at the
-        render. EVIDENCE: for each experience of the CV, the matches of its duties in the profile, with their words.
-        A highlighter that gives no usable answer, or whose endpoint refuses the call, leaves the CV unmarked rather than failing a finished job."""
+        """The validated CV through common's :class:`Highlighter`, with the bundle's prompt. EVIDENCE: for each
+        experience of the CV, the matches of its duties in the profile, with their words."""
         resume = {**state["checked_body"], "experiences": state["checked_experiences"]}
         evidence = [
             [m for matches in duty_matches(state, i) for m in matches]
             for i in state["format_selection"]["experience_ids"]
         ]
-        text = f"KEY POINTS:\n{dumps(state['key_points'])}\n\nCV:\n{dumps(resume)}\n\nEVIDENCE:\n{dumps(evidence)}"
-        with stage("cv.highlight"):
-            try:
-                resume = keep_words(self._ask("highlight", dict, self.bundle.sys_prompt_highlight, text), resume)
-            except (ModelOutputError, APIError) as e:
-                logger.warning("  ⚠ highlighting failed (%s) — continuing with the unmarked CV", e)
-            flat = json.dumps(resume)  # every text, to list the markers
-            logger.info("bold: %s", re.findall(r"\*\*([^*]+)\*\*", flat))
-            logger.info("italics: %s", re.findall(r"(?<!\*)\*([^*]+)\*(?!\*)", flat))
-        return {"highlighted_resume": resume}
+        highlighter = Highlighter(self.llm, self.bundle.sys_prompt_highlight)
+        return {"highlighted_resume": highlighter.highlight(state["key_points"], resume, evidence, usage=self.usage)}
 
     # --- the render ---------------------------------------------------------
     def _render(self, state: Mapping[str, Any]) -> Tuple[Dict[str, Any], RenderResult, int]:
@@ -532,10 +533,21 @@ class CVGenerator:
                 exp = resume["experiences"][i]
                 duty = exp["duties"].pop(j)
                 removed += 1
-                logger.info("%d pages: removed duty %d of %s (scores %s, %d coverage points lost): %s...",
-                            result.pages, j + 1, exp["company"], scores_of(duty), lost, SCORES.sub("", duty)[:50])
-            logger.info("rendered: %d pages, %d lines past page %d",
-                        result.pages, result.overflow_lines, self.renderer.page_limit)
+                logger.info(
+                    "%d pages: removed duty %d of %s (scores %s, %d coverage points lost): %s...",
+                    result.pages,
+                    j + 1,
+                    exp["company"],
+                    scores_of(duty),
+                    lost,
+                    SCORES.sub("", duty)[:50],
+                )
+            logger.info(
+                "rendered: %d pages, %d lines past page %d",
+                result.pages,
+                result.overflow_lines,
+                self.renderer.page_limit,
+            )
         return self._document(resume), result, removed
 
     def _document(self, resume: Mapping[str, Any]) -> Dict[str, Any]:
@@ -555,8 +567,7 @@ class CVGenerator:
             return f"{len(state['score_reasons'])} lists of the profile scored"
         if step == "format_selection":
             choice = state["format_selection"]
-            return (f"format {choice['format']}: experiences {choice['experience_ids']}, "
-                    f"duties {choice['duty_caps']}")
+            return f"format {choice['format']}: experiences {choice['experience_ids']}, duties {choice['duty_caps']}"
         if step == "cv":
             return f"body and {len(state['cv_experiences'])} experience(s) written"
         if step == "validation":
@@ -589,7 +600,6 @@ __all__ = [
     "COVERAGE_CAP",
     "COVERAGE_BEST",
     "capped_coverage",
-    "keep_words",
     "scores_of",
     "score_targets",
     "without_scores",

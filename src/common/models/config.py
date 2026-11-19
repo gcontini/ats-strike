@@ -17,18 +17,6 @@ from typing import Any, Dict, Iterable, Literal, Optional, Tuple
 
 from pydantic import BaseModel, ConfigDict
 
-from ..defaults import default_path
-
-MODELS_FILE = "models.toml"
-
-#: The jobs ats-strike has a model for, in the order a run uses them: the JD
-#: check, its analysis and the letter, then the six steps of a CV; the
-#: writing step has two roles, ``cv`` for the body and ``duties`` for the experiences.
-MODEL_ROLES = (
-    "detect", "analysis", "letter",
-    "jd_evaluation", "profile_scoring", "format_selection", "cv", "duties", "validation", "highlight",
-)
-
 
 class ModelSpec(BaseModel):
     """One ``[models.<role>]`` table, after its env overrides."""
@@ -86,19 +74,14 @@ def _overridden(role: str, table: Dict[str, Any]) -> Dict[str, Any]:
     return table
 
 
-def load_model_config(
-    resources_dir: Optional[Path] = None, roles: Iterable[str] = MODEL_ROLES
-) -> ModelConfig:
-    """Parse ``models.toml``: from ``resources_dir`` when given, else the shipped copy.
+def load_model_config(path: Path, roles: Iterable[str]) -> ModelConfig:
+    """Parse the ``models.toml`` at ``path``; ``roles`` are the tables read.
 
-    ``roles`` are the tables read: v1's by default; another pipeline passes its own.
+    Each pipeline passes its own file and its own roles.
     """
-    path = Path(resources_dir) / MODELS_FILE if resources_dir else default_path(MODELS_FILE)
-    raw = tomllib.loads(path.read_text(encoding="utf-8"))
+    raw = tomllib.loads(Path(path).read_text(encoding="utf-8"))
     return ModelConfig(
         provider=raw["provider"],
         defaults=raw.get("defaults", {}),
-        models={
-            role: ModelSpec(**_overridden(role, raw["models"][role])) for role in roles
-        },
+        models={role: ModelSpec(**_overridden(role, raw["models"][role])) for role in roles},
     )

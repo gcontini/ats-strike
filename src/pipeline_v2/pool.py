@@ -29,20 +29,49 @@ import math
 import operator
 from datetime import date
 from threading import Lock
-from typing import (Annotated, Any, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple,
-                    TypedDict, TypeVar)
+from typing import (
+    Annotated,
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    TypedDict,
+    TypeVar,
+)
 
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
 from pydantic import BaseModel, ValidationError
 
-from pipeline_v1.errors import ModelOutputError
-from pipeline_v1.models import ModelSelector, Usage
-from pipeline_v1.observability import stage
+from common.errors import ModelOutputError
+from common.models import ModelSelector, Usage
+from common.observability import stage
 
 from .items import ProgressFn, add_usage, in_order
-from .pool_store import (LONG, MAX_GROUPS, Bullet, ExperiencePool, Frame, Group, Line, Pool, Rung, Skill,
-                         StoryPool, career_years, item_weights, level_sha256, lines, shown_sha256, story_work)
+from .pool_store import (
+    LONG,
+    MAX_GROUPS,
+    Bullet,
+    ExperiencePool,
+    Frame,
+    Group,
+    Line,
+    Pool,
+    Rung,
+    Skill,
+    StoryPool,
+    career_years,
+    item_weights,
+    level_sha256,
+    lines,
+    shown_sha256,
+    story_work,
+)
 from .store import Item, Items, Story, _plain, squash
 from .tree_store import Tree, leaf_status, level
 
@@ -64,9 +93,12 @@ def header(exp: Mapping[str, Any]) -> str:
 
 def item_line(item: Item, weight: Optional[int] = None) -> str:
     head = item.type + (f", {item.agency}" if item.agency else "")
-    return (f"{item.id} [{head}] {item.text}" + (f" | scope: {item.scope}" if item.scope else "")
-            + (f" | tech: {', '.join(item.tech)}" if item.tech else "")
-            + (f" | weight {weight}" if weight else ""))
+    return (
+        f"{item.id} [{head}] {item.text}"
+        + (f" | scope: {item.scope}" if item.scope else "")
+        + (f" | tech: {', '.join(item.tech)}" if item.tech else "")
+        + (f" | weight {weight}" if weight else "")
+    )
 
 
 def _own(items: Items, experience: int) -> List[Item]:
@@ -79,13 +111,16 @@ def experience_input(exp: Mapping[str, Any], items: Items, style: str) -> str:
     by_id = {i.id: i for i in items.items}
     x = next(x for x in items.experiences if x.id == e)
     weights = item_weights(items)
-    return (f"WRITING STYLE:\n{style or '-'}\n\nEXPERIENCE: {header(exp)}\n\n"
-            "EXPERIENCE CONTEXT:\n" + ("\n".join(item_line(by_id[i]) for i in x.context if i in by_id) or "(none)")
-            + "\n\nITEMS:\n" + "\n".join(item_line(i, weights.get(i.id)) for i in _own(items, e)))
+    return (
+        f"WRITING STYLE:\n{style or '-'}\n\nEXPERIENCE: {header(exp)}\n\n"
+        "EXPERIENCE CONTEXT:\n"
+        + ("\n".join(item_line(by_id[i]) for i in x.context if i in by_id) or "(none)")
+        + "\n\nITEMS:\n"
+        + "\n".join(item_line(i, weights.get(i.id)) for i in _own(items, e))
+    )
 
 
-def ladder_input(exp: Mapping[str, Any], items: Items, role_summary: Line, stories: Sequence[Story],
-                 style: str) -> str:
+def ladder_input(exp: Mapping[str, Any], items: Items, role_summary: Line, stories: Sequence[Story], style: str) -> str:
     """A ladder call's user message: the header, the role summary, SETTING and its own stories."""
     by_id = {i.id: i for i in items.items}
     work = story_work(items)
@@ -93,12 +128,15 @@ def ladder_input(exp: Mapping[str, Any], items: Items, role_summary: Line, stori
     blocks = []
     for s in stories:
         marks = [m for m in ("LONG" if work[s.id] >= LONG else "", "MERGED" if s.merged else "") if m]
-        blocks.append(f"{s.id}" + (f" ({', '.join(marks)})" if marks else "") + f": {s.title}\n"
-                      f"  ANCHOR: {', '.join(s.anchor)}\n"
-                      + "\n".join("  " + item_line(by_id[i]) for i in s.items if i in by_id))
-    return (f"WRITING STYLE:\n{style or '-'}\n\nEXPERIENCE: {header(exp)}\n\n"
-            f"ROLE SUMMARY: {role_summary.text}\nIt states: {', '.join(role_summary.uses) or '-'}\n\n"
-            "SETTING:\n" + ("\n".join(setting) or "(none)") + "\n\nSTORIES:\n" + "\n\n".join(blocks))
+        blocks.append(
+            f"{s.id}" + (f" ({', '.join(marks)})" if marks else "") + f": {s.title}\n"
+            f"  ANCHOR: {', '.join(s.anchor)}\n" + "\n".join("  " + item_line(by_id[i]) for i in s.items if i in by_id)
+        )
+    return (
+        f"WRITING STYLE:\n{style or '-'}\n\nEXPERIENCE: {header(exp)}\n\n"
+        f"ROLE SUMMARY: {role_summary.text}\nIt states: {', '.join(role_summary.uses) or '-'}\n\n"
+        "SETTING:\n" + ("\n".join(setting) or "(none)") + "\n\nSTORIES:\n" + "\n\n".join(blocks)
+    )
 
 
 def profile_input(profile: Mapping[str, Any], items: Items, tree: Tree, today: date) -> str:
@@ -109,15 +147,21 @@ def profile_input(profile: Mapping[str, Any], items: Items, tree: Tree, today: d
     experiences = "\n\n".join(
         f"EXPERIENCE {exp['id']}: {header(exp)}, {months.get(exp['id']) or '?'} months\n"
         + "\n".join("  " + item_line(i, weights.get(i.id)) for i in _own(items, exp["id"]))
-        for exp in profile["experiences"])
+        for exp in profile["experiences"]
+    )
     status = leaf_status(tree, items)
-    leaves = "\n".join(f"{n.id} {n.name}" + (f" | aliases: {', '.join(n.aliases)}" if n.aliases else "")
-                       for n in tree.nodes if level(n.id) == 3 and status[n.id] == "proven")
-    return (f"WRITING STYLE:\n{profile.get('writing_style') or '-'}\n\nEXPERIENCES:\n{experiences}\n\n"
-            f"CAREER: {career_years(profile, today)} whole years\n\nPROVEN LEAVES:\n{leaves}\n\n"
-            f"CANDIDATE SKILLS:\n{', '.join(profile.get('skills') or []) or '-'}\n\n"
-            f"JOB TITLES:\n{', '.join(_titles(profile.get('job_title')))}\n\n"
-            "MASTER SUMMARIES:\n" + ("\n".join(profile.get("summaries") or []) or "-"))
+    leaves = "\n".join(
+        f"{n.id} {n.name}" + (f" | aliases: {', '.join(n.aliases)}" if n.aliases else "")
+        for n in tree.nodes
+        if level(n.id) == 3 and status[n.id] == "proven"
+    )
+    return (
+        f"WRITING STYLE:\n{profile.get('writing_style') or '-'}\n\nEXPERIENCES:\n{experiences}\n\n"
+        f"CAREER: {career_years(profile, today)} whole years\n\nPROVEN LEAVES:\n{leaves}\n\n"
+        f"CANDIDATE SKILLS:\n{', '.join(profile.get('skills') or []) or '-'}\n\n"
+        f"JOB TITLES:\n{', '.join(_titles(profile.get('job_title')))}\n\n"
+        "MASTER SUMMARIES:\n" + ("\n".join(profile.get("summaries") or []) or "-")
+    )
 
 
 def _titles(value: Any) -> List[str]:
@@ -131,7 +175,7 @@ def batches(stories: Sequence[Story], work: Mapping[str, int]) -> List[List[Stor
     if not short:
         return long
     size = math.ceil(len(short) / math.ceil(len(short) / BATCH))
-    return long + [list(short[k:k + size]) for k in range(0, len(short), size)]
+    return long + [list(short[k : k + size]) for k in range(0, len(short), size)]
 
 
 # --- the replies ---------------------------------------------------------------------------------
@@ -205,8 +249,10 @@ def json_object(text: str) -> dict:
         value = json.loads(body, strict=False)
     except json.JSONDecodeError as error:
         at = error.pos
-        raise ValueError(f"- the JSON breaks at character {at}: {error.msg}. Around it: "
-                         f"...{body[max(0, at - 100):at]}<<HERE>>{body[at:at + 40]}...") from None
+        raise ValueError(
+            f"- the JSON breaks at character {at}: {error.msg}. Around it: "
+            f"...{body[max(0, at - 100) : at]}<<HERE>>{body[at : at + 40]}..."
+        ) from None
     if not isinstance(value, dict):
         raise ValueError("- it is not a JSON object")
     return value
@@ -259,8 +305,14 @@ def build_story(story: Story, reply: ReplyStory, work: int) -> Tuple[StoryPool, 
     for r in sorted(reply.ladder, key=lambda r: (r.rung, r.wording)):
         rid, text = f"{story.id}.r{r.rung}.{r.wording}", squash(r.text)
         if not text or any(x.id == rid for x in ladder):
-            dropped.append({"story": story.id, "what": f"r{r.rung}.{r.wording}", "text": text,
-                            "reason": "an empty bullet" if not text else "a second bullet for this rung and wording"})
+            dropped.append(
+                {
+                    "story": story.id,
+                    "what": f"r{r.rung}.{r.wording}",
+                    "text": text,
+                    "reason": "an empty bullet" if not text else "a second bullet for this rung and wording",
+                }
+            )
         elif lines(text) < r.rung:
             down.append((lines(text), r))
         else:
@@ -275,8 +327,13 @@ def build_story(story: Story, reply: ReplyStory, work: int) -> Tuple[StoryPool, 
     groups: List[Group] = []
     for raw in by_number.values():
         text = " | ".join(squash(b.text) for b in raw)
-        reason = (f"a group of a short story ({work} action and result items; {LONG} make it long)" if work < LONG
-                  else f"a group beyond the {MAX_GROUPS}th" if len(groups) >= MAX_GROUPS else None)
+        reason = (
+            f"a group of a short story ({work} action and result items; {LONG} make it long)"
+            if work < LONG
+            else f"a group beyond the {MAX_GROUPS}th"
+            if len(groups) >= MAX_GROUPS
+            else None
+        )
         if reason:
             dropped.append({"story": story.id, "what": "group", "text": text, "reason": reason})
             continue
@@ -287,8 +344,10 @@ def build_story(story: Story, reply: ReplyStory, work: int) -> Tuple[StoryPool, 
 
 def build_profile(reply: ProfileReply) -> Tuple[List[Skill], List[Frame]]:
     skills = [Skill(id=f"k{k:02d}", text=squash(s.text), nodes=s.nodes) for k, s in enumerate(reply.skills, 1)]
-    frames = [Frame(id=f"f{k}", family=squash(f.family), text=squash(f.text), uses=f.uses)
-              for k, f in enumerate(reply.frames, 1)]
+    frames = [
+        Frame(id=f"f{k}", family=squash(f.family), text=squash(f.text), uses=f.uses)
+        for k, f in enumerate(reply.frames, 1)
+    ]
     return skills, frames
 
 
@@ -309,7 +368,7 @@ def edited_pieces(block: ExperiencePool) -> List[dict]:
 class ExperienceState(TypedDict, total=False):
     """The experiences to write, and each one's role summary and compact line."""
 
-    todo: List[Tuple[int, dict]]                       # (position, profile experience)
+    todo: List[Tuple[int, dict]]  # (position, profile experience)
     items: Items
     style: str
     answers: Annotated[List[Tuple[int, Tuple[int, Line, Line]]], operator.add]
@@ -328,8 +387,16 @@ class WriteState(TypedDict, total=False):
 class PoolWriter:
     """Writes a profile's pool from its items and its competence tree."""
 
-    def __init__(self, *, llm: ModelSelector, experience_prompt: str, ladder_prompt: str, profile_prompt: str,
-                 rules: str, progress: Optional[ProgressFn] = None) -> None:
+    def __init__(
+        self,
+        *,
+        llm: ModelSelector,
+        experience_prompt: str,
+        ladder_prompt: str,
+        profile_prompt: str,
+        rules: str,
+        progress: Optional[ProgressFn] = None,
+    ) -> None:
         self.llm = llm
         self.experience_prompt = _with_rules(experience_prompt, rules)
         self.ladder_prompt = _with_rules(ladder_prompt, rules)
@@ -339,8 +406,17 @@ class PoolWriter:
         self.usage = Usage()
         self._lock = Lock()
 
-    def write(self, items: Items, tree: Tree, profile: Mapping[str, Any], *, today: date,
-              previous: Optional[Pool] = None, force: Iterable[int] = (), profile_level: bool = False) -> Pool:
+    def write(
+        self,
+        items: Items,
+        tree: Tree,
+        profile: Mapping[str, Any],
+        *,
+        today: date,
+        previous: Optional[Pool] = None,
+        force: Iterable[int] = (),
+        profile_level: bool = False,
+    ) -> Pool:
         """The pool for ``items``: blocks of ``previous`` whose items are unchanged copied, the others
         (and those in ``force``, by experience id) written; skill phrases and frames written when
         there is no ``previous`` or on ``profile_level``, else copied."""
@@ -368,10 +444,21 @@ class PoolWriter:
         for n, exp in todo:
             x = items.experiences[n]
             for batch in batches(x.stories, work):
-                ladders.append({"position": len(ladders), "experience": exp, "items": items,
-                                "role_summary": lines[x.id][0], "stories": batch, "style": style})
-        profile_task = ({"position": len(ladders), "profile": dict(profile), "items": items, "tree": tree,
-                         "today": today} if due else None)
+                ladders.append(
+                    {
+                        "position": len(ladders),
+                        "experience": exp,
+                        "items": items,
+                        "role_summary": lines[x.id][0],
+                        "stories": batch,
+                        "style": style,
+                    }
+                )
+        profile_task = (
+            {"position": len(ladders), "profile": dict(profile), "items": items, "tree": tree, "today": today}
+            if due
+            else None
+        )
         answers: List[Any] = []
         if ladders or profile_task:
             answers = self._write_graph().invoke({"ladders": ladders, "profile_task": profile_task})["collected"]
@@ -392,11 +479,17 @@ class PoolWriter:
             if x.id not in lines:
                 blocks.append(old[x.id])
                 continue
-            blocks.append(ExperiencePool(
-                experience=x.id, items_sha256=shown_sha256(items, x.id),
-                role_summary=lines[x.id][0], compact=lines[x.id][1],
-                stories=[written[x.id][s.id] for s in x.stories], dropped=dropped.get(x.id, []),
-                previous=edited_pieces(old[x.id]) if x.id in old else []))
+            blocks.append(
+                ExperiencePool(
+                    experience=x.id,
+                    items_sha256=shown_sha256(items, x.id),
+                    role_summary=lines[x.id][0],
+                    compact=lines[x.id][1],
+                    stories=[written[x.id][s.id] for s in x.stories],
+                    dropped=dropped.get(x.id, []),
+                    previous=edited_pieces(old[x.id]) if x.id in old else [],
+                )
+            )
         level = level_sha256(items, tree) if due else previous.level_sha256
         return Pool(level_sha256=level, experiences=blocks, skills=skills, frames=frames)
 
@@ -412,22 +505,31 @@ class PoolWriter:
         return graph.compile()
 
     def _each_experience(self, state: ExperienceState) -> List[Send]:
-        return [Send("experience", {"position": n, "experience": exp, "items": state["items"],
-                                    "style": state["style"]}) for n, exp in state["todo"]]
+        return [
+            Send("experience", {"position": n, "experience": exp, "items": state["items"], "style": state["style"]})
+            for n, exp in state["todo"]
+        ]
 
     def _experience(self, task: dict) -> dict:
         exp, items = task["experience"], task["items"]
         usage = Usage()
         try:
             with stage(STAGE):
-                reply = self._ask(self.experience_prompt, experience_input(exp, items, task["style"]),
-                                  parse_experience, f"e{exp['id']} role summary", usage)
+                reply = self._ask(
+                    self.experience_prompt,
+                    experience_input(exp, items, task["style"]),
+                    parse_experience,
+                    f"e{exp['id']} role summary",
+                    usage,
+                )
         finally:
             add_usage(self.usage, usage, self._lock)
         role = Line(text=squash(reply.role_summary.text), uses=reply.role_summary.uses)
         compact = Line(text=squash(reply.compact.text), uses=reply.compact.uses)
-        self._report(f"e{exp['id']}: role summary {len(role.text)} characters, compact line {len(compact.text)}; "
-                     f"{self._cost(usage)}")
+        self._report(
+            f"e{exp['id']}: role summary {len(role.text)} characters, compact line {len(compact.text)}; "
+            f"{self._cost(usage)}"
+        )
         return {"answers": [(task["position"], (exp["id"], role, compact))]}
 
     def _collect_lines(self, state: ExperienceState) -> dict:
@@ -459,31 +561,44 @@ class PoolWriter:
         usage = Usage()
         try:
             with stage(STAGE):
-                reply = self._ask(self.ladder_prompt,
-                                  ladder_input(exp, items, task["role_summary"], stories, task["style"]),
-                                  lambda raw: parse_ladder(raw, asked), what, usage)
+                reply = self._ask(
+                    self.ladder_prompt,
+                    ladder_input(exp, items, task["role_summary"], stories, task["style"]),
+                    lambda raw: parse_ladder(raw, asked),
+                    what,
+                    usage,
+                )
         finally:
             add_usage(self.usage, usage, self._lock)
         work = story_work(items)
         replies = {s.id: s for s in reply.stories}
         built: List[StoryPool] = []
-        lost: List[dict] = [{"story": s.id, "what": "story", "text": "", "reason": "not a story of this call"}
-                            for s in reply.stories if s.id not in asked]
+        lost: List[dict] = [
+            {"story": s.id, "what": "story", "text": "", "reason": "not a story of this call"}
+            for s in reply.stories
+            if s.id not in asked
+        ]
         for story in stories:
             pool, dropped = build_story(story, replies[story.id], work[story.id])
             built.append(pool)
             lost += dropped
-        self._report(f"{what}: {sum(len(s.ladder) for s in built)} rungs, {sum(len(s.groups) for s in built)} "
-                     f"groups, {len(lost)} dropped; {self._cost(usage)}")
+        self._report(
+            f"{what}: {sum(len(s.ladder) for s in built)} rungs, {sum(len(s.groups) for s in built)} "
+            f"groups, {len(lost)} dropped; {self._cost(usage)}"
+        )
         return {"answers": [(task["position"], ("ladder", exp["id"], built, lost))]}
 
     def _profile(self, task: dict) -> dict:
         usage = Usage()
         try:
             with stage(STAGE):
-                reply = self._ask(self.profile_prompt,
-                                  profile_input(task["profile"], task["items"], task["tree"], task["today"]),
-                                  parse_profile, "profile", usage)
+                reply = self._ask(
+                    self.profile_prompt,
+                    profile_input(task["profile"], task["items"], task["tree"], task["today"]),
+                    parse_profile,
+                    "profile",
+                    usage,
+                )
         finally:
             add_usage(self.usage, usage, self._lock)
         skills, frames = build_profile(reply)
@@ -509,15 +624,20 @@ class PoolWriter:
             logger.warning("  ✗ [%s] %s: reply %d/2 rejected:\n%s", ROLE, what, attempt, problem)
             messages += [
                 {"role": "assistant", "content": raw},
-                {"role": "user", "content": f"Your previous reply was rejected:\n{problem}\n\n"
-                                            "Reply again with the complete, corrected output only."},
+                {
+                    "role": "user",
+                    "content": f"Your previous reply was rejected:\n{problem}\n\n"
+                    "Reply again with the complete, corrected output only.",
+                },
             ]
         raise ModelOutputError(f"{ROLE}: pool {what}: the reply was rejected:\n{problem}", stage=STAGE)
 
     @staticmethod
     def _cost(usage: Usage) -> str:
-        return (f"{usage.calls} call(s), {usage.seconds:.0f}s, tokens {usage.input_tokens} in, "
-                f"{usage.thinking_tokens} thinking, {usage.output_tokens} out")
+        return (
+            f"{usage.calls} call(s), {usage.seconds:.0f}s, tokens {usage.input_tokens} in, "
+            f"{usage.thinking_tokens} thinking, {usage.output_tokens} out"
+        )
 
     def _report(self, line: str) -> None:
         logger.info("%s", line)
@@ -530,5 +650,17 @@ def _with_rules(prompt: str, rules: str) -> str:
     return prompt.rstrip("\n") + "\n\n" + rules.strip("\n") + "\n"
 
 
-__all__ = ["PoolWriter", "batches", "build_profile", "build_story", "edited_pieces", "experience_input",
-           "json_object", "ladder_input", "parse_experience", "parse_ladder", "parse_profile", "profile_input"]
+__all__ = [
+    "PoolWriter",
+    "batches",
+    "build_profile",
+    "build_story",
+    "edited_pieces",
+    "experience_input",
+    "json_object",
+    "ladder_input",
+    "parse_experience",
+    "parse_ladder",
+    "parse_profile",
+    "profile_input",
+]

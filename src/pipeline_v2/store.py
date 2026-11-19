@@ -21,22 +21,34 @@ from typing import Any, Iterable, List, Literal, Mapping, Optional
 from pydantic import BaseModel, ConfigDict
 
 #: Hard limits: the prompt states softer ones, and a breach is reported, never truncated.
-MAX_TAGS = 6            # soft 1-4
-MAX_TITLE_WORDS = 12    # soft 3-8
-MAX_ANCHOR = 3          # soft 1-2
-MAX_STORY_WORK = 14     # action and result items per story; soft 10
+MAX_TAGS = 6  # soft 1-4
+MAX_TITLE_WORDS = 12  # soft 3-8
+MAX_ANCHOR = 3  # soft 1-2
+MAX_STORY_WORK = 14  # action and result items per story; soft 10
 
 #: English month names, and their three-letter forms.
 MONTHS = {
     name: n
     for n, full in enumerate(
-        ("january", "february", "march", "april", "may", "june", "july", "august",
-         "september", "october", "november", "december"), 1)
+        (
+            "january",
+            "february",
+            "march",
+            "april",
+            "may",
+            "june",
+            "july",
+            "august",
+            "september",
+            "october",
+            "november",
+            "december",
+        ),
+        1,
+    )
     for name in (full, full[:3])
 }
-DATES = re.compile(
-    r"^\s*([a-z]+)\.?\s+(\d{4})\s*(?:--|–|—)\s*(?:([a-z]+)\.?\s+(\d{4})|(present))\s*$", re.I
-)
+DATES = re.compile(r"^\s*([a-z]+)\.?\s+(\d{4})\s*(?:--|–|—)\s*(?:([a-z]+)\.?\s+(\d{4})|(present))\s*$", re.I)
 
 
 class _Strict(BaseModel):
@@ -46,46 +58,46 @@ class _Strict(BaseModel):
 
 
 class Item(_Strict):
-    id: str                  # "e0.i07"
+    id: str  # "e0.i07"
     experience: int
-    duty: int                # -1 = role_summary
+    duty: int  # -1 = role_summary
     type: Literal["context", "action", "result"]
     text: str
-    source: List[str]        # verbatim spans, checked in code
+    source: List[str]  # verbatim spans, checked in code
     agency: Literal["led", "did", "supported", ""] = ""
     scope: str = ""
     tech: List[str] = []
     tags: List[str] = []
-    story: Optional[str] = None   # None = experience-level context
-    edited: bool = False          # set by hand
+    story: Optional[str] = None  # None = experience-level context
+    edited: bool = False  # set by hand
 
 
 class Story(_Strict):
-    id: str                  # "e0.s02"
+    id: str  # "e0.s02"
     experience: int
     title: str
-    items: List[str]         # context first, then actions and results in profile order
-    anchor: List[str]        # 1-2 item ids
-    merged: List[str] = []   # former story ids, set by hand
+    items: List[str]  # context first, then actions and results in profile order
+    anchor: List[str]  # 1-2 item ids
+    merged: List[str] = []  # former story ids, set by hand
 
 
 class DutyWeight(_Strict):
     duty: int
     weight: Literal[1, 2, 3]
-    why: str                 # a few words, for the gate
-    edited: bool = False     # set by hand
+    why: str  # a few words, for the gate
+    edited: bool = False  # set by hand
 
 
 class ExperienceItems(_Strict):
     id: int
-    sha256: str              # of the experience's profile JSON (sorted keys, no whitespace)
-    months: Optional[int]    # from dates; None when unreadable (reported)
-    weights: List[DutyWeight]   # one per profile duty
-    context: List[str]       # experience-level context item ids
+    sha256: str  # of the experience's profile JSON (sorted keys, no whitespace)
+    months: Optional[int]  # from dates; None when unreadable (reported)
+    weights: List[DutyWeight]  # one per profile duty
+    context: List[str]  # experience-level context item ids
     stories: List[Story]
-    coverage: float          # share of the duties' characters under a source span
-    dropped: List[dict] = []    # refused items, with the reason
-    previous: List[dict] = []   # hand edits of a recompiled experience, to re-apply
+    coverage: float  # share of the duties' characters under a source span
+    dropped: List[dict] = []  # refused items, with the reason
+    previous: List[dict] = []  # hand edits of a recompiled experience, to re-apply
 
 
 class Items(_Strict):
@@ -144,7 +156,7 @@ def coverage(exp: Mapping[str, Any], items: Iterable[Item]) -> float:
         for span in spans:
             at = text.find(span)
             if at >= 0:
-                mask[at:at + len(span)] = [True] * len(span)
+                mask[at : at + len(span)] = [True] * len(span)
         covered += sum(mask)
         total += len(text)
     return covered / total if total else 1.0
@@ -218,8 +230,11 @@ def _check_experience(exp: Mapping[str, Any], x: ExperienceItems, own: List[Item
     weighted = Counter(w.duty for w in x.weights)
     problems += [f"{e}: no weight for duty {d}" for d in range(n_duties) if not weighted[d]]
     problems += [f"{e}: {n} weights for duty {d}" for d, n in sorted(weighted.items()) if n > 1]
-    problems += [f"{e}: a weight for duty {d}, which the profile does not have"
-                 for d in sorted(weighted) if not 0 <= d < n_duties]
+    problems += [
+        f"{e}: a weight for duty {d}, which the profile does not have"
+        for d in sorted(weighted)
+        if not 0 <= d < n_duties
+    ]
 
     by_id = {i.id: i for i in own}
     stories = {s.id: s for s in x.stories}
@@ -264,8 +279,11 @@ def _check_story(s: Story, by_id: Mapping[str, Item], lost_work: bool = False) -
     problems += [f"{i.id}: listed in {s.id}, but its story is {i.story}" for i in members if i.story != s.id]
     work = sum(map(is_work, members))
     if work == 0:
-        problems.append(f"{s.id}: no action or result left: its items were dropped" if lost_work
-                        else f"{s.id}: no action or result item")
+        problems.append(
+            f"{s.id}: no action or result left: its items were dropped"
+            if lost_work
+            else f"{s.id}: no action or result item"
+        )
     elif work > MAX_STORY_WORK:
         problems.append(f"{s.id}: {work} action and result items (limit {MAX_STORY_WORK})")
     if not 1 <= len(s.anchor) <= MAX_ANCHOR:
@@ -316,8 +334,7 @@ def _item_lines(item: Item, anchor: bool = False) -> List[str]:
     lines = [f"- **{item.id}** ({', '.join(head)}) {item.text}"]
     if item.scope:
         lines.append(f"  - scope: {item.scope}")
-    lines.append(f"  - tags: {', '.join(item.tags) or '-'}"
-                 + (f" | tech: {', '.join(item.tech)}" if item.tech else ""))
+    lines.append(f"  - tags: {', '.join(item.tags) or '-'}" + (f" | tech: {', '.join(item.tech)}" if item.tech else ""))
     return lines
 
 
@@ -326,8 +343,10 @@ def _previous_line(edit: Mapping[str, Any]) -> str:
     if what == "item":
         return f"- item {edit.get('id')} (edited): {edit.get('text')}"
     if what == "weight":
-        return (f"- duty {edit.get('duty')}: weight set by hand to {edit.get('weight')} ({edit.get('why')}), "
-                f"the recompile gave {edit.get('new')}")
+        return (
+            f"- duty {edit.get('duty')}: weight set by hand to {edit.get('weight')} ({edit.get('why')}), "
+            f"the recompile gave {edit.get('new')}"
+        )
     if what == "story":
         return f"- story {edit.get('id')} {edit.get('title')!r} was merged from {edit.get('merged')}"
     return f"- {json.dumps(edit, ensure_ascii=False)}"
@@ -347,16 +366,22 @@ def items_markdown(profile: Mapping[str, Any], items: Items) -> str:
         x = compiled.get(exp["id"])
         e = f"e{exp['id']}"
         length = f"{x.months} months" if x and x.months is not None else "dates unreadable"
-        out += [f"## {e} · {_plain(exp.get('title'))}, {_plain(exp.get('company'))} · "
-                f"{_plain(exp.get('dates'))} · {length}", ""]
+        out += [
+            f"## {e} · {_plain(exp.get('title'))}, {_plain(exp.get('company'))} · "
+            f"{_plain(exp.get('dates'))} · {length}",
+            "",
+        ]
         if x is None:
             out += ["Not compiled.", ""]
             continue
         own = [i for i in items.items if i.experience == x.id]
         in_stories = sum(len(s.items) for s in x.stories)
-        out += [f"{len(own)} items: {len(x.context)} experience context, {in_stories} in "
-                f"{len(x.stories)} stories. {x.coverage:.0%} of the duties' text under a source span. "
-                f"{len(x.dropped)} dropped.", ""]
+        out += [
+            f"{len(own)} items: {len(x.context)} experience context, {in_stories} in "
+            f"{len(x.stories)} stories. {x.coverage:.0%} of the duties' text under a source span. "
+            f"{len(x.dropped)} dropped.",
+            "",
+        ]
 
         weights = {w.duty: w for w in x.weights}
         out += ["**Narrative**", ""]

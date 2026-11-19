@@ -7,7 +7,7 @@ from typing import List, Optional
 from cv_contracts import Envelope, Letter
 from fastapi import APIRouter, Request, UploadFile
 
-from ..deps import envelope_of, execute, get_state
+from ..deps import envelope_of, execute, get_pipeline, get_state
 from ..multipart import JOB, PACK, SETTINGS, read_request
 
 router = APIRouter()
@@ -21,11 +21,11 @@ async def create_letter(
     settings: Optional[str] = SETTINGS,
 ) -> dict:
     """Write a cover letter for one job description."""
-    state = get_state(request)
+    state, pipeline = get_state(request), get_pipeline(request)
     parts = await read_request(pack, job, settings, max_bytes=state.settings.max_part_bytes)
 
     def letter(sink) -> str:
-        return state.pipeline.letter(parts.pack, parts.job, parts.settings)
+        return pipeline.letter(parts.pack, parts.job, parts.settings)
 
     text, items = await execute(state, letter)
     return envelope_of(Letter(text=text, items=items))

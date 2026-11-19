@@ -26,8 +26,10 @@ def handed(stub) -> tuple:
 
 
 def test_the_pack_and_the_job_reach_the_pipeline_apart_and_as_bytes(client, stub):
-    parts = files(pack={"candidate_profile.json": b"{}", "logo.png": b"\x89PNG\x00"},
-                  job={"job_description.txt": "a posting", "analysis.json": b"{}"})
+    parts = files(
+        pack={"candidate_profile.json": b"{}", "logo.png": b"\x89PNG\x00"},
+        job={"job_description.txt": "a posting", "analysis.json": b"{}"},
+    )
     assert analyse(client, parts).status_code == 200
     pack, job, settings = handed(stub)
     assert pack == {"candidate_profile.json": b"{}", "logo.png": b"\x89PNG\x00"}
@@ -36,8 +38,7 @@ def test_the_pack_and_the_job_reach_the_pipeline_apart_and_as_bytes(client, stub
 
 
 def test_a_sub_folder_and_accents_survive_in_a_name(client, stub):
-    parts = files(pack={"cache/pool.json": b"[]", "señal/ç.txt": b"x"},
-                  job={"steps/key_points.json": b"[]"})
+    parts = files(pack={"cache/pool.json": b"[]", "señal/ç.txt": b"x"}, job={"steps/key_points.json": b"[]"})
     analyse(client, parts)
     pack, job, _ = handed(stub)
     assert set(pack) == {"cache/pool.json", "señal/ç.txt"}

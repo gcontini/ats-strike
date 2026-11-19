@@ -18,13 +18,14 @@ import json
 import logging
 from typing import Optional
 
+from common.models import ModelSelector
+from common.observability import stage
+
 from .bundle import CandidateInputs
 from .defaults import read_text_default
-from .models import ModelSelector
-from .observability import LOGGER_ROOT, stage
 from .schemas import JDAnalysis, JDDetection
 
-logger = logging.getLogger(f"{LOGGER_ROOT}.jd")
+logger = logging.getLogger("pipeline_v1.jd")
 
 #: The contract with the model for :meth:`JDValidator.analyze`, shipped as
 #: ``resources/sys_prompt_analysis.txt`` alongside the CV/letter prompts.
@@ -57,14 +58,14 @@ class JDValidator:
         # The posting is a message of its own, after the instructions: a page
         # of 20000 characters must not bury them, nor pass for them.
         with stage("jd.detect"):
-            verdict = self.llm.call_llm(
-                "detect", bool, DETECT_PROMPT, [{"role": "user", "content": text}]
-            )
+            verdict = self.llm.call_llm("detect", bool, DETECT_PROMPT, [{"role": "user", "content": text}])
         logger.info("  🔎 job description check: %s", "YES" if verdict else "NO")
         return JDDetection(is_job_description=verdict)
 
     def analyze(
-        self, job_description: str, candidate: CandidateInputs,
+        self,
+        job_description: str,
+        candidate: CandidateInputs,
         system_prompt: Optional[str] = None,
     ) -> JDAnalysis:
         """Compare a job description against the profile and extract key facts.
@@ -84,7 +85,9 @@ class JDValidator:
         )
         with stage("jd.analysis"):
             return self.llm.call_llm(
-                "analysis", JDAnalysis, system_prompt or JD_SYSTEM_PROMPT,
+                "analysis",
+                JDAnalysis,
+                system_prompt or JD_SYSTEM_PROMPT,
                 [{"role": "user", "content": content}],
             )
 

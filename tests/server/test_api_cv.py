@@ -108,8 +108,10 @@ def test_a_bad_request_starts_no_session(client, stub, app_state):
 
 # --- what comes back ---------------------------------------------------------
 def test_the_pipeline_is_handed_the_whole_request(client, stub):
-    parts = files(pack={"candidate_profile.json": b"{}", "cache/pool.json": b"[]"},
-                  job={"job_description.txt": POSTING, "steps/key_points.json": b"[]"})
+    parts = files(
+        pack={"candidate_profile.json": b"{}", "cache/pool.json": b"[]"},
+        job={"job_description.txt": POSTING, "steps/key_points.json": b"[]"},
+    )
     run_cv(client, parts=parts, settings={"pages": 1, "extra_body": {"cv": {"top_p": 1}}})
     name, pack, job, settings, _ = stub.calls[-1]
     assert name == "cv"
@@ -124,7 +126,9 @@ def test_each_output_is_stored_as_it_comes_and_the_session_ends_done(client, stu
     stored = [StoreItem.model_validate(item) for item in of_type(events, "store")]
     outputs = [item for item in stored if item.type != "log"]
     assert [(o.location, o.type, o.name) for o in outputs] == [
-        ("CV", "step", "steps/key_points.json"), ("CV", "step", "cv.json"), ("CV", "cv", "cv.pdf"),
+        ("CV", "step", "steps/key_points.json"),
+        ("CV", "step", "cv.json"),
+        ("CV", "cv", "cv.pdf"),
     ]
     assert outputs[0].text == '[{"id": 1}]'
     assert outputs[2].content() == b"%PDF-1.7 \x00\xff"
@@ -153,16 +157,14 @@ def test_the_slot_comes_back_when_the_job_ends(client, app_state):
     """Released by the worker, not by the request — so a leak only shows here."""
     run_cv(client)
 
-    taken = [app_state.job_slots.acquire(blocking=False)
-             for _ in range(app_state.settings.max_concurrent_jobs)]
+    taken = [app_state.job_slots.acquire(blocking=False) for _ in range(app_state.settings.max_concurrent_jobs)]
     for _ in [t for t in taken if t]:
         app_state.job_slots.release()
     assert all(taken)
 
 
 def test_an_unknown_session_is_a_404(client):
-    for response in (client.get("/v1/cv/never-happened/events"),
-                     client.delete("/v1/cv/never-happened")):
+    for response in (client.get("/v1/cv/never-happened/events"), client.delete("/v1/cv/never-happened")):
         assert response.status_code == 404
         assert "unknown_request" in response.json()["error"]
 
@@ -299,19 +301,27 @@ def test_a_request_id_cannot_name_a_directory_of_its_own_choosing(client, app_st
 
 
 # --- failing -----------------------------------------------------------------
-@pytest.mark.parametrize("failure, status, message", [
-    (Failing("model_output", "cv: no usable reply", stage="cv.jd_evaluation"), 502,
-     "model_output [cv.jd_evaluation]: cv: no usable reply"),
-    (Failing("missing_part", "file 'candidate_data.json' is required"), 400,
-     "missing_part: file 'candidate_data.json' is required"),
-    (Failing("bad_part", "setting 'pages' must be ..."), 400, "bad_part: setting 'pages'"),
-    (Failing("budget_exceeded", "time budget exhausted"), 504, "budget_exceeded: "),
-    (Failing("provider_timeout", "the model endpoint failed: X"), 504, "provider_timeout: "),
-    (Failing("provider_error", "the model endpoint failed: X"), 502, "provider_error: "),
-    (RuntimeError("a bug"), 500, "internal_error: RuntimeError: a bug"),
-])
-def test_a_failed_job_ends_with_the_cause_after_its_total(client, stub, failure, status,
-                                                          message):
+@pytest.mark.parametrize(
+    "failure, status, message",
+    [
+        (
+            Failing("model_output", "cv: no usable reply", stage="cv.jd_evaluation"),
+            502,
+            "model_output [cv.jd_evaluation]: cv: no usable reply",
+        ),
+        (
+            Failing("missing_part", "file 'candidate_data.json' is required"),
+            400,
+            "missing_part: file 'candidate_data.json' is required",
+        ),
+        (Failing("bad_part", "setting 'pages' must be ..."), 400, "bad_part: setting 'pages'"),
+        (Failing("budget_exceeded", "time budget exhausted"), 504, "budget_exceeded: "),
+        (Failing("provider_timeout", "the model endpoint failed: X"), 504, "provider_timeout: "),
+        (Failing("provider_error", "the model endpoint failed: X"), 502, "provider_error: "),
+        (RuntimeError("a bug"), 500, "internal_error: RuntimeError: a bug"),
+    ],
+)
+def test_a_failed_job_ends_with_the_cause_after_its_total(client, stub, failure, status, message):
     stub.failure = failure
     events = run_cv(client)
 
@@ -327,8 +337,7 @@ def test_a_failed_job_ends_with_the_cause_after_its_total(client, stub, failure,
 
 
 def test_a_full_server_says_429_rather_than_queueing(client, app_state):
-    taken = [app_state.job_slots.acquire(blocking=False)
-             for _ in range(app_state.settings.max_concurrent_jobs)]
+    taken = [app_state.job_slots.acquire(blocking=False) for _ in range(app_state.settings.max_concurrent_jobs)]
     try:
         response = client.post("/v1/cv", files=a_job())
     finally:
@@ -368,9 +377,7 @@ def test_a_broken_template_is_422_with_the_tex_log_in_the_reply(client, stub):
     stub.failure = failure
     response = client.post("/v1/cv/render", files=files(job={"cv.json": b"{}"}))
     assert response.status_code == 422
-    assert response.json()["error"] == (
-        "latex_compile [compile]: pdflatex failed\n! Undefined control sequence."
-    )
+    assert response.json()["error"] == ("latex_compile [compile]: pdflatex failed\n! Undefined control sequence.")
 
 
 def test_render_takes_its_parts_like_every_route(client, stub):

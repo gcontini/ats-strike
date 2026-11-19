@@ -20,7 +20,7 @@ from pydantic import ValidationError
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from ..jobstore import SAFE_ID
-from .deps import AppState, require_token
+from .deps import PIPELINES, AppState, require_token
 from .errors import ApiError, handle_exception
 from .routers import cv, health, jd, letter
 from .settings import Settings
@@ -28,9 +28,7 @@ from .settings import Settings
 logger = logging.getLogger("cv_server.api")
 
 #: The logger roots whose lines reach stdout and the request's run.
-LOGGER_ROOTS = ("pipeline_v1", "cv_server")
-
-API_PREFIX = "/v1"
+LOGGER_ROOTS = ("common", "pipeline_v1", "cv_server")
 
 
 class RequestContextMiddleware:
@@ -69,9 +67,7 @@ class RequestContextMiddleware:
             await self.app(scope, receive, send_with_id)
 
 
-def create_app(
-    settings: Optional[Settings] = None, state: Optional[AppState] = None
-) -> FastAPI:
+def create_app(settings: Optional[Settings] = None, state: Optional[AppState] = None) -> FastAPI:
     """Build the application.
 
     ``state`` is the injection point: pass one built with a stand-in pipeline
@@ -89,7 +85,7 @@ def create_app(
             "  \U0001f680 ats-strike-server ready (jobs<=%d, auth %s, pdflatex %s)",
             settings.max_concurrent_jobs,
             "on" if settings.api_token else "off",
-            "yes" if app.state.cv.pipeline.info()["pdflatex"] else "NO",
+            "yes" if app.state.cv.pipelines["v1"].info()["pdflatex"] else "NO",
         )
         yield
 
@@ -115,10 +111,11 @@ def create_app(
     app.add_exception_handler(Exception, handle_exception)
 
     app.include_router(health.router, tags=["health"])
+    # The same routers once per pipeline: the path's first segment names it.
     guarded = [Depends(require_token)]
-    app.include_router(cv.router, prefix=API_PREFIX, tags=["cv"], dependencies=guarded)
-    app.include_router(jd.router, prefix=API_PREFIX, tags=["jd"], dependencies=guarded)
-    app.include_router(letter.router, prefix=API_PREFIX, tags=["letter"], dependencies=guarded)
+    for name in state.pipelines if state else PIPELINES:
+        for router, tag in ((cv.router, "cv"), (jd.router, "jd"), (letter.router, "letter")):
+            app.include_router(router, prefix=f"/{name}", tags=[tag], dependencies=guarded)
     return app
 
 
@@ -135,13 +132,16 @@ def _fail_orphans(state: AppState) -> None:
     for job in state.jobs.all():
         if not job.running:
             continue
-        job.append("error", Failure(
-            http_status=503,
-            error="unavailable: the server restarted while this job was running",
-        ).model_dump(mode="json"))
+        job.append(
+            "error",
+            Failure(
+                http_status=503,
+                error="unavailable: the server restarted while this job was running",
+            ).model_dump(mode="json"),
+        )
         logger.warning("  ⚠ job %s was left running by a previous process", job.request_id)
 
 
 app = create_app()
 
-__all__ = ["create_app", "app", "API_PREFIX", "LOGGER_ROOTS"]
+__all__ = ["create_app", "app", "LOGGER_ROOTS"]

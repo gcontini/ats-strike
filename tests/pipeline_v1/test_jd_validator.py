@@ -44,10 +44,13 @@ def test_strips_markdown_fences(candidate):
     assert analyze(candidate, fenced)[1].match_percentage == 82
 
 
-@pytest.mark.parametrize("field, value", [
-    ("should_apply", "MAYBE"),
-    ("should_apply_reason", "x" * 301),
-])
+@pytest.mark.parametrize(
+    "field, value",
+    [
+        ("should_apply", "MAYBE"),
+        ("should_apply_reason", "x" * 301),
+    ],
+)
 def test_rejects_an_invalid_should_apply(field, value):
     bad = dict(VALID, **{field: value})
     with pytest.raises(ValidationError):
@@ -55,9 +58,9 @@ def test_rejects_an_invalid_should_apply(field, value):
 
 
 def test_optional_fields_may_be_absent():
-    minimal = {k: v for k, v in VALID.items()
-               if k not in ("work_location", "expected_salary",
-                            "max_salary", "posting_url")}
+    minimal = {
+        k: v for k, v in VALID.items() if k not in ("work_location", "expected_salary", "max_salary", "posting_url")
+    }
     analysis = JDAnalysis.model_validate(minimal)
     assert analysis.posting_url is None
     assert analysis.max_salary == -1

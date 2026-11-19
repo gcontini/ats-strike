@@ -23,7 +23,7 @@ way.
 flowchart TB
     subgraph s1["stage 1 — build (uv:python3.12-bookworm-slim)"]
         L1["pyproject.toml · uv.lock<br/>+ the contracts' pyproject"] --> L2["uv sync --frozen --no-dev<br/>--no-install-project<br/>--no-install-local"]
-        L2 --> L3["src · resources/v1"]
+        L2 --> L3["src · resources/common · v1 · v2"]
         L3 --> L4["uv sync --frozen --no-dev --no-editable<br/>→ /app/.venv"]
     end
     subgraph s2["stage 2 — runtime (python:3.12-slim-bookworm)"]
@@ -141,7 +141,7 @@ declares is what is sent. The comments in `models.toml` list the known traps.
 | `WEB_CONCURRENCY` | `1` | uvicorn worker processes. **Keep it at 1** per work root |
 | `ATS_KEEPALIVE` | `75` | uvicorn keep-alive timeout, seconds |
 | `ATS_API_TOKEN` | unset | Bearer token clients must send. **Unset means no auth** |
-| `ATS_RESOURCES` | baked in | Directory of replacement prompts / template / `models.toml` |
+| `ATS_RESOURCES` | baked in | Directory of replacement prompts / template / `models.toml`, one sub-folder per pipeline (`v1/`) |
 | `ATS_WORK_DIR` | system temp | Where CV sessions are kept, one directory of events each. Scratch space is always local temp |
 | `ATS_SESSION_TTL_DAYS` | `1` | Days a session nobody acknowledged is kept after its last event |
 | `ATS_MAX_CONCURRENT_JOBS` | `10` | Requests in flight; the rest get `429` |
@@ -153,11 +153,14 @@ declares is what is sent. The comments in `models.toml` list the known traps.
 
 ### Prompts and the template
 
-The five prompts and `resume.tex.jinja` ship inside the image. To change them
-permanently, mount a directory with your versions and set
-`ATS_RESOURCES`; anything missing there falls back to the built-in copy.
-To change them for one request, upload them as parts — that is what the client
-does when it finds them next to its executable.
+The prompts and `resume.tex.jinja` ship inside the image. To change them
+permanently, mount a directory with your versions and set `ATS_RESOURCES` to
+it; v1 reads its files from its `v1/` sub-folder, laid out as `resources/v1`
+(`my-resources/v1/sys_prompt_cv_body.txt`, `my-resources/v1/models.toml`, …).
+Anything missing there falls back to the built-in copy; the highlight prompt
+is shared by every pipeline and is not read from there. To change them for one
+request, send them in the pack — that is what the client does with every file
+in its server folder.
 
 ```bash
 docker run -p 8080:8080 --env-file .env \

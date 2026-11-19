@@ -28,9 +28,19 @@ from collections import Counter
 from datetime import date
 from pathlib import Path
 
-from pipeline_v1.models import build_selector
-from pipeline_v2 import (ROLES, Items, Pool, PoolWriter, Tree, pool_checks, pool_dump, pool_markdown,
-                         resources_dir, validate_pool)
+from common.models import build_selector
+from pipeline_v2 import (
+    ROLES,
+    Items,
+    Pool,
+    PoolWriter,
+    Tree,
+    pool_checks,
+    pool_dump,
+    pool_markdown,
+    resources_dir,
+    validate_pool,
+)
 from pipeline_v2.pool_store import ladder_and_group_bullets
 
 
@@ -38,8 +48,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("folder", type=Path, help="the server folder holding candidate_profile.json")
     parser.add_argument("--out", type=Path, required=True, help="holds items.json and tree.json; pool.json goes here")
-    parser.add_argument("--experiences", type=int, nargs="+", default=[], metavar="ID",
-                        help="experience ids to write again even when their items are unchanged")
+    parser.add_argument(
+        "--experiences",
+        type=int,
+        nargs="+",
+        default=[],
+        metavar="ID",
+        help="experience ids to write again even when their items are unchanged",
+    )
     parser.add_argument("--profile", action="store_true", help="write the skill phrases and frames again")
     parser.add_argument("command", nargs="?", choices=["md"], help="md: check pool.json, rebuild pool.md")
     args = parser.parse_args()
@@ -59,7 +75,7 @@ def main() -> int:
             sys.exit(f"{pool_path} does not exist")
         pool = previous
     else:
-        for name in ("pipeline_v1", "pipeline_v2"):
+        for name in ("common", "pipeline_v2"):
             log = logging.getLogger(name)
             log.setLevel(logging.INFO)
             log.addHandler(logging.StreamHandler(sys.stdout))
@@ -67,24 +83,34 @@ def main() -> int:
         def prompt(name: str) -> str:
             return (resources_dir() / f"sys_prompt_pool_{name}.txt").read_text(encoding="utf-8")
 
-        writer = PoolWriter(llm=build_selector(resources_dir(), ROLES), experience_prompt=prompt("experience"),
-                            ladder_prompt=prompt("ladder"), profile_prompt=prompt("profile"), rules=prompt("rules"))
+        writer = PoolWriter(
+            llm=build_selector(resources_dir() / "models.toml", ROLES),
+            experience_prompt=prompt("experience"),
+            ladder_prompt=prompt("ladder"),
+            profile_prompt=prompt("profile"),
+            rules=prompt("rules"),
+        )
         started = time.monotonic()
-        pool = writer.write(items, tree, profile, today=today, previous=previous, force=args.experiences,
-                            profile_level=args.profile)
+        pool = writer.write(
+            items, tree, profile, today=today, previous=previous, force=args.experiences, profile_level=args.profile
+        )
         u = writer.usage
-        print(f"\n{u.calls} call(s), {time.monotonic() - started:.0f}s wall, {u.seconds:.0f}s in calls, "
-              f"tokens {u.input_tokens} in, {u.thinking_tokens} thinking, {u.output_tokens} out")
+        print(
+            f"\n{u.calls} call(s), {time.monotonic() - started:.0f}s wall, {u.seconds:.0f}s in calls, "
+            f"tokens {u.input_tokens} in, {u.thinking_tokens} thinking, {u.output_tokens} out"
+        )
         pool_path.write_text(pool_dump(pool), encoding="utf-8")
     page_path.write_text(pool_markdown(pool, items, tree, profile, today), encoding="utf-8")
 
     bullets = [b for block in pool.experiences for b in ladder_and_group_bullets(block)]
     rungs = Counter((r.rung, r.wording) for block in pool.experiences for s in block.stories for r in s.ladder)
     groups = [g for block in pool.experiences for s in block.stories for g in s.groups]
-    print(f"\n{len(bullets)} bullets: rung 1 {rungs[1, 'a']}+{rungs[1, 'b']}, rung 2 {rungs[2, 'a']}+{rungs[2, 'b']}, "
-          f"rung 3 {rungs[3, 'a']}+{rungs[3, 'b']} (a+b); {sum(len(g.bullets) for g in groups)} in {len(groups)} "
-          f"groups; {len(pool.experiences)} role summaries, {len(pool.skills)} skill phrases, "
-          f"{len(pool.frames)} frames; {sum(len(b.dropped) for b in pool.experiences)} dropped")
+    print(
+        f"\n{len(bullets)} bullets: rung 1 {rungs[1, 'a']}+{rungs[1, 'b']}, rung 2 {rungs[2, 'a']}+{rungs[2, 'b']}, "
+        f"rung 3 {rungs[3, 'a']}+{rungs[3, 'b']} (a+b); {sum(len(g.bullets) for g in groups)} in {len(groups)} "
+        f"groups; {len(pool.experiences)} role summaries, {len(pool.skills)} skill phrases, "
+        f"{len(pool.frames)} frames; {sum(len(b.dropped) for b in pool.experiences)} dropped"
+    )
     found = pool_checks(pool, items, tree, profile, today)
     print("checks: " + ", ".join(f"{k} {len(v)}" for k, v in found.items()))
     problems = validate_pool(pool, items, tree)

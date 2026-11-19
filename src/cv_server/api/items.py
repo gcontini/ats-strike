@@ -19,7 +19,8 @@ def output_item(output: Any) -> StoreItem:
 
 def _line(ts: datetime, level: str, stage: str, message: str) -> StoreItem:
     return StoreItem(
-        location="CV", type="log",
+        location="CV",
+        type="log",
         text=f"{ts.isoformat(timespec='seconds')} {level:<7} [{stage}] {message}",
     )
 
@@ -32,7 +33,9 @@ def log_item(entry: Any) -> StoreItem:
 def total_item(total: Any) -> StoreItem:
     """The run's model calls added up: the last log line of a reply."""
     return _line(
-        datetime.now(timezone.utc), "INFO", "run",
+        datetime.now(timezone.utc),
+        "INFO",
+        "run",
         f"Σ {total.calls} model call(s), {total.seconds:.1f}s | input={total.input_tokens}, "
         f"thinking={total.thinking_tokens}, output={total.output_tokens}",
     )

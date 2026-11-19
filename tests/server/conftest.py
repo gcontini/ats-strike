@@ -29,7 +29,7 @@ def app_state(stub, tmp_path) -> AppState:
     settings = Settings(work_root=tmp_path)
     return AppState(
         settings=settings,
-        pipeline=stub,
+        pipelines={"v1": stub},
         job_slots=BoundedSemaphore(settings.max_concurrent_jobs),
     )
 

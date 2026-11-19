@@ -33,16 +33,12 @@ def test_a_configured_token_is_required(secured_client):
 
 
 def test_the_wrong_token_is_refused(secured_client):
-    response = secured_client.post(
-        "/v1/jd/detect", files=SHORT, headers={"Authorization": "Bearer wrong"}
-    )
+    response = secured_client.post("/v1/jd/detect", files=SHORT, headers={"Authorization": "Bearer wrong"})
     assert response.status_code == 401
 
 
 def test_the_right_token_gets_through(secured_client):
-    response = secured_client.post(
-        "/v1/jd/detect", files=SHORT, headers={"Authorization": "Bearer s3cret"}
-    )
+    response = secured_client.post("/v1/jd/detect", files=SHORT, headers={"Authorization": "Bearer s3cret"})
     assert response.status_code == 200
 
 
@@ -77,6 +73,4 @@ def test_a_provider_failure_is_a_gateway_error_not_a_bug(client, stub):
     stub.failure = Failing("provider_unreachable", "the model endpoint failed: APIConnectionError")
     response = client.post("/v1/jd/detect", files=files(job={"job_description.txt": "Job posting. " * 120}))
     assert response.status_code == 502
-    assert response.json()["error"] == (
-        "provider_unreachable: the model endpoint failed: APIConnectionError"
-    )
+    assert response.json()["error"] == ("provider_unreachable: the model endpoint failed: APIConnectionError")
