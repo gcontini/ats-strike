@@ -5,19 +5,24 @@ No model call. The S0 probe's selector, ported to the pool (S3) and the allocati
 
 - **ATS** = ``LITERAL_WEIGHT`` x the literal score (the requirements' ``keywords`` in the CV's
   text) + the rest x the tree score (each node's points earned by the evidence printed for it).
-- **Narrative** (the human score): each job's years, from its months, are shared by its duties by
-  points (weight 1, 2, 3 counts 1, 3, 9 points; a duty with no action or result item is left
-  out); a duty tells its years times the share of its action and result items that are printed
-  (a bullet's ``covers``, a compact line's ``uses``). The score is the years told over the
-  career's years. In both, each month of a job counts ``0.5 ** (its age / HALF_LIFE_YEARS)``, its
-  age taken from the CV's date (:func:`recency`): a job long ago weighs less however long it lasted.
+- **Narrative** (the human score): a job on the page tells ``PRESENCE`` of its years in either
+  form (its role summary or its compact line); its duties tell the rest. A job's years, from its
+  months, are shared by its duties by points (weight 1, 2, 3 counts 1, 3, 9 points; a duty with no
+  action or result item is left out); a duty tells its share times the share of its action and
+  result items its bullets print (a bullet's ``covers``; a compact line tells no duty), each item
+  at the depth of the deepest bullet telling it (:data:`DEPTH`: a story's top rung or a group tells
+  it whole, a rung below less). The score is the years told over the career's years. In both,
+  each month of a job counts ``0.5 ** (its age / HALF_LIFE_YEARS)``, its age taken from the CV's
+  date (:func:`recency`): a job long ago weighs less however long it lasted.
 - **Objective** = ``ATS_WEIGHT`` x ATS + the rest x narrative. The mix is code, not a setting.
 
-The greedy starts from the most recent and the earliest experience in compact form (both always
-shown) and takes the move with the best gain per line while one fits: when no move improves the
-objective, the one that loses least per line still fills the page. An experience opens with its
-two best slots. Then the refill pass: drop the weakest slot, run the greedy again, keep the result
-when the objective is higher, stop at the first try that is not.
+The greedy starts from the most recent experience in full with its two best slots (when it has two
+stories; neither the refill nor :func:`fit` takes it below two bullets) and takes the move with the
+best gain per line while one fits: when no move improves the objective, the one that loses least
+per line still fills the page. Every other experience, the earliest too, comes in by a move, so a
+job that earns too little is left out. An experience opens with its two best slots. Then the
+refill pass: drop the weakest slot, run the greedy again, keep the result when the objective is
+higher, stop at the first try that is not.
 
 A slot's text for scoring is its wording ``a`` (the first wording of its rung); its lines are the
 longest wording's, so any wording fits. Groups are a long story's alternatives above its top rung.
@@ -62,6 +67,12 @@ DUTY_POINTS = {1: 1, 2: 3, 3: 9}
 #: A month of a job counts 0.5 ** (its age in years / HALF_LIFE_YEARS) in the narrative (the user's choice of
 #: 2026-11-19, after 3, 5 and 8 were simulated on the dev JDs).
 HALF_LIFE_YEARS = 3.0
+#: The share of a job's years it tells by being on the page, in either form; its duties tell the rest
+#: (the user's "a job's summary matters more than its duties", 2026-11-20).
+PRESENCE = 0.5
+#: The share of a story's items a bullet tells, by how many rungs below the story's top it is: the
+#: top rung (or a group, above it) tells them whole, a shorter rung leaves the context out.
+DEPTH = (1.0, 0.85, 0.6)
 
 #: A slot's rung: 1-3 on the ladder, or a group "g1".."g3".
 RungKey = Union[int, str]
@@ -290,14 +301,26 @@ def ats(draft: Draft, ctx: Context) -> Dict[str, float]:
     return {"ats": LITERAL_WEIGHT * lit + (1 - LITERAL_WEIGHT) * tree, "literal": lit, "tree": tree}
 
 
+def told(draft: Draft, ctx: Context) -> Dict[str, float]:
+    """Item id -> the depth it is told at: the deepest slot covering it (:data:`DEPTH`)."""
+    out: Dict[str, float] = {}
+    for story, rung in draft["slots"].items():
+        depth = 1.0 if isinstance(rung, str) else DEPTH[max(ctx.ladder[story]) - rung]
+        for p in slot_pieces(ctx, story, rung):
+            for i in p.covers:
+                out[i] = max(out.get(i, 0.0), depth)
+    return out
+
+
 def narrative(draft: Draft, ctx: Context) -> float:
     """The years told over the career's years (see the module)."""
     career = sum(ctx.years.values())
     if not career:
         return 0.0
-    printed = frozenset().union(*(p.covers for p in pieces(draft, ctx)))
-    told = sum(y * len(work & printed) / len(work) for y, work in ctx.duties.values())
-    return told / career
+    shown = sum(ctx.years[e] for e in draft["forms"])
+    items = told(draft, ctx)
+    duties = sum(y * sum(items.get(i, 0.0) for i in work) / len(work) for y, work in ctx.duties.values())
+    return (PRESENCE * shown + (1 - PRESENCE) * duties) / career
 
 
 def objective(draft: Draft, ctx: Context) -> float:
@@ -336,22 +359,32 @@ def moves(draft: Draft, ctx: Context) -> List[Tuple[str, Draft]]:
         out += [(f"step {s} to {k if isinstance(k, str) else f'r{k}'}", _with(draft, slots={s: k})) for k in ups]
     for e in ctx.experiences:
         if draft["forms"].get(e) == "compact" and len(_stories(ctx, e)) >= 2:
-            opened = _with(draft, forms={e: "full"})
-            for _ in range(2):
-                adds = [
-                    _with(opened, slots={s: r})
-                    for s in _stories(ctx, e)
-                    if s not in opened["slots"]
-                    for r in _rungs(ctx, s)
-                ]
-                if not adds:
-                    break
-                h0, o0 = height(opened, ctx), objective(opened, ctx)
-                opened = max(adds, key=lambda d: (objective(d, ctx) - o0) / max(height(d, ctx) - h0, 1e-9))
-            out.append((f"open e{e}", opened))
+            out.append((f"open e{e}", opened(draft, ctx, e)))
         elif e not in draft["forms"]:
             out.append((f"compact e{e}", _with(draft, forms={e: "compact"})))
     return out
+
+
+def opened(draft: Draft, ctx: Context, e: int) -> Draft:
+    """``draft`` with experience ``e`` in full and its two best slots (any rung or group, each by
+    gain per line)."""
+    out = _with(draft, forms={e: "full"})
+    for _ in range(2):
+        adds = [_with(out, slots={s: r}) for s in _stories(ctx, e) if s not in out["slots"] for r in _rungs(ctx, s)]
+        if not adds:
+            break
+        h0, o0 = height(out, ctx), objective(out, ctx)
+        out = max(adds, key=lambda d: (objective(d, ctx) - o0) / max(height(d, ctx) - h0, 1e-9))
+    return out
+
+
+def floor_kept(draft: Draft, ctx: Context) -> bool:
+    """The most recent experience is in full with at least 2 bullets, or has fewer than 2 stories."""
+    e = ctx.experiences[0]
+    if len(_stories(ctx, e)) < 2:
+        return True
+    mine = [s for s in draft["slots"] if ctx.story_exp[s] == e]
+    return draft["forms"].get(e) == "full" and sum(len(slot_lines(ctx, s, draft["slots"][s])) for s in mine) >= 2
 
 
 def tidy(draft: Draft, ctx: Context) -> Draft:
@@ -390,13 +423,14 @@ def greedy(ctx: Context, start: Draft, log: Optional[Callable[[str], None]] = No
 
 
 def weakest(draft: Draft, ctx: Context) -> Optional[Tuple[str, Draft]]:
-    """The slot whose removal loses least objective per line freed, and the draft without it."""
+    """The slot whose removal loses least objective per line freed, and the draft without it; the
+    most recent experience keeps its 2 bullets (:func:`floor_kept`)."""
     base, used = objective(draft, ctx), height(draft, ctx)
     best = None
     for s in draft["slots"]:
         cand = tidy(_with(draft, drop=(s,)), ctx)
         freed = used - height(cand, ctx)
-        if freed <= 0:
+        if freed <= 0 or not floor_kept(cand, ctx):
             continue
         loss = (base - objective(cand, ctx)) / freed
         if best is None or loss < best[0]:
@@ -423,7 +457,8 @@ def refill(ctx: Context, draft: Draft, log: Optional[Callable[[str], None]] = No
 def fit(draft: Draft, ctx: Context) -> Optional[Draft]:
     """One step towards a shorter CV (S0's): the step down that loses least objective per line
     saved (a group to its story's top rung, a rung to the one below); only when no story can step
-    down, the removal that loses least. None when nothing is left to take away."""
+    down, the removal that loses least, keeping the most recent experience's 2 bullets
+    (:func:`floor_kept`). None when nothing is left to take away."""
     base, used = objective(draft, ctx), height(draft, ctx)
 
     def cost(cand: Draft) -> float:
@@ -437,7 +472,7 @@ def fit(draft: Draft, ctx: Context) -> Optional[Draft]:
         if below is not None:
             downs.append(_with(draft, slots={s: below}))
         removals.append(tidy(_with(draft, drop=(s,)), ctx))
-    options = [c for c in (downs or removals) if cost(c) < math.inf]
+    options = [c for c in (downs or removals) if cost(c) < math.inf and floor_kept(c, ctx)]
     return min(options, key=cost) if options else None
 
 
@@ -609,9 +644,13 @@ def draft_of(plan: Plan) -> Draft:
 
 
 def select(ctx: Context, log: Optional[Callable[[str], None]] = None) -> Plan:
-    """The plan for one job: the greedy, the refill pass, then skills, frame and headline."""
-    ids = ctx.experiences
-    first = greedy(ctx, {"forms": {ids[0]: "compact", ids[-1]: "compact"}, "slots": {}}, log)
+    """The plan for one job: the greedy from the most recent experience in full, the refill pass,
+    then skills, frame and headline."""
+    e = ctx.experiences[0]
+    start: Draft = {"forms": {e: "compact"}, "slots": {}}
+    if len(_stories(ctx, e)) >= 2:
+        start = opened({"forms": {}, "slots": {}}, ctx, e)
+    first = greedy(ctx, start, log)
     return plan_of(refill(ctx, first, log), ctx, round(objective(finish(first, ctx), ctx), 4))
 
 

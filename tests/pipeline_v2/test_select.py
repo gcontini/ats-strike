@@ -6,6 +6,7 @@ stories each, one leaf per experience.
 
 from __future__ import annotations
 
+import dataclasses
 from datetime import date
 
 import pytest
@@ -124,17 +125,31 @@ def test_duties_share_the_years_by_1_3_9_points():
     assert got[(0, 0)][1] == {"e0.i02", "e0.i03"}
 
 
-def test_a_duty_tells_its_years_by_the_share_of_its_items_printed(ctx):
+def test_a_job_on_the_page_tells_half_its_years_and_its_bullets_the_rest(ctx):
     career = 120 / 12
-    # e0.s01 at rung 2 covers both items of e0's duty 0: 2 years x 9/10
+    half = sel.PRESENCE * 2  # e0 on the page: half its 2 years
+    # e0.s01 at its top rung covers both items of e0's duty 0 in full: 2 years x 9/10
+    draft = {"forms": {0: "full"}, "slots": {"e0.s01": 3}}
+    assert sel.narrative(draft, ctx) == pytest.approx((half + 0.5 * 2 * 0.9) / career)
+    # a rung below tells them at 0.85
     draft = {"forms": {0: "full"}, "slots": {"e0.s01": 2}}
-    assert sel.narrative(draft, ctx) == pytest.approx(2 * 0.9 / career)
-    # rung 1 covers the action only: half of it
+    assert sel.narrative(draft, ctx) == pytest.approx((half + 0.5 * 2 * 0.9 * 0.85) / career)
+    # rung 1 covers the action only, at 0.6
     draft = {"forms": {0: "full"}, "slots": {"e0.s01": 1}}
-    assert sel.narrative(draft, ctx) == pytest.approx(2 * 0.9 / 2 / career)
-    # a compact line counts the items it uses: e2's uses its duty 0's action
+    assert sel.narrative(draft, ctx) == pytest.approx((half + 0.5 * 2 * 0.9 * 0.6 / 2) / career)
+    # a compact line tells no duty, though it uses e2's duty 0's action: only the presence
     draft = {"forms": {2: "compact"}, "slots": {}}
-    assert sel.narrative(draft, ctx) == pytest.approx(5 * 0.9 / 2 / career)
+    assert sel.narrative(draft, ctx) == pytest.approx(0.5 * 5 / career)
+
+
+def test_the_depth_counts_from_the_storys_own_top_rung(ctx):
+    # a story whose longest bullet is 2 lines tells everything at rung 2
+    short = dataclasses.replace(
+        ctx, ladder={**ctx.ladder, "e0.s01": {1: ctx.ladder["e0.s01"][1], 2: ctx.ladder["e0.s01"][2]}}
+    )
+    draft = {"forms": {0: "full"}, "slots": {"e0.s01": 2}}
+    assert sel.told(draft, short) == {"e0.i02": 1.0, "e0.i03": 1.0}
+    assert sel.told(draft, ctx) == {"e0.i02": 0.85, "e0.i03": 0.85}
 
 
 def test_older_months_weigh_less():
@@ -152,16 +167,16 @@ def test_older_months_weigh_less():
     ctx = sel.context(items, tree, pool, allocation, ["Platform Engineer"], {2: 0.5})
     # e2's 5 years count 2.5, in what it tells and in the career (2 + 3 + 2.5)
     draft = {"forms": {2: "compact"}, "slots": {}}
-    assert sel.narrative(draft, ctx) == pytest.approx(2.5 * 0.9 / 2 / 7.5)
+    assert sel.narrative(draft, ctx) == pytest.approx(0.5 * 2.5 / 7.5)
 
 
 # --- the greedy and the refill pass -----------------------------------------------------------------
-def test_the_plan_fits_the_budget_and_shows_the_earliest_and_latest_jobs(ctx, tight):
+def test_the_plan_fits_the_budget_and_shows_the_latest_job_in_full(ctx, tight):
     plan = sel.select(ctx)
     shown = {x.experience: x for x in plan.experiences}
-    assert {0, 2} <= set(shown)
+    assert shown[0].form == "full"
     assert plan.lines <= plan.budget_lines
-    assert "compact" in [x.form for x in plan.experiences]  # not everything fits
+    assert len(shown) < 3 or "compact" in [x.form for x in plan.experiences]  # not everything fits
     # S0's fix: the page is filled even by moves that lose, so no line is left
     assert plan.budget_lines - plan.lines < 1
     # slots most relevant first
@@ -186,6 +201,23 @@ def test_the_refill_pass_never_lowers_the_objective(ctx, tight):
     assert sel.objective(sel.refill(ctx, poor), ctx) >= sel.objective(poor, ctx)
     plan = sel.select(ctx)
     assert plan.scores.objective >= plan.greedy_objective
+
+
+def test_the_latest_job_keeps_two_bullets_when_nothing_matches_it(monkeypatch):
+    monkeypatch.setattr(sel, "CAPACITY_PT", 200.0)
+    items, tree, pool, allocation = store()
+    allocation = allocation.model_copy(update={"requirements": allocation.requirements[:1]})  # Terraform only: e1
+    ctx = sel.context(items, tree, pool, allocation, ["Platform Engineer"], {})
+    draft = sel.draft_of(sel.select(ctx))
+    assert draft["forms"][0] == "full" and sel.floor_kept(draft, ctx)
+    while (draft := sel.fit(draft, ctx)) is not None:  # the fit steps keep it too
+        assert sel.floor_kept(draft, ctx)
+
+
+def test_a_job_that_earns_too_little_is_left_out(tight):
+    items, tree, pool, allocation = store()
+    ctx = sel.context(items, tree, pool, allocation, ["Platform Engineer"], {2: 0.001})
+    assert 2 not in [x.experience for x in sel.select(ctx).experiences]
 
 
 # --- S0's asserts ------------------------------------------------------------------------------------
