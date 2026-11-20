@@ -1,17 +1,16 @@
 """The ``**bold**`` pass: a CV's key-point keywords bold, its stacks italic.
 
-The same for every pipeline: one prompt (``resources/common``, packaged as
-``common.resources``) and one code path. The model is shown the CV a pipeline
-wrote, never the candidate's data. The renderer turns the markers into LaTeX.
+One code path for every pipeline; the prompt is the pipeline's own (each ships
+its ``sys_prompt_highlight.txt``), so one can change without the other. The
+model is shown the CV a pipeline wrote, never the candidate's data. The
+renderer turns the markers into LaTeX.
 """
 
 from __future__ import annotations
 
-import importlib.resources
 import json
 import logging
 import re
-from pathlib import Path
 from typing import Any, Optional
 
 from openai import APIError
@@ -22,16 +21,8 @@ from .observability import LOGGER_ROOT, stage
 
 logger = logging.getLogger(f"{LOGGER_ROOT}.highlight")
 
-#: The packaged prompt's file name; a pack's file of the same name replaces it.
-PROMPT_FILE = "sys_prompt_highlight.txt"
-
 #: The "|3-80,7-40" suffix of a scored text: key point id - score.
 SCORES = re.compile(r"\|((?:\d+-\d+,?)*)$")
-
-
-def packaged_prompt() -> str:
-    """The highlight prompt shipped in ``common.resources``."""
-    return (Path(str(importlib.resources.files("common.resources"))) / PROMPT_FILE).read_text(encoding="utf-8")
 
 
 def unmarked(text: str) -> str:
@@ -62,14 +53,16 @@ def _dumps(obj: Any) -> str:
 
 class Highlighter:
     """Marks a CV's key-point keywords **bold** and its stacks *italic*. A text whose words the model
-    changed keeps its original; a failed call leaves the CV unmarked."""
+    changed keeps its original; a failed call leaves the CV unmarked. ``prompt`` and ``role`` (the model role
+    called) are the calling pipeline's."""
 
-    def __init__(self, llm: ModelSelector, prompt: Optional[str] = None) -> None:
+    def __init__(self, llm: ModelSelector, prompt: str, role: str) -> None:
         self.llm = llm
-        self.prompt = packaged_prompt() if prompt is None else prompt
+        self.prompt = prompt
+        self.role = role
 
     def highlight(self, key_points: Any, resume: dict, evidence: Any, *, usage: Optional[Usage] = None) -> dict:
-        """The CV with its markers, on the ``highlight`` role. EVIDENCE: for each experience of the CV, the
+        """The CV with its markers, on the caller's role. EVIDENCE: for each experience of the CV, the
         matches of its duties in the profile, with their words. A highlighter that gives no usable answer, or
         whose endpoint refuses the call, leaves the CV unmarked rather than failing a finished job. ``usage``,
         when given, counts the call."""
@@ -77,7 +70,7 @@ class Highlighter:
         with stage("cv.highlight"):
             try:
                 reply = self.llm.call_llm(
-                    "highlight", dict, self.prompt, [{"role": "user", "content": text}], usage=usage
+                    self.role, dict, self.prompt, [{"role": "user", "content": text}], usage=usage
                 )
                 resume = keep_words(reply, resume)
             except (ModelOutputError, APIError) as e:
@@ -88,4 +81,4 @@ class Highlighter:
         return resume
 
 
-__all__ = ["Highlighter", "SCORES", "keep_words", "packaged_prompt", "unmarked"]
+__all__ = ["Highlighter", "SCORES", "keep_words", "unmarked"]

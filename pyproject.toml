@@ -10,7 +10,6 @@
 #                       profile, a CV per job from it; a library on common
 #   src/cv_server/      the HTTP API in front of the pipelines, deployed as a
 #                       container; one set of routes per pipeline (/v1/..., /v2/...)
-#   resources/common/   the highlighter's prompt
 #   resources/v1/       the pipeline's prompts, schemas, template and models
 #   resources/v2/       pipeline 2.0's prompts, template, market list and models
 #   resources/docker/   the image's scripts and vendored fonts, compose.yaml
@@ -69,15 +68,14 @@ ats-strike-contracts = { path = "src/contracts", editable = true }
 requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
-# resources/common, resources/v1 and resources/v2 live outside src/, so each
+# resources/v1 and resources/v2 live outside src/, so each
 # needs its own package-dir entry and an explicit packages list (packages.find
 # only scans "where").
 [tool.setuptools]
-package-dir = { "" = "src", "common.resources" = "resources/common", "pipeline_v1.resources" = "resources/v1", "pipeline_v2.resources" = "resources/v2" }
+package-dir = { "" = "src", "pipeline_v1.resources" = "resources/v1", "pipeline_v2.resources" = "resources/v2" }
 packages = [
     "common",
     "common.models",
-    "common.resources",
     "pipeline_v1",
     "pipeline_v1.resources",
     "pipeline_v2",
@@ -88,7 +86,6 @@ packages = [
 ]
 
 [tool.setuptools.package-data]
-"common.resources" = ["*.txt"]
 "pipeline_v1.resources" = ["*.txt", "*.json", "*.toml", "*.jinja", "*.png"]
 "pipeline_v2.resources" = ["*.txt", "*.json", "*.toml", "*.jinja"]
 

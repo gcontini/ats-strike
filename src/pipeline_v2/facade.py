@@ -61,8 +61,11 @@ from .tree import TreeBuilder
 from .tree_store import Market, Tree, tree_dump, tree_markdown, with_profile
 from .varnish import Varnisher, varnish_markdown
 
-#: The model roles of ``resources/v2/models.toml``.
-ROLES = ("compile", "validation", "allocate", "varnish", "highlight")
+#: The model roles of ``resources/v2/models.toml``. None is a v1 role's name, so an
+#: ``ATS_<ROLE>_<FIELD>`` env override reaches one pipeline only.
+ROLES = ("compile", "review", "allocate", "varnish", "markup")
+#: The role of the highlight call.
+MARKUP = "markup"
 
 #: Wall-clock budget for one CV job, v1's.
 DEFAULT_BUDGET_SECONDS = 1200.0
@@ -346,7 +349,10 @@ class Pipeline:
                 highlighted = Usage()
                 title = profile["job_title"][0]
                 sent = inputs(document(plan, profile, pool, title, varnish), plan, varnish.picks, ctx, pool, items)
-                found = marks(sent[1], Highlighter(self.llm).highlight(*sent, usage=highlighted))
+                found = marks(
+                    sent[1],
+                    Highlighter(self.llm, self.prompts["highlight"], MARKUP).highlight(*sent, usage=highlighted),
+                )
                 run.done("Highlight", highlighted, f"{len(found)} text(s) marked")
 
             run.start("Page layout")

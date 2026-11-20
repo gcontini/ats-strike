@@ -36,7 +36,6 @@ RUN uv sync --frozen --no-dev --no-install-project --no-install-local
 # packages into the venv instead of linking them back to /app/src, so the
 # runtime stage needs nothing but the venv itself.
 COPY src ./src
-COPY resources/common ./resources/common
 COPY resources/v1 ./resources/v1
 COPY resources/v2 ./resources/v2
 RUN uv sync --frozen --no-dev --no-editable

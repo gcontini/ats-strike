@@ -496,7 +496,7 @@ class CVGenerator:
             [m for matches in duty_matches(state, i) for m in matches]
             for i in state["format_selection"]["experience_ids"]
         ]
-        highlighter = Highlighter(self.llm, self.bundle.sys_prompt_highlight)
+        highlighter = Highlighter(self.llm, self.bundle.sys_prompt_highlight, "highlight")
         return {"highlighted_resume": highlighter.highlight(state["key_points"], resume, evidence, usage=self.usage)}
 
     # --- the render ---------------------------------------------------------

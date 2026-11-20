@@ -86,6 +86,14 @@ def test_common_imports_no_pipeline_and_knows_no_http():
     }
 
 
+def test_no_model_role_name_is_in_both_pipelines():
+    """An ``ATS_<ROLE>_<FIELD>`` env override must reach one pipeline only."""
+    from pipeline_v1.facade import MODEL_ROLES
+    from pipeline_v2 import ROLES
+
+    assert not set(MODEL_ROLES) & set(ROLES)
+
+
 def test_pipeline_v1_never_imports_pipeline_v2():
     assert "pipeline_v2" not in imports_of(PACKAGES["pipeline"])
 

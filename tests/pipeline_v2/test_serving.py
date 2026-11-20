@@ -18,7 +18,7 @@ from test_tree import answer as tree_answer
 from v2_helpers import cut
 
 from common.errors import BudgetExceededError
-from pipeline_v2 import ROLES, Pipeline
+from pipeline_v2 import ROLES, Pipeline, resources_dir
 from pipeline_v2 import facade as facade_module
 from pipeline_v2.facade import budget_message
 
@@ -83,7 +83,7 @@ def fake(clock: Clock = None) -> FakeLLM:
         {"id": 2, "requirement": "Agile", "keywords": ["Agile"], "importance": 80, "node": "2.1.1"},
     ]
     llm["compile"].replies = [compile_reply]
-    llm["validation"].replies = ["OK"]
+    llm["review"].replies = ["OK"]
     llm["allocate"].replies = [
         json.dumps({"title": "Cloud Engineer", "requirements": [{**r, "relation": "same"} for r in requirements]})
     ]
@@ -92,12 +92,12 @@ def fake(clock: Clock = None) -> FakeLLM:
         json.dumps({"job_title": "Cloud Engineer", "sentence": ""}),
         json.dumps({"replacements": []}),
     ]
-    llm["highlight"].replies = [lambda body: json.dumps(section(body, "CV"))]
+    llm["markup"].replies = [lambda body: json.dumps(section(body, "CV"))]
     return llm
 
 
 def store_calls(llm: FakeLLM) -> int:
-    return len(llm["compile"].calls) + len(llm["validation"].calls)
+    return len(llm["compile"].calls) + len(llm["review"].calls)
 
 
 def test_the_message_says_which_files_are_built_and_to_run_again():
@@ -126,7 +126,7 @@ def test_an_empty_cache_with_a_short_budget_stores_items_and_tree_then_says_run_
     assert caught.value.stage == "Bullet writing"
     assert "the store holds items.json and tree.json; still to build: pool.json" in str(caught.value)
     assert str(caught.value).endswith("Run this job again to continue.")
-    assert not llm["validation"].calls and not llm["allocate"].calls
+    assert not llm["review"].calls and not llm["allocate"].calls
 
 
 def test_a_second_run_continues_from_the_files_the_first_stored(monkeypatch, tmp_path):
@@ -165,6 +165,8 @@ def test_a_full_cache_makes_no_store_call_and_writes_a_cv(tmp_path):
     llm, sink = fake(), Sink()
     summary = Pipeline(llm=llm).cv({**pack(), **built.cache()}, {"job_description.txt": JD}, {}, tmp_path / "b", sink)
     assert store_calls(llm) == 0
+    system = next(m["content"] for m in llm["markup"].calls[0]["messages"] if m["role"] == "system")
+    assert (resources_dir() / "sys_prompt_highlight.txt").read_text(encoding="utf-8").strip() in system
     assert sink.names("CACHE") == []
     assert sink.statuses == ["Job reading", "Content choice", "Polish", "Highlight", "Page layout"]
     steps = [f"steps/{n}.{x}" for n in ("allocation", "plan") for x in ("json", "md")]

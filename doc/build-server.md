@@ -23,7 +23,7 @@ way.
 flowchart TB
     subgraph s1["stage 1 — build (uv:python3.12-bookworm-slim)"]
         L1["pyproject.toml · uv.lock<br/>+ the contracts' pyproject"] --> L2["uv sync --frozen --no-dev<br/>--no-install-project<br/>--no-install-local"]
-        L2 --> L3["src · resources/common · v1 · v2"]
+        L2 --> L3["src · resources/v1 · v2"]
         L3 --> L4["uv sync --frozen --no-dev --no-editable<br/>→ /app/.venv"]
     end
     subgraph s2["stage 2 — runtime (python:3.12-slim-bookworm)"]

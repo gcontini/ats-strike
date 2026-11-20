@@ -173,3 +173,13 @@ def test_the_analysis_is_optional():
 )
 def test_what_a_cv_request_does_is_decided_by_the_job(names, action):
     assert pack.job_action({name: b"" for name in names}) == action
+
+
+def test_the_highlight_prompt_is_v1s_own_and_a_pack_replaces_it():
+    from pipeline_v1.bundle import default_bundle
+    from pipeline_v1.defaults import packaged_dir
+
+    shipped = default_bundle().sys_prompt_highlight
+    assert shipped == (packaged_dir() / "sys_prompt_highlight.txt").read_text(encoding="utf-8")
+    files = {"sys_prompt_highlight.txt": b"bold less"}
+    assert default_bundle().with_overrides(**pack.bundle_overrides(files)).sys_prompt_highlight == "bold less"

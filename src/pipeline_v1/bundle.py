@@ -21,8 +21,6 @@ from dataclasses import dataclass, field, replace
 from functools import lru_cache
 from typing import Any, Mapping
 
-from common.highlight import packaged_prompt as highlight_prompt
-
 from .defaults import (
     SIGNATURE_FILE,
     TEMPLATE_FILE,
@@ -83,8 +81,7 @@ class CandidateInputs:
 
 @lru_cache(maxsize=1)
 def default_bundle() -> ResourceBundle:
-    """The shipped defaults, read once per process. The highlight prompt is
-    common's, which ``$ATS_RESOURCES`` does not reach.
+    """The shipped defaults, read once per process.
 
     Cached deliberately: these files cannot change under a running server
     without a restart, and re-reading them per request would be a dozen opens
@@ -100,7 +97,7 @@ def default_bundle() -> ResourceBundle:
         cv_duties_schema=read_text_default("cv_duties_schema.json"),
         sys_prompt_validation_body=read_text_default("sys_prompt_validation_body.txt"),
         sys_prompt_validation_duties=read_text_default("sys_prompt_validation_duties.txt"),
-        sys_prompt_highlight=highlight_prompt(),
+        sys_prompt_highlight=read_text_default("sys_prompt_highlight.txt"),
         sys_prompt_letter=read_text_default("sys_prompt_letter.txt"),
         template_source=read_text_default(TEMPLATE_FILE),
         assets={SIGNATURE_FILE: read_bytes_default(SIGNATURE_FILE)},

@@ -12,7 +12,6 @@ src/common/        common        — what the pipelines share: models, observabi
 src/pipeline_v2/   pipeline_v2   — CV pipeline 2.0, being built beside v1
 resources/v1/                    — the pipeline's prompts, schemas, template, models.toml
 resources/v2/                    — pipeline 2.0's prompts, template and models.toml
-resources/common/                — the highlighter's prompt
 ```
 
 The client (`cv_client`, the thing you run: clipboard/watch/submit/render) is
@@ -95,7 +94,7 @@ job's session is the only thing kept
 **`src/common/`** — what every pipeline is built on; no HTTP, imports no pipeline
 - `models/` — `ModelSelector`: one LangChain chat model per role
   (v1's `detect`/`analysis`/`letter` and the six CV steps; v2's `compile`,
-  `validation`, `allocate`, `varnish` and `highlight`) from the `models.toml` a pipeline passes in
+  `review`, `allocate`, `varnish` and `markup`: no name in both, so an env override reaches one) from the `models.toml` a pipeline passes in
   (`resources/v1/`, `resources/v2/`), built by the role's `model_provider`
   (`standard.py` on `ChatOpenAI`, `deepseek.py` on `ChatDeepSeek`), and two
   methods: `call_llm(role, type, system_prompt, messages)`, which returns a
@@ -111,7 +110,8 @@ job's session is the only thing kept
   `LogEntry`s for the run. A CV job's `Run` has a `sink` — its session's
   append — and a running `total`; other requests' lines go to stdout only.
 - `highlight.py` — `Highlighter`: the CV's keywords bold, its stacks italic
-  (its prompt is `resources/common/`).
+  (its prompt is the calling pipeline's: `resources/v1/` or `resources/v2/`
+  `sys_prompt_highlight.txt`).
 - `cv_renderer.py` — `CVRenderer`: Jinja (`\VAR{}`/`\BLOCK{}`
   delimiters, `DictLoader` built fresh per request since the template can be
   client-supplied) → `pdflatex`, sandboxed (`-no-shell-escape`,

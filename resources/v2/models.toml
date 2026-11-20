@@ -1,25 +1,26 @@
 # CV pipeline 2.0 model configuration
 # ===================================
 # The same keys as resources/v1/models.toml, which documents each of them;
-# only the roles differ. Every role calls [provider], unless it sets
+# only the roles differ, and none has a v1 role's name, so an env override reaches
+# one pipeline only. Every role calls [provider], unless it sets
 # use_alternate_provider = N (N >= 2): then MODEL_API_KEY<N> / MODEL_BASE_URL<N>.
 #
 #   compile   compiles the store: the base items and stories (S1), the
 #             competence tree's shape and its links to the items (S2), and
 #             the pool: role summaries, ladders and groups, skill phrases and
 #             summary frames (S3)
-#   validation  reviews the pool against its items, as v1's validation of an
-#             experience (S4)
+#   review    Bullet review: the pool reviewed against the profile, as v1's
+#             validation of an experience (S4)
 #   allocate  places a job description's requirements on the competence tree
 #             (S5)
 #   varnish   one CV's three finishing calls: a wording per slot and a title
 #             per experience, the headline and the summary's sentence, the
 #             job's missing terms into the summary and the bullets (S8)
-#   highlight the **bold**/*italic* keyword pass, common's highlighter and
-#             prompt, as in v1 (S9)
+#   markup    Highlight: the **bold**/*italic* keyword pass, common's
+#             highlighter with v2's copy of v1's prompt (S9)
 #
 # Every key of a [models.<role>] table can be overridden with an env var,
-# ATS_<ROLE>_<FIELD> (ATS_COMPILE_MODEL, ATS_COMPILE_EXTRA_BODY, ...), as in v1.
+# ATS_<ROLE>_<FIELD> (ATS_COMPILE_MODEL, ATS_MARKUP_EXTRA_BODY, ...), as in v1.
 
 [provider]
 api_key_env  = "MODEL_API_KEY"
@@ -39,7 +40,7 @@ extra_body             = { thinking_budget = 8000 }
 
 # Reviews the pool, one experience at a time, up to five rounds each (S4). v1's settings for its
 # validation role (resources/v1/models.toml): DeepSeek's own API, tool calls of replace_in_duties.
-[models.validation]
+[models.review]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2
@@ -62,9 +63,9 @@ model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "xhigh"
 
-# The **bold**/*italic* pass, one call per CV after the varnish (S9): common's highlighter and its prompt,
-# with v1's settings for the same role (resources/v1/models.toml).
-[models.highlight]
+# The **bold**/*italic* pass, one call per CV after the varnish (S9): common's highlighter with v2's prompt,
+# and v1's settings for its highlight role (resources/v1/models.toml).
+[models.markup]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2

@@ -11,8 +11,8 @@ outside the scratch directory it is handed.
 - ``errors`` — the failures a pipeline raises, each with a kind and a stage.
 - ``parsing`` — a rejected reply, logged short.
 - ``highlight`` — :class:`Highlighter`: a CV's keywords marked bold, its
-  stacks italic.
+  stacks italic, with the prompt the calling pipeline ships.
 - ``cv_renderer`` — structured CV data in, a compiled PDF out, in a sandbox.
 
-Its one prompt is ``resources/common``, packaged as ``common.resources``.
+It ships no prompt: each pipeline brings its own.
 """

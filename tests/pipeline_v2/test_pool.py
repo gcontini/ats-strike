@@ -880,7 +880,7 @@ def reviewing(replacements: list) -> FakeLLM:
             return tool_completion("fake-validation", [("replace_in_duties", r) for r in replacements])
         return "OK"
 
-    llm["validation"].replies = [answer]
+    llm["review"].replies = [answer]
     return llm
 
 
@@ -919,13 +919,13 @@ def test_a_replacement_is_applied_to_the_piece_and_nothing_else(long_items, long
         }
     ]
     first = next(
-        c for c in llm["validation"].calls if "Example Bank" in user_text(c) and "ATTEMPT: 1\n" in user_text(c)
+        c for c in llm["review"].calls if "Example Bank" in user_text(c) and "ATTEMPT: 1\n" in user_text(c)
     )
     shown = user_text(first)
     assert '"duty_ids": [\n    "e0.compact",\n    "e0.s01.r1.a"' in shown
     assert dumps(long_profile["experiences"][0]) in shown and "Example Shop" not in shown  # its own experience
     assert first["tools"][0]["function"]["name"] == "replace_in_duties"
-    assert len(llm["validation"].calls) == 3  # e0 twice (the fix, then OK), e1 once
+    assert len(llm["review"].calls) == 3  # e0 twice (the fix, then OK), e1 once
     assert moves == []
     assert "- **e0.compact** (round 1)" in review_markdown(calls, moves)
 
@@ -953,7 +953,7 @@ def test_a_replacement_is_refused_on_each_piece_whose_line_count_it_changes(long
         "'Moved the platform work' refused in duty 2: it would fill 2 printed line(s), more than 1 "
         "(100 characters, 96 a line); duty 10: "
     )
-    retry = next(c for c in llm["validation"].calls if "ATTEMPT: 2\n" in user_text(c))
+    retry = next(c for c in llm["review"].calls if "ATTEMPT: 2\n" in user_text(c))
     assert (
         "FAILED REPLACEMENTS:\n'Moved the platform work' refused in duty 2: "
         "it would fill 2 printed line(s), more than 1" in user_text(retry)

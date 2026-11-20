@@ -1,4 +1,4 @@
-"""The pool's review: v1's duties validation, one experience at a time, on the ``validation`` role.
+"""The pool's review: v1's duties validation, one experience at a time, on the ``review`` role.
 
 Each experience is one review, all of them side by side (LangGraph ``Send``). The model is shown
 the profile's experience as the evidence (EXPERIENCE), as v1 and the S0 probe showed it, and every
@@ -37,7 +37,7 @@ from .store import _plain
 
 logger = logging.getLogger("pipeline_v2.pool_review")
 
-ROLE = "validation"
+ROLE = "review"
 STAGE = "Bullet review"
 #: Rounds per experience, as v1's validation. After the last one the pool keeps the last edits.
 MAX_ROUNDS = 5

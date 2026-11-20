@@ -1,8 +1,9 @@
 """The highlight for one job (step 9): the three inputs :class:`common.highlight.Highlighter` reads,
 built from the varnished document as v1 builds them, and its markers laid back over the document.
 
-The highlighter, its prompt and its rules are ``common``'s, unchanged: one prompt and one code path
-for every pipeline. v2 only feeds it:
+The highlighter and its rules are ``common``'s, unchanged: one code path for every pipeline. Its
+prompt is v2's own (``resources/v2/sys_prompt_highlight.txt``, a copy of v1's when split), so the
+two pipelines can tune it apart. v2 feeds it:
 
 - **KEY POINTS:** S5's requirements as ``{id, requirement, keywords, importance}``, most important
   first.

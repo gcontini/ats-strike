@@ -150,8 +150,8 @@ $ATS_RESOURCES/
     └── models.toml
 ```
 
-Anything missing there falls back to the built-in copy. The highlight prompt
-is shared by every pipeline (`resources/common/`) and is not read from there.
+Anything missing there falls back to the built-in copy, the highlight prompt
+(`sys_prompt_highlight.txt`) included: each pipeline ships its own.
 To change any of them for one request, send them in the pack — that is what
 the client does with every file in its server folder.
 
