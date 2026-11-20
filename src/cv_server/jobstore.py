@@ -1,6 +1,8 @@
 """Where a CV session lives: a directory of events, one file each.
 
-One directory per session under ``ATS_WORK_DIR``, named by its id::
+One directory per session under ``ATS_WORK_DIR``, named by its id, in a
+directory per pipeline (the server makes one :class:`JobStore` per pipeline,
+rooted at ``ATS_WORK_DIR/<pipeline>``)::
 
     <root>/<request_id>/events/
         000001.json   {"type": "status", "data": {...}}

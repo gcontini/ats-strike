@@ -30,6 +30,10 @@ You need to provide:
 - The job description
 - You api key and model configurations 
 
+## Contributing
+
+**KEEP IT SIMPLE. Do not add unwanted features. State the limitation and stop. Keep the code simple.**
+
 ## Will it work for me?
 
 It started as my own personal lab to learn AI assisted coding and to pass the ATS with flying colors. It's not tested across different cv formats and sizes. It's sized for a well established professional with >10 

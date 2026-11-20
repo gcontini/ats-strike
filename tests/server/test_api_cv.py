@@ -22,7 +22,6 @@ from fastapi.testclient import TestClient
 from cv_contracts import Done, Failure, Status, StoreItem
 
 from cv_server.api.app import create_app
-from cv_server.jobstore import JobStore
 
 from server_helpers import (
     POSTING,
@@ -75,7 +74,7 @@ def test_a_job_in_flight_is_a_session_that_has_started(client, stub, app_state):
     gate = hold(stub)
     try:
         request_id = start_cv(client)
-        events = app_state.jobs.open(request_id).events()
+        events = app_state.jobs("v1").open(request_id).events()
         assert events == [(1, "status", {"status": "started", "detail": ""})]
     finally:
         gate.set()
@@ -95,8 +94,8 @@ def test_following_leaves_nothing_behind(client, stub, app_state):
         read_events(client, request_id)
 
     assert stub.calls[0][-1] is True, "the job had a scratch directory"
-    assert [p.name for p in app_state.settings.work_root.iterdir()] == [request_id]
-    assert [p.name for p in (app_state.settings.work_root / request_id).iterdir()] == ["events"]
+    assert [p.name for p in app_state.jobs("v1").root.iterdir()] == [request_id]
+    assert [p.name for p in (app_state.jobs("v1").root / request_id).iterdir()] == ["events"]
 
 
 def test_a_bad_request_starts_no_session(client, stub, app_state):
@@ -255,7 +254,7 @@ def test_a_reset_deletes_every_session_but_a_running_one(client, stub, app_state
         response = client.delete("/v1/cv?all")
         assert response.status_code == 200
         assert response.json()["data"] == {"deleted": 2, "running": 1}
-        assert [p.name for p in app_state.settings.work_root.iterdir()] == ["busy"]
+        assert [p.name for p in app_state.jobs("v1").root.iterdir()] == ["busy"]
     finally:
         gate.set()
     read_events(client, "busy")
@@ -271,7 +270,7 @@ def test_an_expired_session_is_not_replayed(client, app_state):
     """Older than the TTL, it is pruned before the lookup: a new job starts."""
     read_events(client, start_cv(client, request_id="old-posting"))
     day_and_more = time.time() - 86400 * app_state.settings.session_ttl_days - 60
-    for path in (app_state.settings.work_root / "old-posting" / "events").iterdir():
+    for path in (app_state.jobs("v1").root / "old-posting" / "events").iterdir():
         os.utime(path, (day_and_more, day_and_more))
 
     again = client.post("/v1/cv", files=a_job(), headers={"X-Request-Id": "old-posting"})
@@ -282,7 +281,7 @@ def test_an_expired_session_is_not_replayed(client, app_state):
 def test_a_job_a_previous_process_left_running_ends_with_an_error(app_state):
     """A fresh process owns no workers, so the session is closed for it — a
     client following it stops waiting."""
-    job = JobStore(app_state.settings.work_root).create("orphan")
+    job = app_state.jobs("v1").create("orphan")
     job.append("status", Status(status="validation").model_dump(mode="json"))
 
     with TestClient(create_app(state=app_state)) as fresh:

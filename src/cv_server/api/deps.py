@@ -41,10 +41,12 @@ class AppState:
     pipelines: Dict[str, Any]
     job_slots: BoundedSemaphore
 
-    @property
-    def jobs(self) -> JobStore:
-        """The CV sessions. A value over a path, not shared state."""
-        return JobStore(self.settings.work_root)
+    def jobs(self, pipeline: str) -> JobStore:
+        """One pipeline's CV sessions, under ``<work root>/<pipeline>/``. A value
+        over a path, not shared state. Apart because the client keys a session
+        by the posting alone: the same posting sent to ``/v1`` and ``/v2`` is two
+        jobs, not one to reattach to."""
+        return JobStore(self.settings.work_root / pipeline)
 
     @classmethod
     def build(cls, settings: Settings) -> "AppState":
@@ -66,6 +68,11 @@ def get_state(request: Request) -> AppState:
 def get_pipeline(request: Request) -> Any:
     """The pipeline the path names by its first segment (``/v1/cv`` → ``v1``)."""
     return get_state(request).pipelines[request.url.path.split("/")[1]]
+
+
+def get_jobs(request: Request) -> JobStore:
+    """The CV sessions of the pipeline the path names."""
+    return get_state(request).jobs(request.url.path.split("/")[1])
 
 
 def get_text_pipeline(request: Request) -> Pipeline:
@@ -158,6 +165,7 @@ __all__ = [
     "AppState",
     "Collected",
     "get_state",
+    "get_jobs",
     "get_pipeline",
     "get_text_pipeline",
     "require_token",

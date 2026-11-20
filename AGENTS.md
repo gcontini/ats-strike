@@ -1,5 +1,7 @@
 # Working in this repository
 
+**KEEP IT SIMPLE. Do not add unwanted features. State the limitation and stop. Keep the code simple.**
+
 Rules the code follows. They are not style preferences; each one is here
 because breaking it has a cost we have already paid once.
 

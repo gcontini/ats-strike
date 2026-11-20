@@ -129,7 +129,7 @@ def _fail_orphans(state: AppState) -> None:
     instance per work root: the semaphore and the workers are per-process, so
     a second one would declare a live job dead.
     """
-    for job in state.jobs.all():
+    for job in (job for name in state.pipelines for job in state.jobs(name).all()):
         if not job.running:
             continue
         job.append(

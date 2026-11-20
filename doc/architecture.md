@@ -75,7 +75,7 @@ database, no accounts and no seeded state; the only thing it keeps is a CV
 job's session, one directory of events:
 
 ```text
-$ATS_WORK_DIR/<session id>/events/
+$ATS_WORK_DIR/<pipeline>/<session id>/events/
     000001.json   {"type": "status", "data": {"status": "started", ...}}
     000002.json   {"type": "store", "data": {"type": "log", ...}}       a log line
     000003.json   {"type": "store", "data": {"type": "step", ...}}      a step's result
@@ -90,7 +90,8 @@ be appended to, and a rename is a copy. A reader lists the directory and reads
 what is new; the one file that may not read whole yet is the newest, so a
 reader stops there and finds it complete on its next look. The session id is
 the client's: the SHA-256 of the posting's text, so the same posting finds its
-session again. A session is deleted when the client acknowledges it, or once
+session again. Each pipeline keeps its own sessions, so the same posting sent
+to `/v1` and to `/v2` is two jobs. A session is deleted when the client acknowledges it, or once
 its last event is older than `ATS_SESSION_TTL_DAYS`; a running one, never.
 The scratch directory a job compiles in is on local disk, and is gone with the
 job.

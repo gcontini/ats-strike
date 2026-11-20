@@ -31,7 +31,7 @@ from starlette.concurrency import run_in_threadpool
 
 from ...jobstore import JobDir
 from .. import jobs
-from ..deps import claim_slot, envelope_for, envelope_of, execute, get_pipeline, get_state
+from ..deps import claim_slot, envelope_for, envelope_of, execute, get_jobs, get_pipeline, get_state
 from ..errors import ApiError, JobNotReady, UnknownRequest
 from ..multipart import JOB, PACK, SETTINGS, read_request
 
@@ -58,7 +58,7 @@ async def create_cv(
         return pipeline.cv(parts.pack, parts.job, parts.settings, scratch, sink)
 
     run = current_run()
-    store = state.jobs
+    store = get_jobs(request)
     # Expired sessions go first, so an old one for this id cannot be found.
     await run_in_threadpool(store.prune, state.settings.session_ttl_days * 86400)
     if await run_in_threadpool(store.open, run.request_id) is not None:
@@ -102,12 +102,12 @@ async def reset(
     """Delete every session whose job is not running."""
     if everything is None:
         raise ApiError("DELETE /v1/cv deletes every session: say so with ?all")
-    deleted, running = await run_in_threadpool(get_state(request).jobs.prune, 0)
+    deleted, running = await run_in_threadpool(get_jobs(request).prune, 0)
     return envelope_of(Cleanup(deleted=deleted, running=running))
 
 
 def _session(request: Request, request_id: str) -> JobDir:
-    job = get_state(request).jobs.open(request_id)
+    job = get_jobs(request).open(request_id)
     if job is None:
         raise UnknownRequest(
             f"no CV session {request_id} — it was acknowledged, it is older than "

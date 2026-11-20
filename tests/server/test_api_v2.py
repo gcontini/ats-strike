@@ -29,7 +29,7 @@ def client(app_state, v2):
 def test_the_cv_and_its_render_run_v2(client, stub, v2):
     response = client.post("/v2/cv", files=a_job(), headers={"X-Request-Id": "v2-posting"})
     assert response.status_code == 202
-    assert read_events(client, "v2-posting")[-1][1] == "done"
+    assert read_events(client, "v2-posting", prefix="/v2")[-1][1] == "done"
     assert client.post("/v2/cv/render", files=files(job={"cv.json": b"{}"})).status_code == 200
     assert [c[0] for c in v2.calls] == ["cv", "render"]
     assert stub.calls == []
@@ -51,3 +51,14 @@ def test_an_unknown_prefix_is_a_404(client):
 def test_health_reports_both_pipelines(client):
     models = client.get("/healthz").json()["data"]["models"]
     assert models == {"v1.cv": "stub-cv", "v1.detect": "stub-detect", "v2.compile": "stub-compile"}
+
+
+def test_the_same_posting_on_v1_and_v2_is_two_sessions(client, stub, v2):
+    """The client keys a session by the posting alone, so each pipeline keeps its own."""
+    for prefix in ("/v1", "/v2"):
+        response = client.post(f"{prefix}/cv", files=a_job(), headers={"X-Request-Id": "same-posting"})
+        assert response.json()["data"] == {"reattached": False}, prefix
+    assert read_events(client, "same-posting")[-1][1] == "done"
+    assert read_events(client, "same-posting", prefix="/v2")[-1][1] == "done"
+    assert [c[0] for c in stub.calls] == ["cv"] and [c[0] for c in v2.calls] == ["cv"]
+    assert client.get("/v2/cv/same-posting/events").status_code == 200

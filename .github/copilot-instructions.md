@@ -1,5 +1,7 @@
 # Copilot Instructions — ats-strike
 
+**KEEP IT SIMPLE. Do not add unwanted features. State the limitation and stop. Keep the code simple.**
+
 **ats-strike** turns a job description into a tailored, two-page LaTeX CV and
 an optional cover letter. It is one `uv` project, with the contracts as a
 path dependency:

@@ -125,7 +125,7 @@ to.
 | `WEB_CONCURRENCY` | `1` | uvicorn worker processes |
 | `ATS_API_TOKEN` | unset | Bearer token clients must send. **Unset means no auth.** |
 | `ATS_RESOURCES` | baked in | Directory of replacement prompts/template/`models.toml`, one sub-folder per pipeline (`v1/`) |
-| `ATS_WORK_DIR` | system temp | Where CV sessions are kept, one directory of events each |
+| `ATS_WORK_DIR` | system temp | Where CV sessions are kept, one directory of events each, under a directory per pipeline (`v1/`, `v2/`) |
 | `ATS_SESSION_TTL_DAYS` | `1` | Days a session nobody acknowledged is kept after its last event |
 | `ATS_MAX_CONCURRENT_JOBS` | `10` | Requests in flight; the rest get `429` |
 | `ATS_LATEX_TIMEOUT` | `120` | Seconds before a compile is killed (read by the pipeline) |

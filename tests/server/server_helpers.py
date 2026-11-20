@@ -147,20 +147,20 @@ def start_cv(
     return response.json()["request_id"]
 
 
-def read_events(client, request_id: str, *, after: int = 0) -> list[tuple[int, str, dict]]:
+def read_events(client, request_id: str, *, after: int = 0, prefix: str = "/v1") -> list[tuple[int, str, dict]]:
     """Follow a session's stream to its end: ``[(id, type, data), ...]``.
 
     The stream ends with the job's last event, so this waits for the job; the
     stub answers at once, and a closed gate gives up after ten seconds.
     """
-    return [event for event in raw_events(client, request_id, after=after) if event[1] != "ping"]
+    return [event for event in raw_events(client, request_id, after=after, prefix=prefix) if event[1] != "ping"]
 
 
-def raw_events(client, request_id: str, *, after: int = 0) -> list[tuple[int, str, dict]]:
+def raw_events(client, request_id: str, *, after: int = 0, prefix: str = "/v1") -> list[tuple[int, str, dict]]:
     """The same, with each keep-alive comment as a ``(0, "ping", {})``."""
     headers = {"Last-Event-ID": str(after)} if after else {}
     events, fields = [], {}
-    with client.stream("GET", f"/v1/cv/{request_id}/events", headers=headers) as response:
+    with client.stream("GET", f"{prefix}/cv/{request_id}/events", headers=headers) as response:
         assert response.status_code == 200, response.read()
         assert response.headers["content-type"].startswith("text/event-stream")
         for line in response.iter_lines():
