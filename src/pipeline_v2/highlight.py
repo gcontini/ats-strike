@@ -23,6 +23,7 @@ Pure: values in, values out.
 
 from __future__ import annotations
 
+import re
 from typing import Any, Dict, List, Mapping, Sequence, Tuple
 
 from common.highlight import SCORES
@@ -143,10 +144,26 @@ def marked(doc: Mapping[str, Any], found: Mapping[str, str]) -> Dict[str, Any]:
     }
 
 
+def highlight_markdown(doc: Mapping[str, Any]) -> str:
+    """The view's Highlight section: the bold and italic phrases ``doc`` prints, each with where
+    (skills, summary, eN role / bullet / compact)."""
+    texts = [("skills", t) for t in doc["skills"]] + [("summary", doc["summary"])]
+    for n, e in enumerate(doc["experiences"]):
+        texts += [(f"e{n} role", e["role_summary"]), *((f"e{n} bullet", d) for d in e["duties"])]
+        texts += [(f"e{n} compact", e["compact"])]
+    bold = [f"{b} ({where})" for where, t in texts for b in re.findall(r"\*\*([^*]+)\*\*", t)]
+    italics = [f"{i} ({where})" for where, t in texts for i in re.findall(r"(?<!\*)\*([^*]+)\*(?!\*)", t)]
+    return (
+        f"\n## Highlight\n\nBold ({len(bold)}): {'; '.join(bold) or '(none)'}\n\n"
+        f"Italics ({len(italics)}): {'; '.join(italics) or '(none)'}\n"
+    )
+
+
 __all__ = [
     "SCORE_PER_LEVEL",
     "cv",
     "evidence",
+    "highlight_markdown",
     "inputs",
     "key_points",
     "marked",

@@ -7,19 +7,19 @@
 #                       errors, the highlighter, the validation loop, the renderer
 #   src/pipeline_v1/    everything that makes a CV: LLM calls + pdflatex; no HTTP
 #   src/pipeline_v2/    CV pipeline 2.0, beside v1: a store compiled once per
-#                       profile; a library on common, not served yet
+#                       profile, a CV per job from it; a library on common
 #   src/cv_server/      the HTTP API in front of the pipelines, deployed as a
-#                       container; one set of routes per pipeline (/v1/...)
+#                       container; one set of routes per pipeline (/v1/..., /v2/...)
 #   resources/common/   the highlighter's prompt
 #   resources/v1/       the pipeline's prompts, schemas, template and models
-#   resources/v2/       pipeline 2.0's prompts, template and models
+#   resources/v2/       pipeline 2.0's prompts, template, market list and models
 #   resources/docker/   the image's scripts and vendored fonts, compose.yaml
 #
 # The client is the ats-strike-client repository, and the tests that run the
 # two together are ats-integration-tests.
 #
-# Dependency direction is one-way: contracts <- server -> pipeline_v1 ->
-# common <- pipeline_v2. The pipelines import none of the others;
+# Dependency direction is one-way: contracts <- server -> pipeline_v1,
+# pipeline_v2 -> common. The pipelines import none of the others;
 # tests/test_architecture.py enforces it.
 #
 #     uv sync                 install the server and the contracts into .venv
@@ -90,7 +90,7 @@ packages = [
 [tool.setuptools.package-data]
 "common.resources" = ["*.txt"]
 "pipeline_v1.resources" = ["*.txt", "*.json", "*.toml", "*.jinja", "*.png"]
-"pipeline_v2.resources" = ["*.txt", "*.toml", "*.jinja"]
+"pipeline_v2.resources" = ["*.txt", "*.json", "*.toml", "*.jinja"]
 
 [dependency-groups]
 dev = [

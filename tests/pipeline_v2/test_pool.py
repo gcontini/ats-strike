@@ -839,7 +839,7 @@ def test_a_broken_json_goes_back_once_with_where_it_breaks(long_items, long_tree
     assert "- the JSON breaks at character" in sent[1]["messages"][-1]["content"]
 
 
-def test_a_reply_that_stays_wrong_fails_with_stage_pool(long_items, long_tree, long_profile):
+def test_a_reply_that_stays_wrong_fails_with_stage_bullet_writing(long_items, long_tree, long_profile):
     def bad_rung(body):
         if kind(body) != "ladder":
             return answer(body)
@@ -850,7 +850,7 @@ def test_a_reply_that_stays_wrong_fails_with_stage_pool(long_items, long_tree, l
 
     with pytest.raises(ModelOutputError) as caught:
         write(fake(bad_rung), long_items, long_tree, long_profile)
-    assert caught.value.stage == "pool"
+    assert caught.value.stage == "Bullet writing"
     assert "rung 4 (1, 2 or 3)" in str(caught.value) and "wording 'c' (a or b)" in str(caught.value)
 
 

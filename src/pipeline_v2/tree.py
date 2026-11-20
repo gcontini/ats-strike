@@ -62,7 +62,7 @@ from .tree_store import (
 logger = logging.getLogger("pipeline_v2.tree")
 
 ROLE = "compile"
-STAGE = "tree"
+STAGE = "Skill tree"
 
 T = TypeVar("T")
 

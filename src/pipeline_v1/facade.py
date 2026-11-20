@@ -19,21 +19,13 @@ import json
 import os
 import shutil
 import time
-from contextlib import contextmanager
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterator, Mapping, Protocol, Union
-
-from openai import APIConnectionError, APIError, APITimeoutError
+from typing import Any, Dict, Mapping
 
 from common.cv_renderer import DEFAULT_LATEX_TIMEOUT, CVRenderer
-from common.errors import (
-    MissingPartError,
-    ProviderError,
-    ProviderTimeoutError,
-    ProviderUnreachableError,
-)
+from common.errors import MissingPartError, provider_errors
 from common.models import ModelSelector, build_selector
+from common.outputs import Output, Sink
 
 from . import pack as packs
 from .bundle import ResourceBundle, default_bundle
@@ -64,43 +56,8 @@ MODEL_ROLES = (
 DEFAULT_BUDGET_SECONDS = 1200.0
 
 
-@dataclass(frozen=True)
-class Output:
-    """One thing to store: a step's result, or the CV."""
-
-    location: str  # "CV" | "CACHE"
-    type: str  # "step" | "cv"
-    name: str
-    content: Union[str, bytes]
-
-
-class Sink(Protocol):
-    """Where a long call reports: what runs now, and each output as it is ready."""
-
-    def status(self, status: str, detail: str = "") -> None: ...
-
-    def store(self, output: Output) -> None: ...
-
-
 def _json(data: Any) -> str:
     return json.dumps(data, indent=2, ensure_ascii=False)
-
-
-@contextmanager
-def _provider_errors() -> Iterator[None]:
-    """A model endpoint's failure, as a :class:`PipelineError` of its kind."""
-    try:
-        yield
-    except APIError as exc:
-        # A timeout is a connection error too, so it is asked first.
-        failure = (
-            ProviderTimeoutError
-            if isinstance(exc, APITimeoutError)
-            else ProviderUnreachableError
-            if isinstance(exc, APIConnectionError)
-            else ProviderError
-        )
-        raise failure(f"the model endpoint failed: {type(exc).__name__}") from exc
 
 
 class Pipeline:
@@ -139,7 +96,7 @@ class Pipeline:
 
     def detect(self, jd: str) -> bool:
         """Is this text a job posting? The model call only."""
-        with _provider_errors():
+        with provider_errors():
             return JDValidator(self.llm).detect(jd).is_job_description
 
     def analyze(self, pack: Files, job: Files, settings: Mapping) -> Dict[str, Any]:
@@ -148,7 +105,7 @@ class Pipeline:
         prompt = packs.analysis_prompt(pack)
         jd = packs.jd_text(job)
         llm = self.llm.with_extra_body(packs.extra_bodies(settings, packs.ANALYSIS_ROLES))
-        with _provider_errors():
+        with provider_errors():
             return JDValidator(llm).analyze(jd, candidate, prompt).model_dump(mode="json")
 
     def letter(self, pack: Files, job: Files, settings: Mapping) -> str:
@@ -158,7 +115,7 @@ class Pipeline:
         jd = packs.jd_text(job)
         analysis = packs.job_analysis(job)
         llm = self.llm.with_extra_body(packs.extra_bodies(settings, packs.LETTER_ROLES))
-        with _provider_errors():
+        with provider_errors():
             return LetterGenerator(llm, system_prompt=bundle.sys_prompt_letter).generate(
                 jd, profile=candidate.profile, candidate_data=candidate.data, analysis=analysis
             )
@@ -180,7 +137,7 @@ class Pipeline:
         def artifact(name: str, data: Any) -> None:
             sink.store(Output("CV", "step", f"steps/{name}.json", _json(data)))
 
-        with _provider_errors():
+        with provider_errors():
             document, tex, pdf, summary = CVGenerator(
                 llm=llm,
                 bundle=bundle,

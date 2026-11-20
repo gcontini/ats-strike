@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from server_helpers import Failing, StubPipeline, a_job, logs
+from server_helpers import Failing, a_job, logs
 
 
 def test_returns_the_letter_and_what_it_logged(client, stub):
@@ -28,17 +28,3 @@ def test_a_letter_that_never_validates_is_a_502(client, stub):
     assert response.status_code == 502
     assert "letter.generate" in response.json()["error"]
     assert "data" not in response.json(), "a failure carries no items"
-
-
-def test_each_prefix_reaches_its_own_pipeline(app_state, stub):
-    from fastapi.testclient import TestClient
-
-    from cv_server.api.app import create_app
-
-    other = StubPipeline()
-    other.text = "Dear v2"
-    app_state.pipelines["v2"] = other
-    with TestClient(create_app(state=app_state)) as client:
-        assert client.post("/v1/letter", files=a_job()).json()["data"]["text"] == stub.text
-        assert client.post("/v2/letter", files=a_job()).json()["data"]["text"] == "Dear v2"
-        assert client.post("/v3/letter", files=a_job()).status_code == 404

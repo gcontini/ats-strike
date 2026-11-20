@@ -3,7 +3,7 @@
 These are not style checks: the contracts are imported by the client too (the
 ats-strike-client repository, which has its own copy of these rules), so they
 must stay cheap, and the pipeline must stay a library. The direction is
-``contracts <- server -> pipeline_v1 -> common <- pipeline_v2``: the server is
+``contracts <- server -> pipeline_v1, pipeline_v2 -> common``: the server is
 the protocol, a pipeline everything that makes a CV, and ``common`` what the
 pipelines share; none of them knows HTTP or the wire format. Pipeline 2.0 sits
 beside v1 under the same rules, and takes only ``common``, never v1.
@@ -90,8 +90,8 @@ def test_pipeline_v1_never_imports_pipeline_v2():
     assert "pipeline_v2" not in imports_of(PACKAGES["pipeline"])
 
 
-def test_the_server_does_not_serve_pipeline_v2_yet():
-    assert "pipeline_v2" not in imports_of(PACKAGES["server"])
+def test_the_server_serves_both_pipelines():
+    assert {"pipeline_v1", "pipeline_v2"} <= imports_of(PACKAGES["server"])
 
 
 def test_the_server_carries_no_model_latex_or_templating_library():
@@ -110,9 +110,9 @@ def test_the_server_uses_only_the_pipelines_top_level():
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
-                reached += [a.name for a in node.names if a.name.startswith("pipeline_v1.")]
+                reached += [a.name for a in node.names if a.name.startswith(("pipeline_v1.", "pipeline_v2."))]
             elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
-                if node.module.startswith("pipeline_v1."):
+                if node.module.startswith(("pipeline_v1.", "pipeline_v2.")):
                     reached.append(node.module)
     assert reached == []
 

@@ -79,7 +79,7 @@ from .tree_store import Tree, leaf_status, level
 logger = logging.getLogger("pipeline_v2.pool")
 
 ROLE = "compile"
-STAGE = "pool"
+STAGE = "Bullet writing"
 #: Most stories in one ladder call; a long story is always alone.
 BATCH = 4
 

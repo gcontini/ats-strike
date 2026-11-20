@@ -38,7 +38,7 @@ from .tree_store import Tree, leaf_status, level, parent
 logger = logging.getLogger("pipeline_v2.allocate")
 
 ROLE = "allocate"
-STAGE = "allocate"
+STAGE = "Job reading"
 #: Items the JD evaluation adds to every list; they ask for no competence.
 META = ("success stories", "concrete examples")
 #: What a requirement placed with each relation counts of its importance (S0's selector).

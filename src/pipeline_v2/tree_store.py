@@ -13,10 +13,10 @@ from __future__ import annotations
 
 import json
 import re
-from collections import defaultdict
+from collections import Counter, defaultdict
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence
 
-from .store import Item, Items, _sha256, _Strict
+from .store import Item, Items, _sha256, _Strict, squash
 from .terms import has_term, norm
 
 #: A leaf linked to more items than this is too broad to select by.
@@ -90,6 +90,29 @@ def parent(node_id: str) -> Optional[str]:
 def terms_of(node: Node, counts_as: bool = True) -> List[str]:
     """The node's name and aliases, and its counts-as terms unless ``counts_as`` is false."""
     return [node.name, *node.aliases, *(node.counts_as if counts_as else [])]
+
+
+def market_order(term: MarketTerm) -> tuple:
+    """The market list's order: the most common in the corpus texts first."""
+    return (-term.share, -term.jobs, -term.asked, term.term.lower())
+
+
+def with_profile(market: Market, items: Items, skills: Sequence[str]) -> Market:
+    """The market the shape call reads: the corpus part shipped in ``resources/v2/market.json``,
+    joined with the profile's own terms — the items' tech and the skills list, each skill whole.
+
+    A term the corpus part holds keeps its counts. One it does not hold is added with none: its
+    counts would come from the job descriptions, which the server does not have. Its spelling is
+    the one the profile uses most.
+    """
+    have = {norm(t.term) for t in market.terms}
+    spellings: Dict[str, Counter] = defaultdict(Counter)
+    for term in [t for i in items.items for t in i.tech] + list(skills):
+        key = norm(term)
+        if key and key not in have:
+            spellings[key][term.strip()] += 1
+    added = [MarketTerm(term=squash(c.most_common(1)[0][0]), jobs=0, asked=0.0, share=0.0) for c in spellings.values()]
+    return market.model_copy(update={"terms": sorted([*market.terms, *added], key=market_order)})
 
 
 def market_sha256(market: Market) -> str:
@@ -462,6 +485,7 @@ __all__ = [
     "leaf_links",
     "leaf_status",
     "level",
+    "market_order",
     "market_sha256",
     "parent",
     "propose_outside",
@@ -470,4 +494,5 @@ __all__ = [
     "tree_markdown",
     "unasked",
     "validate_tree",
+    "with_profile",
 ]

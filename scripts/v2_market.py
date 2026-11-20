@@ -1,7 +1,7 @@
-"""Dev runner of S2: the market list the competence tree is named by, with no model call.
+"""The build tool of ``resources/v2/market.json``: the corpus part of the market list the skill tree is
+named by, with no model call.
 
-    uv run python scripts/v2_market.py <data folder> --out <dir> --hold-out <file> --exclude-jds <dir>
-        [--items <items.json> --profile <candidate_profile.json>]
+    uv run python scripts/v2_market.py <data folder> --out resources/v2 --hold-out <file> --exclude-jds <dir>
 
 Reads ``job_description.txt`` and ``analysis.json`` of every run under the data folder
 (``discarded/*/*``, ``CV/*/*``, ``incoming/*``) and ``CV/*/*/steps/key_points.json``. Dedups the job
@@ -12,15 +12,17 @@ descriptions (``--exclude-jds``, 8-word shingle Jaccard >= 0.5) and of the held-
 
 - Requirements and keywords: the key points of the v1 runs that are not held out (build runs).
 - Corpus terms: the ``hard_skills`` of every corpus analysis with ``match_percentage`` >= 40,
-  compounds split; plus the items' tech (``--items``) and the skills list (``--profile``), each
-  skill whole and its parts that stand alone (below).
-- Kept: terms asked by 2+ build runs, or in the profile, or in 3+ of those analyses and standing
-  alone somewhere (a whole hard skill of an analysis, or a build run's keyword): a part split off
-  "Business and IT alignment" is not a term. The shape call's input stays under about 30k tokens:
-  the rarest corpus terms are cut first.
+  compounds split.
+- Kept: terms asked by 2+ build runs, or in 3+ of those analyses and standing alone somewhere (a
+  whole hard skill of an analysis, or a build run's keyword): a part split off "Business and IT
+  alignment" is not a term. The market part of the shape call's input stays under about 30k
+  tokens: the rarest terms are cut first. A real profile's items add about 7k.
+- No employer names: a term, a requirement or a keyword spelled as a company name of the corpus's
+  analyses is dropped.
 
-Everything it writes is derived from the data folder: ``--out`` must be a git-ignored folder.
-Deleted in S10, with ``v2_items.py`` and ``v2_tree.py``.
+The profile's own terms (the items' tech, the skills list) are joined in code when the skill tree
+is built (:func:`pipeline_v2.tree_store.with_profile`): the file is the same for every profile. It
+holds terms, counts and requirement names, no job text; it is shipped in the public repository.
 """
 
 from __future__ import annotations
@@ -37,7 +39,7 @@ from typing import Dict, List, Optional, Tuple
 from pipeline_v2 import Items, Market, resources_dir
 from pipeline_v2.terms import has_term, jaccard, norm, shingles, split_compound
 from pipeline_v2.tree import shape_input
-from pipeline_v2.tree_store import MarketRequirement, MarketTerm
+from pipeline_v2.tree_store import MarketRequirement, MarketTerm, market_order
 
 #: Requirements v1 added to every job; they are not the job's.
 META = {"success stories", "concrete examples"}
@@ -45,7 +47,7 @@ COPY = 0.5  # shingle Jaccard of a copy
 MATCH = 40  # analyses at or above this match_percentage give corpus terms
 MIN_JOBS = 2  # build runs
 MIN_ANALYSES = 3  # corpus analyses at or above MATCH
-TOKENS = 30_000  # the shape call's input, at most about
+TOKENS = 30_000  # the market part of the shape call's input, at most about
 CHARS_PER_TOKEN = 3.3  # S2's example shape input: 87,578 characters, 26,426 tokens
 
 
@@ -82,6 +84,17 @@ def corpus(data: Path) -> Tuple[List[Tuple[Path, str]], int]:
     return list(seen.values()), duplicates
 
 
+def employers(data: Path) -> set:
+    """The company names of every analysis in the data folder, normalized."""
+    names = set()
+    for pattern in ("discarded/*/*", "CV/*/*", "incoming/*"):
+        for path in data.glob(f"{pattern}/analysis.json"):
+            name = (read_json(path) or {}).get("company_name") or ""
+            if norm(name):
+                names.add(norm(name))
+    return names
+
+
 def is_copy(text: str, of: List[frozenset]) -> bool:
     mine = shingles(text)
     return any(jaccard(mine, other) >= COPY for other in of)
@@ -93,8 +106,6 @@ def main() -> int:
     parser.add_argument("--out", type=Path, required=True, help="where market.json goes")
     parser.add_argument("--hold-out", type=Path, required=True, help="held-out run paths, one per line")
     parser.add_argument("--exclude-jds", type=Path, required=True, help="the CV test set's .txt job descriptions")
-    parser.add_argument("--items", type=Path, help="items.json: the items' tech joins the terms")
-    parser.add_argument("--profile", type=Path, help="candidate_profile.json: the skills list joins the terms")
     args = parser.parse_args()
 
     held_runs = [args.data / line.strip() for line in read(args.hold_out).splitlines() if line.strip()]
@@ -157,32 +168,32 @@ def main() -> int:
         if (analysis.get("match_percentage") or 0) >= MATCH:
             asked_near.update(mine)
 
-    # --- the profile's terms
-    items = Items.model_validate_json(read(args.items)) if args.items else None
-    profile = read_json(args.profile) if args.profile else {}
-    skills = list(profile.get("skills") or [])
-    certifications = [c["name"] for c in profile.get("certifications") or []]
-    data = read_json(args.profile.parent / "candidate_data.json") if args.profile else None
-    languages = (data or {}).get("languages", "")
-    own = set()
-    parts = [p for s in skills for p in split_compound(s) if norm(p) in whole or norm(p) in keyword_runs]
-    for t in [t for i in (items.items if items else []) for t in i.tech] + skills + parts:
-        own.add(norm(t))
-        spelling[norm(t)][t.strip()] += 1
-
     def alone(k: str) -> bool:
         return k in whole or k in keyword_runs
 
     kept = {
         k
         for k in spelling
-        if k and (len(keyword_runs.get(k, ())) >= MIN_JOBS or k in own or (asked_near[k] >= MIN_ANALYSES and alone(k)))
+        if k and (len(keyword_runs.get(k, ())) >= MIN_JOBS or (asked_near[k] >= MIN_ANALYSES and alone(k)))
     }
     fragments = sum(
         1
         for k in spelling
-        if asked_near[k] >= MIN_ANALYSES and not alone(k) and len(keyword_runs.get(k, ())) < MIN_JOBS and k not in own
+        if asked_near[k] >= MIN_ANALYSES and not alone(k) and len(keyword_runs.get(k, ())) < MIN_JOBS
     )
+
+    # --- no employer names
+    companies = employers(args.data)
+    named = sorted(spelling[k].most_common(1)[0][0] for k in kept if k in companies)
+    kept -= companies
+    kept_requirements, dropped_keywords = [], []
+    for r in requirements:
+        if norm(r.name) in companies:
+            dropped_keywords.append(r.name)
+            continue
+        dropped_keywords += [w for w in r.keywords if norm(w) in companies]
+        kept_requirements.append(r.model_copy(update={"keywords": [w for w in r.keywords if norm(w) not in companies]}))
+    requirements = kept_requirements
     texts = [(squash(text), squash(text).lower()) for _, text in jds]
     terms = []
     for k in kept:
@@ -196,7 +207,7 @@ def main() -> int:
                 share=round(hits / len(texts), 4) if texts else 0.0,
             )
         )
-    terms.sort(key=lambda t: (-t.share, -t.jobs, -t.asked, t.term.lower()))
+    terms.sort(key=market_order)
 
     # --- the cut: the rarest corpus-only terms go first
     def market(with_terms: List[MarketTerm]) -> Market:
@@ -208,10 +219,9 @@ def main() -> int:
     empty = Items(profile_sha256="", experiences=[], items=[])
 
     def tokens(m: Market) -> int:
-        text = shape_input(items or empty, m, skills=skills, certifications=certifications, languages=languages)
-        return int((len(prompt) + len(text)) / CHARS_PER_TOKEN)
+        return int((len(prompt) + len(shape_input(empty, m))) / CHARS_PER_TOKEN)
 
-    protected = {norm(t.term) for t in terms if t.jobs >= MIN_JOBS or norm(t.term) in own}
+    protected = {norm(t.term) for t in terms if t.jobs >= MIN_JOBS}
     cuttable = sorted(
         (t for t in terms if norm(t.term) not in protected), key=lambda t: (asked_near[norm(t.term)], t.asked, t.share)
     )
@@ -238,13 +248,16 @@ def main() -> int:
     print(
         f"terms: {len(spelling)} seen, {len(kept)} kept by the rules "
         f"({sum(len(keyword_runs.get(k, ())) >= MIN_JOBS for k in kept)} asked by 2+ build runs, "
-        f"{sum(asked_near[k] >= MIN_ANALYSES for k in kept)} in 3+ analyses, {len(own & kept)} from the profile; "
+        f"{sum(asked_near[k] >= MIN_ANALYSES for k in kept)} in 3+ analyses; "
         f"{fragments} split parts in 3+ analyses that never stand alone left out), "
         f"{len(cut)} cut for the token budget, {len(terms)} in the list"
     )
     if cut:
         print("  cut, rarest first: " + ", ".join(t.term for t in cut[:15]) + (" ..." if len(cut) > 15 else ""))
-    print(f"shape input about {tokens(result):,} tokens (budget {TOKENS:,})")
+    print(f"employer names ({len(companies)} companies): {len(named)} term(s) dropped: {', '.join(named) or '-'}")
+    dropped = ", ".join(sorted(set(dropped_keywords))) or "-"
+    print(f"  {len(dropped_keywords)} requirement keyword(s) or name(s) dropped: {dropped}")
+    print(f"market part of the shape input about {tokens(result):,} tokens (budget {TOKENS:,})")
     print("top 25:")
     for t in terms[:25]:
         print(f"  {t.share:6.1%} of JDs | asked {t.asked:5.1%} | {t.jobs:2d} jobs | {t.term}")

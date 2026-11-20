@@ -38,7 +38,7 @@ from .store import _plain
 logger = logging.getLogger("pipeline_v2.pool_review")
 
 ROLE = "validation"
-STAGE = "pool_review"
+STAGE = "Bullet review"
 #: Rounds per experience, as v1's validation. After the last one the pool keeps the last edits.
 MAX_ROUNDS = 5
 

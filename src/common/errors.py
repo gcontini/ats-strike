@@ -7,7 +7,10 @@ unexpected bug and is reported as such.
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from contextlib import contextmanager
+from typing import Any, Dict, Iterator, Optional
+
+from openai import APIConnectionError, APIError, APITimeoutError
 
 
 class PipelineError(RuntimeError):
@@ -83,7 +86,26 @@ class BadPartError(PipelineError):
     kind = "bad_part"
 
 
+@contextmanager
+def provider_errors() -> Iterator[None]:
+    """A model endpoint's failure, as a :class:`PipelineError` of its kind: its body never
+    travels, it can carry the endpoint and the key."""
+    try:
+        yield
+    except APIError as exc:
+        # A timeout is a connection error too, so it is asked first.
+        failure = (
+            ProviderTimeoutError
+            if isinstance(exc, APITimeoutError)
+            else ProviderUnreachableError
+            if isinstance(exc, APIConnectionError)
+            else ProviderError
+        )
+        raise failure(f"the model endpoint failed: {type(exc).__name__}") from exc
+
+
 __all__ = [
+    "provider_errors",
     "PipelineError",
     "LatexCompileError",
     "LatexTimeoutError",

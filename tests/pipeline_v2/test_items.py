@@ -331,10 +331,10 @@ def test_the_answers_land_on_their_own_experience_whatever_order_the_calls_finis
     assert validate(profile, store) == []
 
 
-def test_a_failed_call_fails_the_compile_with_stage_items(profile):
+def test_a_failed_call_fails_the_compile_with_stage_profile_breakdown(profile):
     with pytest.raises(ModelOutputError) as caught:
         compiler(fake("not json")).compile(profile, today=TODAY)
-    assert caught.value.stage == "items"
+    assert caught.value.stage == "Profile breakdown"
 
 
 def test_every_call_is_counted(profile):
@@ -367,7 +367,7 @@ def test_an_invalid_reply_fails_after_its_correction(profile):
     llm = fake(json.dumps({"items": [], "stories": [], "duties": [{"duty": 0, "weight": 5, "why": ""}]}))
     with pytest.raises(ModelOutputError) as caught:
         compiler(llm).compile(profile, today=TODAY)
-    assert caught.value.stage == "items" and len(llm["compile"].calls) == 2
+    assert caught.value.stage == "Profile breakdown" and len(llm["compile"].calls) == 2
     assert "duties.0.weight" in str(caught.value)
 
 

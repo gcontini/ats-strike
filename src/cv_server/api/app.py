@@ -28,7 +28,7 @@ from .settings import Settings
 logger = logging.getLogger("cv_server.api")
 
 #: The logger roots whose lines reach stdout and the request's run.
-LOGGER_ROOTS = ("common", "pipeline_v1", "cv_server")
+LOGGER_ROOTS = ("common", "pipeline_v1", "pipeline_v2", "cv_server")
 
 
 class RequestContextMiddleware:

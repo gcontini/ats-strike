@@ -125,7 +125,7 @@ v1 and taking only `common`: a store compiled once per profile (items,
 competence tree, pool and its review) and, per job description, the
 allocation of its requirements on the tree, the selection of what the
 CV shows (code only), the varnish (picks, headline and sentence, the job's
-missing terms in), the highlight (`common`'s, fed v2's inputs) and its render to two pages, with its own prompts, template and `models.toml`. No endpoint serves it yet; `scripts/v2_*.py` run it.
+missing terms in), the highlight (`common`'s, fed v2's inputs) and its render to two pages, with its own prompts, template and `models.toml`. Served at `/v2` (`pipeline_v2.Pipeline`); the store travels as `CACHE` items in the client's `cache/`.
 
 **`resources/v1/`** — the impersonal defaults baked into the image: four
 prompts, `resume.tex.jinja`, `models.toml`, a blank `candidate_signature.png`

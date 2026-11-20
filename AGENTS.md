@@ -7,7 +7,7 @@ because breaking it has a cost we have already paid once.
 
 - **One job per class.** If you cannot say what a class does in one sentence
   without "and", split it.
-- **One-way dependencies:** `contracts ← cv_server → pipeline_v1 → common ← pipeline_v2`.
+- **One-way dependencies:** `contracts ← cv_server → pipeline_v1, pipeline_v2 → common`.
   The pipelines import none of the others, `common` imports no pipeline, and
   `pipeline_v2` takes only `common`; `tests/test_architecture.py` enforces
   it. The client is the ats-strike-client repository and meets the server over

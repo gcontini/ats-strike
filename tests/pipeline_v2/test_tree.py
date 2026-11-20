@@ -462,10 +462,10 @@ def test_answers_land_on_their_own_experience_whatever_order_the_calls_finish(ex
     assert validate_tree(tree, example_items) == []
 
 
-def test_a_failed_call_fails_the_build_with_stage_tree(example_items):
+def test_a_failed_call_fails_the_build_with_stage_skill_tree(example_items):
     with pytest.raises(ModelOutputError) as caught:
         build(fake(lambda body: answer(body) if is_shape(body) else "not json"), example_items)
-    assert caught.value.stage == "tree"
+    assert caught.value.stage == "Skill tree"
 
 
 def test_every_call_is_counted(example_items):
@@ -493,7 +493,7 @@ def test_a_shape_reply_that_stays_wrong_fails(example_items):
     llm = fake(twice)
     with pytest.raises(ModelOutputError) as caught:
         build(llm, example_items)
-    assert caught.value.stage == "tree" and len(llm["compile"].calls) == 2
+    assert caught.value.stage == "Skill tree" and len(llm["compile"].calls) == 2
     assert "two nodes have this id" in str(caught.value)
 
 
@@ -588,3 +588,22 @@ def test_a_shape_reply_with_no_fault_makes_no_correction(example_items):
     llm = fake()
     builder(llm).build(example_items, GRAPH_MARKET)
     assert len([c for c in llm["compile"].calls if is_shape(c)]) == 1
+
+
+def test_the_profile_join_adds_its_own_terms_with_no_counts_after_the_corpus_ones():
+    items = hand_items()
+    for item in items.items:
+        item.tech = []
+    items.items[0].tech = ["kubernetes", "Zabbix", "zabbix"]
+    joined = tree_store.with_profile(MARKET, items, ["Zabbix", "Alibaba  Cloud", "Scrum"])
+    assert [t.term for t in joined.terms] == ["Kubernetes", "DevOps", "Scrum", "Fortran", "Alibaba Cloud", "Zabbix"]
+    assert joined.terms[0] == MARKET.terms[0], "a term the corpus part holds keeps its spelling and counts"
+    assert (joined.terms[-1].jobs, joined.terms[-1].asked, joined.terms[-1].share) == (0, 0.0, 0.0)
+    assert joined.requirements == MARKET.requirements and MARKET.terms == joined.terms[:4]
+
+
+def test_the_shipped_market_holds_no_employer_named_term():
+    """The build tool drops terms spelled as a corpus company name; a few it dropped, as a guard."""
+    shipped = Market.model_validate_json((resources_dir() / "market.json").read_text(encoding="utf-8"))
+    terms = {t.term for t in shipped.terms}
+    assert len(terms) > 500 and not terms & {"SAP", "Salesforce", "Cisco", "ServiceNow"}

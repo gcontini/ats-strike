@@ -47,7 +47,7 @@ from .store import (
 logger = logging.getLogger("pipeline_v2.items")
 
 ROLE = "compile"
-STAGE = "items"
+STAGE = "Profile breakdown"
 #: The experience's fields the call is shown; nothing else of the profile.
 SHOWN = ("title", "company", "dates", "context", "role_summary", "duties")
 

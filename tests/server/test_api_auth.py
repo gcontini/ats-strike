@@ -45,7 +45,7 @@ def test_the_right_token_gets_through(secured_client):
 def test_health_stays_open_so_a_platform_probe_works(secured_client):
     body = secured_client.get("/healthz").json()
     assert body["data"]["auth_required"] is True
-    assert body["data"]["models"]["cv"] == "stub-cv"
+    assert body["data"]["models"]["v1.cv"] == "stub-cv"
 
 
 def test_health_says_which_protocol_it_speaks(client, stub):

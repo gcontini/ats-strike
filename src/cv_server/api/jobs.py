@@ -55,11 +55,12 @@ class _SessionSink:
             self.job.append("store", dump(log_item(payload)))
 
 
-def start(state: AppState, job: JobDir, run: Run, work: Callable[[Path, Sink], str]) -> None:
+def start(state: AppState, job: JobDir, run: Run, work: Callable[[Path, Sink], str], where: str) -> None:
     """Hand one accepted job to a thread. Returns as soon as it is running.
 
     ``work`` is what produces the CV: it is given a scratch directory on local
-    disk and the session's sink, and returns one line about the run.
+    disk and the session's sink, and returns one line about the run. ``where``
+    is the request that started it (``POST /v2/cv``), for a failure's log line.
     """
     sink = _SessionSink(job)
     run.sink = sink.record
@@ -73,7 +74,7 @@ def start(state: AppState, job: JobDir, run: Run, work: Callable[[Path, Sink], s
                     summary = work(Path(scratch), sink)
                 ending = "done", Done(detail=summary)
             except Exception as exc:  # noqa: BLE001 — stored, not swallowed
-                log_failure(exc, "POST /v1/cv")
+                log_failure(exc, where)
                 status, message = describe_failure(exc)
                 ending = "error", Failure(http_status=status, error=message)
             job.append("store", dump(total_item(run.total)))

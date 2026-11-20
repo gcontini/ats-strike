@@ -1,8 +1,8 @@
 """What every request needs: the shared state, the token check, a job slot.
 
 The state is built once at startup and never mutated: the pipelines and one
-semaphore. Sharing a :class:`~pipeline_v1.Pipeline` across requests is safe —
-its chat models are built once and its HTTP clients are thread-safe.
+semaphore. Sharing a pipeline across requests is safe — its chat models are
+built once and its HTTP clients are thread-safe.
 """
 
 from __future__ import annotations
@@ -16,8 +16,9 @@ from threading import BoundedSemaphore
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from cv_contracts import StoreItem
-from pipeline_v1 import Pipeline, current_run
 from fastapi import Header, Request
+from pipeline_v1 import Pipeline, current_run
+from pipeline_v2 import Pipeline as PipelineV2
 from starlette.concurrency import run_in_threadpool
 
 from ..jobstore import JobStore
@@ -27,8 +28,8 @@ from .settings import Settings
 
 logger = logging.getLogger("cv_server.api")
 
-#: The pipelines served, by the first segment of their paths (``/v1/cv``).
-PIPELINES = {"v1": Pipeline}
+#: The pipelines served, by the first segment of their paths (``/v1/cv``, ``/v2/cv``).
+PIPELINES = {"v1": Pipeline, "v2": PipelineV2}
 
 
 @dataclass
@@ -37,7 +38,7 @@ class AppState:
     job slots and the settings are shared by every pipeline."""
 
     settings: Settings
-    pipelines: Dict[str, Pipeline]
+    pipelines: Dict[str, Any]
     job_slots: BoundedSemaphore
 
     @property
@@ -49,7 +50,7 @@ class AppState:
     def build(cls, settings: Settings) -> "AppState":
         pipelines = {name: kind.build() for name, kind in PIPELINES.items()}
         if not pipelines["v1"].info()["pdflatex"]:
-            logger.warning("  ⚠ pdflatex is not on PATH — /v1/cv and /v1/cv/render will fail")
+            logger.warning("  ⚠ pdflatex is not on PATH — every /cv and /cv/render will fail")
         return cls(
             settings=settings,
             pipelines=pipelines,
@@ -62,9 +63,15 @@ def get_state(request: Request) -> AppState:
     return request.app.state.cv
 
 
-def get_pipeline(request: Request) -> Pipeline:
+def get_pipeline(request: Request) -> Any:
     """The pipeline the path names by its first segment (``/v1/cv`` → ``v1``)."""
     return get_state(request).pipelines[request.url.path.split("/")[1]]
+
+
+def get_text_pipeline(request: Request) -> Pipeline:
+    """The pipeline that reads job descriptions and writes letters: v1's under every prefix, since
+    v2 has no job analysis and no letter. One client server entry then works for every command."""
+    return get_state(request).pipelines["v1"]
 
 
 def require_token(request: Request, authorization: Optional[str] = Header(None)) -> None:
@@ -152,6 +159,7 @@ __all__ = [
     "Collected",
     "get_state",
     "get_pipeline",
+    "get_text_pipeline",
     "require_token",
     "claim_slot",
     "execute",

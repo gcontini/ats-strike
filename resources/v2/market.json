@@ -1,0 +1,9926 @@
+{
+ "build_jobs": 41,
+ "corpus_jobs": 2772,
+ "excluded": {
+  "test": 61,
+  "held_out": 14,
+  "duplicates": 1
+ },
+ "terms": [
+  {
+   "term": "Hybrid",
+   "jobs": 1,
+   "asked": 0.0054,
+   "share": 0.6411
+  },
+  {
+   "term": "Cloud",
+   "jobs": 1,
+   "asked": 0.0476,
+   "share": 0.4123
+  },
+  {
+   "term": "Inglese",
+   "jobs": 8,
+   "asked": 0.0004,
+   "share": 0.3954
+  },
+  {
+   "term": "AI",
+   "jobs": 4,
+   "asked": 0.0213,
+   "share": 0.3535
+  },
+  {
+   "term": "security",
+   "jobs": 1,
+   "asked": 0.0227,
+   "share": 0.2662
+  },
+  {
+   "term": "governance",
+   "jobs": 2,
+   "asked": 0.017,
+   "share": 0.2446
+  },
+  {
+   "term": "Leadership",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.2421
+  },
+  {
+   "term": "Consulenza",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.2381
+  },
+  {
+   "term": "English",
+   "jobs": 36,
+   "asked": 0.0036,
+   "share": 0.2356
+  },
+  {
+   "term": "Informatica",
+   "jobs": 3,
+   "asked": 0.0007,
+   "share": 0.2128
+  },
+  {
+   "term": "Project management",
+   "jobs": 13,
+   "asked": 0.0321,
+   "share": 0.1944
+  },
+  {
+   "term": "Azure",
+   "jobs": 11,
+   "asked": 0.0263,
+   "share": 0.1822
+  },
+  {
+   "term": "compliance",
+   "jobs": 3,
+   "asked": 0.0105,
+   "share": 0.1815
+  },
+  {
+   "term": "training",
+   "jobs": 2,
+   "asked": 0.0025,
+   "share": 0.1746
+  },
+  {
+   "term": "Agile",
+   "jobs": 6,
+   "asked": 0.0285,
+   "share": 0.1739
+  },
+  {
+   "term": "Architect",
+   "jobs": 3,
+   "asked": 0.0,
+   "share": 0.1699
+  },
+  {
+   "term": "Python",
+   "jobs": 6,
+   "asked": 0.079,
+   "share": 0.1566
+  },
+  {
+   "term": "API",
+   "jobs": 2,
+   "asked": 0.0105,
+   "share": 0.1558
+  },
+  {
+   "term": "Italian",
+   "jobs": 10,
+   "asked": 0.0004,
+   "share": 0.1519
+  },
+  {
+   "term": "AWS",
+   "jobs": 15,
+   "asked": 0.0354,
+   "share": 0.1512
+  },
+  {
+   "term": "Cybersecurity",
+   "jobs": 6,
+   "asked": 0.0278,
+   "share": 0.1494
+  },
+  {
+   "term": "Project Manager",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.1494
+  },
+  {
+   "term": "automation",
+   "jobs": 3,
+   "asked": 0.0148,
+   "share": 0.1475
+  },
+  {
+   "term": "networking",
+   "jobs": 6,
+   "asked": 0.0393,
+   "share": 0.1465
+  },
+  {
+   "term": "standards",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.1367
+  },
+  {
+   "term": "CI/CD",
+   "jobs": 5,
+   "asked": 0.0523,
+   "share": 0.1356
+  },
+  {
+   "term": "Trasferte",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.1331
+  },
+  {
+   "term": "DevOps",
+   "jobs": 5,
+   "asked": 0.0166,
+   "share": 0.131
+  },
+  {
+   "term": "Consulting",
+   "jobs": 4,
+   "asked": 0.0,
+   "share": 0.1284
+  },
+  {
+   "term": "SQL",
+   "jobs": 3,
+   "asked": 0.0538,
+   "share": 0.1263
+  },
+  {
+   "term": "Budget",
+   "jobs": 1,
+   "asked": 0.0213,
+   "share": 0.1212
+  },
+  {
+   "term": "reporting",
+   "jobs": 1,
+   "asked": 0.0177,
+   "share": 0.1212
+  },
+  {
+   "term": "GDPR",
+   "jobs": 1,
+   "asked": 0.0087,
+   "share": 0.1194
+  },
+  {
+   "term": "Kubernetes",
+   "jobs": 9,
+   "asked": 0.0848,
+   "share": 0.1151
+  },
+  {
+   "term": "deployment",
+   "jobs": 1,
+   "asked": 0.0036,
+   "share": 0.1147
+  },
+  {
+   "term": "risk",
+   "jobs": 1,
+   "asked": 0.018,
+   "share": 0.114
+  },
+  {
+   "term": "Digital transformation",
+   "jobs": 9,
+   "asked": 0.0065,
+   "share": 0.1129
+  },
+  {
+   "term": "monitoring",
+   "jobs": 4,
+   "asked": 0.0227,
+   "share": 0.1097
+  },
+  {
+   "term": "ERP",
+   "jobs": 1,
+   "asked": 0.0166,
+   "share": 0.1093
+  },
+  {
+   "term": "Trasformazione Digitale",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.105
+  },
+  {
+   "term": "analytics",
+   "jobs": 2,
+   "asked": 0.0094,
+   "share": 0.0996
+  },
+  {
+   "term": "troubleshooting",
+   "jobs": 5,
+   "asked": 0.0148,
+   "share": 0.097
+  },
+  {
+   "term": "continuous improvement",
+   "jobs": 3,
+   "asked": 0.0029,
+   "share": 0.0927
+  },
+  {
+   "term": "R",
+   "jobs": 0,
+   "asked": 0.0029,
+   "share": 0.0924
+  },
+  {
+   "term": "documentazione tecnica",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0902
+  },
+  {
+   "term": "Linux",
+   "jobs": 4,
+   "asked": 0.0321,
+   "share": 0.0895
+  },
+  {
+   "term": "Docker",
+   "jobs": 3,
+   "asked": 0.0462,
+   "share": 0.0887
+  },
+  {
+   "term": "Server",
+   "jobs": 1,
+   "asked": 0.0036,
+   "share": 0.088
+  },
+  {
+   "term": "Ingegneria Informatica",
+   "jobs": 4,
+   "asked": 0.0,
+   "share": 0.0877
+  },
+  {
+   "term": "Insurance",
+   "jobs": 3,
+   "asked": 0.0014,
+   "share": 0.0873
+  },
+  {
+   "term": "Computer Science",
+   "jobs": 8,
+   "asked": 0.0,
+   "share": 0.0841
+  },
+  {
+   "term": "Stakeholder Management",
+   "jobs": 30,
+   "asked": 0.0007,
+   "share": 0.0826
+  },
+  {
+   "term": "Laurea in Ingegneria",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0826
+  },
+  {
+   "term": "Java",
+   "jobs": 7,
+   "asked": 0.0455,
+   "share": 0.0823
+  },
+  {
+   "term": "CRM",
+   "jobs": 3,
+   "asked": 0.0155,
+   "share": 0.0819
+  },
+  {
+   "term": "KPI",
+   "jobs": 4,
+   "asked": 0.0069,
+   "share": 0.0808
+  },
+  {
+   "term": "GCP",
+   "jobs": 12,
+   "asked": 0.0184,
+   "share": 0.0801
+  },
+  {
+   "term": "Italiano",
+   "jobs": 5,
+   "asked": 0.0,
+   "share": 0.0754
+  },
+  {
+   "term": "REST",
+   "jobs": 1,
+   "asked": 0.0112,
+   "share": 0.075
+  },
+  {
+   "term": "best practices",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.075
+  },
+  {
+   "term": "Cyber Security",
+   "jobs": 2,
+   "asked": 0.0004,
+   "share": 0.0696
+  },
+  {
+   "term": "Git",
+   "jobs": 3,
+   "asked": 0.0133,
+   "share": 0.0689
+  },
+  {
+   "term": "Terraform",
+   "jobs": 7,
+   "asked": 0.0382,
+   "share": 0.0685
+  },
+  {
+   "term": "storage",
+   "jobs": 1,
+   "asked": 0.013,
+   "share": 0.0653
+  },
+  {
+   "term": "Excel",
+   "jobs": 0,
+   "asked": 0.0155,
+   "share": 0.0653
+  },
+  {
+   "term": "scripting",
+   "jobs": 2,
+   "asked": 0.0079,
+   "share": 0.0649
+  },
+  {
+   "term": "Solution Architect",
+   "jobs": 5,
+   "asked": 0.0,
+   "share": 0.0646
+  },
+  {
+   "term": "escalation",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0642
+  },
+  {
+   "term": "IoT",
+   "jobs": 1,
+   "asked": 0.0061,
+   "share": 0.0635
+  },
+  {
+   "term": "Pre-sales",
+   "jobs": 5,
+   "asked": 0.0025,
+   "share": 0.0628
+  },
+  {
+   "term": "Product management",
+   "jobs": 2,
+   "asked": 0.0054,
+   "share": 0.0628
+  },
+  {
+   "term": "LLM",
+   "jobs": 3,
+   "asked": 0.0076,
+   "share": 0.062
+  },
+  {
+   "term": "change management",
+   "jobs": 5,
+   "asked": 0.0115,
+   "share": 0.0602
+  },
+  {
+   "term": "Infrastructure as Code",
+   "jobs": 6,
+   "asked": 0.0213,
+   "share": 0.0574
+  },
+  {
+   "term": "SaaS",
+   "jobs": 2,
+   "asked": 0.0043,
+   "share": 0.0574
+  },
+  {
+   "term": "Supply chain",
+   "jobs": 0,
+   "asked": 0.0043,
+   "share": 0.0574
+  },
+  {
+   "term": "Machine Learning",
+   "jobs": 2,
+   "asked": 0.0195,
+   "share": 0.0566
+  },
+  {
+   "term": "Artificial Intelligence",
+   "jobs": 8,
+   "asked": 0.0022,
+   "share": 0.0563
+  },
+  {
+   "term": "Windows",
+   "jobs": 1,
+   "asked": 0.0112,
+   "share": 0.0563
+  },
+  {
+   "term": "Google Cloud",
+   "jobs": 6,
+   "asked": 0.0025,
+   "share": 0.0559
+  },
+  {
+   "term": "Cloud-native",
+   "jobs": 4,
+   "asked": 0.0022,
+   "share": 0.0552
+  },
+  {
+   "term": "Jira",
+   "jobs": 2,
+   "asked": 0.0166,
+   "share": 0.0545
+  },
+  {
+   "term": "Generative AI",
+   "jobs": 10,
+   "asked": 0.0184,
+   "share": 0.0534
+  },
+  {
+   "term": "ITIL",
+   "jobs": 8,
+   "asked": 0.009,
+   "share": 0.0534
+  },
+  {
+   "term": "observability",
+   "jobs": 4,
+   "asked": 0.0115,
+   "share": 0.0516
+  },
+  {
+   "term": "Retail",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0509
+  },
+  {
+   "term": "System Integrator",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0505
+  },
+  {
+   "term": "backup",
+   "jobs": 1,
+   "asked": 0.0177,
+   "share": 0.0505
+  },
+  {
+   "term": "business development",
+   "jobs": 3,
+   "asked": 0.009,
+   "share": 0.0498
+  },
+  {
+   "term": "Microsoft Azure",
+   "jobs": 6,
+   "asked": 0.0101,
+   "share": 0.0494
+  },
+  {
+   "term": "Scrum",
+   "jobs": 5,
+   "asked": 0.0162,
+   "share": 0.0494
+  },
+  {
+   "term": "Scala",
+   "jobs": 0,
+   "asked": 0.0051,
+   "share": 0.0494
+  },
+  {
+   "term": "disaster recovery",
+   "jobs": 4,
+   "asked": 0.0245,
+   "share": 0.0491
+  },
+  {
+   "term": "APIs",
+   "jobs": 1,
+   "asked": 0.0292,
+   "share": 0.0491
+  },
+  {
+   "term": "PMP",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0491
+  },
+  {
+   "term": "SLA",
+   "jobs": 5,
+   "asked": 0.009,
+   "share": 0.0487
+  },
+  {
+   "term": "Software development",
+   "jobs": 1,
+   "asked": 0.0047,
+   "share": 0.048
+  },
+  {
+   "term": "VMware",
+   "jobs": 2,
+   "asked": 0.0101,
+   "share": 0.0465
+  },
+  {
+   "term": "validation",
+   "jobs": 1,
+   "asked": 0.0079,
+   "share": 0.0465
+  },
+  {
+   "term": "RAG",
+   "jobs": 2,
+   "asked": 0.018,
+   "share": 0.0458
+  },
+  {
+   "term": "workshops",
+   "jobs": 2,
+   "asked": 0.0011,
+   "share": 0.0458
+  },
+  {
+   "term": "Oracle",
+   "jobs": 2,
+   "asked": 0.0054,
+   "share": 0.0455
+  },
+  {
+   "term": "procurement",
+   "jobs": 1,
+   "asked": 0.0058,
+   "share": 0.0455
+  },
+  {
+   "term": "Mentoring",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0451
+  },
+  {
+   "term": "system integration",
+   "jobs": 4,
+   "asked": 0.0166,
+   "share": 0.0444
+  },
+  {
+   "term": "Business requirements",
+   "jobs": 3,
+   "asked": 0.0036,
+   "share": 0.0437
+  },
+  {
+   "term": "scalability",
+   "jobs": 3,
+   "asked": 0.0036,
+   "share": 0.0437
+  },
+  {
+   "term": "go-live",
+   "jobs": 3,
+   "asked": 0.0032,
+   "share": 0.0437
+  },
+  {
+   "term": "solution design",
+   "jobs": 6,
+   "asked": 0.0079,
+   "share": 0.0408
+  },
+  {
+   "term": "orchestration",
+   "jobs": 1,
+   "asked": 0.0061,
+   "share": 0.0408
+  },
+  {
+   "term": "Banking",
+   "jobs": 3,
+   "asked": 0.0029,
+   "share": 0.0404
+  },
+  {
+   "term": "JavaScript",
+   "jobs": 1,
+   "asked": 0.0166,
+   "share": 0.04
+  },
+  {
+   "term": "BI",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.04
+  },
+  {
+   "term": "risk management",
+   "jobs": 7,
+   "asked": 0.0097,
+   "share": 0.0393
+  },
+  {
+   "term": "Business case",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0386
+  },
+  {
+   "term": "Software engineering",
+   "jobs": 2,
+   "asked": 0.004,
+   "share": 0.0379
+  },
+  {
+   "term": "IAM",
+   "jobs": 4,
+   "asked": 0.0101,
+   "share": 0.0375
+  },
+  {
+   "term": "Firewall",
+   "jobs": 2,
+   "asked": 0.0022,
+   "share": 0.0375
+  },
+  {
+   "term": "service management",
+   "jobs": 1,
+   "asked": 0.0051,
+   "share": 0.0375
+  },
+  {
+   "term": "Bash",
+   "jobs": 3,
+   "asked": 0.0047,
+   "share": 0.0372
+  },
+  {
+   "term": "Financial Services",
+   "jobs": 3,
+   "asked": 0.0011,
+   "share": 0.0372
+  },
+  {
+   "term": "Ingegneria Gestionale",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0368
+  },
+  {
+   "term": "Microsoft Office",
+   "jobs": 1,
+   "asked": 0.0173,
+   "share": 0.0368
+  },
+  {
+   "term": "routing",
+   "jobs": 1,
+   "asked": 0.0079,
+   "share": 0.0368
+  },
+  {
+   "term": "presales",
+   "jobs": 3,
+   "asked": 0.0025,
+   "share": 0.0364
+  },
+  {
+   "term": "Bachelor's Degree",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0364
+  },
+  {
+   "term": "On-premise",
+   "jobs": 4,
+   "asked": 0.0018,
+   "share": 0.0357
+  },
+  {
+   "term": "C#",
+   "jobs": 1,
+   "asked": 0.0069,
+   "share": 0.0357
+  },
+  {
+   "term": "milestones",
+   "jobs": 1,
+   "asked": 0.0029,
+   "share": 0.0357
+  },
+  {
+   "term": "PRINCE2",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0357
+  },
+  {
+   "term": "Ansible",
+   "jobs": 1,
+   "asked": 0.0112,
+   "share": 0.0354
+  },
+  {
+   "term": "Infrastrutture IT",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.035
+  },
+  {
+   "term": "event-driven",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0343
+  },
+  {
+   "term": "customer requirements",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0339
+  },
+  {
+   "term": "Data governance",
+   "jobs": 0,
+   "asked": 0.0108,
+   "share": 0.0339
+  },
+  {
+   "term": "business continuity",
+   "jobs": 4,
+   "asked": 0.0108,
+   "share": 0.0335
+  },
+  {
+   "term": "Agentic AI",
+   "jobs": 2,
+   "asked": 0.0087,
+   "share": 0.0332
+  },
+  {
+   "term": "SAFe",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0332
+  },
+  {
+   "term": "GenAI",
+   "jobs": 5,
+   "asked": 0.0036,
+   "share": 0.0328
+  },
+  {
+   "term": "NoSQL",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.0328
+  },
+  {
+   "term": "Google Cloud Platform",
+   "jobs": 6,
+   "asked": 0.0097,
+   "share": 0.0325
+  },
+  {
+   "term": "business stakeholders",
+   "jobs": 4,
+   "asked": 0.0,
+   "share": 0.0325
+  },
+  {
+   "term": "Resilience",
+   "jobs": 2,
+   "asked": 0.0004,
+   "share": 0.0325
+  },
+  {
+   "term": "Customer Success",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0321
+  },
+  {
+   "term": "Power BI",
+   "jobs": 0,
+   "asked": 0.0105,
+   "share": 0.0321
+  },
+  {
+   "term": "Payments",
+   "jobs": 2,
+   "asked": 0.0011,
+   "share": 0.0317
+  },
+  {
+   "term": "Go",
+   "jobs": 3,
+   "asked": 0.0022,
+   "share": 0.0314
+  },
+  {
+   "term": "Jenkins",
+   "jobs": 0,
+   "asked": 0.0061,
+   "share": 0.031
+  },
+  {
+   "term": "OpenShift",
+   "jobs": 0,
+   "asked": 0.0058,
+   "share": 0.031
+  },
+  {
+   "term": "Microsoft 365",
+   "jobs": 1,
+   "asked": 0.018,
+   "share": 0.0307
+  },
+  {
+   "term": "Waterfall",
+   "jobs": 1,
+   "asked": 0.0061,
+   "share": 0.0307
+  },
+  {
+   "term": "migration",
+   "jobs": 2,
+   "asked": 0.004,
+   "share": 0.0303
+  },
+  {
+   "term": "VPN",
+   "jobs": 2,
+   "asked": 0.0072,
+   "share": 0.0299
+  },
+  {
+   "term": "fluent English",
+   "jobs": 7,
+   "asked": 0.0004,
+   "share": 0.0296
+  },
+  {
+   "term": "Grafana",
+   "jobs": 4,
+   "asked": 0.0025,
+   "share": 0.0296
+  },
+  {
+   "term": "KPIs",
+   "jobs": 2,
+   "asked": 0.0025,
+   "share": 0.0296
+  },
+  {
+   "term": "PMO",
+   "jobs": 1,
+   "asked": 0.0036,
+   "share": 0.0292
+  },
+  {
+   "term": ".NET",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0292
+  },
+  {
+   "term": "Provisioning",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0292
+  },
+  {
+   "term": "TypeScript",
+   "jobs": 0,
+   "asked": 0.0148,
+   "share": 0.0292
+  },
+  {
+   "term": "code review",
+   "jobs": 0,
+   "asked": 0.0029,
+   "share": 0.0292
+  },
+  {
+   "term": "Technical Support",
+   "jobs": 3,
+   "asked": 0.0014,
+   "share": 0.0289
+  },
+  {
+   "term": "DNS",
+   "jobs": 2,
+   "asked": 0.0058,
+   "share": 0.0289
+  },
+  {
+   "term": "SQL Server",
+   "jobs": 1,
+   "asked": 0.0065,
+   "share": 0.0289
+  },
+  {
+   "term": "Business intelligence",
+   "jobs": 1,
+   "asked": 0.0058,
+   "share": 0.0289
+  },
+  {
+   "term": "PowerShell",
+   "jobs": 0,
+   "asked": 0.0065,
+   "share": 0.0289
+  },
+  {
+   "term": "Azure DevOps",
+   "jobs": 0,
+   "asked": 0.0043,
+   "share": 0.0289
+  },
+  {
+   "term": "PostgreSQL",
+   "jobs": 0,
+   "asked": 0.0061,
+   "share": 0.0285
+  },
+  {
+   "term": "project delivery",
+   "jobs": 5,
+   "asked": 0.0032,
+   "share": 0.0281
+  },
+  {
+   "term": "Commesse",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0281
+  },
+  {
+   "term": "Data engineering",
+   "jobs": 0,
+   "asked": 0.0032,
+   "share": 0.0278
+  },
+  {
+   "term": "Enterprise architecture",
+   "jobs": 4,
+   "asked": 0.0097,
+   "share": 0.0274
+  },
+  {
+   "term": "Active Directory",
+   "jobs": 0,
+   "asked": 0.017,
+   "share": 0.0271
+  },
+  {
+   "term": "C++",
+   "jobs": 0,
+   "asked": 0.0069,
+   "share": 0.0271
+  },
+  {
+   "term": "logging",
+   "jobs": 2,
+   "asked": 0.0032,
+   "share": 0.0267
+  },
+  {
+   "term": "connectivity",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0267
+  },
+  {
+   "term": "negotiation",
+   "jobs": 2,
+   "asked": 0.0072,
+   "share": 0.0263
+  },
+  {
+   "term": "network security",
+   "jobs": 0,
+   "asked": 0.0101,
+   "share": 0.0263
+  },
+  {
+   "term": "databases",
+   "jobs": 0,
+   "asked": 0.0061,
+   "share": 0.0263
+  },
+  {
+   "term": "Cloud infrastructure",
+   "jobs": 4,
+   "asked": 0.0076,
+   "share": 0.026
+  },
+  {
+   "term": "Claude",
+   "jobs": 2,
+   "asked": 0.0014,
+   "share": 0.026
+  },
+  {
+   "term": "Fintech",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.026
+  },
+  {
+   "term": "Solution Architecture",
+   "jobs": 8,
+   "asked": 0.0083,
+   "share": 0.0256
+  },
+  {
+   "term": "program management",
+   "jobs": 5,
+   "asked": 0.0065,
+   "share": 0.0256
+  },
+  {
+   "term": "IaC",
+   "jobs": 5,
+   "asked": 0.0032,
+   "share": 0.0256
+  },
+  {
+   "term": "Willingness to Travel",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0256
+  },
+  {
+   "term": "Technical sales",
+   "jobs": 1,
+   "asked": 0.0058,
+   "share": 0.0256
+  },
+  {
+   "term": "PowerPoint",
+   "jobs": 0,
+   "asked": 0.0119,
+   "share": 0.0256
+  },
+  {
+   "term": "Technical Leadership",
+   "jobs": 9,
+   "asked": 0.0,
+   "share": 0.0253
+  },
+  {
+   "term": "NIS2",
+   "jobs": 2,
+   "asked": 0.0083,
+   "share": 0.0253
+  },
+  {
+   "term": "C-level",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0249
+  },
+  {
+   "term": "MLOps",
+   "jobs": 2,
+   "asked": 0.0115,
+   "share": 0.0245
+  },
+  {
+   "term": "quality assurance",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0245
+  },
+  {
+   "term": "IT infrastructure",
+   "jobs": 3,
+   "asked": 0.0152,
+   "share": 0.0242
+  },
+  {
+   "term": "Prometheus",
+   "jobs": 3,
+   "asked": 0.0022,
+   "share": 0.0242
+  },
+  {
+   "term": "MES",
+   "jobs": 0,
+   "asked": 0.0076,
+   "share": 0.0227
+  },
+  {
+   "term": "React",
+   "jobs": 0,
+   "asked": 0.0054,
+   "share": 0.0227
+  },
+  {
+   "term": "Solutions Architect",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0224
+  },
+  {
+   "term": "Windows Server",
+   "jobs": 0,
+   "asked": 0.0137,
+   "share": 0.0224
+  },
+  {
+   "term": "DevSecOps",
+   "jobs": 3,
+   "asked": 0.0076,
+   "share": 0.022
+  },
+  {
+   "term": "Emerging Technologies",
+   "jobs": 3,
+   "asked": 0.0011,
+   "share": 0.022
+  },
+  {
+   "term": "AI solutions",
+   "jobs": 2,
+   "asked": 0.0025,
+   "share": 0.022
+  },
+  {
+   "term": "AI tools",
+   "jobs": 2,
+   "asked": 0.0022,
+   "share": 0.0216
+  },
+  {
+   "term": "Angular",
+   "jobs": 0,
+   "asked": 0.0072,
+   "share": 0.0216
+  },
+  {
+   "term": "AI agents",
+   "jobs": 2,
+   "asked": 0.0051,
+   "share": 0.0213
+  },
+  {
+   "term": "Business analysis",
+   "jobs": 3,
+   "asked": 0.0051,
+   "share": 0.0209
+  },
+  {
+   "term": "Data analytics",
+   "jobs": 2,
+   "asked": 0.0036,
+   "share": 0.0209
+  },
+  {
+   "term": "MySQL",
+   "jobs": 0,
+   "asked": 0.0058,
+   "share": 0.0209
+  },
+  {
+   "term": "Technical documentation",
+   "jobs": 4,
+   "asked": 0.0079,
+   "share": 0.0206
+  },
+  {
+   "term": "UAT",
+   "jobs": 1,
+   "asked": 0.0051,
+   "share": 0.0206
+  },
+  {
+   "term": "Technical requirements",
+   "jobs": 2,
+   "asked": 0.0011,
+   "share": 0.0202
+  },
+  {
+   "term": "go-to-market",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0202
+  },
+  {
+   "term": "CI/CD pipelines",
+   "jobs": 0,
+   "asked": 0.0173,
+   "share": 0.0202
+  },
+  {
+   "term": "Spring Boot",
+   "jobs": 0,
+   "asked": 0.0108,
+   "share": 0.0202
+  },
+  {
+   "term": "Multi-Cloud",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0198
+  },
+  {
+   "term": "asset management",
+   "jobs": 1,
+   "asked": 0.0029,
+   "share": 0.0198
+  },
+  {
+   "term": "TCP/IP",
+   "jobs": 0,
+   "asked": 0.0051,
+   "share": 0.0198
+  },
+  {
+   "term": "Microservices",
+   "jobs": 6,
+   "asked": 0.0397,
+   "share": 0.0195
+  },
+  {
+   "term": "Trusted Advisor",
+   "jobs": 3,
+   "asked": 0.0,
+   "share": 0.0195
+  },
+  {
+   "term": "PaaS",
+   "jobs": 1,
+   "asked": 0.0036,
+   "share": 0.0195
+  },
+  {
+   "term": "Quality Standards",
+   "jobs": 3,
+   "asked": 0.0004,
+   "share": 0.0191
+  },
+  {
+   "term": "ISO 27001",
+   "jobs": 2,
+   "asked": 0.0069,
+   "share": 0.0191
+  },
+  {
+   "term": "Entra ID",
+   "jobs": 0,
+   "asked": 0.009,
+   "share": 0.0191
+  },
+  {
+   "term": "PLC",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0191
+  },
+  {
+   "term": "prioritization",
+   "jobs": 1,
+   "asked": 0.0043,
+   "share": 0.0188
+  },
+  {
+   "term": "Configuration Management",
+   "jobs": 1,
+   "asked": 0.0036,
+   "share": 0.0188
+  },
+  {
+   "term": "Operating model",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0188
+  },
+  {
+   "term": "ITSM",
+   "jobs": 4,
+   "asked": 0.0079,
+   "share": 0.0184
+  },
+  {
+   "term": "capacity planning",
+   "jobs": 4,
+   "asked": 0.0043,
+   "share": 0.0184
+  },
+  {
+   "term": "Cloud security",
+   "jobs": 3,
+   "asked": 0.0058,
+   "share": 0.0184
+  },
+  {
+   "term": "System engineering",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.018
+  },
+  {
+   "term": "Cross-functional Collaboration",
+   "jobs": 12,
+   "asked": 0.0,
+   "share": 0.0177
+  },
+  {
+   "term": "middleware",
+   "jobs": 1,
+   "asked": 0.0051,
+   "share": 0.0177
+  },
+  {
+   "term": "GitHub Actions",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0177
+  },
+  {
+   "term": "GitLab CI",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0177
+  },
+  {
+   "term": "Node.js",
+   "jobs": 0,
+   "asked": 0.0047,
+   "share": 0.0177
+  },
+  {
+   "term": "TOGAF",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0173
+  },
+  {
+   "term": "data integration",
+   "jobs": 1,
+   "asked": 0.0069,
+   "share": 0.0173
+  },
+  {
+   "term": "technical specifications",
+   "jobs": 2,
+   "asked": 0.0029,
+   "share": 0.017
+  },
+  {
+   "term": "Cloud Computing",
+   "jobs": 2,
+   "asked": 0.0018,
+   "share": 0.017
+  },
+  {
+   "term": "Professional Services",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.017
+  },
+  {
+   "term": "Service delivery",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.017
+  },
+  {
+   "term": "Computer Engineering",
+   "jobs": 4,
+   "asked": 0.0,
+   "share": 0.0166
+  },
+  {
+   "term": "Large Language Models",
+   "jobs": 3,
+   "asked": 0.0011,
+   "share": 0.0166
+  },
+  {
+   "term": "budgeting",
+   "jobs": 1,
+   "asked": 0.0076,
+   "share": 0.0166
+  },
+  {
+   "term": "Data architecture",
+   "jobs": 1,
+   "asked": 0.0076,
+   "share": 0.0166
+  },
+  {
+   "term": "Project planning",
+   "jobs": 4,
+   "asked": 0.0321,
+   "share": 0.0162
+  },
+  {
+   "term": "Cloud Native",
+   "jobs": 3,
+   "asked": 0.0007,
+   "share": 0.0162
+  },
+  {
+   "term": "IT service management",
+   "jobs": 2,
+   "asked": 0.0061,
+   "share": 0.0162
+  },
+  {
+   "term": "platform engineering",
+   "jobs": 2,
+   "asked": 0.0011,
+   "share": 0.0159
+  },
+  {
+   "term": "data platforms",
+   "jobs": 1,
+   "asked": 0.0069,
+   "share": 0.0159
+  },
+  {
+   "term": "serverless",
+   "jobs": 1,
+   "asked": 0.0029,
+   "share": 0.0159
+  },
+  {
+   "term": "FinOps",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0159
+  },
+  {
+   "term": "incident management",
+   "jobs": 5,
+   "asked": 0.0043,
+   "share": 0.0155
+  },
+  {
+   "term": "Cloud platforms",
+   "jobs": 3,
+   "asked": 0.0213,
+   "share": 0.0155
+  },
+  {
+   "term": "Corrective Actions",
+   "jobs": 3,
+   "asked": 0.0007,
+   "share": 0.0155
+  },
+  {
+   "term": "Virtualization",
+   "jobs": 2,
+   "asked": 0.0188,
+   "share": 0.0155
+  },
+  {
+   "term": "Hybrid cloud",
+   "jobs": 2,
+   "asked": 0.0043,
+   "share": 0.0155
+  },
+  {
+   "term": "WMS",
+   "jobs": 1,
+   "asked": 0.004,
+   "share": 0.0155
+  },
+  {
+   "term": "account management",
+   "jobs": 1,
+   "asked": 0.0047,
+   "share": 0.0152
+  },
+  {
+   "term": "IaaS",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0152
+  },
+  {
+   "term": "MCP",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0152
+  },
+  {
+   "term": "cloud environments",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0152
+  },
+  {
+   "term": "Application Management",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0152
+  },
+  {
+   "term": "integrazione applicativa",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0144
+  },
+  {
+   "term": "Data Warehouse",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.0144
+  },
+  {
+   "term": "S3",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0144
+  },
+  {
+   "term": "Cloud architecture",
+   "jobs": 6,
+   "asked": 0.0115,
+   "share": 0.0141
+  },
+  {
+   "term": "cloud services",
+   "jobs": 1,
+   "asked": 0.0047,
+   "share": 0.0141
+  },
+  {
+   "term": "Helm",
+   "jobs": 3,
+   "asked": 0.0061,
+   "share": 0.0137
+  },
+  {
+   "term": "SRE",
+   "jobs": 2,
+   "asked": 0.0014,
+   "share": 0.0137
+  },
+  {
+   "term": "vulnerability management",
+   "jobs": 1,
+   "asked": 0.0054,
+   "share": 0.0137
+  },
+  {
+   "term": "AI governance",
+   "jobs": 1,
+   "asked": 0.0032,
+   "share": 0.0137
+  },
+  {
+   "term": "dashboards",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0137
+  },
+  {
+   "term": "LLMs",
+   "jobs": 0,
+   "asked": 0.0112,
+   "share": 0.0137
+  },
+  {
+   "term": "Power Platform",
+   "jobs": 0,
+   "asked": 0.0025,
+   "share": 0.0137
+  },
+  {
+   "term": "Public Cloud",
+   "jobs": 3,
+   "asked": 0.0007,
+   "share": 0.0133
+  },
+  {
+   "term": "data analysis",
+   "jobs": 1,
+   "asked": 0.0141,
+   "share": 0.0133
+  },
+  {
+   "term": "PyTorch",
+   "jobs": 0,
+   "asked": 0.0047,
+   "share": 0.0133
+  },
+  {
+   "term": "business transformation",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0133
+  },
+  {
+   "term": "Fluent Italian",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.013
+  },
+  {
+   "term": "MS Office",
+   "jobs": 1,
+   "asked": 0.0029,
+   "share": 0.013
+  },
+  {
+   "term": "high availability",
+   "jobs": 4,
+   "asked": 0.0054,
+   "share": 0.0126
+  },
+  {
+   "term": "People Management",
+   "jobs": 4,
+   "asked": 0.0,
+   "share": 0.0126
+  },
+  {
+   "term": "GitOps",
+   "jobs": 1,
+   "asked": 0.0036,
+   "share": 0.0126
+  },
+  {
+   "term": "Enterprise Architect",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0123
+  },
+  {
+   "term": "Platform Engineer",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0123
+  },
+  {
+   "term": "root cause analysis",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.0123
+  },
+  {
+   "term": "Power Automate",
+   "jobs": 0,
+   "asked": 0.0054,
+   "share": 0.0123
+  },
+  {
+   "term": "English language",
+   "jobs": 5,
+   "asked": 0.0004,
+   "share": 0.0119
+  },
+  {
+   "term": "data pipelines",
+   "jobs": 3,
+   "asked": 0.0051,
+   "share": 0.0119
+  },
+  {
+   "term": "Distributed systems",
+   "jobs": 2,
+   "asked": 0.0072,
+   "share": 0.0119
+  },
+  {
+   "term": "integration patterns",
+   "jobs": 2,
+   "asked": 0.0025,
+   "share": 0.0119
+  },
+  {
+   "term": "alerting",
+   "jobs": 2,
+   "asked": 0.0011,
+   "share": 0.0119
+  },
+  {
+   "term": "IT strategy",
+   "jobs": 2,
+   "asked": 0.0054,
+   "share": 0.0115
+  },
+  {
+   "term": "portfolio management",
+   "jobs": 1,
+   "asked": 0.0047,
+   "share": 0.0115
+  },
+  {
+   "term": "Hyper-V",
+   "jobs": 1,
+   "asked": 0.0036,
+   "share": 0.0115
+  },
+  {
+   "term": "process improvement",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0115
+  },
+  {
+   "term": "C/C++",
+   "jobs": 0,
+   "asked": 0.0032,
+   "share": 0.0115
+  },
+  {
+   "term": "containerization",
+   "jobs": 1,
+   "asked": 0.0072,
+   "share": 0.0112
+  },
+  {
+   "term": "VPC",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0112
+  },
+  {
+   "term": "MATLAB",
+   "jobs": 0,
+   "asked": 0.0029,
+   "share": 0.0112
+  },
+  {
+   "term": "advanced analytics",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0112
+  },
+  {
+   "term": "Amazon Web Services",
+   "jobs": 5,
+   "asked": 0.0,
+   "share": 0.0108
+  },
+  {
+   "term": "Kanban",
+   "jobs": 2,
+   "asked": 0.0032,
+   "share": 0.0108
+  },
+  {
+   "term": "IT governance",
+   "jobs": 2,
+   "asked": 0.0029,
+   "share": 0.0108
+  },
+  {
+   "term": "Shell",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0108
+  },
+  {
+   "term": "Delivery Manager",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0108
+  },
+  {
+   "term": "data modeling",
+   "jobs": 1,
+   "asked": 0.0112,
+   "share": 0.0108
+  },
+  {
+   "term": "Software architecture",
+   "jobs": 1,
+   "asked": 0.009,
+   "share": 0.0108
+  },
+  {
+   "term": "AutoCAD",
+   "jobs": 0,
+   "asked": 0.0043,
+   "share": 0.0108
+  },
+  {
+   "term": "gestione progetti",
+   "jobs": 4,
+   "asked": 0.0,
+   "share": 0.0105
+  },
+  {
+   "term": "REST APIs",
+   "jobs": 2,
+   "asked": 0.0253,
+   "share": 0.0105
+  },
+  {
+   "term": "Technology Consulting",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0105
+  },
+  {
+   "term": "process automation",
+   "jobs": 1,
+   "asked": 0.0043,
+   "share": 0.0105
+  },
+  {
+   "term": "Veeam",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0105
+  },
+  {
+   "term": "SAP S/4HANA",
+   "jobs": 0,
+   "asked": 0.0061,
+   "share": 0.0105
+  },
+  {
+   "term": "gap analysis",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0105
+  },
+  {
+   "term": "Requirements gathering",
+   "jobs": 8,
+   "asked": 0.0133,
+   "share": 0.0101
+  },
+  {
+   "term": "Team Leadership",
+   "jobs": 5,
+   "asked": 0.0007,
+   "share": 0.0101
+  },
+  {
+   "term": "Technology Strategy",
+   "jobs": 3,
+   "asked": 0.0007,
+   "share": 0.0101
+  },
+  {
+   "term": "containers",
+   "jobs": 2,
+   "asked": 0.0072,
+   "share": 0.0101
+  },
+  {
+   "term": "API Gateway",
+   "jobs": 2,
+   "asked": 0.0032,
+   "share": 0.0101
+  },
+  {
+   "term": "Problem Management",
+   "jobs": 2,
+   "asked": 0.0011,
+   "share": 0.0101
+  },
+  {
+   "term": "DORA",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0101
+  },
+  {
+   "term": "international teams",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0097
+  },
+  {
+   "term": "Office 365",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0097
+  },
+  {
+   "term": "FastAPI",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0097
+  },
+  {
+   "term": "XML",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0097
+  },
+  {
+   "term": "vendor management",
+   "jobs": 7,
+   "asked": 0.0051,
+   "share": 0.0094
+  },
+  {
+   "term": "Systems Engineering",
+   "jobs": 2,
+   "asked": 0.0032,
+   "share": 0.0094
+  },
+  {
+   "term": "Version Control",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0094
+  },
+  {
+   "term": "Industrial automation",
+   "jobs": 1,
+   "asked": 0.0061,
+   "share": 0.0094
+  },
+  {
+   "term": "release management",
+   "jobs": 1,
+   "asked": 0.0047,
+   "share": 0.0094
+  },
+  {
+   "term": "PHP",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0094
+  },
+  {
+   "term": "ECS",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0094
+  },
+  {
+   "term": "Enterprise AI",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0094
+  },
+  {
+   "term": "Apache Spark",
+   "jobs": 0,
+   "asked": 0.0054,
+   "share": 0.0094
+  },
+  {
+   "term": "Microsoft Fabric",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0094
+  },
+  {
+   "term": "data visualization",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0094
+  },
+  {
+   "term": "resource planning",
+   "jobs": 4,
+   "asked": 0.0022,
+   "share": 0.009
+  },
+  {
+   "term": "Technical Design",
+   "jobs": 3,
+   "asked": 0.0004,
+   "share": 0.009
+  },
+  {
+   "term": "vulnerability assessment",
+   "jobs": 1,
+   "asked": 0.0036,
+   "share": 0.009
+  },
+  {
+   "term": "API management",
+   "jobs": 1,
+   "asked": 0.0029,
+   "share": 0.009
+  },
+  {
+   "term": "SDLC",
+   "jobs": 2,
+   "asked": 0.0029,
+   "share": 0.0087
+  },
+  {
+   "term": "Cloud transformation",
+   "jobs": 2,
+   "asked": 0.0022,
+   "share": 0.0087
+  },
+  {
+   "term": "AI adoption",
+   "jobs": 2,
+   "asked": 0.0014,
+   "share": 0.0087
+  },
+  {
+   "term": "Data Lake",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.0087
+  },
+  {
+   "term": "OpenStack",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0087
+  },
+  {
+   "term": "Project management methodologies",
+   "jobs": 0,
+   "asked": 0.0087,
+   "share": 0.0087
+  },
+  {
+   "term": "Azure AI",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0087
+  },
+  {
+   "term": "Architectural Decisions",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0083
+  },
+  {
+   "term": "SOA",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0083
+  },
+  {
+   "term": "Unix",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0083
+  },
+  {
+   "term": "PySpark",
+   "jobs": 0,
+   "asked": 0.0061,
+   "share": 0.0083
+  },
+  {
+   "term": "Microsoft Project",
+   "jobs": 0,
+   "asked": 0.0054,
+   "share": 0.0083
+  },
+  {
+   "term": "Red Hat OpenShift",
+   "jobs": 0,
+   "asked": 0.0036,
+   "share": 0.0083
+  },
+  {
+   "term": "Cloud technologies",
+   "jobs": 0,
+   "asked": 0.0029,
+   "share": 0.0083
+  },
+  {
+   "term": "SASE",
+   "jobs": 0,
+   "asked": 0.0029,
+   "share": 0.0083
+  },
+  {
+   "term": "operating systems",
+   "jobs": 0,
+   "asked": 0.0025,
+   "share": 0.0083
+  },
+  {
+   "term": "HTML",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0083
+  },
+  {
+   "term": "load balancing",
+   "jobs": 2,
+   "asked": 0.0018,
+   "share": 0.0079
+  },
+  {
+   "term": "Functional requirements",
+   "jobs": 2,
+   "asked": 0.0014,
+   "share": 0.0079
+  },
+  {
+   "term": "project documentation",
+   "jobs": 1,
+   "asked": 0.004,
+   "share": 0.0079
+  },
+  {
+   "term": "Cyber resilience",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0079
+  },
+  {
+   "term": "contract management",
+   "jobs": 5,
+   "asked": 0.0032,
+   "share": 0.0076
+  },
+  {
+   "term": "cost control",
+   "jobs": 1,
+   "asked": 0.0065,
+   "share": 0.0076
+  },
+  {
+   "term": "Microsoft SQL Server",
+   "jobs": 1,
+   "asked": 0.0032,
+   "share": 0.0076
+  },
+  {
+   "term": "Application maintenance",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0076
+  },
+  {
+   "term": "IT consulting",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0076
+  },
+  {
+   "term": "MQTT",
+   "jobs": 0,
+   "asked": 0.0032,
+   "share": 0.0076
+  },
+  {
+   "term": "Microsoft Entra ID",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0076
+  },
+  {
+   "term": "Technical proposals",
+   "jobs": 3,
+   "asked": 0.004,
+   "share": 0.0072
+  },
+  {
+   "term": "Continuous Integration",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0072
+  },
+  {
+   "term": "product requirements",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0072
+  },
+  {
+   "term": "Oracle Cloud",
+   "jobs": 2,
+   "asked": 0.0004,
+   "share": 0.0072
+  },
+  {
+   "term": "Issue Resolution",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0072
+  },
+  {
+   "term": "Reference Architecture",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0072
+  },
+  {
+   "term": "Cloud networking",
+   "jobs": 1,
+   "asked": 0.0051,
+   "share": 0.0072
+  },
+  {
+   "term": "LLMOps",
+   "jobs": 1,
+   "asked": 0.0043,
+   "share": 0.0072
+  },
+  {
+   "term": "Gantt",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0072
+  },
+  {
+   "term": "System Administration",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0072
+  },
+  {
+   "term": "Demand management",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0072
+  },
+  {
+   "term": "data modelling",
+   "jobs": 0,
+   "asked": 0.0036,
+   "share": 0.0072
+  },
+  {
+   "term": "Agile delivery",
+   "jobs": 0,
+   "asked": 0.0032,
+   "share": 0.0072
+  },
+  {
+   "term": "Automated testing",
+   "jobs": 0,
+   "asked": 0.0029,
+   "share": 0.0072
+  },
+  {
+   "term": "Google Workspace",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0072
+  },
+  {
+   "term": "Microsoft Dynamics 365",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0072
+  },
+  {
+   "term": "Airflow",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0072
+  },
+  {
+   "term": "Stakeholder Communication",
+   "jobs": 4,
+   "asked": 0.0004,
+   "share": 0.0069
+  },
+  {
+   "term": "Executive Stakeholders",
+   "jobs": 4,
+   "asked": 0.0,
+   "share": 0.0069
+  },
+  {
+   "term": "container orchestration",
+   "jobs": 2,
+   "asked": 0.0025,
+   "share": 0.0069
+  },
+  {
+   "term": "DR",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0069
+  },
+  {
+   "term": "AKS",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0069
+  },
+  {
+   "term": "Agile methodologies",
+   "jobs": 0,
+   "asked": 0.0032,
+   "share": 0.0069
+  },
+  {
+   "term": "IT project management",
+   "jobs": 4,
+   "asked": 0.0119,
+   "share": 0.0065
+  },
+  {
+   "term": "Project coordination",
+   "jobs": 3,
+   "asked": 0.0036,
+   "share": 0.0065
+  },
+  {
+   "term": "regulatory compliance",
+   "jobs": 3,
+   "asked": 0.0025,
+   "share": 0.0065
+  },
+  {
+   "term": "event-driven architecture",
+   "jobs": 2,
+   "asked": 0.0061,
+   "share": 0.0065
+  },
+  {
+   "term": "Datadog",
+   "jobs": 2,
+   "asked": 0.0011,
+   "share": 0.0065
+  },
+  {
+   "term": "Architecture Design",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0065
+  },
+  {
+   "term": "Cloud Operations",
+   "jobs": 2,
+   "asked": 0.0004,
+   "share": 0.0065
+  },
+  {
+   "term": "Software development lifecycle",
+   "jobs": 1,
+   "asked": 0.0065,
+   "share": 0.0065
+  },
+  {
+   "term": "Product lifecycle management",
+   "jobs": 1,
+   "asked": 0.0043,
+   "share": 0.0065
+  },
+  {
+   "term": "cost management",
+   "jobs": 1,
+   "asked": 0.0036,
+   "share": 0.0065
+  },
+  {
+   "term": "COBIT",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.0065
+  },
+  {
+   "term": "Product demonstrations",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.0065
+  },
+  {
+   "term": "quality management",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.0065
+  },
+  {
+   "term": "API design",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0065
+  },
+  {
+   "term": "GKE",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0065
+  },
+  {
+   "term": "energy storage",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0065
+  },
+  {
+   "term": "Microsoft Intune",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0065
+  },
+  {
+   "term": ".NET Core",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0065
+  },
+  {
+   "term": "AI technologies",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0065
+  },
+  {
+   "term": "delivery management",
+   "jobs": 6,
+   "asked": 0.0036,
+   "share": 0.0061
+  },
+  {
+   "term": "performance optimization",
+   "jobs": 3,
+   "asked": 0.0022,
+   "share": 0.0061
+  },
+  {
+   "term": "Risk Mitigation",
+   "jobs": 3,
+   "asked": 0.0,
+   "share": 0.0061
+  },
+  {
+   "term": "System architecture",
+   "jobs": 2,
+   "asked": 0.0032,
+   "share": 0.0061
+  },
+  {
+   "term": "strategic planning",
+   "jobs": 2,
+   "asked": 0.0004,
+   "share": 0.0061
+  },
+  {
+   "term": "Security by Design",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0061
+  },
+  {
+   "term": "Solution Engineer",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0061
+  },
+  {
+   "term": "Microsoft Excel",
+   "jobs": 0,
+   "asked": 0.0061,
+   "share": 0.0061
+  },
+  {
+   "term": "Azure Data Factory",
+   "jobs": 0,
+   "asked": 0.0025,
+   "share": 0.0061
+  },
+  {
+   "term": "Product ownership",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0061
+  },
+  {
+   "term": "international projects",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0058
+  },
+  {
+   "term": "VMware vSphere",
+   "jobs": 1,
+   "asked": 0.0043,
+   "share": 0.0058
+  },
+  {
+   "term": "Azure SQL",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0058
+  },
+  {
+   "term": "AI architecture",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0058
+  },
+  {
+   "term": "functional specifications",
+   "jobs": 0,
+   "asked": 0.0047,
+   "share": 0.0058
+  },
+  {
+   "term": "C#/.NET",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0058
+  },
+  {
+   "term": "Service Cloud",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0058
+  },
+  {
+   "term": "Technical pre-sales",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0058
+  },
+  {
+   "term": "Flutter",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0058
+  },
+  {
+   "term": "AI infrastructure",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0058
+  },
+  {
+   "term": "Escalation Management",
+   "jobs": 5,
+   "asked": 0.0018,
+   "share": 0.0054
+  },
+  {
+   "term": "Integration Architecture",
+   "jobs": 5,
+   "asked": 0.0018,
+   "share": 0.0054
+  },
+  {
+   "term": "application architecture",
+   "jobs": 3,
+   "asked": 0.0036,
+   "share": 0.0054
+  },
+  {
+   "term": "Client Relationship",
+   "jobs": 3,
+   "asked": 0.0,
+   "share": 0.0054
+  },
+  {
+   "term": "Application support",
+   "jobs": 2,
+   "asked": 0.0032,
+   "share": 0.0054
+  },
+  {
+   "term": "IT security",
+   "jobs": 2,
+   "asked": 0.0018,
+   "share": 0.0054
+  },
+  {
+   "term": "Proxmox",
+   "jobs": 2,
+   "asked": 0.0014,
+   "share": 0.0054
+  },
+  {
+   "term": "Technical Account Manager",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0054
+  },
+  {
+   "term": "uptime",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0054
+  },
+  {
+   "term": "Backend development",
+   "jobs": 1,
+   "asked": 0.0032,
+   "share": 0.0054
+  },
+  {
+   "term": "Identity management",
+   "jobs": 1,
+   "asked": 0.0029,
+   "share": 0.0054
+  },
+  {
+   "term": "OCI",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0054
+  },
+  {
+   "term": "User Acceptance Testing",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0054
+  },
+  {
+   "term": "communication protocols",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0054
+  },
+  {
+   "term": "digital platforms",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0054
+  },
+  {
+   "term": "Project management tools",
+   "jobs": 0,
+   "asked": 0.004,
+   "share": 0.0054
+  },
+  {
+   "term": "data warehousing",
+   "jobs": 0,
+   "asked": 0.0029,
+   "share": 0.0054
+  },
+  {
+   "term": "Exchange Online",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0054
+  },
+  {
+   "term": "Visual Studio",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0054
+  },
+  {
+   "term": "private cloud",
+   "jobs": 2,
+   "asked": 0.0011,
+   "share": 0.0051
+  },
+  {
+   "term": "Commercial Awareness",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0051
+  },
+  {
+   "term": "Executive Communication",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0051
+  },
+  {
+   "term": "Infrastructure Architect",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0051
+  },
+  {
+   "term": "infrastructure automation",
+   "jobs": 1,
+   "asked": 0.0029,
+   "share": 0.0051
+  },
+  {
+   "term": "Computer Vision",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0051
+  },
+  {
+   "term": "iPaaS",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0051
+  },
+  {
+   "term": "IT/OT",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0051
+  },
+  {
+   "term": "Functional analysis",
+   "jobs": 0,
+   "asked": 0.0101,
+   "share": 0.0051
+  },
+  {
+   "term": "data migration",
+   "jobs": 0,
+   "asked": 0.0043,
+   "share": 0.0051
+  },
+  {
+   "term": "Data architectures",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0051
+  },
+  {
+   "term": "Digital payments",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0051
+  },
+  {
+   "term": "POS",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0051
+  },
+  {
+   "term": "dependency management",
+   "jobs": 2,
+   "asked": 0.0032,
+   "share": 0.0047
+  },
+  {
+   "term": "Customer Relationship Management",
+   "jobs": 2,
+   "asked": 0.0004,
+   "share": 0.0047
+  },
+  {
+   "term": "architecture principles",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0047
+  },
+  {
+   "term": "Shell scripting",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0047
+  },
+  {
+   "term": "Product discovery",
+   "jobs": 0,
+   "asked": 0.0058,
+   "share": 0.0047
+  },
+  {
+   "term": "manufacturing processes",
+   "jobs": 0,
+   "asked": 0.0036,
+   "share": 0.0047
+  },
+  {
+   "term": "Technology Roadmap",
+   "jobs": 7,
+   "asked": 0.0004,
+   "share": 0.0043
+  },
+  {
+   "term": "K8s",
+   "jobs": 7,
+   "asked": 0.0,
+   "share": 0.0043
+  },
+  {
+   "term": "Cloud migration",
+   "jobs": 5,
+   "asked": 0.0032,
+   "share": 0.0043
+  },
+  {
+   "term": "application modernization",
+   "jobs": 3,
+   "asked": 0.0018,
+   "share": 0.0043
+  },
+  {
+   "term": "Professional English",
+   "jobs": 3,
+   "asked": 0.0007,
+   "share": 0.0043
+  },
+  {
+   "term": "Transformation Program",
+   "jobs": 2,
+   "asked": 0.0004,
+   "share": 0.0043
+  },
+  {
+   "term": "Client Management",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0043
+  },
+  {
+   "term": "Product positioning",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0043
+  },
+  {
+   "term": "Enterprise integration",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0043
+  },
+  {
+   "term": "issue management",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0043
+  },
+  {
+   "term": "ERP systems",
+   "jobs": 0,
+   "asked": 0.0051,
+   "share": 0.0043
+  },
+  {
+   "term": "User research",
+   "jobs": 0,
+   "asked": 0.0043,
+   "share": 0.0043
+  },
+  {
+   "term": "Lead generation",
+   "jobs": 0,
+   "asked": 0.0032,
+   "share": 0.0043
+  },
+  {
+   "term": "HTML5",
+   "jobs": 0,
+   "asked": 0.0025,
+   "share": 0.0043
+  },
+  {
+   "term": "AI strategy",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0043
+  },
+  {
+   "term": "Team Management",
+   "jobs": 5,
+   "asked": 0.0014,
+   "share": 0.004
+  },
+  {
+   "term": "Engineering Degree",
+   "jobs": 4,
+   "asked": 0.0007,
+   "share": 0.004
+  },
+  {
+   "term": "application integration",
+   "jobs": 3,
+   "asked": 0.0054,
+   "share": 0.004
+  },
+  {
+   "term": "cost optimization",
+   "jobs": 3,
+   "asked": 0.0018,
+   "share": 0.004
+  },
+  {
+   "term": "performance monitoring",
+   "jobs": 2,
+   "asked": 0.0011,
+   "share": 0.004
+  },
+  {
+   "term": "Architecture Standards",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.004
+  },
+  {
+   "term": "Delivery Lead",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.004
+  },
+  {
+   "term": "English proficiency",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.004
+  },
+  {
+   "term": "Application lifecycle management",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.004
+  },
+  {
+   "term": "Cloud-native architectures",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.004
+  },
+  {
+   "term": "Azure AI Foundry",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.004
+  },
+  {
+   "term": "AWS/Azure",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.004
+  },
+  {
+   "term": "Capacity Management",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0036
+  },
+  {
+   "term": "Microservices architecture",
+   "jobs": 1,
+   "asked": 0.0022,
+   "share": 0.0036
+  },
+  {
+   "term": "risk analysis",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0036
+  },
+  {
+   "term": "reporting tools",
+   "jobs": 0,
+   "asked": 0.0025,
+   "share": 0.0036
+  },
+  {
+   "term": "master data management",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0036
+  },
+  {
+   "term": "A/B testing",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0036
+  },
+  {
+   "term": "Design Thinking",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0036
+  },
+  {
+   "term": "Domain-Driven Design",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0036
+  },
+  {
+   "term": "Requirements analysis",
+   "jobs": 5,
+   "asked": 0.0162,
+   "share": 0.0032
+  },
+  {
+   "term": "Architecture governance",
+   "jobs": 3,
+   "asked": 0.0022,
+   "share": 0.0032
+  },
+  {
+   "term": "competitive intelligence",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0032
+  },
+  {
+   "term": "Continuous Delivery",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0032
+  },
+  {
+   "term": "Market analysis",
+   "jobs": 1,
+   "asked": 0.004,
+   "share": 0.0032
+  },
+  {
+   "term": "Software testing",
+   "jobs": 1,
+   "asked": 0.0036,
+   "share": 0.0032
+  },
+  {
+   "term": "systems integration",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.0032
+  },
+  {
+   "term": "backlog management",
+   "jobs": 0,
+   "asked": 0.004,
+   "share": 0.0032
+  },
+  {
+   "term": "Azure Databricks",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0032
+  },
+  {
+   "term": "CRM tools",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0032
+  },
+  {
+   "term": "Agile methodology",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0032
+  },
+  {
+   "term": "gestione stakeholder",
+   "jobs": 6,
+   "asked": 0.0,
+   "share": 0.0029
+  },
+  {
+   "term": "team coordination",
+   "jobs": 4,
+   "asked": 0.0004,
+   "share": 0.0029
+  },
+  {
+   "term": "resource management",
+   "jobs": 2,
+   "asked": 0.0032,
+   "share": 0.0029
+  },
+  {
+   "term": "Project reporting",
+   "jobs": 2,
+   "asked": 0.0029,
+   "share": 0.0029
+  },
+  {
+   "term": "Helm charts",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0029
+  },
+  {
+   "term": "Technical Account Management",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0029
+  },
+  {
+   "term": "KPI reporting",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.0029
+  },
+  {
+   "term": "Salesforce CRM",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0029
+  },
+  {
+   "term": "Ceph",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0029
+  },
+  {
+   "term": "Customer onboarding",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0029
+  },
+  {
+   "term": "IT architecture",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0029
+  },
+  {
+   "term": "operational governance",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0029
+  },
+  {
+   "term": "Dataverse",
+   "jobs": 0,
+   "asked": 0.0025,
+   "share": 0.0029
+  },
+  {
+   "term": "OPC UA",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0029
+  },
+  {
+   "term": "Industrial IoT",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0029
+  },
+  {
+   "term": "Siemens Teamcenter",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0029
+  },
+  {
+   "term": "Next.js",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0029
+  },
+  {
+   "term": "Supplier Management",
+   "jobs": 5,
+   "asked": 0.0011,
+   "share": 0.0025
+  },
+  {
+   "term": "Client Relationship Management",
+   "jobs": 3,
+   "asked": 0.0,
+   "share": 0.0025
+  },
+  {
+   "term": "budget management",
+   "jobs": 2,
+   "asked": 0.0054,
+   "share": 0.0025
+  },
+  {
+   "term": "Infrastructure Architecture",
+   "jobs": 2,
+   "asked": 0.0011,
+   "share": 0.0025
+  },
+  {
+   "term": "Service Operations",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0025
+  },
+  {
+   "term": "cross-functional coordination",
+   "jobs": 2,
+   "asked": 0.0004,
+   "share": 0.0025
+  },
+  {
+   "term": "Integration Design",
+   "jobs": 2,
+   "asked": 0.0004,
+   "share": 0.0025
+  },
+  {
+   "term": "Operational Risk",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0025
+  },
+  {
+   "term": "Service Delivery Manager",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0025
+  },
+  {
+   "term": "TAM",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0025
+  },
+  {
+   "term": "bid management",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0025
+  },
+  {
+   "term": "container security",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0025
+  },
+  {
+   "term": "IP networking",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0025
+  },
+  {
+   "term": "API integrations",
+   "jobs": 0,
+   "asked": 0.0058,
+   "share": 0.0025
+  },
+  {
+   "term": "go-to-market strategy",
+   "jobs": 0,
+   "asked": 0.0025,
+   "share": 0.0025
+  },
+  {
+   "term": "Network automation",
+   "jobs": 0,
+   "asked": 0.0025,
+   "share": 0.0025
+  },
+  {
+   "term": "Generative AI tools",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0025
+  },
+  {
+   "term": "Azure cloud",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0025
+  },
+  {
+   "term": "gestione fornitori",
+   "jobs": 5,
+   "asked": 0.0,
+   "share": 0.0022
+  },
+  {
+   "term": "Deployment Automation",
+   "jobs": 2,
+   "asked": 0.0004,
+   "share": 0.0022
+  },
+  {
+   "term": "Scope Definition",
+   "jobs": 2,
+   "asked": 0.0004,
+   "share": 0.0022
+  },
+  {
+   "term": "relazioni con il cliente",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0022
+  },
+  {
+   "term": "technical coordination",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0022
+  },
+  {
+   "term": "competitor analysis",
+   "jobs": 1,
+   "asked": 0.0032,
+   "share": 0.0022
+  },
+  {
+   "term": "Linux systems",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.0022
+  },
+  {
+   "term": "competitive analysis",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0022
+  },
+  {
+   "term": "Cloud monitoring",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0022
+  },
+  {
+   "term": "relational databases",
+   "jobs": 0,
+   "asked": 0.0137,
+   "share": 0.0022
+  },
+  {
+   "term": "B2B sales",
+   "jobs": 0,
+   "asked": 0.0029,
+   "share": 0.0022
+  },
+  {
+   "term": "OT cybersecurity",
+   "jobs": 0,
+   "asked": 0.0025,
+   "share": 0.0022
+  },
+  {
+   "term": "JPA/Hibernate",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0022
+  },
+  {
+   "term": "project portfolio management",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0022
+  },
+  {
+   "term": "SAP SuccessFactors",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0022
+  },
+  {
+   "term": ".NET/C#",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0022
+  },
+  {
+   "term": "Cisco ACI",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0022
+  },
+  {
+   "term": "RFP responses",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0022
+  },
+  {
+   "term": "solution selling",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0022
+  },
+  {
+   "term": "Technical project management",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0022
+  },
+  {
+   "term": "End-to-end project management",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0022
+  },
+  {
+   "term": "partner management",
+   "jobs": 3,
+   "asked": 0.0007,
+   "share": 0.0018
+  },
+  {
+   "term": "effort estimation",
+   "jobs": 2,
+   "asked": 0.0018,
+   "share": 0.0018
+  },
+  {
+   "term": "AI Project Manager",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0018
+  },
+  {
+   "term": "Architecture Review",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0018
+  },
+  {
+   "term": "Influence without Authority",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0018
+  },
+  {
+   "term": "Process analysis",
+   "jobs": 1,
+   "asked": 0.0029,
+   "share": 0.0018
+  },
+  {
+   "term": "Network infrastructure",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.0018
+  },
+  {
+   "term": "contract negotiation",
+   "jobs": 1,
+   "asked": 0.0018,
+   "share": 0.0018
+  },
+  {
+   "term": "Infrastructure monitoring",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0018
+  },
+  {
+   "term": "performance reporting",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0018
+  },
+  {
+   "term": "Payment processing",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0018
+  },
+  {
+   "term": "Veeam Backup",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0018
+  },
+  {
+   "term": "Bash scripting",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0018
+  },
+  {
+   "term": "enterprise integrations",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0018
+  },
+  {
+   "term": "functional documentation",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0018
+  },
+  {
+   "term": "Requirements engineering",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0018
+  },
+  {
+   "term": "SASE/SSE",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0018
+  },
+  {
+   "term": "AWS/GCP",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0018
+  },
+  {
+   "term": "Enterprise technology sales",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0018
+  },
+  {
+   "term": "ServiceNow platform",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0018
+  },
+  {
+   "term": "Program Delivery",
+   "jobs": 3,
+   "asked": 0.0,
+   "share": 0.0014
+  },
+  {
+   "term": "API integration",
+   "jobs": 2,
+   "asked": 0.0051,
+   "share": 0.0014
+  },
+  {
+   "term": "Technical troubleshooting",
+   "jobs": 2,
+   "asked": 0.0032,
+   "share": 0.0014
+  },
+  {
+   "term": "Security compliance",
+   "jobs": 2,
+   "asked": 0.0011,
+   "share": 0.0014
+  },
+  {
+   "term": "legacy modernization",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0014
+  },
+  {
+   "term": "Continual Service Improvement",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0014
+  },
+  {
+   "term": "CSI",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0014
+  },
+  {
+   "term": "English B2",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0014
+  },
+  {
+   "term": "product training",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0014
+  },
+  {
+   "term": "technology selection",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0014
+  },
+  {
+   "term": "Project budget",
+   "jobs": 1,
+   "asked": 0.004,
+   "share": 0.0014
+  },
+  {
+   "term": "Cloud-native architecture",
+   "jobs": 1,
+   "asked": 0.0029,
+   "share": 0.0014
+  },
+  {
+   "term": "Technical solution design",
+   "jobs": 1,
+   "asked": 0.0029,
+   "share": 0.0014
+  },
+  {
+   "term": "infrastructure security",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0014
+  },
+  {
+   "term": "Commercial negotiation",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0014
+  },
+  {
+   "term": "business case development",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0014
+  },
+  {
+   "term": "Digital project management",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0014
+  },
+  {
+   "term": "Network architecture",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0014
+  },
+  {
+   "term": "Node.js/TypeScript",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0014
+  },
+  {
+   "term": "supply chain processes",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0014
+  },
+  {
+   "term": "UPS systems",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0014
+  },
+  {
+   "term": "ITSM processes",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0014
+  },
+  {
+   "term": "Power Apps development",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0014
+  },
+  {
+   "term": "SAP ERP",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0014
+  },
+  {
+   "term": "SAP SD",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0014
+  },
+  {
+   "term": "Business process analysis",
+   "jobs": 3,
+   "asked": 0.0036,
+   "share": 0.0011
+  },
+  {
+   "term": "Technical Communication",
+   "jobs": 3,
+   "asked": 0.0,
+   "share": 0.0011
+  },
+  {
+   "term": "client communication",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0011
+  },
+  {
+   "term": "madrelingua italiana",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0011
+  },
+  {
+   "term": "Technical Degree",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0011
+  },
+  {
+   "term": "SLA management",
+   "jobs": 1,
+   "asked": 0.0043,
+   "share": 0.0011
+  },
+  {
+   "term": "Object-oriented programming",
+   "jobs": 0,
+   "asked": 0.0029,
+   "share": 0.0011
+  },
+  {
+   "term": "Agile product development",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0011
+  },
+  {
+   "term": "Enterprise solution architecture",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0011
+  },
+  {
+   "term": "Azure/AWS/GCP",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0011
+  },
+  {
+   "term": "PowerShell scripting",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0011
+  },
+  {
+   "term": "Agentic AI frameworks",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0011
+  },
+  {
+   "term": "Salesforce Flow",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0011
+  },
+  {
+   "term": "SLA/KPI monitoring",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0011
+  },
+  {
+   "term": "Ticketing systems",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0011
+  },
+  {
+   "term": "DevOps Engineering",
+   "jobs": 3,
+   "asked": 0.0,
+   "share": 0.0007
+  },
+  {
+   "term": "log analysis",
+   "jobs": 2,
+   "asked": 0.0007,
+   "share": 0.0007
+  },
+  {
+   "term": "Founding Engineer",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0007
+  },
+  {
+   "term": "PLC programming",
+   "jobs": 1,
+   "asked": 0.0047,
+   "share": 0.0007
+  },
+  {
+   "term": "integration platforms",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0007
+  },
+  {
+   "term": "service governance",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0007
+  },
+  {
+   "term": "E-commerce platforms",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0007
+  },
+  {
+   "term": "Advanced Excel",
+   "jobs": 0,
+   "asked": 0.0032,
+   "share": 0.0007
+  },
+  {
+   "term": "ERP implementation",
+   "jobs": 0,
+   "asked": 0.0032,
+   "share": 0.0007
+  },
+  {
+   "term": "AWS/Azure/GCP",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0007
+  },
+  {
+   "term": "Microsoft 365 administration",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0007
+  },
+  {
+   "term": "REST API design",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0007
+  },
+  {
+   "term": "Construction project management",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0007
+  },
+  {
+   "term": "Python programming",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0007
+  },
+  {
+   "term": "Salesforce Agentforce",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0007
+  },
+  {
+   "term": "Windows Server administration",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0007
+  },
+  {
+   "term": "Contract administration",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0007
+  },
+  {
+   "term": "Enterprise application integration",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0007
+  },
+  {
+   "term": "GCP services",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0007
+  },
+  {
+   "term": "IAM/PAM",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0007
+  },
+  {
+   "term": "IT demand management",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0007
+  },
+  {
+   "term": "Jira or Azure DevOps",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0007
+  },
+  {
+   "term": "PHP/Laravel",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0007
+  },
+  {
+   "term": "RAG architectures",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0007
+  },
+  {
+   "term": "serverless architecture",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0007
+  },
+  {
+   "term": "SQL queries",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0007
+  },
+  {
+   "term": "Strategic account management",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0007
+  },
+  {
+   "term": "wireless networking",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0007
+  },
+  {
+   "term": "Linux administration",
+   "jobs": 2,
+   "asked": 0.0036,
+   "share": 0.0004
+  },
+  {
+   "term": "Project Monitoring",
+   "jobs": 2,
+   "asked": 0.0004,
+   "share": 0.0004
+  },
+  {
+   "term": "BCP",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0004
+  },
+  {
+   "term": "Cloud Certification",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0004
+  },
+  {
+   "term": "cloud native architecture",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0004
+  },
+  {
+   "term": "migrazione cloud",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0004
+  },
+  {
+   "term": "Scalable Architecture",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0004
+  },
+  {
+   "term": "Technical Delivery Lead",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0004
+  },
+  {
+   "term": "technology standards",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0004
+  },
+  {
+   "term": "Travel Availability",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0004
+  },
+  {
+   "term": "Project scheduling",
+   "jobs": 1,
+   "asked": 0.0025,
+   "share": 0.0004
+  },
+  {
+   "term": "tender management",
+   "jobs": 1,
+   "asked": 0.0014,
+   "share": 0.0004
+  },
+  {
+   "term": "release automation",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0004
+  },
+  {
+   "term": "ETL/ELT pipelines",
+   "jobs": 0,
+   "asked": 0.0032,
+   "share": 0.0004
+  },
+  {
+   "term": "Linux system administration",
+   "jobs": 0,
+   "asked": 0.0025,
+   "share": 0.0004
+  },
+  {
+   "term": "Terraform/IaC",
+   "jobs": 0,
+   "asked": 0.0025,
+   "share": 0.0004
+  },
+  {
+   "term": "VMware virtualization",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0004
+  },
+  {
+   "term": "Enterprise integration architecture",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0004
+  },
+  {
+   "term": "KPI analysis",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0004
+  },
+  {
+   "term": "Linux systems administration",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0004
+  },
+  {
+   "term": "Insurance processes",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0004
+  },
+  {
+   "term": "Project risk management",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0004
+  },
+  {
+   "term": "roadmap prioritization",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0004
+  },
+  {
+   "term": "AI/ML solution architecture",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0004
+  },
+  {
+   "term": "AWS cloud infrastructure",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0004
+  },
+  {
+   "term": "Azure services",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0004
+  },
+  {
+   "term": "Bash or Python scripting",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0004
+  },
+  {
+   "term": "Core banking processes",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0004
+  },
+  {
+   "term": "hybrid cloud architecture",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0004
+  },
+  {
+   "term": "IT project coordination",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0004
+  },
+  {
+   "term": "IT Service Management processes",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0004
+  },
+  {
+   "term": "Public procurement",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0004
+  },
+  {
+   "term": "English C1",
+   "jobs": 3,
+   "asked": 0.0004,
+   "share": 0.0
+  },
+  {
+   "term": "digital transition",
+   "jobs": 2,
+   "asked": 0.0,
+   "share": 0.0
+  },
+  {
+   "term": "infrastructure troubleshooting",
+   "jobs": 1,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Business requirements analysis",
+   "jobs": 0,
+   "asked": 0.0058,
+   "share": 0.0
+  },
+  {
+   "term": "functional requirements analysis",
+   "jobs": 0,
+   "asked": 0.0058,
+   "share": 0.0
+  },
+  {
+   "term": "Business requirements gathering",
+   "jobs": 0,
+   "asked": 0.0029,
+   "share": 0.0
+  },
+  {
+   "term": "IT project governance",
+   "jobs": 0,
+   "asked": 0.0029,
+   "share": 0.0
+  },
+  {
+   "term": "sales pipeline management",
+   "jobs": 0,
+   "asked": 0.0029,
+   "share": 0.0
+  },
+  {
+   "term": "Customer requirements analysis",
+   "jobs": 0,
+   "asked": 0.0025,
+   "share": 0.0
+  },
+  {
+   "term": "advanced SQL",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0
+  },
+  {
+   "term": "Enterprise systems integration",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0
+  },
+  {
+   "term": "Project lifecycle management",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0
+  },
+  {
+   "term": "Python backend development",
+   "jobs": 0,
+   "asked": 0.0022,
+   "share": 0.0
+  },
+  {
+   "term": "ERP project management",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0
+  },
+  {
+   "term": "Python automation",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0
+  },
+  {
+   "term": "Technical-commercial proposal preparation",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0
+  },
+  {
+   "term": "Terraform / Infrastructure as Code",
+   "jobs": 0,
+   "asked": 0.0018,
+   "share": 0.0
+  },
+  {
+   "term": "commercial proposal preparation",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0
+  },
+  {
+   "term": "Fortinet networking",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0
+  },
+  {
+   "term": "IT infrastructure architecture",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0
+  },
+  {
+   "term": "PMO governance",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0
+  },
+  {
+   "term": "Technical documentation management",
+   "jobs": 0,
+   "asked": 0.0014,
+   "share": 0.0
+  },
+  {
+   "term": "B2B software sales",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Business intelligence tools",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Business process modeling",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "CAD/CAM software",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Cloud security architecture",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Data lakehouse architecture",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "DevOps/CI/CD",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Enterprise IT infrastructure",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "GitHub Actions CI/CD",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Infrastructure as Code with Terraform or Ansible",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "ITIL service management",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Java enterprise development",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Project management / PMO",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Python and/or Java",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Python or Bash scripting",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Python software development",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Railway digital transformation",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "React or Angular",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Request-to-cash process optimisation",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "SaaS architectures",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Sales negotiation",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Server infrastructure",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "Software project management",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  },
+  {
+   "term": "technical requirements analysis",
+   "jobs": 0,
+   "asked": 0.0011,
+   "share": 0.0
+  }
+ ],
+ "requirements": [
+  {
+   "name": "AI Factory Architecture Lead",
+   "importance": 100,
+   "keywords": [
+    "AI Factory Architecture Lead",
+    "AI Architecture Lead",
+    "Architecture Lead"
+   ]
+  },
+  {
+   "name": "AI solution architecture and design authority",
+   "importance": 95,
+   "keywords": [
+    "AI Solution Architecture",
+    "Solution Architecture",
+    "Design Authority",
+    "architettura AI"
+   ]
+  },
+  {
+   "name": "Architecture governance and review approval",
+   "importance": 85,
+   "keywords": [
+    "Architecture Governance",
+    "Architecture Review",
+    "Architecture Board",
+    "approvazione architetture"
+   ]
+  },
+  {
+   "name": "Reference architectures and reusable patterns",
+   "importance": 80,
+   "keywords": [
+    "Reference Architecture",
+    "Reusable Patterns",
+    "Technical Guardrails",
+    "riuso"
+   ]
+  },
+  {
+   "name": "AI technology ecosystem and emerging technology roadmap",
+   "importance": 80,
+   "keywords": [
+    "AI Technology Ecosystem",
+    "Emerging Technologies",
+    "Technology Roadmap",
+    "technology assessment"
+   ]
+  },
+  {
+   "name": "Delivering AI, machine learning and digital platforms in enterprise environments",
+   "importance": 78,
+   "keywords": [
+    "Machine Learning",
+    "AI Platforms",
+    "Analytics",
+    "Digital Platforms",
+    "Data Platforms"
+   ]
+  },
+  {
+   "name": "Technical leadership of architects and architecture community building",
+   "importance": 75,
+   "keywords": [
+    "Technical Leadership",
+    "Lead Architect",
+    "Architecture Community",
+    "Capability Building"
+   ]
+  },
+  {
+   "name": "Stakeholder leadership and cross-functional technical alignment",
+   "importance": 70,
+   "keywords": [
+    "Stakeholder Management",
+    "Cross-functional Alignment",
+    "gestione stakeholder"
+   ]
+  },
+  {
+   "name": "Translating business priorities into technical direction and architecture decisions",
+   "importance": 65,
+   "keywords": [
+    "Technical Direction",
+    "Architecture Decisions",
+    "Technical Debt",
+    "business alignment"
+   ]
+  },
+  {
+   "name": "Technical evaluation of vendors and external technology partners",
+   "importance": 55,
+   "keywords": [
+    "Vendor Evaluation",
+    "Technical Evaluation",
+    "Technology Partners",
+    "valutazione fornitori"
+   ]
+  },
+  {
+   "name": "Degree in a relevant engineering or technical field",
+   "importance": 40,
+   "keywords": [
+    "Bachelor's Degree",
+    "Master's Degree",
+    "Engineering Degree",
+    "Computer Science"
+   ]
+  },
+  {
+   "name": "Background in industrial digitalization or scale-up consulting environments",
+   "importance": 25,
+   "keywords": [
+    "Industrial Digitalization",
+    "Industrial Automation",
+    "Scale-up",
+    "Consulting"
+   ]
+  },
+  {
+   "name": "English language proficiency",
+   "importance": 25,
+   "keywords": [
+    "English",
+    "fluent English"
+   ]
+  },
+  {
+   "name": "IT Service Manager for Sales Platforms",
+   "importance": 100,
+   "keywords": [
+    "IT Service Manager",
+    "Service Manager",
+    "Service Delivery Manager",
+    "IT Service Manager Sales Platforms"
+   ]
+  },
+  {
+   "name": "IT Service Management principles and ITIL application",
+   "importance": 88,
+   "keywords": [
+    "ITSM",
+    "ITIL",
+    "IT Service Management",
+    "Service Lifecycle Management",
+    "Service Catalogue",
+    "Continuous Service Improvement",
+    "IT Security"
+   ]
+  },
+  {
+   "name": "Running service operations: availability, capacity, configuration, asset management and business continuity",
+   "importance": 85,
+   "keywords": [
+    "Availability Management",
+    "Capacity Management",
+    "Configuration Management",
+    "Asset Management",
+    "Business Continuity",
+    "Infrastructure Monitoring",
+    "Performance Monitoring"
+   ]
+  },
+  {
+   "name": "Cloud and microservices architecture on AWS and Azure",
+   "importance": 82,
+   "keywords": [
+    "AWS",
+    "Azure",
+    "Microservices",
+    "Cloud Architecture",
+    "Cloud-native",
+    "Amazon Web Services"
+   ]
+  },
+  {
+   "name": "Steering suppliers and outsourced providers against SLAs and contracts",
+   "importance": 80,
+   "keywords": [
+    "Vendor Management",
+    "Supplier Management",
+    "Provider Management",
+    "SLA",
+    "Contract Management",
+    "gestione fornitori"
+   ]
+  },
+  {
+   "name": "Project delivery from demand to release using Agile and DevOps",
+   "importance": 78,
+   "keywords": [
+    "Project Management",
+    "Agile",
+    "Scrum",
+    "DevOps",
+    "Release Management",
+    "Estimation"
+   ]
+  },
+  {
+   "name": "Stakeholder management and negotiation at senior level",
+   "importance": 72,
+   "keywords": [
+    "Stakeholder Management",
+    "Negotiation",
+    "Senior Stakeholder Management"
+   ]
+  },
+  {
+   "name": "Budgeting, cost allocation and P&L controlling for services",
+   "importance": 68,
+   "keywords": [
+    "Budgeting",
+    "Cost Management",
+    "Cost Allocation",
+    "P&L",
+    "Financial Planning"
+   ]
+  },
+  {
+   "name": "Governing solution design and architecture consistency with group guidelines",
+   "importance": 65,
+   "keywords": [
+    "Solution Design",
+    "Solution Architecture",
+    "Architecture Governance",
+    "Technical Design"
+   ]
+  },
+  {
+   "name": "Sales and distribution platforms for agents and customers in insurance",
+   "importance": 62,
+   "keywords": [
+    "Insurance",
+    "Distribution Platforms",
+    "Agency Channel",
+    "Sales and Distribution",
+    "Financial Services"
+   ]
+  },
+  {
+   "name": "Italian language fluency",
+   "importance": 60,
+   "keywords": [
+    "Italian",
+    "Italiano"
+   ]
+  },
+  {
+   "name": "Applying AI in projects and in solution functionalities",
+   "importance": 50,
+   "keywords": [
+    "AI",
+    "Artificial Intelligence",
+    "AI-enabled Solutions"
+   ]
+  },
+  {
+   "name": "English language fluency",
+   "importance": 35,
+   "keywords": [
+    "English",
+    "Inglese"
+   ]
+  },
+  {
+   "name": "Senior Consultant ICT — Digital Strategy and Governance",
+   "importance": 100,
+   "keywords": [
+    "Senior Consultant ICT",
+    "Digital Strategy and Governance",
+    "ICT Consultant",
+    "Digital Transformation Consultant",
+    "Consulente ICT"
+   ]
+  },
+  {
+   "name": "Translating client business strategy into ICT and digital transformation strategies",
+   "importance": 90,
+   "keywords": [
+    "ICT Strategy",
+    "Strategia ICT",
+    "Digital Strategy",
+    "Digital Transformation",
+    "Trasformazione Digitale",
+    "Business Strategy"
+   ]
+  },
+  {
+   "name": "Applying ICT governance frameworks and information systems governance",
+   "importance": 85,
+   "keywords": [
+    "ITIL",
+    "COBIT",
+    "ISO 27001",
+    "ICT Governance",
+    "IT Governance",
+    "Governo dei Sistemi Informativi"
+   ]
+  },
+  {
+   "name": "Managing client projects and consulting engagements end to end",
+   "importance": 80,
+   "keywords": [
+    "Project Management",
+    "Gestione Progetti",
+    "Program Management",
+    "Consulenza",
+    "Consulting",
+    "Resource Management",
+    "Monitoraggio avanzamento"
+   ]
+  },
+  {
+   "name": "Cross-domain knowledge of IT systems, networks, cybersecurity and cloud",
+   "importance": 70,
+   "keywords": [
+    "Cloud Computing",
+    "Cybersecurity",
+    "Sicurezza Informatica",
+    "Networking",
+    "Reti",
+    "IT Infrastructure",
+    "Infrastrutture IT"
+   ]
+  },
+  {
+   "name": "Working with Agile frameworks and methodologies",
+   "importance": 60,
+   "keywords": [
+    "Agile",
+    "Scrum",
+    "Kanban",
+    "SAFe",
+    "Metodologie Agile",
+    "Framework Agile"
+   ]
+  },
+  {
+   "name": "Collecting, analysing and interpreting data to propose solutions",
+   "importance": 60,
+   "keywords": [
+    "Data Analysis",
+    "Analisi dei Dati",
+    "Data Interpretation",
+    "Analisi dati"
+   ]
+  },
+  {
+   "name": "Explaining complex technical concepts to non-technical client stakeholders",
+   "importance": 60,
+   "keywords": [
+    "Technical Communication",
+    "Comunicazione tecnica",
+    "Stakeholder Communication",
+    "Comunicazione con il cliente"
+   ]
+  },
+  {
+   "name": "Taking leadership of teams and projects when needed",
+   "importance": 55,
+   "keywords": [
+    "Team Leadership",
+    "Project Leadership",
+    "Leadership",
+    "Guidare il team"
+   ]
+  },
+  {
+   "name": "Market benchmarking and trend analysis to develop client offerings",
+   "importance": 45,
+   "keywords": [
+    "Benchmarking",
+    "Market Analysis",
+    "Analisi dei Trend",
+    "Trend Analysis",
+    "Analisi dei bisogni dei clienti"
+   ]
+  },
+  {
+   "name": "Degree in computer science, IT or engineering disciplines",
+   "importance": 40,
+   "keywords": [
+    "Laurea in Informatica",
+    "Computer Science",
+    "Ingegneria Informatica",
+    "Computer Engineering",
+    "Laurea in Ingegneria"
+   ]
+  },
+  {
+   "name": "English language",
+   "importance": 20,
+   "keywords": [
+    "English",
+    "Inglese"
+   ]
+  },
+  {
+   "name": "Enterprise Architect",
+   "importance": 100,
+   "keywords": [
+    "Enterprise Architect",
+    "Enterprise Architecture",
+    "Technical Delivery Lead"
+   ]
+  },
+  {
+   "name": "Enterprise application architecture design",
+   "importance": 95,
+   "keywords": [
+    "Enterprise Architecture",
+    "application architecture",
+    "architetture applicative",
+    "solution design"
+   ]
+  },
+  {
+   "name": "Legacy modernization and cloud migration",
+   "importance": 80,
+   "keywords": [
+    "legacy modernization",
+    "application modernization",
+    "modernizzazione applicativa",
+    "cloud migration",
+    "migrazione cloud"
+   ]
+  },
+  {
+   "name": "Java and enterprise frameworks",
+   "importance": 80,
+   "keywords": [
+    "Java",
+    "Java EE",
+    "Java enterprise frameworks"
+   ]
+  },
+  {
+   "name": "Cloud-native and integration-oriented solution design",
+   "importance": 75,
+   "keywords": [
+    "cloud-native",
+    "cloud native architecture",
+    "application integration",
+    "integrazione applicativa"
+   ]
+  },
+  {
+   "name": "Cloud platform knowledge (AWS, Azure, Google Cloud)",
+   "importance": 75,
+   "keywords": [
+    "AWS",
+    "Amazon Web Services",
+    "Microsoft Azure",
+    "Google Cloud",
+    "GCP"
+   ]
+  },
+  {
+   "name": "Technical leadership of cross-functional distributed teams",
+   "importance": 70,
+   "keywords": [
+    "technical leadership",
+    "technical coordination",
+    "coordinamento tecnico",
+    "cross-functional teams",
+    "multi-site teams"
+   ]
+  },
+  {
+   "name": "Stakeholder management with business and executive stakeholders",
+   "importance": 70,
+   "keywords": [
+    "stakeholder management",
+    "executive stakeholders",
+    "business stakeholders",
+    "gestione stakeholder"
+   ]
+  },
+  {
+   "name": "Generative AI and Agentic AI adoption",
+   "importance": 65,
+   "keywords": [
+    "Generative AI",
+    "GenAI",
+    "Large Language Models",
+    "LLM",
+    "Agentic AI"
+   ]
+  },
+  {
+   "name": "Architecture principles and technology standards definition",
+   "importance": 60,
+   "keywords": [
+    "architecture principles",
+    "architectural standards",
+    "technology standards",
+    "linee guida architetturali"
+   ]
+  },
+  {
+   "name": "Pre-sales technical analysis, estimation and proposals",
+   "importance": 55,
+   "keywords": [
+    "pre-sales",
+    "presales",
+    "technical estimation",
+    "stime progettuali",
+    "technical proposals"
+   ]
+  },
+  {
+   "name": "Delivery coordination and technology roadmap planning",
+   "importance": 55,
+   "keywords": [
+    "delivery management",
+    "technology roadmap",
+    "roadmap tecnologiche",
+    "program delivery"
+   ]
+  },
+  {
+   "name": "English language proficiency",
+   "importance": 35,
+   "keywords": [
+    "English",
+    "inglese"
+   ]
+  },
+  {
+   "name": "Client Technology Strategist",
+   "importance": 100,
+   "keywords": [
+    "Client Technology Strategist",
+    "Technology Strategist",
+    "Client Strategist"
+   ]
+  },
+  {
+   "name": "Technology strategy, solution objectives and roadmap definition aligned to business priorities",
+   "importance": 92,
+   "keywords": [
+    "Technology Strategy",
+    "IT Strategy",
+    "Technology Roadmap",
+    "Solution Delivery",
+    "Business Value"
+   ]
+  },
+  {
+   "name": "Enterprise architecture and architecture roadmaps",
+   "importance": 90,
+   "keywords": [
+    "Enterprise Architecture",
+    "Enterprise Architect",
+    "Architecture Roadmap",
+    "Solution Architecture"
+   ]
+  },
+  {
+   "name": "Executive stakeholder management and advisory to C-level leaders",
+   "importance": 88,
+   "keywords": [
+    "C-level",
+    "Stakeholder Management",
+    "Trusted Advisor",
+    "Executive Communication"
+   ]
+  },
+  {
+   "name": "Cloud architecture",
+   "importance": 75,
+   "keywords": [
+    "Cloud Architecture",
+    "Cloud Computing",
+    "Azure",
+    "AWS",
+    "GCP"
+   ]
+  },
+  {
+   "name": "Consulting and client-facing advisory work",
+   "importance": 70,
+   "keywords": [
+    "Consulting",
+    "Client-facing",
+    "Advisory",
+    "Professional Services"
+   ]
+  },
+  {
+   "name": "Digital transformation",
+   "importance": 68,
+   "keywords": [
+    "Digital Transformation",
+    "Transformation Program",
+    "Innovation-led"
+   ]
+  },
+  {
+   "name": "Infrastructure and application modernization",
+   "importance": 65,
+   "keywords": [
+    "Infrastructure Modernization",
+    "Application Modernization",
+    "Application Transformation"
+   ]
+  },
+  {
+   "name": "Emerging technologies and innovation (AI, automation, cybersecurity, thought leadership)",
+   "importance": 60,
+   "keywords": [
+    "Artificial Intelligence",
+    "AI",
+    "Automation",
+    "Cybersecurity",
+    "Emerging Technologies",
+    "Innovation",
+    "Thought Leadership"
+   ]
+  },
+  {
+   "name": "Governance, regulatory compliance and operational risk mitigation",
+   "importance": 55,
+   "keywords": [
+    "Governance",
+    "Regulatory Compliance",
+    "Operational Risk",
+    "Risk Mitigation"
+   ]
+  },
+  {
+   "name": "Mentoring and coaching technology teams",
+   "importance": 55,
+   "keywords": [
+    "Mentoring",
+    "Coaching",
+    "Knowledge Sharing",
+    "Team Development"
+   ]
+  },
+  {
+   "name": "Certifications and technical degree",
+   "importance": 30,
+   "keywords": [
+    "TOGAF",
+    "ITIL",
+    "Cloud Certification",
+    "Computer Science",
+    "Information Systems",
+    "MBA"
+   ]
+  },
+  {
+   "name": "English language",
+   "importance": 15,
+   "keywords": [
+    "English"
+   ]
+  },
+  {
+   "name": "Staff Engineer",
+   "importance": 100,
+   "keywords": [
+    "Staff Engineer",
+    "Staff Software Engineer",
+    "Principal Engineer",
+    "Founding Engineer",
+    "Architect"
+   ]
+  },
+  {
+   "name": "Architecture decisions across squads",
+   "importance": 92,
+   "keywords": [
+    "Software Architecture",
+    "Architectural Decisions",
+    "Technical Decisions",
+    "Architecture Design"
+   ]
+  },
+  {
+   "name": "Cross-team technical initiatives driven end to end",
+   "importance": 88,
+   "keywords": [
+    "Cross-team Initiatives",
+    "Cross-functional Projects",
+    "End-to-end Ownership",
+    "Technical Program"
+   ]
+  },
+  {
+   "name": "Designing and running large-scale distributed systems",
+   "importance": 85,
+   "keywords": [
+    "Distributed Systems",
+    "System Design",
+    "Scalability",
+    "High Availability",
+    "Large-scale Systems"
+   ]
+  },
+  {
+   "name": "Technical leadership without authority",
+   "importance": 82,
+   "keywords": [
+    "Technical Leadership",
+    "Influence without Authority",
+    "Stakeholder Management",
+    "Tech Lead"
+   ]
+  },
+  {
+   "name": "Breadth across frontend, backend and systems",
+   "importance": 74,
+   "keywords": [
+    "Full Stack",
+    "Frontend",
+    "Backend",
+    "Back-end",
+    "Systems Engineering"
+   ]
+  },
+  {
+   "name": "Engineering standards and technical hiring",
+   "importance": 55,
+   "keywords": [
+    "Engineering Standards",
+    "Technical Hiring",
+    "Interview Panels",
+    "Engineering Bar"
+   ]
+  },
+  {
+   "name": "English fluency",
+   "importance": 30,
+   "keywords": [
+    "English",
+    "Fluent English"
+   ]
+  },
+  {
+   "name": "Italian language",
+   "importance": 15,
+   "keywords": [
+    "Italian",
+    "Italiano"
+   ]
+  },
+  {
+   "name": "Delivery Manager",
+   "importance": 100,
+   "keywords": [
+    "Delivery Manager",
+    "Delivery Lead",
+    "Delivery Management",
+    "Project Delivery Manager"
+   ]
+  },
+  {
+   "name": "End-to-end delivery of complex enterprise IT projects",
+   "importance": 90,
+   "keywords": [
+    "Enterprise Projects",
+    "Complex Projects",
+    "IT Delivery",
+    "Project Delivery"
+   ]
+  },
+  {
+   "name": "Team leadership and management of development teams",
+   "importance": 85,
+   "keywords": [
+    "Team Management",
+    "Team Leadership",
+    "Leadership",
+    "People Management"
+   ]
+  },
+  {
+   "name": "Java architecture design, traditional and cloud-native",
+   "importance": 80,
+   "keywords": [
+    "Java",
+    "Cloud-native",
+    "Cloud Native Architecture",
+    "Java Architecture"
+   ]
+  },
+  {
+   "name": "Solution architecture across multichannel and integration projects",
+   "importance": 78,
+   "keywords": [
+    "Solution Architecture",
+    "Integration Architecture",
+    "Microservices",
+    "Event-Driven",
+    "SOA",
+    "REST",
+    "Multichannel"
+   ]
+  },
+  {
+   "name": "Client and stakeholder relationship management",
+   "importance": 75,
+   "keywords": [
+    "Stakeholder Management",
+    "Client Relationship",
+    "Customer Relationship",
+    "Client Management"
+   ]
+  },
+  {
+   "name": "Project planning with GANTT and standard methodologies",
+   "importance": 65,
+   "keywords": [
+    "GANTT",
+    "Project Planning",
+    "Project Plans",
+    "Gantt Chart"
+   ]
+  },
+  {
+   "name": "Pre-sales support",
+   "importance": 55,
+   "keywords": [
+    "Pre-sales",
+    "Presales",
+    "Bid Support"
+   ]
+  },
+  {
+   "name": "Requirements analysis from client needs and business meetings",
+   "importance": 55,
+   "keywords": [
+    "Business Meetings",
+    "Requirements Gathering",
+    "Requirements Analysis"
+   ]
+  },
+  {
+   "name": "English language proficiency",
+   "importance": 50,
+   "keywords": [
+    "English",
+    "Inglese"
+   ]
+  },
+  {
+   "name": "Degree in Computer Science or Computer Engineering",
+   "importance": 45,
+   "keywords": [
+    "Computer Science",
+    "Computer Engineering",
+    "Informatica",
+    "Ingegneria Informatica"
+   ]
+  },
+  {
+   "name": "Availability for short business trips abroad",
+   "importance": 30,
+   "keywords": [
+    "Travel Availability",
+    "Business Travel",
+    "Willingness to Travel",
+    "Trasferte"
+   ]
+  },
+  {
+   "name": "AI-assisted delivery with Claude and Anthropic technologies",
+   "importance": 25,
+   "keywords": [
+    "Claude",
+    "Anthropic",
+    "AI Tools",
+    "Generative AI"
+   ]
+  },
+  {
+   "name": "Technical Account Manager",
+   "importance": 100,
+   "keywords": [
+    "Technical Account Manager",
+    "TAM",
+    "Technical Account Management"
+   ]
+  },
+  {
+   "name": "Cloud security and architecture expertise",
+   "importance": 90,
+   "keywords": [
+    "Cloud Security",
+    "Cloud Architecture",
+    "Cloud Services",
+    "Security Best Practices",
+    "Cloud Security Threats"
+   ]
+  },
+  {
+   "name": "Customer adoption planning with success plans and KPIs",
+   "importance": 85,
+   "keywords": [
+    "Customer Adoption",
+    "Success Plans",
+    "Customer Success",
+    "KPIs",
+    "Adoption Strategy"
+   ]
+  },
+  {
+   "name": "Trusted advisor relationships with enterprise stakeholders",
+   "importance": 75,
+   "keywords": [
+    "Trusted Advisor",
+    "Enterprise Clients",
+    "Stakeholder Management",
+    "Executive Engagement",
+    "C-level Stakeholders"
+   ]
+  },
+  {
+   "name": "Technical troubleshooting and escalation management",
+   "importance": 65,
+   "keywords": [
+    "Troubleshooting",
+    "Escalation Management",
+    "Technical Escalations",
+    "Issue Resolution"
+   ]
+  },
+  {
+   "name": "Kubernetes and container security",
+   "importance": 65,
+   "keywords": [
+    "Docker",
+    "Kubernetes",
+    "K8s",
+    "Container Security"
+   ]
+  },
+  {
+   "name": "Technical customer-facing role experience",
+   "importance": 60,
+   "keywords": [
+    "Professional Services",
+    "Solutions Engineering",
+    "Technical Support",
+    "Customer Success Engineer"
+   ]
+  },
+  {
+   "name": "Italian and English fluency",
+   "importance": 60,
+   "keywords": [
+    "Italian",
+    "English"
+   ]
+  },
+  {
+   "name": "Deployment guidance and operational best practices",
+   "importance": 55,
+   "keywords": [
+    "Deployment",
+    "Operational Best Practices",
+    "Center of Excellence",
+    "Workshops",
+    "Customer Onboarding"
+   ]
+  },
+  {
+   "name": "Cloud provider certifications",
+   "importance": 45,
+   "keywords": [
+    "Certified Solutions Architect",
+    "Certified DevOps Engineer",
+    "CSP Certification",
+    "Cloud Certification"
+   ]
+  },
+  {
+   "name": "Contract renewals and account expansion",
+   "importance": 45,
+   "keywords": [
+    "Renewals",
+    "Contract Renewals",
+    "Account Expansion",
+    "Upsell"
+   ]
+  },
+  {
+   "name": "Customer advocacy and cross-functional collaboration",
+   "importance": 40,
+   "keywords": [
+    "Customer Advocacy",
+    "Cross-functional Collaboration",
+    "Voice of the Customer"
+   ]
+  },
+  {
+   "name": "Computer Science or Engineering degree",
+   "importance": 30,
+   "keywords": [
+    "Computer Science",
+    "Engineering Degree",
+    "B.S."
+   ]
+  },
+  {
+   "name": "AI Factory Operations Manager",
+   "importance": 100,
+   "keywords": [
+    "AI Factory Operations Manager",
+    "AI Operations Manager",
+    "AI Delivery Operations Manager",
+    "AI Program Manager",
+    "AI Factory Manager"
+   ]
+  },
+  {
+   "name": "Portfolio management, business case and investment tracking",
+   "importance": 88,
+   "keywords": [
+    "Portfolio Management",
+    "Portfolio Execution",
+    "Portfolio Visibility",
+    "Portfolio Transparency",
+    "Business Case",
+    "Investment Tracking",
+    "Portfolio Reporting"
+   ]
+  },
+  {
+   "name": "Operational governance and delivery framework",
+   "importance": 85,
+   "keywords": [
+    "Operational Governance",
+    "Delivery Framework",
+    "Operating Model",
+    "Governance Processes",
+    "Working Practices"
+   ]
+  },
+  {
+   "name": "Program delivery and PMO leadership",
+   "importance": 82,
+   "keywords": [
+    "Program Management",
+    "Program Delivery",
+    "PMO",
+    "Project Management Office",
+    "PMO Leadership",
+    "Transformation Program"
+   ]
+  },
+  {
+   "name": "Delivery risk and dependency management",
+   "importance": 78,
+   "keywords": [
+    "Risk Management",
+    "Dependency Management",
+    "RAID Log",
+    "Delivery Risk",
+    "Delivery Performance"
+   ]
+  },
+  {
+   "name": "Capacity planning and delivery team performance",
+   "importance": 76,
+   "keywords": [
+    "Capacity Planning",
+    "Resource Planning",
+    "Resource Management",
+    "Workforce Planning",
+    "Delivery Teams",
+    "Team Performance"
+   ]
+  },
+  {
+   "name": "Vendor and external delivery partner coordination",
+   "importance": 72,
+   "keywords": [
+    "Vendor Management",
+    "Partner Management",
+    "Supplier Management",
+    "External Delivery Partners",
+    "gestione fornitori"
+   ]
+  },
+  {
+   "name": "Stage-gate delivery execution against cost, time and quality",
+   "importance": 68,
+   "keywords": [
+    "Stage-Gate",
+    "Stage Gate",
+    "Gate Reviews",
+    "Delivery Lifecycle",
+    "Cost Time Quality"
+   ]
+  },
+  {
+   "name": "Executive stakeholder and steering committee support",
+   "importance": 66,
+   "keywords": [
+    "Executive Stakeholders",
+    "Steering Committee",
+    "Stakeholder Management",
+    "Decision Support",
+    "Reporting Materials"
+   ]
+  },
+  {
+   "name": "AI and digital transformation delivery",
+   "importance": 64,
+   "keywords": [
+    "AI Transformation",
+    "Artificial Intelligence",
+    "AI Delivery",
+    "Digital Transformation",
+    "Digitalization",
+    "Analytics",
+    "Automation"
+   ]
+  },
+  {
+   "name": "Capability development and training programs",
+   "importance": 58,
+   "keywords": [
+    "AI Academy",
+    "Capability Development",
+    "Training Programs",
+    "Certifications",
+    "Learning Programs"
+   ]
+  },
+  {
+   "name": "Professional fluency in English",
+   "importance": 45,
+   "keywords": [
+    "English",
+    "Fluent English",
+    "Professional English",
+    "English C1"
+   ]
+  },
+  {
+   "name": "Engineering, business or technology degree",
+   "importance": 32,
+   "keywords": [
+    "Bachelor's Degree",
+    "Engineering Degree",
+    "Business Administration",
+    "Technology Management",
+    "Program Management"
+   ]
+  },
+  {
+   "name": "Enterprise Applications & Integration Services Specialist",
+   "importance": 100,
+   "keywords": [
+    "Enterprise Applications & Integration Services Specialist",
+    "Enterprise Applications Specialist",
+    "Integration Services Specialist",
+    "Application Integration Specialist"
+   ]
+  },
+  {
+   "name": "Salesforce CRM administration",
+   "importance": 88,
+   "keywords": [
+    "Salesforce CRM",
+    "CRM administration",
+    "Salesforce Administrator",
+    "cloud applications",
+    "SaaS"
+   ]
+  },
+  {
+   "name": "IT project management",
+   "importance": 82,
+   "keywords": [
+    "IT project management",
+    "project management",
+    "gestione progetti IT",
+    "project delivery",
+    "digital transformation"
+   ]
+  },
+  {
+   "name": "Business process and requirements analysis",
+   "importance": 78,
+   "keywords": [
+    "requirements analysis",
+    "business process analysis",
+    "process analysis",
+    "requirements gathering",
+    "analisi dei requisiti",
+    "business analysis"
+   ]
+  },
+  {
+   "name": "Application support and incident management",
+   "importance": 72,
+   "keywords": [
+    "application support",
+    "incident management",
+    "troubleshooting",
+    "log analysis",
+    "application monitoring",
+    "SLA",
+    "service level agreement"
+   ]
+  },
+  {
+   "name": "User acceptance testing and test management",
+   "importance": 65,
+   "keywords": [
+    "UAT",
+    "User Acceptance Testing",
+    "test management",
+    "test plan",
+    "collaudo"
+   ]
+  },
+  {
+   "name": "Solution design",
+   "importance": 62,
+   "keywords": [
+    "solution design",
+    "technical design",
+    "progettazione della soluzione",
+    "solution blueprint"
+   ]
+  },
+  {
+   "name": "AMS partner and vendor management",
+   "importance": 58,
+   "keywords": [
+    "AMS",
+    "Application Managed Services",
+    "vendor management",
+    "partner management",
+    "gestione fornitori"
+   ]
+  },
+  {
+   "name": "Technical documentation and user guides",
+   "importance": 52,
+   "keywords": [
+    "technical documentation",
+    "documentazione tecnica",
+    "user guides",
+    "FAQ"
+   ]
+  },
+  {
+   "name": "English language",
+   "importance": 45,
+   "keywords": [
+    "English",
+    "English B2",
+    "fluent English",
+    "inglese"
+   ]
+  },
+  {
+   "name": "User training and go-live support",
+   "importance": 42,
+   "keywords": [
+    "user training",
+    "go-live",
+    "training",
+    "formazione utenti"
+   ]
+  },
+  {
+   "name": "iPaaS integration platforms",
+   "importance": 28,
+   "keywords": [
+    "iPaaS",
+    "Integration Platform as a Service",
+    "integration platforms",
+    "API integration"
+   ]
+  },
+  {
+   "name": "Senior Service Delivery Manager",
+   "importance": 100,
+   "keywords": [
+    "Senior Service Delivery Manager",
+    "Service Delivery Manager",
+    "IT Service Delivery Manager",
+    "Senior SDM"
+   ]
+  },
+  {
+   "name": "End-to-end IT service delivery management",
+   "importance": 95,
+   "keywords": [
+    "IT Service Delivery",
+    "Service Delivery Management",
+    "End-to-End Service Delivery",
+    "Service Ownership"
+   ]
+  },
+  {
+   "name": "SLA/KPI performance reporting and service governance",
+   "importance": 90,
+   "keywords": [
+    "SLA",
+    "KPI",
+    "Service Level Agreements",
+    "Service Governance",
+    "Service Reviews",
+    "Performance Reporting"
+   ]
+  },
+  {
+   "name": "Customer relationship and senior stakeholder management",
+   "importance": 90,
+   "keywords": [
+    "Customer Relationship Management",
+    "Stakeholder Management",
+    "Senior Stakeholder Engagement",
+    "Customer Satisfaction"
+   ]
+  },
+  {
+   "name": "Fluent Italian",
+   "importance": 85,
+   "keywords": [
+    "Italian",
+    "Fluent Italian",
+    "Italiano"
+   ]
+  },
+  {
+   "name": "Incident, escalation and service continuity management",
+   "importance": 85,
+   "keywords": [
+    "Incident Management",
+    "Escalation Management",
+    "Major Incident Management",
+    "Service Continuity",
+    "Operational Risk"
+   ]
+  },
+  {
+   "name": "Supplier, partner and technical team coordination",
+   "importance": 80,
+   "keywords": [
+    "Supplier Management",
+    "Vendor Management",
+    "Third-Party Management",
+    "Partner Management",
+    "Technical Team Coordination"
+   ]
+  },
+  {
+   "name": "ITIL service management practices",
+   "importance": 75,
+   "keywords": [
+    "ITIL",
+    "Problem Management",
+    "Change Management"
+   ]
+  },
+  {
+   "name": "Continual service improvement",
+   "importance": 70,
+   "keywords": [
+    "Continual Service Improvement",
+    "CSI",
+    "Service Improvement Plans",
+    "Service Quality Improvement"
+   ]
+  },
+  {
+   "name": "Managed services and IT outsourcing environment",
+   "importance": 65,
+   "keywords": [
+    "Managed Services",
+    "IT Outsourcing",
+    "Outsourcing"
+   ]
+  },
+  {
+   "name": "Commercial and contract awareness for service commitments",
+   "importance": 55,
+   "keywords": [
+    "Commercial Awareness",
+    "Contract Management",
+    "Service Commitments"
+   ]
+  },
+  {
+   "name": "Aviation and airport high-availability operations",
+   "importance": 45,
+   "keywords": [
+    "Aviation",
+    "Airport Operations",
+    "High Availability",
+    "Business-Critical IT"
+   ]
+  },
+  {
+   "name": "Fluent English",
+   "importance": 30,
+   "keywords": [
+    "English",
+    "Fluent English"
+   ]
+  },
+  {
+   "name": "Infrastructure Architect",
+   "importance": 100,
+   "keywords": [
+    "Infrastructure Architect",
+    "Infrastructure Architecture",
+    "Cloud Infrastructure Architect"
+   ]
+  },
+  {
+   "name": "Design of complex infrastructure architectures across on-premise, hybrid and public cloud",
+   "importance": 90,
+   "keywords": [
+    "Infrastructure Architecture",
+    "Hybrid Cloud",
+    "Public Cloud",
+    "On-Premise",
+    "Cloud Infrastructure",
+    "infrastrutture IT"
+   ]
+  },
+  {
+   "name": "Cloud solution design on Azure, AWS and Google Cloud Platform",
+   "importance": 85,
+   "keywords": [
+    "Azure",
+    "AWS",
+    "Google Cloud Platform",
+    "GCP"
+   ]
+  },
+  {
+   "name": "Enterprise infrastructure design covering server, storage, networking and virtualization",
+   "importance": 80,
+   "keywords": [
+    "Server",
+    "Storage",
+    "Networking",
+    "Virtualization",
+    "Enterprise Infrastructure"
+   ]
+  },
+  {
+   "name": "Business Continuity and Disaster Recovery design",
+   "importance": 70,
+   "keywords": [
+    "Business Continuity",
+    "Disaster Recovery",
+    "BCP",
+    "DR"
+   ]
+  },
+  {
+   "name": "Data center modernization, infrastructure transformation and cloud adoption programmes",
+   "importance": 65,
+   "keywords": [
+    "Data Center Modernization",
+    "Data Center Transformation",
+    "Cloud Adoption",
+    "Cloud Migration",
+    "consolidamento tecnologico",
+    "modernizzazione infrastrutturale"
+   ]
+  },
+  {
+   "name": "Definition of architectural standards, technology roadmaps and guidelines",
+   "importance": 60,
+   "keywords": [
+    "Architecture Standards",
+    "Technology Roadmap",
+    "Architectural Guidelines",
+    "linee guida tecnologiche"
+   ]
+  },
+  {
+   "name": "Collaboration with business stakeholders and multidisciplinary Cloud, Network, Security and Operations teams",
+   "importance": 55,
+   "keywords": [
+    "Stakeholder Management",
+    "Business Stakeholders",
+    "Cross-functional Collaboration",
+    "team multidisciplinari"
+   ]
+  },
+  {
+   "name": "Architecture and cloud certifications",
+   "importance": 35,
+   "keywords": [
+    "Azure Solutions Architect",
+    "AWS Solutions Architect",
+    "Google Professional Cloud Architect",
+    "VMware VCP",
+    "TOGAF",
+    "ITIL"
+   ]
+  },
+  {
+   "name": "English language",
+   "importance": 30,
+   "keywords": [
+    "English"
+   ]
+  },
+  {
+   "name": "Manager Up – Delivery Lead & Architect",
+   "importance": 100,
+   "keywords": [
+    "Manager Up",
+    "Delivery Lead",
+    "Architect",
+    "Delivery Lead & Architect",
+    "Senior Manager"
+   ]
+  },
+  {
+   "name": "IT and application architecture design",
+   "importance": 95,
+   "keywords": [
+    "IT Architecture",
+    "Solution Architecture",
+    "Application Architecture",
+    "Architectural Design",
+    "architetture IT"
+   ]
+  },
+  {
+   "name": "Systems integration and integration scenario design",
+   "importance": 90,
+   "keywords": [
+    "Systems Integration",
+    "Integration Design",
+    "Integration Architecture",
+    "scenari di integrazione"
+   ]
+  },
+  {
+   "name": "Cloud platform expertise across AWS, Google Cloud and Microsoft Azure",
+   "importance": 85,
+   "keywords": [
+    "Cloud Platforms",
+    "AWS",
+    "Google Cloud",
+    "Microsoft Azure",
+    "Azure",
+    "GCP"
+   ]
+  },
+  {
+   "name": "AI and GenAI service implementation",
+   "importance": 80,
+   "keywords": [
+    "AI",
+    "GenAI",
+    "Artificial Intelligence",
+    "Generative AI",
+    "servizi AI"
+   ]
+  },
+  {
+   "name": "Financial Services industry experience",
+   "importance": 80,
+   "keywords": [
+    "Financial Services",
+    "FSI",
+    "Banking",
+    "Insurance",
+    "Wealth Management",
+    "Real Estate"
+   ]
+  },
+  {
+   "name": "Team management and leadership",
+   "importance": 75,
+   "keywords": [
+    "Team Management",
+    "Team Leadership",
+    "People Management",
+    "gestione team"
+   ]
+  },
+  {
+   "name": "Client relationship management and business development",
+   "importance": 75,
+   "keywords": [
+    "Client Relationship Management",
+    "Stakeholder Management",
+    "Business Development",
+    "relazioni con il cliente",
+    "relazioni commerciali"
+   ]
+  },
+  {
+   "name": "Project, demand and business planning",
+   "importance": 70,
+   "keywords": [
+    "Project Management",
+    "Demand Management",
+    "Business Plan"
+   ]
+  },
+  {
+   "name": "Business process analysis and design",
+   "importance": 65,
+   "keywords": [
+    "Business Process Analysis",
+    "Process Design",
+    "analisi e disegno processi"
+   ]
+  },
+  {
+   "name": "Software development background",
+   "importance": 60,
+   "keywords": [
+    "Software Development",
+    "Software Developer",
+    "SW Developer"
+   ]
+  },
+  {
+   "name": "Technical degree in Computer Science or Information Engineering",
+   "importance": 50,
+   "keywords": [
+    "Computer Science",
+    "Information Engineering",
+    "Technical Degree",
+    "Laurea Informatica",
+    "Ingegneria dell'Informazione"
+   ]
+  },
+  {
+   "name": "Technical and professional English",
+   "importance": 40,
+   "keywords": [
+    "English",
+    "Technical English",
+    "Professional English",
+    "inglese tecnico"
+   ]
+  },
+  {
+   "name": "IT Infrastructure Architect",
+   "importance": 100,
+   "keywords": [
+    "IT Infrastructure Architect",
+    "Infrastructure Architect",
+    "IT Architect",
+    "Architetto Infrastrutture"
+   ]
+  },
+  {
+   "name": "Infrastructure architecture design, standards and governance",
+   "importance": 95,
+   "keywords": [
+    "Infrastructure Architecture",
+    "IT Infrastructure",
+    "architetture infrastrutturali",
+    "best practices",
+    "standards",
+    "governance",
+    "linee guida"
+   ]
+  },
+  {
+   "name": "Disaster recovery and business continuity design",
+   "importance": 85,
+   "keywords": [
+    "Disaster Recovery",
+    "Business Continuity",
+    "failover",
+    "DR",
+    "BCP"
+   ]
+  },
+  {
+   "name": "Capacity management and infrastructure sizing",
+   "importance": 82,
+   "keywords": [
+    "Capacity Management",
+    "capacity planning",
+    "dimensionamento",
+    "resource planning"
+   ]
+  },
+  {
+   "name": "Resilient, scalable and high-performance infrastructure",
+   "importance": 78,
+   "keywords": [
+    "Scalability",
+    "Resilience",
+    "High Availability",
+    "uptime",
+    "performance optimization"
+   ]
+  },
+  {
+   "name": "Vendor and contract management in multi-supplier contexts",
+   "importance": 75,
+   "keywords": [
+    "Vendor Management",
+    "supplier management",
+    "gestione fornitori",
+    "contract management",
+    "multi-vendor"
+   ]
+  },
+  {
+   "name": "Stakeholder collaboration and requirements gathering",
+   "importance": 72,
+   "keywords": [
+    "Stakeholder Management",
+    "requirements gathering",
+    "non-functional requirements",
+    "cross-functional",
+    "business stakeholders"
+   ]
+  },
+  {
+   "name": "Technical leadership and coordination of technical teams",
+   "importance": 70,
+   "keywords": [
+    "Technical Leadership",
+    "team coordination",
+    "coordinamento team tecnici",
+    "team leadership"
+   ]
+  },
+  {
+   "name": "Cloud transformation, migration and technology refresh projects",
+   "importance": 65,
+   "keywords": [
+    "Cloud Transformation",
+    "cloud migration",
+    "migration",
+    "technology refresh"
+   ]
+  },
+  {
+   "name": "Service delivery, service operations and SLA/KPI monitoring",
+   "importance": 63,
+   "keywords": [
+    "Service Delivery",
+    "Service Operations",
+    "service management",
+    "SLA",
+    "KPI",
+    "performance monitoring"
+   ]
+  },
+  {
+   "name": "Infrastructure project planning and control (time, cost, resources, milestones)",
+   "importance": 60,
+   "keywords": [
+    "Project Management",
+    "Waterfall",
+    "Agile",
+    "Hybrid",
+    "project planning",
+    "milestones",
+    "budget"
+   ]
+  },
+  {
+   "name": "Continual service improvement initiatives",
+   "importance": 55,
+   "keywords": [
+    "Continual Service Improvement",
+    "CSI",
+    "continuous improvement",
+    "miglioramento continuo"
+   ]
+  },
+  {
+   "name": "English language",
+   "importance": 30,
+   "keywords": [
+    "English"
+   ]
+  },
+  {
+   "name": "Forward Deployed Engineer",
+   "importance": 100,
+   "keywords": [
+    "Forward Deployed Engineer",
+    "Forward Deployment Engineer",
+    "Forward Deployed Software Engineer",
+    "Solution Engineer"
+   ]
+  },
+  {
+   "name": "Enterprise AI solution delivery from discovery to go-live and adoption",
+   "importance": 90,
+   "keywords": [
+    "Enterprise AI",
+    "AI solutions",
+    "end-to-end implementation",
+    "go-live",
+    "digital transformation",
+    "solution adoption"
+   ]
+  },
+  {
+   "name": "Executive stakeholder management and expectation alignment",
+   "importance": 85,
+   "keywords": [
+    "Stakeholder Management",
+    "Executive Stakeholders",
+    "C-level",
+    "expectations management",
+    "gestione stakeholder"
+   ]
+  },
+  {
+   "name": "Strategic or technology consulting and solution engineering background",
+   "importance": 75,
+   "keywords": [
+    "Management Consulting",
+    "Strategy Consulting",
+    "Technology Consulting",
+    "Solution Engineering",
+    "consulenza strategica"
+   ]
+  },
+  {
+   "name": "Application integration and API connectivity with client ecosystems",
+   "importance": 72,
+   "keywords": [
+    "API",
+    "system integration",
+    "CRM",
+    "ERP",
+    "data warehouse",
+    "integrazioni applicative"
+   ]
+  },
+  {
+   "name": "AI agents, Large Language Models and Generative AI",
+   "importance": 70,
+   "keywords": [
+    "LLM",
+    "Large Language Models",
+    "AI agents",
+    "RAG",
+    "Generative AI",
+    "Knowledge Graph",
+    "agenti AI"
+   ]
+  },
+  {
+   "name": "SQL, data pipelines and data modeling",
+   "importance": 65,
+   "keywords": [
+    "SQL",
+    "data pipelines",
+    "data modeling",
+    "data transformation",
+    "pipeline dati",
+    "modellazione dati"
+   ]
+  },
+  {
+   "name": "Discovery workshops and translation of business needs into functional and technical requirements",
+   "importance": 60,
+   "keywords": [
+    "requirements gathering",
+    "functional requirements",
+    "technical requirements",
+    "workshops",
+    "discovery",
+    "stakeholder interviews"
+   ]
+  },
+  {
+   "name": "Business process knowledge in procurement, risk, compliance or strategic planning",
+   "importance": 55,
+   "keywords": [
+    "business process analysis",
+    "procurement",
+    "risk",
+    "compliance",
+    "strategic planning"
+   ]
+  },
+  {
+   "name": "Rapid prototyping and proof of concept delivery",
+   "importance": 55,
+   "keywords": [
+    "Proof of Concept",
+    "PoC",
+    "prototyping",
+    "rapid prototyping",
+    "MVP"
+   ]
+  },
+  {
+   "name": "KPI definition, adoption metrics and value quantification for decision makers",
+   "importance": 50,
+   "keywords": [
+    "KPI",
+    "adoption metrics",
+    "value measurement",
+    "business benefits",
+    "value realization",
+    "metriche di adozione"
+   ]
+  },
+  {
+   "name": "Platform configuration of workflows, information models and AI orchestration",
+   "importance": 45,
+   "keywords": [
+    "workflow configuration",
+    "AI orchestration",
+    "information modeling",
+    "platform configuration",
+    "modelli informativi"
+   ]
+  },
+  {
+   "name": "Professional communication in Italian and English",
+   "importance": 45,
+   "keywords": [
+    "Italian",
+    "English",
+    "Italiano",
+    "bilingual"
+   ]
+  },
+  {
+   "name": "Responsabile Product Development",
+   "importance": 100,
+   "keywords": [
+    "Responsabile Product Development",
+    "Product Solutions Architect",
+    "Product Development Manager",
+    "CYS Product Development"
+   ]
+  },
+  {
+   "name": "Software development team coordination and training",
+   "importance": 95,
+   "keywords": [
+    "team coordination",
+    "development team",
+    "team training",
+    "Product Engineering Manager",
+    "coordinamento team di sviluppo"
+   ]
+  },
+  {
+   "name": "Product delivery to time, cost and quality targets",
+   "importance": 90,
+   "keywords": [
+    "product delivery",
+    "time cost quality",
+    "delivery targets",
+    "sviluppo prodotti"
+   ]
+  },
+  {
+   "name": "Common development and design process definition",
+   "importance": 82,
+   "keywords": [
+    "development processes",
+    "design processes",
+    "process definition",
+    "processi di sviluppo e progettazione"
+   ]
+  },
+  {
+   "name": "DevSecOps systems and software progress control",
+   "importance": 85,
+   "keywords": [
+    "DevSecOps",
+    "secure development",
+    "software progress control",
+    "pianificazione e controllo avanzamento software"
+   ]
+  },
+  {
+   "name": "Security standards and CAR compliance",
+   "importance": 82,
+   "keywords": [
+    "security standards",
+    "CAR",
+    "security compliance",
+    "standard di sicurezza"
+   ]
+  },
+  {
+   "name": "Project Management methodologies and certifications",
+   "importance": 80,
+   "keywords": [
+    "Project Management",
+    "PMP",
+    "Agile",
+    "Scrum",
+    "metodologie di Project Management"
+   ]
+  },
+  {
+   "name": "System Engineering methodologies",
+   "importance": 75,
+   "keywords": [
+    "System Engineering",
+    "Systems Engineering",
+    "Ingegneria dei sistemi"
+   ]
+  },
+  {
+   "name": "Cyber security software and technology familiarity",
+   "importance": 80,
+   "keywords": [
+    "Cyber Security",
+    "Cybersecurity",
+    "security software",
+    "cyber security products"
+   ]
+  },
+  {
+   "name": "Enterprise and cloud architecture design",
+   "importance": 75,
+   "keywords": [
+    "Enterprise Architecture",
+    "Cloud Architecture",
+    "private cloud",
+    "public cloud",
+    "architetture enterprise"
+   ]
+  },
+  {
+   "name": "Product and department economics",
+   "importance": 60,
+   "keywords": [
+    "product economics",
+    "department economics",
+    "economia di prodotto",
+    "economia di reparto"
+   ]
+  },
+  {
+   "name": "Stakeholder communication and public speaking",
+   "importance": 55,
+   "keywords": [
+    "stakeholder management",
+    "public speaking",
+    "gestione stakeholder"
+   ]
+  },
+  {
+   "name": "Fluent English",
+   "importance": 55,
+   "keywords": [
+    "English",
+    "fluent English",
+    "lingua inglese"
+   ]
+  },
+  {
+   "name": "Site Leader – Life Science",
+   "importance": 100,
+   "keywords": [
+    "Site Leader",
+    "Site Lead",
+    "Site Leadership",
+    "Life Science Site Leader"
+   ]
+  },
+  {
+   "name": "Project management and delivery coordination",
+   "importance": 90,
+   "keywords": [
+    "Project Management",
+    "Gestione progetti",
+    "Project Coordination",
+    "Delivery Management",
+    "Project Planning"
+   ]
+  },
+  {
+   "name": "Team leadership and people development",
+   "importance": 85,
+   "keywords": [
+    "Team Leadership",
+    "Team Management",
+    "People Management",
+    "Capacity Planning",
+    "Staffing",
+    "Onboarding"
+   ]
+  },
+  {
+   "name": "Stakeholder and client management",
+   "importance": 85,
+   "keywords": [
+    "Stakeholder Management",
+    "Client Management",
+    "Gestione stakeholder",
+    "Client Relationship",
+    "Relazioni con il cliente"
+   ]
+  },
+  {
+   "name": "Business development and account expansion",
+   "importance": 70,
+   "keywords": [
+    "Business Development",
+    "Sviluppo business",
+    "Account Management",
+    "Effort Estimation",
+    "Stima effort",
+    "Scope Definition"
+   ]
+  },
+  {
+   "name": "Risk and escalation management",
+   "importance": 65,
+   "keywords": [
+    "Risk Management",
+    "Risk Mitigation",
+    "Escalation Management",
+    "Gestione rischi"
+   ]
+  },
+  {
+   "name": "Project KPI monitoring and periodic reporting",
+   "importance": 60,
+   "keywords": [
+    "KPI",
+    "Project Reporting",
+    "Reporting periodico",
+    "Project Metrics"
+   ]
+  },
+  {
+   "name": "Life Science domain experience",
+   "importance": 55,
+   "keywords": [
+    "Life Science",
+    "Life Sciences",
+    "Pharma",
+    "Farmaceutico",
+    "Life Sciences industry"
+   ]
+  },
+  {
+   "name": "Consultancy delivery experience",
+   "importance": 45,
+   "keywords": [
+    "Consulenza",
+    "Consulting",
+    "IT Consulting",
+    "Società di consulenza"
+   ]
+  },
+  {
+   "name": "English language",
+   "importance": 20,
+   "keywords": [
+    "English",
+    "Inglese"
+   ]
+  },
+  {
+   "name": "Project Manager",
+   "importance": 100,
+   "keywords": [
+    "Project Manager",
+    "Project Management",
+    "Responsabile di Progetto"
+   ]
+  },
+  {
+   "name": "Project cost and schedule control",
+   "importance": 90,
+   "keywords": [
+    "Cost Control",
+    "Controllo costi",
+    "Tempi e costi",
+    "Project Budget",
+    "Commesse"
+   ]
+  },
+  {
+   "name": "Analysis of variances and corrective action",
+   "importance": 78,
+   "keywords": [
+    "Variance Analysis",
+    "Analisi degli scostamenti",
+    "Scostamenti",
+    "Cause Analysis",
+    "Corrective Actions"
+   ]
+  },
+  {
+   "name": "Project risk identification and mitigation",
+   "importance": 75,
+   "keywords": [
+    "Risk Management",
+    "Gestione del rischio",
+    "Risk Analysis",
+    "Aree di rischio",
+    "Piano di progetto"
+   ]
+  },
+  {
+   "name": "Stakeholder management and cross-functional coordination",
+   "importance": 70,
+   "keywords": [
+    "Stakeholder Management",
+    "Coordinamento interfunzionale",
+    "Cross-functional Coordination",
+    "Negoziazione",
+    "Interfaccia con il cliente"
+   ]
+  },
+  {
+   "name": "Technical and administrative project documentation",
+   "importance": 55,
+   "keywords": [
+    "Technical Documentation",
+    "Documentazione tecnica",
+    "Documentazione amministrativa",
+    "Project Documentation",
+    "Reporting"
+   ]
+  },
+  {
+   "name": "Analytical problem solving",
+   "importance": 45,
+   "keywords": [
+    "Problem Solving",
+    "Capacità analitiche",
+    "Analytical Skills",
+    "Metodologie di analisi"
+   ]
+  },
+  {
+   "name": "Microsoft Office package",
+   "importance": 45,
+   "keywords": [
+    "Microsoft Office",
+    "Pacchetto Office",
+    "MS Office",
+    "Office 365"
+   ]
+  },
+  {
+   "name": "English language",
+   "importance": 35,
+   "keywords": [
+    "English",
+    "Inglese",
+    "English C1",
+    "C1 English"
+   ]
+  },
+  {
+   "name": "Availability for travel, including abroad",
+   "importance": 25,
+   "keywords": [
+    "Disponibilità trasferte",
+    "Trasferte estere",
+    "Travel Availability",
+    "Willingness to travel"
+   ]
+  },
+  {
+   "name": "Technical Solution Engineer-Italy",
+   "importance": 100,
+   "keywords": [
+    "Technical Solution Engineer",
+    "Solution Engineer",
+    "Technical Solutions Engineer",
+    "Solutions Engineer"
+   ]
+  },
+  {
+   "name": "Energy storage system solution design",
+   "importance": 90,
+   "keywords": [
+    "ESS",
+    "Energy Storage System",
+    "BESS",
+    "solution design"
+   ]
+  },
+  {
+   "name": "Technical and market requirements analysis",
+   "importance": 90,
+   "keywords": [
+    "technical requirements",
+    "requirements analysis",
+    "requirements gathering",
+    "customer requirements",
+    "market requirements",
+    "product requirements",
+    "user needs analysis"
+   ]
+  },
+  {
+   "name": "Microgrid energy storage system development",
+   "importance": 85,
+   "keywords": [
+    "microgrid",
+    "microgrid energy storage",
+    "energy storage system development"
+   ]
+  },
+  {
+   "name": "Grid-forming PCS technology",
+   "importance": 85,
+   "keywords": [
+    "grid-forming PCS",
+    "PCS",
+    "Power Conversion System"
+   ]
+  },
+  {
+   "name": "Renewable energy power generation and distribution systems",
+   "importance": 80,
+   "keywords": [
+    "renewable energy",
+    "power generation",
+    "power distribution",
+    "power transformation",
+    "photovoltaic",
+    "power grid"
+   ]
+  },
+  {
+   "name": "Customer relationship management",
+   "importance": 75,
+   "keywords": [
+    "customer relationship management",
+    "CRM",
+    "client relationships",
+    "client communication"
+   ]
+  },
+  {
+   "name": "Technical risk identification and issue resolution",
+   "importance": 70,
+   "keywords": [
+    "technical risk",
+    "risk identification",
+    "issue resolution",
+    "troubleshooting",
+    "system issues"
+   ]
+  },
+  {
+   "name": "Bidding document and technical proposal preparation",
+   "importance": 70,
+   "keywords": [
+    "bidding documents",
+    "tender preparation",
+    "technical proposals",
+    "bid preparation"
+   ]
+  },
+  {
+   "name": "Overseas energy storage project development",
+   "importance": 70,
+   "keywords": [
+    "overseas energy storage",
+    "international projects",
+    "overseas project development",
+    "energy storage project development"
+   ]
+  },
+  {
+   "name": "English technical documentation and proficiency",
+   "importance": 70,
+   "keywords": [
+    "English",
+    "technical specifications",
+    "technical papers",
+    "technical documentation"
+   ]
+  },
+  {
+   "name": "Technical agreement preparation and negotiation",
+   "importance": 65,
+   "keywords": [
+    "technical agreements",
+    "technical negotiation",
+    "contract negotiation",
+    "negotiation"
+   ]
+  },
+  {
+   "name": "Electrical engineering or related engineering degree",
+   "importance": 50,
+   "keywords": [
+    "Electrical Engineering",
+    "Power Electronics",
+    "High Voltage",
+    "Mechanical Engineering",
+    "Automation"
+   ]
+  },
+  {
+   "name": "Product Manager – Access Control & Video Intercom",
+   "importance": 100,
+   "keywords": [
+    "Product Manager",
+    "Product Manager Access Control",
+    "Product Manager Video Intercom",
+    "Access Control and Video Intercom Product Manager"
+   ]
+  },
+  {
+   "name": "Access Control product and solution knowledge",
+   "importance": 95,
+   "keywords": [
+    "Access Control",
+    "access control systems",
+    "electronic access control",
+    "access control solutions"
+   ]
+  },
+  {
+   "name": "Video Intercom product and solution knowledge",
+   "importance": 95,
+   "keywords": [
+    "Video Intercom",
+    "video intercom systems",
+    "video door entry",
+    "intercom systems"
+   ]
+  },
+  {
+   "name": "Product portfolio management",
+   "importance": 90,
+   "keywords": [
+    "Product Management",
+    "product portfolio management",
+    "product lifecycle management",
+    "product line management"
+   ]
+  },
+  {
+   "name": "Security industry domain experience",
+   "importance": 85,
+   "keywords": [
+    "security industry",
+    "physical security",
+    "electronic security",
+    "security sector"
+   ]
+  },
+  {
+   "name": "Italian security market and channel knowledge",
+   "importance": 80,
+   "keywords": [
+    "Italian security market",
+    "Italy security market",
+    "security distributors",
+    "System Integrators",
+    "installers"
+   ]
+  },
+  {
+   "name": "Fluent Italian",
+   "importance": 80,
+   "keywords": [
+    "Italian",
+    "Italian language",
+    "fluent Italian",
+    "madrelingua italiana"
+   ]
+  },
+  {
+   "name": "Business development and go-to-market strategy",
+   "importance": 75,
+   "keywords": [
+    "Business Development",
+    "Go-to-Market",
+    "GTM",
+    "product launch",
+    "market launch",
+    "business growth",
+    "commercial awareness"
+   ]
+  },
+  {
+   "name": "Customer-facing technical support and training",
+   "importance": 70,
+   "keywords": [
+    "Pre-Sales",
+    "Technical Sales",
+    "product demonstrations",
+    "technical presentations",
+    "product training",
+    "solution training"
+   ]
+  },
+  {
+   "name": "Product positioning and competitive analysis",
+   "importance": 65,
+   "keywords": [
+    "product positioning",
+    "competitive analysis",
+    "competitive intelligence",
+    "pricing analysis"
+   ]
+  },
+  {
+   "name": "Customer requirements and market feedback collection",
+   "importance": 60,
+   "keywords": [
+    "customer requirements",
+    "product requirements",
+    "market feedback",
+    "voice of customer",
+    "requirements gathering"
+   ]
+  },
+  {
+   "name": "Cross-functional coordination with HQ and R&D",
+   "importance": 55,
+   "keywords": [
+    "R&D coordination",
+    "HQ coordination",
+    "cross-functional collaboration",
+    "international teams",
+    "stakeholder management",
+    "relationship management"
+   ]
+  },
+  {
+   "name": "Fluent English",
+   "importance": 35,
+   "keywords": [
+    "English",
+    "English language",
+    "fluent English",
+    "professional English"
+   ]
+  },
+  {
+   "name": "Cloud Systems Analyst",
+   "importance": 100,
+   "keywords": [
+    "Cloud Systems Analyst",
+    "Cloud System Analyst",
+    "Cloud Analyst",
+    "Cloud Systems Engineer"
+   ]
+  },
+  {
+   "name": "On-premises cloud platform administration",
+   "importance": 95,
+   "keywords": [
+    "OpenStack",
+    "Proxmox",
+    "Ceph",
+    "Proxmox VE",
+    "Ceph storage",
+    "on-premises cloud"
+   ]
+  },
+  {
+   "name": "Linux systems administration",
+   "importance": 85,
+   "keywords": [
+    "Linux",
+    "Linux administration",
+    "Linux systems"
+   ]
+  },
+  {
+   "name": "Automation and configuration scripting",
+   "importance": 80,
+   "keywords": [
+    "Ansible",
+    "Terraform",
+    "automation scripting",
+    "configuration scripting"
+   ]
+  },
+  {
+   "name": "vSphere to Proxmox platform migration",
+   "importance": 75,
+   "keywords": [
+    "vSphere",
+    "VMware vSphere",
+    "vSphere migration",
+    "platform migration"
+   ]
+  },
+  {
+   "name": "Cloud monitoring and performance optimization",
+   "importance": 65,
+   "keywords": [
+    "Grafana",
+    "Prometheus",
+    "InfluxDB",
+    "ELK",
+    "Fluentd",
+    "performance optimization"
+   ]
+  },
+  {
+   "name": "Vendor liaison and user support",
+   "importance": 60,
+   "keywords": [
+    "vendor liaison",
+    "user support",
+    "external partners",
+    "on-call support"
+   ]
+  },
+  {
+   "name": "Cloud integration with development teams",
+   "importance": 55,
+   "keywords": [
+    "cloud integration",
+    "development teams",
+    "cross-department collaboration"
+   ]
+  },
+  {
+   "name": "Virtual networking and IP fabric",
+   "importance": 45,
+   "keywords": [
+    "virtual networking",
+    "IP fabric",
+    "high bandwidth networking"
+   ]
+  },
+  {
+   "name": "Kubernetes deployment",
+   "importance": 45,
+   "keywords": [
+    "Kubernetes",
+    "K8s"
+   ]
+  },
+  {
+   "name": "AI/ML workload support",
+   "importance": 35,
+   "keywords": [
+    "AI/ML workloads",
+    "Ollama",
+    "LM Studio",
+    "GPU-enabled services",
+    "MCP",
+    "managed AI platforms"
+   ]
+  },
+  {
+   "name": "Veeam backup and recovery",
+   "importance": 30,
+   "keywords": [
+    "Veeam",
+    "Veeam Backup",
+    "backup and recovery"
+   ]
+  },
+  {
+   "name": "Working proficiency in English; French or German a plus",
+   "importance": 25,
+   "keywords": [
+    "English",
+    "French",
+    "German"
+   ]
+  },
+  {
+   "name": "Project Manager AI",
+   "importance": 100,
+   "keywords": [
+    "Project Manager AI",
+    "AI Project Manager",
+    "PM AI",
+    "AI Consultant",
+    "PM / AI Consultant",
+    "Project Manager Artificial Intelligence"
+   ]
+  },
+  {
+   "name": "Project management of technology initiatives",
+   "importance": 90,
+   "keywords": [
+    "Project Management",
+    "Project Coordination",
+    "gestione progetti",
+    "coordinamento progettuale",
+    "project delivery"
+   ]
+  },
+  {
+   "name": "Generative AI landscape knowledge",
+   "importance": 88,
+   "keywords": [
+    "Generative AI",
+    "AI Generativa",
+    "GenAI",
+    "Artificial Intelligence",
+    "Intelligenza Artificiale"
+   ]
+  },
+  {
+   "name": "Hands-on use of Generative AI tools and agents",
+   "importance": 85,
+   "keywords": [
+    "Microsoft Copilot",
+    "ChatGPT",
+    "Claude",
+    "Gemini",
+    "AI Agent",
+    "RAG",
+    "Retrieval-Augmented Generation"
+   ]
+  },
+  {
+   "name": "Client and stakeholder management with requirements gathering",
+   "importance": 85,
+   "keywords": [
+    "Stakeholder Management",
+    "gestione stakeholder",
+    "client relationship",
+    "gestione cliente",
+    "requirements gathering",
+    "raccolta esigenze",
+    "business and IT stakeholders"
+   ]
+  },
+  {
+   "name": "Identification of concrete AI use cases",
+   "importance": 70,
+   "keywords": [
+    "use case",
+    "casi d'uso",
+    "AI use case",
+    "opportunità di innovazione"
+   ]
+  },
+  {
+   "name": "Workshops, training sessions and presentations",
+   "importance": 72,
+   "keywords": [
+    "Workshop",
+    "sessioni formative",
+    "training",
+    "formazione",
+    "presentazioni",
+    "facilitation"
+   ]
+  },
+  {
+   "name": "AI adoption and change enablement in organizations",
+   "importance": 65,
+   "keywords": [
+    "AI adoption",
+    "adozione AI",
+    "Change Management",
+    "Digital Transformation",
+    "trasformazione digitale",
+    "AI enablement"
+   ]
+  },
+  {
+   "name": "Cloud platforms and Microsoft ecosystem",
+   "importance": 40,
+   "keywords": [
+    "cloud platforms",
+    "piattaforme cloud",
+    "Microsoft ecosystem",
+    "ecosistema Microsoft"
+   ]
+  },
+  {
+   "name": "Certifications in AI, Project Management or Change Management",
+   "importance": 30,
+   "keywords": [
+    "AI certification",
+    "certificazione AI",
+    "Project Management certification",
+    "Change Management certification",
+    "percorso specialistico"
+   ]
+  },
+  {
+   "name": "Italian language",
+   "importance": 55,
+   "keywords": [
+    "Italian",
+    "Italiano",
+    "madrelingua italiana"
+   ]
+  },
+  {
+   "name": "Driving licence B and travel availability in Lombardy",
+   "importance": 30,
+   "keywords": [
+    "Patente B",
+    "Driving licence",
+    "driving license",
+    "trasferte",
+    "disponibilità a viaggiare",
+    "Lombardy"
+   ]
+  },
+  {
+   "name": "English language",
+   "importance": 20,
+   "keywords": [
+    "English",
+    "Inglese"
+   ]
+  },
+  {
+   "name": "Account Manager Specialist",
+   "importance": 100,
+   "keywords": [
+    "Account Manager Specialist",
+    "Account Manager",
+    "Account Specialist"
+   ]
+  },
+  {
+   "name": "Vendor certifications in cloud and cybersecurity",
+   "importance": 90,
+   "keywords": [
+    "Microsoft",
+    "AWS",
+    "Oracle",
+    "VMware"
+   ]
+  },
+  {
+   "name": "Cybersecurity, cloud and licensing domain knowledge",
+   "importance": 82,
+   "keywords": [
+    "Cybersecurity",
+    "Cloud",
+    "Software Licensing"
+   ]
+  },
+  {
+   "name": "Client portfolio and business context analysis for lead qualification",
+   "importance": 85,
+   "keywords": [
+    "client portfolio analysis",
+    "business context analysis",
+    "lead qualification",
+    "customer analysis"
+   ]
+  },
+  {
+   "name": "Technology scouting and selection for innovative vertical solutions",
+   "importance": 80,
+   "keywords": [
+    "technology scouting",
+    "technology selection",
+    "innovative solutions"
+   ]
+  },
+  {
+   "name": "Sales support for specialist vertical solution propositions",
+   "importance": 85,
+   "keywords": [
+    "sales support",
+    "vertical solution proposition",
+    "commercial proposal"
+   ]
+  },
+  {
+   "name": "Custom solution design support for complex customer needs",
+   "importance": 70,
+   "keywords": [
+    "custom solution design",
+    "complex solution design",
+    "design support"
+   ]
+  },
+  {
+   "name": "Technical-economic offer formulation and contract closing",
+   "importance": 80,
+   "keywords": [
+    "technical-economic offer",
+    "offer formulation",
+    "contract closing"
+   ]
+  },
+  {
+   "name": "Customer interface and cross-functional coordination",
+   "importance": 75,
+   "keywords": [
+    "customer interface",
+    "stakeholder coordination",
+    "cross-functional coordination",
+    "customer management"
+   ]
+  },
+  {
+   "name": "Commercial target achievement and sales performance",
+   "importance": 60,
+   "keywords": [
+    "sales targets",
+    "commercial targets",
+    "sales performance"
+   ]
+  },
+  {
+   "name": "Customer feedback collection for marketing",
+   "importance": 45,
+   "keywords": [
+    "customer feedback",
+    "feedback collection",
+    "marketing feedback"
+   ]
+  },
+  {
+   "name": "English language",
+   "importance": 40,
+   "keywords": [
+    "English"
+   ]
+  },
+  {
+   "name": "Engineering or technical degree",
+   "importance": 25,
+   "keywords": [
+    "Engineering degree",
+    "technical degree",
+    "Laurea in Ingegneria"
+   ]
+  },
+  {
+   "name": "Platform Engineer II - Observability",
+   "importance": 100,
+   "keywords": [
+    "Platform Engineer II - Observability",
+    "Platform Engineer Observability",
+    "Observability Platform Engineer",
+    "Platform Engineer"
+   ]
+  },
+  {
+   "name": "Observability and monitoring of distributed systems",
+   "importance": 95,
+   "keywords": [
+    "Observability",
+    "Monitoring",
+    "Distributed Systems",
+    "System Health"
+   ]
+  },
+  {
+   "name": "Observability tooling with Grafana, Prometheus, Datadog and Sentry",
+   "importance": 90,
+   "keywords": [
+    "Grafana",
+    "Prometheus",
+    "Datadog",
+    "Sentry"
+   ]
+  },
+  {
+   "name": "Cloud provider experience",
+   "importance": 80,
+   "keywords": [
+    "Cloud Provider"
+   ]
+  },
+  {
+   "name": "Cloud-native deployment and infrastructure tooling",
+   "importance": 85,
+   "keywords": [
+    "Kubernetes",
+    "Helm",
+    "Docker",
+    "Terraform"
+   ]
+  },
+  {
+   "name": "Linux systems and shell usage",
+   "importance": 65,
+   "keywords": [
+    "Linux",
+    "Shell"
+   ]
+  },
+  {
+   "name": "Programming in relevant stack languages",
+   "importance": 80,
+   "keywords": [
+    "PHP",
+    "Java",
+    "Python",
+    "Go"
+   ]
+  },
+  {
+   "name": "Code instrumentation and observability library integration",
+   "importance": 75,
+   "keywords": [
+    "Code Instrumentation",
+    "Instrumentation Libraries",
+    "Library Integration",
+    "Data Collection"
+   ]
+  },
+  {
+   "name": "Telemetry data pipelines and analytics",
+   "importance": 70,
+   "keywords": [
+    "Data Pipelines",
+    "Telemetry",
+    "Data Analytics",
+    "Data Normalization",
+    "Data Aggregation"
+   ]
+  },
+  {
+   "name": "Technical leadership for standardised observability frameworks",
+   "importance": 70,
+   "keywords": [
+    "Observability Frameworks",
+    "Framework Adoption",
+    "Technical Leadership",
+    "Framework Standardization"
+   ]
+  },
+  {
+   "name": "Service inventory and change impact tracking",
+   "importance": 60,
+   "keywords": [
+    "Service Inventory",
+    "Service Catalog",
+    "Change Tracking",
+    "Impact Analysis"
+   ]
+  },
+  {
+   "name": "Cross-team collaboration and influence without authority",
+   "importance": 60,
+   "keywords": [
+    "Cross-functional Collaboration",
+    "Stakeholder Management",
+    "Influence without Authority"
+   ]
+  },
+  {
+   "name": "English language proficiency",
+   "importance": 20,
+   "keywords": [
+    "English"
+   ]
+  },
+  {
+   "name": "Cloud PM",
+   "importance": 100,
+   "keywords": [
+    "Cloud PM",
+    "Cloud Project Manager",
+    "PM Cloud",
+    "Project Manager Cloud"
+   ]
+  },
+  {
+   "name": "End-to-end project delivery management",
+   "importance": 95,
+   "keywords": [
+    "Project Management",
+    "Project Delivery",
+    "Delivery Management",
+    "gestione progetti"
+   ]
+  },
+  {
+   "name": "Public Administration client relationship management",
+   "importance": 90,
+   "keywords": [
+    "Public Administration",
+    "Pubblica Amministrazione",
+    "PA",
+    "client relationship management",
+    "gestione clienti",
+    "rapporto con i clienti"
+   ]
+  },
+  {
+   "name": "Public cloud platform knowledge",
+   "importance": 80,
+   "keywords": [
+    "AWS",
+    "Google Cloud",
+    "Microsoft Azure",
+    "Oracle Cloud",
+    "Public Cloud"
+   ]
+  },
+  {
+   "name": "Cloud migration project delivery",
+   "importance": 70,
+   "keywords": [
+    "Cloud migration",
+    "migrazione cloud",
+    "migrazione al cloud"
+   ]
+  },
+  {
+   "name": "Project contract economics and invoicing",
+   "importance": 70,
+   "keywords": [
+    "contract management",
+    "revenue forecasting",
+    "invoicing",
+    "fatturazione",
+    "profitability",
+    "commesse"
+   ]
+  },
+  {
+   "name": "Stakeholder interface and alignment",
+   "importance": 70,
+   "keywords": [
+    "stakeholder management",
+    "stakeholder interface",
+    "stakeholder alignment",
+    "stakeholder communication"
+   ]
+  },
+  {
+   "name": "Risk, priority and progress management",
+   "importance": 65,
+   "keywords": [
+    "risk management",
+    "priority management",
+    "issue management",
+    "project reporting",
+    "work progress",
+    "avanzamento lavori"
+   ]
+  },
+  {
+   "name": "Technical team leadership and coordination",
+   "importance": 60,
+   "keywords": [
+    "technical leadership",
+    "team coordination",
+    "resource coordination",
+    "collaborative leadership"
+   ]
+  },
+  {
+   "name": "Consultative support to CIOs and digital transition managers",
+   "importance": 55,
+   "keywords": [
+    "CIO advisory",
+    "digital transition",
+    "digital transformation",
+    "consultative support",
+    "transizione digitale"
+   ]
+  },
+  {
+   "name": "Engineering or computer science degree",
+   "importance": 50,
+   "keywords": [
+    "Master's degree in Engineering",
+    "Laurea specialistica",
+    "Ingegneria",
+    "Informatica",
+    "Ingegneria Gestionale",
+    "Computer Science"
+   ]
+  },
+  {
+   "name": "Project management certifications",
+   "importance": 25,
+   "keywords": [
+    "PMI-PMP",
+    "PRINCE2",
+    "PM certification"
+   ]
+  },
+  {
+   "name": "English language proficiency",
+   "importance": 20,
+   "keywords": [
+    "English",
+    "English language",
+    "English proficiency"
+   ]
+  },
+  {
+   "name": "Solutions Architect - Area Payments",
+   "importance": 100,
+   "keywords": [
+    "Solutions Architect",
+    "Solution Architect",
+    "Software Architect",
+    "IT Solutions Architect",
+    "Payments Architect"
+   ]
+  },
+  {
+   "name": "Integration architecture and design",
+   "importance": 95,
+   "keywords": [
+    "Integration Architecture",
+    "Integration Design",
+    "Integration Patterns",
+    "Enterprise Service Bus",
+    "ESB",
+    "API Gateway"
+   ]
+  },
+  {
+   "name": "Banking and payments domain expertise",
+   "importance": 90,
+   "keywords": [
+    "Banking",
+    "Payments",
+    "Incassi",
+    "Monetica",
+    "Card Processing",
+    "Treasury",
+    "Tesoreria",
+    "Servizi con l'Estero"
+   ]
+  },
+  {
+   "name": "API and event-driven integration architecture",
+   "importance": 85,
+   "keywords": [
+    "Microservices",
+    "REST API",
+    "REST APIs",
+    "Event-Driven Architecture",
+    "Event Driven",
+    "EDA"
+   ]
+  },
+  {
+   "name": "Vendor package integration and System Integrator technical supervision",
+   "importance": 85,
+   "keywords": [
+    "Vendor Package Integration",
+    "System Integrator",
+    "NEXI",
+    "CAD",
+    "Technical Specifications",
+    "Architecture Code Review"
+   ]
+  },
+  {
+   "name": "Core banking integration across channels and data",
+   "importance": 80,
+   "keywords": [
+    "Core Banking",
+    "Core Banking Integration",
+    "Contabilità",
+    "CRM",
+    "Canali Diretti",
+    "Direct Channels",
+    "Data Lake"
+   ]
+  },
+  {
+   "name": "Java/Oracle legacy and mainframe integration",
+   "importance": 75,
+   "keywords": [
+    "Java",
+    "Oracle",
+    "COBOL",
+    "DB2",
+    "Mainframe",
+    "Batch Processing",
+    "File Transfer"
+   ]
+  },
+  {
+   "name": "Functional-to-technical blueprint and delivery ownership",
+   "importance": 75,
+   "keywords": [
+    "Technical Blueprint",
+    "Functional Requirements",
+    "Technical Design",
+    "Delivery Ownership",
+    "Technical Leadership"
+   ]
+  },
+  {
+   "name": "Cross-team infrastructure enablement",
+   "importance": 65,
+   "keywords": [
+    "Security",
+    "Networking",
+    "Middleware",
+    "Infrastructure Integration",
+    "Database Infrastructure"
+   ]
+  },
+  {
+   "name": "Complex incident troubleshooting and root cause remediation",
+   "importance": 65,
+   "keywords": [
+    "Troubleshooting",
+    "Incident Management",
+    "Root Cause Analysis",
+    "Corrective Actions",
+    "Integration Channels"
+   ]
+  },
+  {
+   "name": "Computer engineering or information science degree",
+   "importance": 20,
+   "keywords": [
+    "Computer Engineering",
+    "Information Sciences",
+    "Ingegneria Informatica",
+    "Scienze dell'Informazione"
+   ]
+  },
+  {
+   "name": "English language",
+   "importance": 15,
+   "keywords": [
+    "English"
+   ]
+  },
+  {
+   "name": "Solution Architect Manager",
+   "importance": 100,
+   "keywords": [
+    "Solution Architect Manager",
+    "Technical Delivery Lead",
+    "Solution Architect",
+    "Technical Lead",
+    "Architect"
+   ]
+  },
+  {
+   "name": "Enterprise application architecture and technology roadmap",
+   "importance": 95,
+   "keywords": [
+    "Enterprise Application Architecture",
+    "Application Architecture",
+    "Technology Roadmap",
+    "Architecture Principles",
+    "Technology Standards",
+    "Architecture Guidelines"
+   ]
+  },
+  {
+   "name": "Cloud-native architecture design",
+   "importance": 90,
+   "keywords": [
+    "Cloud-native Architecture",
+    "Cloud Native",
+    "Cloud Architecture",
+    "Modular Architecture",
+    "Scalable Architecture"
+   ]
+  },
+  {
+   "name": "Application modernization and cloud migration",
+   "importance": 90,
+   "keywords": [
+    "Application Modernization",
+    "Legacy Modernization",
+    "Legacy Migration",
+    "Cloud Migration",
+    "Application Migration",
+    "Legacy Systems"
+   ]
+  },
+  {
+   "name": "Application integration architecture",
+   "importance": 85,
+   "keywords": [
+    "Application Integration",
+    "Integration Architecture",
+    "Enterprise Integration"
+   ]
+  },
+  {
+   "name": "Java enterprise ecosystem",
+   "importance": 85,
+   "keywords": [
+    "Java",
+    "Enterprise Java",
+    "Java Ecosystem",
+    "Java Frameworks"
+   ]
+  },
+  {
+   "name": "Technical delivery coordination",
+   "importance": 85,
+   "keywords": [
+    "Technical Coordination",
+    "Cross-functional Team Coordination",
+    "Distributed Team Coordination",
+    "Technical Delivery",
+    "Program Delivery",
+    "Delivery Management",
+    "Quality Standards"
+   ]
+  },
+  {
+   "name": "Cloud platform expertise",
+   "importance": 75,
+   "keywords": [
+    "AWS",
+    "Microsoft Azure",
+    "Google Cloud",
+    "Google Cloud Platform",
+    "GCP"
+   ]
+  },
+  {
+   "name": "Generative AI and Agentic AI solutions",
+   "importance": 75,
+   "keywords": [
+    "Generative AI",
+    "GenAI",
+    "Large Language Models",
+    "LLM",
+    "Agentic AI"
+   ]
+  },
+  {
+   "name": "Stakeholder management",
+   "importance": 75,
+   "keywords": [
+    "Stakeholder Management",
+    "Executive Stakeholders",
+    "Business Stakeholders",
+    "Technical Stakeholders"
+   ]
+  },
+  {
+   "name": "Pre-sales technical support",
+   "importance": 70,
+   "keywords": [
+    "Pre-sales",
+    "Presales",
+    "Prevendita",
+    "Technical Proposals",
+    "Project Estimation"
+   ]
+  },
+  {
+   "name": "Consulting or system integrator experience",
+   "importance": 60,
+   "keywords": [
+    "Technology Consulting",
+    "Consultancy",
+    "System Integrator"
+   ]
+  },
+  {
+   "name": "English language",
+   "importance": 30,
+   "keywords": [
+    "English",
+    "English Language"
+   ]
+  },
+  {
+   "name": "Founding Platform Engineer",
+   "importance": 100,
+   "keywords": [
+    "Founding Platform Engineer",
+    "Founding - Platform Engineer",
+    "Platform Engineer",
+    "Founding Engineer"
+   ]
+  },
+  {
+   "name": "Infrastructure as Code with Terraform",
+   "importance": 90,
+   "keywords": [
+    "Terraform",
+    "Infrastructure as Code",
+    "IaC",
+    "Terraform modules"
+   ]
+  },
+  {
+   "name": "Kubernetes production operations and Helm packaging",
+   "importance": 90,
+   "keywords": [
+    "Kubernetes",
+    "K8s",
+    "Helm",
+    "Helm charts",
+    "cluster management"
+   ]
+  },
+  {
+   "name": "AWS cloud infrastructure deployment",
+   "importance": 85,
+   "keywords": [
+    "AWS",
+    "Amazon Web Services",
+    "Azure",
+    "GCP",
+    "Google Cloud"
+   ]
+  },
+  {
+   "name": "CI/CD pipeline automation",
+   "importance": 80,
+   "keywords": [
+    "CI/CD",
+    "GitHub Actions",
+    "GitLab CI",
+    "continuous deployment",
+    "zero-touch pipeline"
+   ]
+  },
+  {
+   "name": "Scripting with Bash, Python or Go",
+   "importance": 70,
+   "keywords": [
+    "Bash",
+    "Python",
+    "Go",
+    "scripting"
+   ]
+  },
+  {
+   "name": "On-premise and air-gapped customer deployments",
+   "importance": 70,
+   "keywords": [
+    "on-premise",
+    "air-gapped",
+    "private cloud",
+    "private registries",
+    "proxy",
+    "restricted networks"
+   ]
+  },
+  {
+   "name": "Monitoring, logging and alerting",
+   "importance": 65,
+   "keywords": [
+    "monitoring",
+    "logging",
+    "alerting",
+    "Prometheus",
+    "Grafana"
+   ]
+  },
+  {
+   "name": "Customer IT/OT technical advisory and security questionnaires",
+   "importance": 65,
+   "keywords": [
+    "IT/OT",
+    "OT",
+    "technical calls",
+    "security questionnaires",
+    "installation support"
+   ]
+  },
+  {
+   "name": "Internal cluster health, cloud cost and infrastructure security",
+   "importance": 55,
+   "keywords": [
+    "cloud cost management",
+    "cluster health",
+    "infrastructure security",
+    "HashiCorp Vault"
+   ]
+  },
+  {
+   "name": "Autonomous architectural decision-making",
+   "importance": 75,
+   "keywords": [
+    "architectural decisions",
+    "technical decision-making",
+    "solution design"
+   ]
+  },
+  {
+   "name": "GitOps and lightweight Kubernetes distributions",
+   "importance": 25,
+   "keywords": [
+    "GitOps",
+    "Argo CD",
+    "Flux",
+    "k3s",
+    "RKE2"
+   ]
+  },
+  {
+   "name": "Italian and English language proficiency",
+   "importance": 70,
+   "keywords": [
+    "Italian",
+    "English",
+    "C1"
+   ]
+  },
+  {
+   "name": "IT Manager & System Administrator",
+   "importance": 100,
+   "keywords": [
+    "IT Manager & System Administrator",
+    "IT Manager",
+    "System Administrator",
+    "IT Manager and System Administrator"
+   ]
+  },
+  {
+   "name": "System administration and cloud/on-premise infrastructure management",
+   "importance": 95,
+   "keywords": [
+    "System Administration",
+    "SysAdmin",
+    "IT Infrastructure",
+    "Cloud Infrastructure",
+    "On-Premise",
+    "Infrastructure Troubleshooting",
+    "Hands-On IT Operations"
+   ]
+  },
+  {
+   "name": "External IT vendor and partner management",
+   "importance": 90,
+   "keywords": [
+    "Vendor Management",
+    "Supplier Management",
+    "IT Vendor Coordination",
+    "SLA Monitoring",
+    "External IT Partners",
+    "gestione fornitori"
+   ]
+  },
+  {
+   "name": "Cyber security, disaster recovery and regulatory compliance",
+   "importance": 85,
+   "keywords": [
+    "Cyber Security",
+    "Cybersecurity",
+    "Disaster Recovery",
+    "NIS 2",
+    "NIS2",
+    "GDPR",
+    "Regulatory Compliance"
+   ]
+  },
+  {
+   "name": "Application integration with APIs and EDI",
+   "importance": 80,
+   "keywords": [
+    "Application Integration",
+    "API",
+    "EDI",
+    "integrazione applicativa"
+   ]
+  },
+  {
+   "name": "IT governance and digital transformation",
+   "importance": 75,
+   "keywords": [
+    "IT Governance",
+    "Technology Governance",
+    "Digital Transformation",
+    "Digital Transition"
+   ]
+  },
+  {
+   "name": "Networking and connectivity",
+   "importance": 70,
+   "keywords": [
+    "Networking",
+    "Network Management",
+    "Connectivity",
+    "Network Infrastructure"
+   ]
+  },
+  {
+   "name": "IT project management and application governance",
+   "importance": 65,
+   "keywords": [
+    "IT Project Management",
+    "Application Governance",
+    "Project Coordination",
+    "regia applicativa"
+   ]
+  },
+  {
+   "name": "Degree in computer engineering, management engineering or computer science",
+   "importance": 50,
+   "keywords": [
+    "Computer Engineering",
+    "Management Engineering",
+    "Computer Science",
+    "Ingegneria Informatica",
+    "Ingegneria Gestionale",
+    "Informatica"
+   ]
+  },
+  {
+   "name": "Logistics, transport and terminal operations domain",
+   "importance": 35,
+   "keywords": [
+    "Logistics",
+    "Transport",
+    "Terminal Management",
+    "Shipping",
+    "Retail",
+    "GDO"
+   ]
+  },
+  {
+   "name": "Sector operational systems TOS, WMS and TMS",
+   "importance": 30,
+   "keywords": [
+    "TOS",
+    "Terminal Operating System",
+    "WMS",
+    "Warehouse Management System",
+    "TMS",
+    "Transport Management System"
+   ]
+  },
+  {
+   "name": "Business Intelligence, Data Analytics, AI and IoT",
+   "importance": 25,
+   "keywords": [
+    "Business Intelligence",
+    "BI",
+    "Data Analytics",
+    "Artificial Intelligence",
+    "AI",
+    "IoT"
+   ]
+  },
+  {
+   "name": "English language proficiency for international projects",
+   "importance": 20,
+   "keywords": [
+    "English",
+    "International Projects"
+   ]
+  },
+  {
+   "name": "Group IT Infrastructure Services Expert",
+   "importance": 100,
+   "keywords": [
+    "Group IT Infrastructure Services Expert",
+    "IT Infrastructure Services Expert",
+    "IT Infrastructure Expert",
+    "Infrastructure Services Expert"
+   ]
+  },
+  {
+   "name": "IT infrastructure project delivery and management",
+   "importance": 88,
+   "keywords": [
+    "IT Infrastructure Project Management",
+    "IT Project Management",
+    "Infrastructure Project Delivery",
+    "Budget Management"
+   ]
+  },
+  {
+   "name": "IT service management frameworks with ITIL",
+   "importance": 86,
+   "keywords": [
+    "IT Service Management",
+    "ITSM",
+    "ITIL",
+    "Service Management Frameworks"
+   ]
+  },
+  {
+   "name": "Vendor and service provider management",
+   "importance": 84,
+   "keywords": [
+    "Vendor Management",
+    "Service Provider Management",
+    "Contract Management",
+    "SLA Management",
+    "Vendor Relationships"
+   ]
+  },
+  {
+   "name": "Microsoft 365 and Azure cloud services",
+   "importance": 82,
+   "keywords": [
+    "Microsoft 365",
+    "M365",
+    "Azure",
+    "Multi-Cloud Migration"
+   ]
+  },
+  {
+   "name": "Microsoft and Unix/Linux operating systems",
+   "importance": 78,
+   "keywords": [
+    "Microsoft Operating Systems",
+    "Windows",
+    "Unix",
+    "Linux"
+   ]
+  },
+  {
+   "name": "IT infrastructure KPI definition and reporting",
+   "importance": 72,
+   "keywords": [
+    "KPIs",
+    "KPI Reporting",
+    "Performance Measurement",
+    "Infrastructure Metrics"
+   ]
+  },
+  {
+   "name": "Cybersecurity vulnerability assessment and remediation",
+   "importance": 68,
+   "keywords": [
+    "Cybersecurity",
+    "Vulnerability Assessment",
+    "Remediation Plans",
+    "Security Remediation"
+   ]
+  },
+  {
+   "name": "Infrastructure technical innovation",
+   "importance": 66,
+   "keywords": [
+    "Technical Innovation",
+    "Infrastructure Innovation",
+    "Emerging Technologies",
+    "Technology Implementation"
+   ]
+  },
+  {
+   "name": "Stakeholder management and cross-functional collaboration",
+   "importance": 62,
+   "keywords": [
+    "Stakeholder Management",
+    "Cross-functional Collaboration",
+    "Relationship Building"
+   ]
+  },
+  {
+   "name": "Identity management and system integration",
+   "importance": 60,
+   "keywords": [
+    "Identity Management",
+    "IAM",
+    "System Integration"
+   ]
+  },
+  {
+   "name": "AI Solution Architect",
+   "importance": 100,
+   "keywords": [
+    "AI Solution Architect",
+    "AI Architect",
+    "Solution Architect",
+    "Enterprise AI Architect"
+   ]
+  },
+  {
+   "name": "End-to-end AI solution architecture and blueprints",
+   "importance": 86,
+   "keywords": [
+    "AI Architecture",
+    "Solution Architecture",
+    "Reference Architecture",
+    "Architecture Blueprints",
+    "End-to-End Architecture"
+   ]
+  },
+  {
+   "name": "Stakeholder management and communication",
+   "importance": 80,
+   "keywords": [
+    "Stakeholder Management",
+    "Communication",
+    "Influence",
+    "Business Stakeholder Advisory"
+   ]
+  },
+  {
+   "name": "Python and AI/ML frameworks",
+   "importance": 78,
+   "keywords": [
+    "Python",
+    "AI/ML Frameworks",
+    "Machine Learning Frameworks"
+   ]
+  },
+  {
+   "name": "MLOps and model lifecycle management",
+   "importance": 76,
+   "keywords": [
+    "MLOps",
+    "Model Lifecycle Management",
+    "ML Model Deployment",
+    "Model Management"
+   ]
+  },
+  {
+   "name": "Architecture governance and design reviews",
+   "importance": 74,
+   "keywords": [
+    "Architecture Governance",
+    "Architecture Review",
+    "Design Governance",
+    "Enterprise Architecture",
+    "Architecture Standards"
+   ]
+  },
+  {
+   "name": "Technical leadership and architectural guidance",
+   "importance": 72,
+   "keywords": [
+    "Technical Leadership",
+    "Architectural Guidance",
+    "Engineering Best Practices"
+   ]
+  },
+  {
+   "name": "Data architecture and data pipelines",
+   "importance": 72,
+   "keywords": [
+    "Data Architecture",
+    "Data Pipelines",
+    "Data Integration"
+   ]
+  },
+  {
+   "name": "API design and system integration patterns",
+   "importance": 70,
+   "keywords": [
+    "API Design",
+    "System Integration",
+    "Integration Patterns",
+    "REST APIs",
+    "Orchestration"
+   ]
+  },
+  {
+   "name": "Responsible AI, security and privacy compliance",
+   "importance": 68,
+   "keywords": [
+    "Responsible AI",
+    "AI Governance",
+    "AI Ethics",
+    "Data Privacy",
+    "Security Compliance"
+   ]
+  },
+  {
+   "name": "Cloud platform architecture on Azure, AWS or GCP",
+   "importance": 64,
+   "keywords": [
+    "Azure",
+    "AWS",
+    "GCP",
+    "Cloud Platforms",
+    "Microsoft Azure",
+    "Google Cloud Platform"
+   ]
+  },
+  {
+   "name": "Scalable AI deployment and observability",
+   "importance": 62,
+   "keywords": [
+    "Containerization",
+    "Deployment Patterns",
+    "Scalable Deployment",
+    "Observability"
+   ]
+  },
+  {
+   "name": "Business requirements translation and implementation roadmaps",
+   "importance": 60,
+   "keywords": [
+    "Business Requirements",
+    "Implementation Roadmaps",
+    "Solution Roadmap",
+    "Cross-functional Collaboration"
+   ]
+  },
+  {
+   "name": "Applied AI domains: generative AI, NLP, computer vision",
+   "importance": 55,
+   "keywords": [
+    "Generative AI",
+    "NLP",
+    "Computer Vision",
+    "Predictive Analytics"
+   ]
+  },
+  {
+   "name": "AI/ML engineering",
+   "importance": 50,
+   "keywords": [
+    "AI/ML Engineering",
+    "Artificial Intelligence",
+    "Machine Learning"
+   ]
+  },
+  {
+   "name": "Delivery Manager - Partner Integration & Implementation",
+   "importance": 100,
+   "keywords": [
+    "Delivery Manager",
+    "Partner Integration",
+    "Implementation Manager"
+   ]
+  },
+  {
+   "name": "Partner implementation delivery from scoping to go-live",
+   "importance": 85,
+   "keywords": [
+    "Partner Implementations",
+    "Implementation Lifecycle",
+    "Go-Live",
+    "Concurrent Implementations",
+    "Solution Alignment"
+   ]
+  },
+  {
+   "name": "API and integration troubleshooting",
+   "importance": 80,
+   "keywords": [
+    "API Integration",
+    "APIs",
+    "Technical Troubleshooting",
+    "System Architecture"
+   ]
+  },
+  {
+   "name": "Stakeholder management across technical and commercial parties",
+   "importance": 72,
+   "keywords": [
+    "Stakeholder Management",
+    "Cross-functional Collaboration",
+    "Partner Communication",
+    "Technical Communication"
+   ]
+  },
+  {
+   "name": "Integration scoping and delivery prioritization",
+   "importance": 70,
+   "keywords": [
+    "Integration Scoping",
+    "Scope Definition",
+    "Delivery Prioritization",
+    "Delivery Planning"
+   ]
+  },
+  {
+   "name": "Payments and fintech domain expertise",
+   "importance": 65,
+   "keywords": [
+    "Payments",
+    "Payment Processing",
+    "Fintech",
+    "Payment Ecosystem"
+   ]
+  },
+  {
+   "name": "Technical program and delivery management",
+   "importance": 62,
+   "keywords": [
+    "Technical Program Management",
+    "Program Management",
+    "Delivery Management",
+    "Multi-stakeholder Projects"
+   ]
+  },
+  {
+   "name": "AI tools applied to delivery work",
+   "importance": 55,
+   "keywords": [
+    "AI Tools",
+    "Generative AI",
+    "AI Adoption"
+   ]
+  },
+  {
+   "name": "Delivery quality assurance against a quality bar",
+   "importance": 55,
+   "keywords": [
+    "Delivery Quality",
+    "Quality Standards"
+   ]
+  },
+  {
+   "name": "Product feedback and integration framework improvement",
+   "importance": 52,
+   "keywords": [
+    "Product Feedback",
+    "Integration Frameworks",
+    "Continuous Improvement"
+   ]
+  },
+  {
+   "name": "E-commerce platforms and shop systems",
+   "importance": 50,
+   "keywords": [
+    "E-commerce Platforms",
+    "Shop Systems",
+    "E-commerce Integration"
+   ]
+  },
+  {
+   "name": "Italian language proficiency",
+   "importance": 45,
+   "keywords": [
+    "Italian"
+   ]
+  },
+  {
+   "name": "English language proficiency",
+   "importance": 20,
+   "keywords": [
+    "English"
+   ]
+  },
+  {
+   "name": "Software Automation & Application Manager",
+   "importance": 100,
+   "keywords": [
+    "Software Automation & Application Manager",
+    "Software Automation Manager",
+    "Application Manager",
+    "Software Application Manager",
+    "Automation Software Manager"
+   ]
+  },
+  {
+   "name": "Software Engineering Team Management",
+   "importance": 88,
+   "keywords": [
+    "Software Engineering Team Management",
+    "Engineering Management",
+    "Software Team Leadership",
+    "Team Management",
+    "Resource Planning",
+    "People Development",
+    "Performance Evaluation"
+   ]
+  },
+  {
+   "name": "Full-Stack Software Application Development (.NET/C#/Java)",
+   "importance": 84,
+   "keywords": [
+    ".NET",
+    "C#",
+    "Java",
+    "Full Stack Development",
+    "Frontend Development",
+    "Backend Development"
+   ]
+  },
+  {
+   "name": "Automated Software Solutions Development & Integration",
+   "importance": 80,
+   "keywords": [
+    "Automation Software",
+    "Software Integration",
+    "Automated Software Solutions",
+    "Product Integration"
+   ]
+  },
+  {
+   "name": "Microsoft SQL Server",
+   "importance": 76,
+   "keywords": [
+    "Microsoft SQL Server",
+    "SQL Server",
+    "SQL"
+   ]
+  },
+  {
+   "name": "Project Delivery, Quality and Progress Monitoring",
+   "importance": 74,
+   "keywords": [
+    "Project Management",
+    "Project Delivery",
+    "Project Monitoring",
+    "Quality Management",
+    "Risk Management",
+    "Corrective Actions"
+   ]
+  },
+  {
+   "name": "Application Maintenance & Continuous Improvement",
+   "importance": 72,
+   "keywords": [
+    "Application Maintenance",
+    "Software Maintenance",
+    "Continuous Improvement",
+    "Process Optimization",
+    "Software Standardization"
+   ]
+  },
+  {
+   "name": "Technical Support Coordination & Escalation Management",
+   "importance": 70,
+   "keywords": [
+    "Technical Support",
+    "Escalation Management",
+    "Customer Escalation",
+    "L2/L3 Support",
+    "Technical Support Coordination"
+   ]
+  },
+  {
+   "name": "PLC Software Development (Structured Text, CODESYS, Beckhoff)",
+   "importance": 68,
+   "keywords": [
+    "PLC Programming",
+    "PLC Software Development",
+    "Structured Text",
+    "ST",
+    "CODESYS",
+    "Beckhoff"
+   ]
+  },
+  {
+   "name": "Agile/Scrum, SDLC & CI/CD Practices",
+   "importance": 65,
+   "keywords": [
+    "Agile",
+    "Scrum",
+    "SDLC",
+    "CI/CD",
+    "Continuous Integration",
+    "Continuous Delivery"
+   ]
+  },
+  {
+   "name": "Microservices Architecture",
+   "importance": 62,
+   "keywords": [
+    "Microservices",
+    "Microservices Architecture"
+   ]
+  },
+  {
+   "name": "Client Requirements Analysis, Technical Solution Design & Tender Support",
+   "importance": 62,
+   "keywords": [
+    "Client Requirements",
+    "Requirements Analysis",
+    "Technical Solution Design",
+    "Customer Needs",
+    "Tender Management",
+    "Bid Management"
+   ]
+  },
+  {
+   "name": "Cross-Functional & International Collaboration",
+   "importance": 60,
+   "keywords": [
+    "Cross-functional Collaboration",
+    "Stakeholder Management",
+    "International Teams",
+    "Multidisciplinary Teams"
+   ]
+  },
+  {
+   "name": "Software Testing, Validation & Technical Troubleshooting",
+   "importance": 52,
+   "keywords": [
+    "Software Testing",
+    "Validation",
+    "Technical Troubleshooting"
+   ]
+  },
+  {
+   "name": "Jira & Git Development Tools",
+   "importance": 50,
+   "keywords": [
+    "Jira",
+    "Git",
+    "Version Control"
+   ]
+  },
+  {
+   "name": "Software Engineering",
+   "importance": 50,
+   "keywords": [
+    "Software Engineering"
+   ]
+  },
+  {
+   "name": "Solution Architect",
+   "importance": 100,
+   "keywords": [
+    "Solution Architect",
+    "Solutions Architect"
+   ]
+  },
+  {
+   "name": "Solution architecture design aligned with business requirements",
+   "importance": 90,
+   "keywords": [
+    "Solution Architecture",
+    "Solution Design",
+    "Architecture Design",
+    "Technical Architecture"
+   ]
+  },
+  {
+   "name": "Stakeholder communication",
+   "importance": 86,
+   "keywords": [
+    "Stakeholder Communication",
+    "Stakeholder Management",
+    "Technical Communication",
+    "Business Communication",
+    "Client Communication"
+   ]
+  },
+  {
+   "name": "Business requirements analysis and translation",
+   "importance": 84,
+   "keywords": [
+    "Business Requirements",
+    "Requirements Analysis",
+    "Business Analysis",
+    "Application Landscape",
+    "Architectural Evolution"
+   ]
+  },
+  {
+   "name": "Technical leadership and team supervision",
+   "importance": 82,
+   "keywords": [
+    "Technical Leadership",
+    "Team Supervision",
+    "People Management",
+    "Mentoring"
+   ]
+  },
+  {
+   "name": "System integration and interface design",
+   "importance": 80,
+   "keywords": [
+    "System Architecture",
+    "Integration Architecture",
+    "Interface Design",
+    "Communication Protocols",
+    "System Integration"
+   ]
+  },
+  {
+   "name": "Modern architecture patterns and paradigms",
+   "importance": 78,
+   "keywords": [
+    "Microservices",
+    "Serverless",
+    "Event-Driven Architecture",
+    "Data Streaming",
+    "GenAI",
+    "Platform Engineering",
+    "Security by Design",
+    "DevSecOps"
+   ]
+  },
+  {
+   "name": "Architecture alignment with IT strategy",
+   "importance": 76,
+   "keywords": [
+    "IT Strategy Alignment",
+    "Scalable Architecture",
+    "Sustainable Architecture",
+    "Long-Term Business Goals"
+   ]
+  },
+  {
+   "name": "Cloud platforms and cloud-native architecture",
+   "importance": 75,
+   "keywords": [
+    "AWS",
+    "GCP",
+    "Azure",
+    "Cloud Native",
+    "SaaS",
+    "IaaS",
+    "PaaS",
+    "FaaS"
+   ]
+  },
+  {
+   "name": "Technical risk management",
+   "importance": 74,
+   "keywords": [
+    "Technical Risk Management",
+    "Risk Mitigation",
+    "Security Risk",
+    "Performance Risk",
+    "Integration Risk"
+   ]
+  },
+  {
+   "name": "Technology selection",
+   "importance": 72,
+   "keywords": [
+    "Technology Selection",
+    "Framework Selection",
+    "Platform Selection"
+   ]
+  },
+  {
+   "name": "Architectural component knowledge",
+   "importance": 70,
+   "keywords": [
+    "API Management",
+    "APIM",
+    "IAM",
+    "Reverse Proxy",
+    "Cache",
+    "BFF",
+    "Event Manager"
+   ]
+  },
+  {
+   "name": "Quality assurance and testing oversight",
+   "importance": 65,
+   "keywords": [
+    "Quality Assurance",
+    "Testing Oversight",
+    "Test Strategy",
+    "Quality Standards"
+   ]
+  },
+  {
+   "name": "Programming languages and software lifecycle",
+   "importance": 62,
+   "keywords": [
+    "Java",
+    "JavaScript",
+    "Python",
+    "Go",
+    "SDLC",
+    "Software Development Lifecycle"
+   ]
+  },
+  {
+   "name": "Software engineering practices",
+   "importance": 55,
+   "keywords": [
+    "Software Engineering",
+    "Engineering Practices",
+    "Development Best Practices"
+   ]
+  },
+  {
+   "name": "English language",
+   "importance": 30,
+   "keywords": [
+    "English",
+    "English Language"
+   ]
+  },
+  {
+   "name": "Cloud Operations Engineer",
+   "importance": 100,
+   "keywords": [
+    "Cloud Operations Engineer",
+    "Cloud Engineer",
+    "Cloud Operations",
+    "L2 Cloud Engineer"
+   ]
+  },
+  {
+   "name": "Multi-cloud infrastructure operations across GCP and Azure",
+   "importance": 88,
+   "keywords": [
+    "Multi-Cloud",
+    "GCP",
+    "Google Cloud Platform",
+    "Microsoft Azure",
+    "Azure",
+    "Cloud Infrastructure"
+   ]
+  },
+  {
+   "name": "L2 incident and service request management",
+   "importance": 86,
+   "keywords": [
+    "Incident Management",
+    "L2 Support",
+    "Service Requests",
+    "Provisioning",
+    "Access Provisioning",
+    "Escalation"
+   ]
+  },
+  {
+   "name": "Infrastructure automation with Terraform and scripting",
+   "importance": 80,
+   "keywords": [
+    "Infrastructure as Code",
+    "IaC",
+    "Terraform",
+    "Infrastructure Automation",
+    "Python",
+    "Bash",
+    "Git",
+    "Scripting"
+   ]
+  },
+  {
+   "name": "Monitoring and log analysis",
+   "importance": 75,
+   "keywords": [
+    "Monitoring",
+    "Logging",
+    "Cloud Monitoring",
+    "Azure Monitor",
+    "Grafana",
+    "Log Analysis"
+   ]
+  },
+  {
+   "name": "Cloud networking and security fundamentals",
+   "importance": 60,
+   "keywords": [
+    "Cloud Networking",
+    "VPC",
+    "Subnet",
+    "IAM",
+    "TLS/SSL",
+    "Cloud Security"
+   ]
+  },
+  {
+   "name": "On-call rotation availability",
+   "importance": 50,
+   "keywords": [
+    "On-call",
+    "On-call Rotation",
+    "24/7 Support"
+   ]
+  },
+  {
+   "name": "Kubernetes container orchestration",
+   "importance": 30,
+   "keywords": [
+    "Kubernetes",
+    "K8s",
+    "GKE",
+    "AKS",
+    "Container Orchestration",
+    "Network Policy",
+    "Ingress",
+    "Kubernetes Security"
+   ]
+  },
+  {
+   "name": "English language proficiency",
+   "importance": 30,
+   "keywords": [
+    "English",
+    "English Language"
+   ]
+  },
+  {
+   "name": "ITIL and ITSM service management",
+   "importance": 25,
+   "keywords": [
+    "ITIL",
+    "ITSM",
+    "Jira"
+   ]
+  },
+  {
+   "name": "Managed database operations",
+   "importance": 20,
+   "keywords": [
+    "CloudSQL",
+    "Azure SQL",
+    "Managed Databases"
+   ]
+  },
+  {
+   "name": "Regulated enterprise experience",
+   "importance": 20,
+   "keywords": [
+    "Regulated Environment",
+    "Banking",
+    "Financial Services",
+    "Insurance"
+   ]
+  },
+  {
+   "name": "API Gateway management",
+   "importance": 15,
+   "keywords": [
+    "API Gateway",
+    "Apigee"
+   ]
+  },
+  {
+   "name": "Google Cloud or Azure certification",
+   "importance": 15,
+   "keywords": [
+    "Google Cloud Certification",
+    "Azure Certification",
+    "GCP Certification"
+   ]
+  },
+  {
+   "name": "Technical Account Manager",
+   "importance": 100,
+   "keywords": [
+    "Technical Account Manager",
+    "TAM",
+    "Technical Account Management"
+   ]
+  },
+  {
+   "name": "Solution architecture design across on-premise, cloud and hybrid environments",
+   "importance": 88,
+   "keywords": [
+    "Solution Architecture",
+    "Solution Architect",
+    "Cloud Architecture",
+    "Hybrid Cloud",
+    "Multi-Cloud",
+    "On-Premise",
+    "HLD",
+    "LLD"
+   ]
+  },
+  {
+   "name": "Client technical advisory and ownership of key accounts",
+   "importance": 84,
+   "keywords": [
+    "Technical Advisory",
+    "Client Advisory",
+    "Trusted Advisor",
+    "Client Relationship Management",
+    "Client Engagement"
+   ]
+  },
+  {
+   "name": "Cloud platform experience (AWS, Azure, GCP, OCI)",
+   "importance": 78,
+   "keywords": [
+    "AWS",
+    "Azure",
+    "GCP",
+    "OCI",
+    "Amazon Web Services",
+    "Google Cloud Platform",
+    "Oracle Cloud"
+   ]
+  },
+  {
+   "name": "Client technology roadmap and value proposition definition",
+   "importance": 70,
+   "keywords": [
+    "Technology Roadmap",
+    "Technology Strategy",
+    "Value Proposition",
+    "IT Strategy"
+   ]
+  },
+  {
+   "name": "Pre-sales solution definition and RFP response",
+   "importance": 68,
+   "keywords": [
+    "Pre-sales",
+    "RFP",
+    "Bid Response",
+    "Effort Estimation",
+    "Technical Offer",
+    "Solution Definition"
+   ]
+  },
+  {
+   "name": "Resilience, high availability and disaster recovery design",
+   "importance": 66,
+   "keywords": [
+    "High Availability",
+    "Disaster Recovery",
+    "Backup",
+    "Business Continuity",
+    "Resilience",
+    "Migration"
+   ]
+  },
+  {
+   "name": "Executive stakeholder communication and trade-off presentation",
+   "importance": 63,
+   "keywords": [
+    "Stakeholder Management",
+    "Executive Communication",
+    "Trade-off Analysis",
+    "Technical Presentation"
+   ]
+  },
+  {
+   "name": "DevOps practices with Infrastructure as Code and Kubernetes",
+   "importance": 61,
+   "keywords": [
+    "DevOps",
+    "Infrastructure as Code",
+    "Terraform",
+    "Kubernetes",
+    "Containers",
+    "Cloud Native"
+   ]
+  },
+  {
+   "name": "ITSM/ITIL service operations management",
+   "importance": 57,
+   "keywords": [
+    "ITIL",
+    "ITSM",
+    "Incident Management",
+    "Problem Management",
+    "Change Management",
+    "SLA",
+    "Service Operations"
+   ]
+  },
+  {
+   "name": "Technical escalation handling and cross-team alignment",
+   "importance": 55,
+   "keywords": [
+    "Escalation Management",
+    "Technical Escalation",
+    "Cross-functional Collaboration",
+    "Delivery Alignment"
+   ]
+  },
+  {
+   "name": "Enterprise networking",
+   "importance": 52,
+   "keywords": [
+    "Networking",
+    "Routing",
+    "VPN",
+    "Firewall",
+    "DNS",
+    "Load Balancing",
+    "Hybrid Connectivity"
+   ]
+  },
+  {
+   "name": "Security and compliance management",
+   "importance": 47,
+   "keywords": [
+    "IT Security",
+    "Compliance",
+    "NIS2",
+    "ISO 27001",
+    "Vulnerability Management"
+   ]
+  },
+  {
+   "name": "Virtualization platforms",
+   "importance": 45,
+   "keywords": [
+    "Virtualization",
+    "VMware",
+    "Hyper-V",
+    "Proxmox"
+   ]
+  },
+  {
+   "name": "Solution cost optimization with TCO and FinOps",
+   "importance": 44,
+   "keywords": [
+    "TCO",
+    "FinOps",
+    "Cost Optimization",
+    "Sizing"
+   ]
+  },
+  {
+   "name": "English language proficiency",
+   "importance": 35,
+   "keywords": [
+    "English",
+    "Business English",
+    "English B2",
+    "English C1"
+   ]
+  },
+  {
+   "name": "IT Transformation Manager",
+   "importance": 100,
+   "keywords": [
+    "IT Transformation Manager",
+    "IT Transformation",
+    "Transformation Manager",
+    "Transformation Lead"
+   ]
+  },
+  {
+   "name": "Cloud and DevOps transformation leadership",
+   "importance": 88,
+   "keywords": [
+    "Cloud Transformation",
+    "DevOps Transformation",
+    "Cloud and DevOps Transformation",
+    "Transformation Roadmap",
+    "Transformation Strategy"
+   ]
+  },
+  {
+   "name": "Stakeholder management and business partnering",
+   "importance": 80,
+   "keywords": [
+    "Stakeholder Management",
+    "Stakeholder Communication",
+    "Cross-Functional Collaboration",
+    "Business Partnering"
+   ]
+  },
+  {
+   "name": "AI and Generative AI industrialization",
+   "importance": 74,
+   "keywords": [
+    "AI Industrialization",
+    "MLOps",
+    "LLMOps",
+    "Generative AI",
+    "AI Solutions"
+   ]
+  },
+  {
+   "name": "Operating model and ways-of-working transformation",
+   "importance": 72,
+   "keywords": [
+    "Ways of Working",
+    "Operating Model Transformation",
+    "Product Operating Model",
+    "Change Management"
+   ]
+  },
+  {
+   "name": "Program and project management",
+   "importance": 70,
+   "keywords": [
+    "Program Management",
+    "Project Management",
+    "Risk Management",
+    "Budget Management",
+    "Dependency Management",
+    "Scope Management"
+   ]
+  },
+  {
+   "name": "CI/CD and infrastructure as code",
+   "importance": 64,
+   "keywords": [
+    "CI/CD",
+    "Continuous Delivery",
+    "Infrastructure as Code",
+    "IaC",
+    "Delivery Pipeline"
+   ]
+  },
+  {
+   "name": "DevSecOps and security by design",
+   "importance": 62,
+   "keywords": [
+    "DevSecOps",
+    "Security by Design"
+   ]
+  },
+  {
+   "name": "Platform engineering",
+   "importance": 60,
+   "keywords": [
+    "Platform Engineering",
+    "Cloud-Native"
+   ]
+  },
+  {
+   "name": "Kubernetes and container platforms",
+   "importance": 56,
+   "keywords": [
+    "Kubernetes",
+    "K8s",
+    "Containers"
+   ]
+  },
+  {
+   "name": "Site reliability engineering and observability",
+   "importance": 54,
+   "keywords": [
+    "SRE",
+    "Site Reliability Engineering",
+    "Observability"
+   ]
+  },
+  {
+   "name": "DevOps engineering",
+   "importance": 50,
+   "keywords": [
+    "DevOps Engineering",
+    "DevOps"
+   ]
+  },
+  {
+   "name": "Hyperscaler cloud platforms",
+   "importance": 38,
+   "keywords": [
+    "AWS",
+    "Azure",
+    "Google Cloud",
+    "GCP",
+    "Hyperscaler"
+   ]
+  },
+  {
+   "name": "Spec-driven and AI-assisted development",
+   "importance": 30,
+   "keywords": [
+    "Spec-Driven Development",
+    "Spec-Driven Design",
+    "AI-Assisted Development"
+   ]
+  },
+  {
+   "name": "Cloud and AI regulatory compliance",
+   "importance": 24,
+   "keywords": [
+    "DORA",
+    "EU AI Act",
+    "Regulatory Compliance"
+   ]
+  },
+  {
+   "name": "English",
+   "importance": 20,
+   "keywords": [
+    "English"
+   ]
+  },
+  {
+   "name": "AI & Technology Project Manager",
+   "importance": 100,
+   "keywords": [
+    "AI Project Manager",
+    "Technology Project Manager",
+    "Technical Project Manager",
+    "AI & Technology Project Manager",
+    "Project Manager"
+   ]
+  },
+  {
+   "name": "Technical team coordination and leadership",
+   "importance": 85,
+   "keywords": [
+    "Team Coordination",
+    "Technical Team Leadership",
+    "Team Management",
+    "Resource Planning",
+    "Workload Planning"
+   ]
+  },
+  {
+   "name": "Technology and AI development roadmap definition",
+   "importance": 82,
+   "keywords": [
+    "Technology Roadmap",
+    "AI Roadmap",
+    "Technology Strategy",
+    "Strategic Planning"
+   ]
+  },
+  {
+   "name": "Business requirements gathering and translation into projects",
+   "importance": 78,
+   "keywords": [
+    "Requirements Gathering",
+    "Business Requirements",
+    "Business Analysis",
+    "Needs Analysis"
+   ]
+  },
+  {
+   "name": "Project planning, scheduling and deadline management",
+   "importance": 74,
+   "keywords": [
+    "Project Planning",
+    "Project Scheduling",
+    "Prioritization",
+    "Deadline Management"
+   ]
+  },
+  {
+   "name": "Stakeholder and Business Unit management",
+   "importance": 72,
+   "keywords": [
+    "Stakeholder Management",
+    "Business Unit Liaison",
+    "Cross-functional Collaboration",
+    "Executive Reporting"
+   ]
+  },
+  {
+   "name": "Project Management methodologies and tools",
+   "importance": 70,
+   "keywords": [
+    "Project Management",
+    "Agile",
+    "Scrum",
+    "Kanban",
+    "PM Tools"
+   ]
+  },
+  {
+   "name": "Project progress monitoring and risk anticipation",
+   "importance": 68,
+   "keywords": [
+    "Project Monitoring",
+    "Risk Management",
+    "Progress Tracking",
+    "Delivery Tracking"
+   ]
+  },
+  {
+   "name": "Multi-project management",
+   "importance": 64,
+   "keywords": [
+    "Multi-Project Management",
+    "Program Management",
+    "Concurrent Projects"
+   ]
+  },
+  {
+   "name": "IT, software and Digital Transformation project experience",
+   "importance": 62,
+   "keywords": [
+    "IT Project Management",
+    "Software Projects",
+    "Digital Transformation"
+   ]
+  },
+  {
+   "name": "Process structuring through PM methods and tools",
+   "importance": 60,
+   "keywords": [
+    "Process Improvement",
+    "Process Structuring",
+    "Organizational Method"
+   ]
+  },
+  {
+   "name": "AI, generative AI and process automation knowledge",
+   "importance": 50,
+   "keywords": [
+    "Artificial Intelligence",
+    "Generative AI",
+    "AI Agents",
+    "Intelligent Agents",
+    "Process Automation"
+   ]
+  },
+  {
+   "name": "Collaboration with HR on skills gaps and training plans",
+   "importance": 42,
+   "keywords": [
+    "Skills Gap Analysis",
+    "Competency Mapping",
+    "Training Plans",
+    "Recruitment Support"
+   ]
+  },
+  {
+   "name": "DevOps Engineer",
+   "importance": 100,
+   "keywords": [
+    "DevOps Engineer",
+    "DevOps",
+    "DevOps Engineering"
+   ]
+  },
+  {
+   "name": "Container image building and lifecycle maintenance",
+   "importance": 82,
+   "keywords": [
+    "Container Images",
+    "Container Image Building",
+    "Container Templates",
+    "Image Patching",
+    "Container Updates"
+   ]
+  },
+  {
+   "name": "Deployment automation for applications and platforms",
+   "importance": 80,
+   "keywords": [
+    "Deployment Automation",
+    "CI/CD",
+    "Release Automation",
+    "Application Deployment"
+   ]
+  },
+  {
+   "name": "Git version control",
+   "importance": 76,
+   "keywords": [
+    "Git",
+    "Version Control"
+   ]
+  },
+  {
+   "name": "Linux system administration",
+   "importance": 62,
+   "keywords": [
+    "Linux",
+    "Ubuntu",
+    "Debian",
+    "Linux Administration"
+   ]
+  },
+  {
+   "name": "Performance and cost optimization",
+   "importance": 60,
+   "keywords": [
+    "Performance Optimization",
+    "Cost Optimization"
+   ]
+  },
+  {
+   "name": "Network engineering",
+   "importance": 58,
+   "keywords": [
+    "Networking",
+    "IP Networking",
+    "VPN",
+    "DNS",
+    "Load Balancing",
+    "Firewall"
+   ]
+  },
+  {
+   "name": "Kubernetes and microservices architecture",
+   "importance": 57,
+   "keywords": [
+    "Kubernetes",
+    "K8s",
+    "Microservices",
+    "Distributed Application Architecture"
+   ]
+  },
+  {
+   "name": "Bash shell scripting",
+   "importance": 56,
+   "keywords": [
+    "Bash",
+    "Shell Scripting",
+    "Shell"
+   ]
+  },
+  {
+   "name": "Operational documentation and postmortems",
+   "importance": 50,
+   "keywords": [
+    "Operational Documentation",
+    "Postmortems",
+    "Operational Procedures"
+   ]
+  },
+  {
+   "name": "Application and platform support",
+   "importance": 45,
+   "keywords": [
+    "Application Support",
+    "Platform Support"
+   ]
+  },
+  {
+   "name": "English fluency",
+   "importance": 30,
+   "keywords": [
+    "English"
+   ]
+  },
+  {
+   "name": "Infrastructure as Code provisioning",
+   "importance": 28,
+   "keywords": [
+    "Terraform",
+    "AWS CloudFormation",
+    "Infrastructure as Code",
+    "IaC"
+   ]
+  },
+  {
+   "name": "Commercial cloud services and APIs",
+   "importance": 26,
+   "keywords": [
+    "AWS",
+    "Google Cloud Platform",
+    "GCP",
+    "Cloud APIs"
+   ]
+  },
+  {
+   "name": "Python scripting",
+   "importance": 24,
+   "keywords": [
+    "Python"
+   ]
+  },
+  {
+   "name": "SQL and NoSQL databases",
+   "importance": 22,
+   "keywords": [
+    "SQL",
+    "NoSQL"
+   ]
+  },
+  {
+   "name": "Cloud Infrastructure Engineer",
+   "importance": 100,
+   "keywords": [
+    "Cloud Infrastructure Engineer",
+    "Senior Cloud Infrastructure Engineer",
+    "Cloud Infrastructure",
+    "Infrastructure Engineer",
+    "Site Reliability Engineer",
+    "SRE"
+   ]
+  },
+  {
+   "name": "Production cloud operations and uptime ownership",
+   "importance": 85,
+   "keywords": [
+    "Cloud Operations",
+    "Production Operations",
+    "Uptime",
+    "Cost Optimization"
+   ]
+  },
+  {
+   "name": "Observability and monitoring with Datadog",
+   "importance": 84,
+   "keywords": [
+    "Observability",
+    "Monitoring",
+    "Datadog",
+    "Dashboards",
+    "Alerting",
+    "SLOs"
+   ]
+  },
+  {
+   "name": "Self-hosted deployment with Helm and Docker Compose",
+   "importance": 82,
+   "keywords": [
+    "Helm",
+    "Helm Charts",
+    "Docker Compose",
+    "Self-Hosted Deployment",
+    "Self-Hosting"
+   ]
+  },
+  {
+   "name": "CI/CD and zero-downtime deployment automation",
+   "importance": 76,
+   "keywords": [
+    "CI/CD",
+    "Continuous Integration",
+    "Deployment Automation",
+    "Zero-Downtime Deployment"
+   ]
+  },
+  {
+   "name": "Capacity planning and scaling for growth",
+   "importance": 74,
+   "keywords": [
+    "Capacity Planning",
+    "Autoscaling",
+    "Scalability"
+   ]
+  },
+  {
+   "name": "AWS cloud infrastructure",
+   "importance": 70,
+   "keywords": [
+    "AWS",
+    "Amazon Web Services",
+    "IAM",
+    "S3",
+    "AWS Networking"
+   ]
+  },
+  {
+   "name": "Reliability engineering and safe infrastructure change",
+   "importance": 62,
+   "keywords": [
+    "Reliability Engineering",
+    "Change Management"
+   ]
+  },
+  {
+   "name": "Infrastructure as Code",
+   "importance": 60,
+   "keywords": [
+    "Infrastructure as Code",
+    "IaC",
+    "Terraform",
+    "Pulumi",
+    "CloudFormation"
+   ]
+  },
+  {
+   "name": "Container orchestration with Kubernetes and Docker",
+   "importance": 58,
+   "keywords": [
+    "Kubernetes",
+    "K8s",
+    "Docker",
+    "ECS",
+    "Fargate",
+    "Container Orchestration"
+   ]
+  },
+  {
+   "name": "Security and compliance hardening",
+   "importance": 55,
+   "keywords": [
+    "Security Hardening",
+    "Compliance",
+    "Cloud Security"
+   ]
+  },
+  {
+   "name": "ClickHouse Cloud operations",
+   "importance": 52,
+   "keywords": [
+    "ClickHouse Cloud",
+    "Analytical Databases"
+   ]
+  },
+  {
+   "name": "Open source contributions and self-hosted user support",
+   "importance": 50,
+   "keywords": [
+    "Open Source",
+    "Open Source Contributions",
+    "Developer Support"
+   ]
+  },
+  {
+   "name": "DevOps engineering",
+   "importance": 48,
+   "keywords": [
+    "DevOps",
+    "DevOps Engineering"
+   ]
+  },
+  {
+   "name": "Bilingual Technical Support Engineer",
+   "importance": 100,
+   "keywords": [
+    "Bilingual Technical Support Engineer",
+    "Technical Support Engineer",
+    "Bilingual Engineer"
+   ]
+  },
+  {
+   "name": "Advanced technical support and troubleshooting for solar inverters and battery storage",
+   "importance": 90,
+   "keywords": [
+    "Technical Support",
+    "Troubleshooting",
+    "Post-Sales Support",
+    "Inverter Troubleshooting"
+   ]
+  },
+  {
+   "name": "Photovoltaic and energy storage systems engineering",
+   "importance": 86,
+   "keywords": [
+    "Photovoltaics",
+    "PV Systems",
+    "Energy Storage",
+    "Battery Storage Systems",
+    "Solar Inverters",
+    "Electrical Systems",
+    "Lithium Batteries"
+   ]
+  },
+  {
+   "name": "Chinese language proficiency",
+   "importance": 84,
+   "keywords": [
+    "Chinese",
+    "Mandarin"
+   ]
+  },
+  {
+   "name": "Italian language proficiency",
+   "importance": 82,
+   "keywords": [
+    "Italian"
+   ]
+  },
+  {
+   "name": "Technical liaison with HQ engineering and product management",
+   "importance": 78,
+   "keywords": [
+    "Technical Liaison",
+    "Stakeholder Management",
+    "Cross-Functional Collaboration",
+    "Product Management"
+   ]
+  },
+  {
+   "name": "English language proficiency",
+   "importance": 76,
+   "keywords": [
+    "English"
+   ]
+  },
+  {
+   "name": "Technical training for customers and installers",
+   "importance": 70,
+   "keywords": [
+    "Technical Training",
+    "Product Training",
+    "Installer Training"
+   ]
+  },
+  {
+   "name": "Technical translation and Italian localization",
+   "importance": 60,
+   "keywords": [
+    "Technical Translation",
+    "Technical Documentation",
+    "Localization",
+    "Italian Localization"
+   ]
+  },
+  {
+   "name": "Market and competitor intelligence",
+   "importance": 58,
+   "keywords": [
+    "Market Intelligence",
+    "Competitor Analysis",
+    "Competitive Intelligence"
+   ]
+  },
+  {
+   "name": "Renewable energy engineering",
+   "importance": 50,
+   "keywords": [
+    "Renewable Energy Engineering",
+    "Solar Energy"
+   ]
+  }
+ ]
+}

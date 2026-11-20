@@ -79,7 +79,7 @@ where that server is and which folder it is sent:
 # cv.toml
 [servers.v11]
 folder = "v11"
-url    = "http://localhost:8080"
+url    = "http://localhost:8080/v1"
 ```
 
 ```bash
@@ -94,6 +94,26 @@ and `--server_ver v11 --server_ver v05` writes one CV with each, side by side,
 into the same job folder — the client's
 [README](https://github.com/gcontini/ats-strike-client/blob/main/client/README.md)
 covers the modes, configuration, and the output layout.
+
+**Pipeline 2.0** runs on the same server, at `/v2`. Give it a server folder of
+its own — `v2/`, say — holding copies of `candidate_profile.json`,
+`candidate_data.json` and `candidate_signature.png` (and
+`candidate_preferences.md` if it is your only server: the posting's analysis
+reads it), and a section whose URL ends in `/v2`:
+
+```toml
+[servers.v2]
+folder = "v2"
+url    = "http://localhost:8080/v2"
+```
+
+The first time, v2 builds a *store* from your profile: about 26 minutes of
+model calls, more than one job's 20-minute budget. The server sends each piece
+back as it is done, into `v2/cache/`, and a job that runs out of time ends by
+saying which pieces are built: run the same posting again and it continues
+where it stopped. Nothing notices a change to your profile: after you edit it,
+delete `v2/cache/`. Under `/v2` the posting check, the analysis and the cover
+letter are v1's; v2 writes the CV.
 
 ## Architecture
 

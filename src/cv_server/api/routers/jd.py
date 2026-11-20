@@ -1,4 +1,5 @@
-"""Reading job descriptions: the cheap gate and the full analysis."""
+"""Reading job descriptions: the cheap gate and the full analysis. v1's pipeline does both, under
+every prefix (:func:`~..deps.get_text_pipeline`)."""
 
 from __future__ import annotations
 
@@ -8,7 +9,7 @@ from typing import List, Optional
 from cv_contracts import Analysed, Detection, Envelope, static_jd_guess
 from fastapi import APIRouter, Request, UploadFile
 
-from ..deps import envelope_of, execute, get_pipeline, get_state
+from ..deps import envelope_of, execute, get_state, get_text_pipeline
 from ..errors import MissingPart
 from ..multipart import JOB, PACK, SETTINGS, read_request
 
@@ -30,7 +31,7 @@ async def detect_jd(
     records whether the model was asked at all (it is not, when the structural
     checks already say no — that is the point of having them).
     """
-    state, pipeline = get_state(request), get_pipeline(request)
+    state, pipeline = get_state(request), get_text_pipeline(request)
     parts = await read_request(pack, job, settings, max_bytes=state.settings.max_part_bytes)
     if "job_description.txt" not in parts.job:
         raise MissingPart("job file 'job_description.txt' is required")
@@ -52,7 +53,7 @@ async def analyze_jd(
     settings: Optional[str] = SETTINGS,
 ) -> dict:
     """Score a posting against the profile and extract its facts."""
-    state, pipeline = get_state(request), get_pipeline(request)
+    state, pipeline = get_state(request), get_text_pipeline(request)
     parts = await read_request(pack, job, settings, max_bytes=state.settings.max_part_bytes)
 
     def analyze(sink) -> dict:

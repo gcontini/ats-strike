@@ -1,10 +1,11 @@
 # CV pipeline v2: design
 
-Status: draft, 2026-11-12, updated 2026-11-19. The probe of
+Status: draft, 2026-11-12, updated 2026-11-20. The probe of
 [section 11](#11-plan-of-work) has run: **go**, on the conditions listed there. The
-repository has the new layout, and v2 is built through the varnish: the store
+repository has the new layout, and v2 is built through the highlight: the store
 (base items, competence tree, reviewed pool) and, per job, allocation,
-selection, render and varnish. Highlight, serving and evaluation remain. This
+selection, polish, highlight and render ([section 3.1](#31-how-a-cv-is-made-now)).
+v2 is served at `/v2`; the 2.0.0 release, a real run and the evaluation remain. This
 replaces the draft of 2026-11-10, which compiled the profile into facts and still
 wrote every CV with a model;
 [section 12](#12-alternatives-considered) says what was kept from it. v2 is a second
@@ -116,13 +117,46 @@ Terms used below:
 - **slot:** one place in a planned CV, to be filled by a wording.
 - **mix:** the weights that balance the keyword score against the human score.
 
+### 3.1 How a CV is made now
+
+Eleven steps. The first four build the store once per profile: about 26
+minutes of model time, so the first job may stop after the store and the next
+one continues. The other seven run for every job: five model calls, five to
+seven minutes. A job has v1's budget, 20 minutes: a part of the store starts
+only when about its time is left (the Time column; Bullet writing and Bullet
+review count as one, since `pool.json` is stored after both), and the CV only
+once the store is complete and about 7 minutes are left. Otherwise the job
+ends saying which files are built, and to run it again. With the full budget,
+the first job usually ends after Skill tree, and the second writes the CV.
+Each job's step files go to its `steps/` folder.
+
+| # | Step | Runs | Model or code | What it does | Writes | Time | Watch for |
+|---|---|---|---|---|---|---|---|
+| 1 | Profile breakdown | once | model, one call per experience | cuts each duty into numbered items (context, action, result) with their exact source words, checked in code; groups them into stories, one piece of work each, with its anchor; lists each job's shared context; weighs each duty 1 to 3 | `items.json`, `items.md` | 3 min | a wrong item type; stories cut too fine; a weight you disagree with |
+| 2 | Skill tree | once | model (a shape call and one correction, then one link call per experience); code (market terms, skill status) | a tree of skills in three levels, named in the job market's words, with aliases; links the items to skills; code marks each skill proven, weak or ghost | `tree.json`, `tree.md` | 11 min | a skill proven on thin evidence, or a ghost you can prove |
+| 3 | Bullet writing | once | model, one call per experience, per story and for the profile part; code checks | per experience a two-line role summary and a one-line compact form; per story, bullets of one, two and three lines in two wordings each, and up to three bullet groups for a long story; skill phrases and summary frames. Code checks length, numbers, "led" and what a bullet leans on | `pool.json`, `pool.md` | 9 min | a bullet leaning on something never said; a claim bigger than the duty |
+| 4 | Bullet review | once | model, one review per experience | checks every piece against the profile with an interview test, edits through a replace tool; code refuses an edit that adds a line | `pool.json` edited, `review.md` | 2 min | different faults found each run |
+| 5 | Job reading | each job | model, one call | the job's requirements with importance and English keywords, each placed on the skill tree; code says where it landed (proven, weak, ghost) and spreads points up the tree | `allocation.json`, `allocation.md` | 80 s | a requirement on the wrong skill, loosest on jobs far from the profile |
+| 6 | Content choice | each job | code | fills about 71 lines: which jobs print in full or as one compact line, which stories at what length, ten skill phrases, the summary frame and its terms, the headline. Score: half job keywords (printed words and skill proof), half narrative (the share of career years told; main duties count nine times a one-off; a month weighs half for every three years of age). The earliest and latest jobs always print | `plan.json`, `plan.md` | 2 s | a job compact that you want in full; room spent on old jobs; bullet order |
+| 7 | Polish: wording pick | each job | model | one of the stored wordings per bullet, and one title per job from the titles the profile lists | `varnish.md` | 70-130 s | a wording that drops a fact |
+| 8 | Polish: headline and sentence | each job | model | the title under the name and the summary's one written sentence, aimed at 450 characters; code accepts 500 and refuses a number the profile does not hold | `varnish.md` | 5-17 s | a title the profile does not license; a generic sentence |
+| 9 | Polish: job terms in | each job | model; code guards | code offers the job keywords the CV lacks, only for requirements the profile proves; the model rewrites the summary first, then bullets; code refuses an edit that adds a line or a number, brings a term not offered, removes a job term or changes the title | `varnish.md` (applied and refused) | 30-120 s | terms pasted in as labels ("did Project Monitoring of ...") |
+| 10 | Highlight | each job | model, the prompt shared with v1 | bolds two skills and whole job keywords in the bullets, italicises stacks; code keeps the original of any text whose words changed | `varnish.md` (Highlight) | 80 s | compact lines never marked; a bold you would not pick |
+| 11 | Page layout | each job | code and LaTeX | builds the document and renders it; over two pages, shortens a story by one length or removes one, and renders again | `cv.pdf`, `cv.json`, `cv.tex`, `varnish.json` | seconds | a shortened bullet prints its plain stored wording, without polish or bold |
+
 ## 4. The store: once per profile
 
 The store is compiled from the profile and editable by hand. It is personal
 data, and the server keeps none of it. The server returns the store's files as
-cache items, the client keeps them in its folder for the v2 server, and sends
-them back with every request, as it does the profile. Protocol 2 already
-carries such items, so the store adds nothing to the wire.
+cache items, the client keeps them in its folder for the v2 server (`cache/`),
+and sends them back with every request, as it does the profile. Protocol 2
+already carries such items, so the store adds nothing to the wire. Each file
+the request lacks is built, in order, and stored as soon as it is done; nothing
+checks the store against the profile, so after a profile change the user
+deletes `cache/`. The market list the skill tree is named by ships with the
+server (`resources/v2/market.json`: the corpus part, terms, counts and
+requirement names, no job text and no employer name); the profile's own terms,
+which the server cannot count, are joined to it with no counts.
 
 For the probe's profile (five experiences) the store came to 120 items in 27
 stories, a tree of 176 nodes, and a pool of 162 bullets, 5 compact lines, 5 role
@@ -480,8 +514,7 @@ title at the head of the summary.
 Not built, to keep the step small: a repeat check between slots, connectives
 and shortenings between stories ([section 4.5](#45-context-and-references)),
 saved local edits, a final validation call, and the alias swap. A new sentence
-written on request, waiting for the candidate's approval, comes last in the
-build.
+written on request was dropped.
 
 ### 5.5 Highlight
 
@@ -489,7 +522,11 @@ v1's highlighter, shared by both pipelines: one model call marks the job's
 key-point terms in bold and the technical stacks in italics, and code keeps the
 original of any text whose words the model changed. For v2 the key points come
 from the allocation's English keywords (the job's own words gave an Italian job
-none).
+none). Each bullet carries the requirements it proves, with a score from how
+strongly it proves them, and the items behind it serve as the evidence; code
+strips the scores before the render. Bold goes only on whole job keywords, so
+fewer bullets are bold when fewer keywords appear (this changed v1's bold too).
+Compact lines are never marked.
 
 ## 6. Scoring and the mix
 
@@ -601,7 +638,7 @@ v1 stays, served at `/v1`. v2 has none of v1's:
 
 | Risk | Mitigation |
 |---|---|
-| An unusual job gets generic bullets: the pool cannot reframe a story for a requirement nobody anticipated | the varnish's regeneration tiers; the unmatched report shows when it happens |
+| An unusual job gets generic bullets: the pool cannot reframe a story for a requirement nobody anticipated | the polish's choice among stored wordings and its job terms; the unmatched report shows when it happens |
 | The job's words stay out: selection alone reached 35% literal coverage | the varnish's edits are on the critical path, and the evaluation scores coverage on both key-point sets |
 | The tree's abstract nodes do not discriminate, and a leaf on one weak item flips | split along the distinctions jobs make; `proven` by two calls or the candidate's check |
 | A wrong alias prints a false claim | two alias lists per node; only "same thing" may replace words, and a new alias waits for review |
@@ -632,24 +669,24 @@ experience level.
 
 Then the build, one sub-plan each:
 
-| | Sub-plan | Output |
+| Step | Code | Output |
 |---|---|---|
-| R | Repository layout | done: one project, with `src/pipeline_v1` (the former pipeline package), `src/cv_server`, the contracts submodule in `src/contracts`, `resources/v1`, `resources/docker` and `terraform/`; v1 unchanged |
-| S1 | Base items and stories | done: the decomposition prompt, the source check, item types; shared context at the experience level; stories by piece of work, with anchors; narrative weights; code in `src/pipeline_v2` |
-| S2 | Competence tree | done: the market list in code (the test set's copies left out), the shape and attach prompts, leaf status in code (proven, weak, ghost), two term lists per node, ghost leaves, the held-out test |
-| S3 | Pool | done: role summary first, ladder, wordings, up to three group views per long story, what each piece leans on and its check, compact lines, skill phrases on strong leaves, summary frames with checks |
-| S4 | Pool review | done: one model review per experience against the profile, with an interview defendability test; an edit may not add printed lines, and a bullet it shortens moves down a rung |
-| H | One server, several pipelines | done: each pipeline under its own path, and the client's server URL names it; a `common` package with the model layer, the renderer, the review and the highlighter. The 0.5 line stays on its own server |
-| S5 | Allocation | done: one call places the job's requirements on the tree (v1's job evaluation prompt plus placement); keywords are the literal terms; ten dev jobs share 81% of their points with the earlier check's runs, 80% of importance lands on proven skills, none nowhere |
-| S6 | Selector and scores | done: code picks the slots for the page; on ten dev jobs every plan fills the page and shows every job; the human score is the share of career years told |
-| S7 | Geometry and render | done: the v2 template with a compact form, a document built from the plan, render and fit; the line model recalibrated; ten dev CVs fit two pages at the first render |
-| S8 | Varnish | done: three calls after the plan — a stored wording per slot and a title per experience, the headline and the summary's sentence, the job's missing terms into the summary and bullets under code's guards; older months weigh less in the selection (half-life three years). On ten dev jobs literal coverage goes from 43-45% to 58-61% (v1 62%); connectives, saved edits and the repeat check cut |
-| S9 | Highlight | built, gate pending: a guard so a terms-in replacement keeps the job terms and the job title it touches; the shared highlighter, unchanged, fed the allocation's requirements, each bullet's proof scores and the items behind it. On ten dev jobs: 2 skills and 4-5 bullet phrases bold, all on 2 pages, about 80 s per CV |
-| S10 | Serving `/v2` | the mix, artifacts, docs; v1 stays at `/v1` |
-| S11 | Evaluation | the new columns; a thorough run of v1 against v2; the reading checks in short sessions |
-| S12 | Regeneration, tier three | a new sentence written on demand |
+| Repository layout | R | done: one project, with `src/pipeline_v1` (the former pipeline package), `src/cv_server`, the contracts submodule in `src/contracts`, `resources/v1`, `resources/docker` and `terraform/`; v1 unchanged |
+| Profile breakdown | S1 | done: the decomposition prompt, the source check, item types; shared context at the experience level; stories by piece of work, with anchors; narrative weights; code in `src/pipeline_v2` |
+| Skill tree | S2 | done: the market list in code (the test set's copies left out), the shape and attach prompts, leaf status in code (proven, weak, ghost), two term lists per node, ghost leaves, the held-out test |
+| Bullet writing | S3 | done: role summary first, ladder, wordings, up to three group views per long story, what each piece leans on and its check, compact lines, skill phrases on strong leaves, summary frames with checks |
+| Bullet review | S4 | done: one model review per experience against the profile, with an interview defendability test; an edit may not add printed lines, and a bullet it shortens moves down a rung |
+| Shared server | H | done: each pipeline under its own path, and the client's server URL names it; a `common` package with the model layer, the renderer, the review and the highlighter. The 0.5 line stays on its own server |
+| Job reading | S5 | done: one call places the job's requirements on the tree (v1's job evaluation prompt plus placement); keywords are the literal terms; ten dev jobs share 81% of their points with the earlier check's runs, 80% of importance lands on proven skills, none nowhere |
+| Content choice | S6 | done: code picks the slots for the page; on ten dev jobs every plan fills the page and shows every job; the human score is the share of career years told |
+| Page layout | S7 | done: the v2 template with a compact form, a document built from the plan, render and fit; the line model recalibrated; ten dev CVs fit two pages at the first render |
+| Polish | S8 | done: three calls after the plan — a stored wording per slot and a title per experience, the headline and the summary's sentence, the job's missing terms into the summary and bullets under code's guards; older months weigh less in the selection (half-life three years). On ten dev jobs literal coverage goes from 43-45% to 58-61% (v1 62%); connectives, saved edits and the repeat check cut |
+| Highlight | S9 | done: a guard so a terms-in replacement keeps the job terms and the job title it touches; the shared highlighter, unchanged, fed the allocation's requirements, each bullet's proof scores and the items behind it. On ten dev jobs all on 2 pages, about 80 s per CV; the shared prompt tuned at the gate so the bold is whole job keywords only (2 skills, 1-5 bullet phrases) |
+| Serving and release 2.0.0 | S10 | built 2026-11-20, release pending: `/v2` on the server (`/v2/jd/*` and `/v2/letter` run v1); the store built from the client's cache, missing files first, under the job's budget; the market list's corpus part shipped as a resource; v1 stays at `/v1` |
+| Real run | new | one CV from the real profile and a new job, from an empty cache, read step by step |
+| Evaluation | S11 | the new columns; a thorough run of v1 against v2; the reading checks in short sessions |
 
-Order: R, S1, S2, S3, then H before S4, then S4 to S12. The store needs no new
+Order: as listed, with Shared server before Bullet review. The store needs no new
 endpoint: protocol 2 already carries the cache items it travels as. What H adds
 to the wire is the pipeline's path in the client's server section.
 

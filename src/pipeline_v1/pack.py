@@ -6,7 +6,7 @@ folder, by relative path), the **job** (the posting as this server sees it:
 **settings** (a JSON object, forwarded untouched by the client). Nothing else
 in the pipeline knows file names; nothing here calls a model or writes a file.
 
-Text is UTF-8 with a BOM stripped. A file a call needs and does not find is a
+Files are read by :mod:`common.files`. A file a call needs and does not find is a
 :class:`MissingPartError`; one that is not UTF-8, not JSON or not a JSON
 object is a :class:`BadPartError`. A file this module does not name is
 ignored — ``cache/`` included.
@@ -14,20 +14,15 @@ ignored — ``cache/`` included.
 
 from __future__ import annotations
 
-import json
 from dataclasses import fields
 from pathlib import PurePosixPath
 from typing import Any, Dict, Iterable, Mapping, Optional
 
 from common.errors import BadPartError, MissingPartError
+from common.files import Files, json_file, text_file
 
 from .bundle import CandidateInputs, ResourceBundle
 from .defaults import TEMPLATE_FILE
-
-Files = Mapping[str, bytes]
-
-#: Strip a UTF-8 BOM: Windows editors add one and JSON parsers choke on it.
-_BOM = "﻿"
 
 PROFILE_FILE = "candidate_profile.json"
 DATA_FILE = "candidate_data.json"
@@ -57,38 +52,6 @@ JD_FILE = "job_description.txt"
 JOB_ANALYSIS_FILE = "analysis.json"
 DOCUMENT_FILE = "cv.json"
 TEX_FILE = "cv.tex"
-
-
-# --- reading one file ---------------------------------------------------------
-def text_file(files: Files, name: str, *, required: bool = False) -> Optional[str]:
-    """A text file, decoded, its BOM stripped; ``None`` when absent and not required."""
-    blob = files.get(name)
-    if blob is None:
-        if required:
-            raise MissingPartError(f"file '{name}' is required")
-        return None
-    try:
-        text = blob.decode("utf-8")
-    except UnicodeDecodeError as exc:
-        raise BadPartError(f"file '{name}' is not UTF-8 text: {exc}") from exc
-    text = text.lstrip(_BOM)
-    if required and not text.strip():
-        raise BadPartError(f"file '{name}' is empty")
-    return text
-
-
-def json_file(files: Files, name: str, *, required: bool = False) -> Optional[Dict[str, Any]]:
-    """A JSON object file, parsed; ``None`` when absent and not required."""
-    text = text_file(files, name, required=required)
-    if text is None:
-        return None
-    try:
-        data = json.loads(text)
-    except json.JSONDecodeError as exc:
-        raise BadPartError(f"file '{name}' is not valid JSON: {exc}") from exc
-    if not isinstance(data, dict):
-        raise BadPartError(f"file '{name}' must be a JSON object, got {type(data).__name__}")
-    return data
 
 
 # --- the pack -----------------------------------------------------------------

@@ -66,7 +66,7 @@ async def create_cv(
 
     claim_slot(state)
     session = store.create(run.request_id)
-    jobs.start(state, session, run, work)
+    jobs.start(state, session, run, work, f"POST {request.url.path}")
     return envelope_of(CVSession(reattached=False))
 
 

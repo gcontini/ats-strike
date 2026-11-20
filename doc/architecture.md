@@ -39,11 +39,11 @@ flowchart TB
     COMMON --> TEX
 ```
 
-`client → contracts ← server → pipeline_v1 → common ← pipeline_v2`. The
+`client → contracts ← server → pipeline_v1, pipeline_v2 → common`. The
 client and the server live in separate repositories and never import each
 other, the pipelines import none of the others and know no HTTP, and the
-server reaches the pipeline only through its top level
-(`from pipeline_v1 import ...`). `common` holds what the pipelines share —
+server reaches each pipeline only through its top level
+(`from pipeline_v1 import ...`, `from pipeline_v2 import ...`). `common` holds what the pipelines share —
 the models, the observability, the errors, the highlighter and the
 renderer — and imports no pipeline. `pipeline_v2` follows the
 same rules and takes only `common`, never v1; v1 never imports v2;
@@ -55,10 +55,10 @@ cheap in both.
 | Package | Holds | Ships as |
 |---|---|---|
 | `client/` | Your server folders — profile, contact data, template, images — the output tree, the spreadsheet | A PyInstaller executable, ~1 file, from its own repository, [ats-strike-client](https://github.com/gcontini/ats-strike-client) |
-| `src/cv_server/` | The protocol: request reading, auth, sessions, the event stream; one set of routes per pipeline, under its prefix (`/v1/...`) | Inside the container image |
+| `src/cv_server/` | The protocol: request reading, auth, sessions, the event stream; one set of routes per pipeline, under its prefix (`/v1/...`, `/v2/...`); `/v2/jd/*` and `/v2/letter` run v1's pipeline, since 2.0 has no job analysis and no letter | Inside the container image |
 | `src/common/`, `resources/common/` | What every pipeline is built on: the models, the observability, the errors, the highlighter and its prompt, the renderer and its LaTeX sandbox | Inside the container image |
 | `src/pipeline_v1/`, `resources/v1/` | Everything that makes a CV: the prompts and schemas, the models and their API keys, the LaTeX template and toolchain | Inside the container image, ~780 MB with TeX |
-| `src/pipeline_v2/`, `resources/v2/` | CV pipeline 2.0, being built beside v1: a store compiled once per profile (so far its base items and stories, a competence tree whose leaves are linked to the items, and the pool: everything a CV prints from the experiences, written once — per story a ladder of bullets at 1, 2 and 3 lines and up to three groups for a long one, per experience a role summary and a compact line, for the profile skill phrases and summary frames; the experience pieces then reviewed against their items); per job description, so far its requirements placed on the tree's nodes, the selection (no model: which experiences and stories the CV shows, at which rung, scored on keywords and on the career's years told, each month weighing half as much every three years back), the varnish (three calls: the wording and titles picked, the headline and the summary's sentence, the job's missing terms put in under code's guards), the highlight (`common`'s highlighter and prompt, fed the allocation's requirements, the CV with each bullet's scores and the items behind them) and its render to a two-page PDF (v1's template with a compact form for an experience; a story steps down a rung while the PDF runs over), with its own prompts, template and `models.toml` | Inside the image too, but no endpoint serves it yet |
+| `src/pipeline_v2/`, `resources/v2/` | CV pipeline 2.0, served at `/v2` beside v1: a store compiled once per profile and kept by the client as `CACHE` items in the server folder's `cache/`, each missing file built under the time budget, so the first job of a profile may stop after part of it and the next continues (its base items and stories, a competence tree whose leaves are linked to the items, and the pool: everything a CV prints from the experiences, written once — per story a ladder of bullets at 1, 2 and 3 lines and up to three groups for a long one, per experience a role summary and a compact line, for the profile skill phrases and summary frames; the experience pieces then reviewed against their items); per job description, its requirements placed on the tree's nodes, the selection (no model: which experiences and stories the CV shows, at which rung, scored on keywords and on the career's years told, each month weighing half as much every three years back), the varnish (three calls: the wording and titles picked, the headline and the summary's sentence, the job's missing terms put in under code's guards), the highlight (`common`'s highlighter and prompt, fed the allocation's requirements, the CV with each bullet's scores and the items behind them) and its render to a two-page PDF (v1's template with a compact form for an experience; a story steps down a rung while the PDF runs over), with its own prompts, template, `models.toml` and the market list's corpus part (`market.json`: terms, counts and requirement names, no job text and no employer name, built by `scripts/v2_market.py`; the profile's own terms are joined in code) | Inside the container image |
 | `src/contracts/` | The wire format: the envelope, the payloads, a thing to store, the protocol number, the free JD pre-check | A pydantic-only package with its own repository, [ats-strike-contract](https://github.com/gcontini/ats-strike-contract), checked out here as a git submodule |
 
 The wire knows no pipeline: the client sends a **pack** — every file of a
@@ -106,11 +106,11 @@ flowchart TB
     PARTS --> SLOT{"a free job slot?"}
     SLOT -->|"no"| E429["429 too_many_jobs<br/>Retry-After: 30"]
     SLOT -->|"yes"| KIND{"which endpoint?"}
-    KIND -->|"/v1/jd/*, /v1/letter, /v1/cv/render"| POOL["threadpool<br/>answer when done"]
-    KIND -->|"/v1/cv"| THREAD["worker thread<br/>answer 202 now"]
+    KIND -->|"/vN/jd/*, /vN/letter, /vN/cv/render"| POOL["threadpool<br/>answer when done"]
+    KIND -->|"/vN/cv"| THREAD["worker thread<br/>answer 202 now"]
     POOL --> ENV["Envelope<br/>with its log lines as items"]
     THREAD --> EVENTS["a status per step, a store per<br/>step result, log line and the CV"]
-    EVENTS --> STREAM["GET /v1/cv/{id}/events"]
+    EVENTS --> STREAM["GET /vN/cv/{id}/events"]
 ```
 
 `POST /v1/cv` for a session id that already has one skips the slot and the

@@ -45,7 +45,7 @@ from .terms import has_term
 logger = logging.getLogger("pipeline_v2.varnish")
 
 ROLE = "varnish"
-STAGE = "varnish"
+STAGE = "Polish"
 #: What the headline prompt aims the whole summary at; code accepts up to SUMMARY_MAX.
 SUMMARY_SOFT = 450
 #: The job title's length the sentence's room assumes when the call writes the title too.
