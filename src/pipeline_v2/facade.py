@@ -12,11 +12,7 @@ order, and stored at once as a ``CACHE`` item with its readable page; the client
 server folder's ``cache/`` and sends it back with every request. There is no hashing: after a
 profile change, the user deletes ``cache/``.
 
-**The budget** is v1's (``ATS_REQUEST_BUDGET_SECONDS``, 1200 s). A part of the store starts only
-when about its time is left of the budget, and the CV only once the store is complete and about 7
-minutes are left. Otherwise the job ends with a :class:`BudgetExceededError` that says which files
-are built and to run the job again: the next run starts from what this one stored. The store takes
-about 26 minutes, so the first job of a profile usually ends after Skill tree.
+The store takes about 26 minutes, so the first job of a profile is that much longer.
 
 **The CV:** Job reading, Content choice, Polish, Highlight, Page layout. It stores ``cv.pdf``,
 ``cv.json`` (the document) and ``cv.tex``, and the job's steps under ``steps/``: the allocation,
@@ -35,12 +31,12 @@ import shutil
 import time
 from datetime import date
 from pathlib import Path, PurePosixPath
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Type, TypeVar
+from typing import Any, Dict, List, Mapping, Optional, Type, TypeVar
 
 from pydantic import BaseModel, ValidationError
 
 from common.cv_renderer import DEFAULT_LATEX_TIMEOUT, CVRenderer
-from common.errors import BadPartError, BudgetExceededError, MissingPartError, provider_errors
+from common.errors import BadPartError, MissingPartError, provider_errors
 from common.files import Files, json_file, text_file
 from common.highlight import Highlighter
 from common.models import ModelSelector, Usage, build_selector
@@ -65,17 +61,6 @@ from .varnish import Varnisher, varnish_markdown
 ROLES = ("compile", "review", "allocate", "varnish", "highlight")
 #: The role of the highlight call.
 HIGHLIGHT = "highlight"
-
-#: Wall-clock budget for one CV job, v1's.
-DEFAULT_BUDGET_SECONDS = 1200.0
-
-#: About how long each part takes (doc/CV-PIPELINE-V2.md, 3.1 "How a CV is made now"): a part
-#: starts only when that much of the budget is left. ``pool.json`` is stored after Bullet writing
-#: (9 min) and Bullet review (2 min) both.
-ITEMS_SECONDS = 180.0
-TREE_SECONDS = 660.0
-POOL_SECONDS = 660.0
-CV_SECONDS = 420.0
 
 PROFILE_FILE = "candidate_profile.json"
 DATA_FILE = "candidate_data.json"
@@ -136,21 +121,6 @@ def job_action(job: Files) -> str:
     return "generate"
 
 
-# --- the budget -----------------------------------------------------------------------------
-def _listed(names: Sequence[str]) -> str:
-    return " and ".join([", ".join(names[:-1]), names[-1]] if len(names) > 1 else names)
-
-
-def budget_message(built: Sequence[str], what: str, left: float, needs: float) -> str:
-    """Why the job stops before ``what``: the time, which store files are built, and run again."""
-    missing = [name for name in STORE_FILES if name not in built]
-    head = f"{max(left, 0.0):.0f}s of the budget left, {what} needs about {needs:.0f}s"
-    if not missing:
-        return f"{head}: the store is complete ({_listed(built)}). Run this job again for the CV."
-    held = f"the store holds {_listed(built)}" if built else "the store holds nothing yet"
-    return f"{head}: {held}; still to build: {_listed(missing)}. Run this job again to continue."
-
-
 def _cost(name: str, usage: Usage, seconds: float) -> str:
     return (
         f"{name}: {usage.calls} call(s), {seconds:.0f}s, tokens {usage.input_tokens} in, "
@@ -163,28 +133,17 @@ def _dump(model: BaseModel) -> str:
 
 
 class _Job:
-    """One CV job's reporting: each step's status, the time left, each step's cost."""
+    """One CV job's reporting: each step's status and each step's cost."""
 
-    def __init__(self, sink: Sink, budget: float) -> None:
+    def __init__(self, sink: Sink) -> None:
         self.sink = sink
         self.started = time.monotonic()
-        self.deadline = self.started + budget
         self.usage: List[Usage] = []
         self.last = ""
         self._mark = self.started
 
-    def start(
-        self, step: str, needs: float = 0.0, *, built: Sequence[str] = (), what: str = "", check: bool = True
-    ) -> None:
-        """Report ``step``; first stop when less than ``needs`` seconds are left, or with ``needs``
-        0 when the deadline has passed. ``check`` false starts it whatever is left."""
-        left = self.deadline - time.monotonic()
-        if check and (left < needs or left <= 0):
-            if needs:
-                message = budget_message(built, what or step, left, needs)
-            else:
-                message = f"time budget exhausted before {step}"
-            raise BudgetExceededError(message, stage=step)
+    def start(self, step: str) -> None:
+        """Report ``step``."""
         self.sink.status(step, self.last)
         self._mark = time.monotonic()
 
@@ -214,11 +173,9 @@ class Pipeline:
         *,
         llm: ModelSelector,
         latex_timeout: float = DEFAULT_LATEX_TIMEOUT,
-        budget_seconds: float = DEFAULT_BUDGET_SECONDS,
     ) -> None:
         self.llm = llm
         self.latex_timeout = latex_timeout
-        self.budget_seconds = budget_seconds
         folder = resources_dir()
         self.prompts = {p.stem.removeprefix("sys_prompt_"): p.read_text(encoding="utf-8") for p in folder.glob("*.txt")}
         self.template = (folder / "resume.tex.jinja").read_text(encoding="utf-8")
@@ -230,7 +187,6 @@ class Pipeline:
         return cls(
             llm=build_selector(resources_dir() / "models.toml", "v2", ROLES),
             latex_timeout=float(os.getenv("ATS_LATEX_TIMEOUT") or DEFAULT_LATEX_TIMEOUT),
-            budget_seconds=float(os.getenv("ATS_REQUEST_BUDGET_SECONDS") or DEFAULT_BUDGET_SECONDS),
         )
 
     def info(self) -> Dict[str, Any]:
@@ -252,11 +208,8 @@ class Pipeline:
         data = json_file(pack, DATA_FILE, required=True)
         jd = jd_text(job)
         today = date.today()
-        run = _Job(sink, self.budget_seconds)
+        run = _Job(sink)
         items, tree, pool = (cached(pack, n, s) for n, s in zip(STORE_FILES, (Items, Tree, Pool), strict=True))
-
-        def built() -> List[str]:
-            return [n for n, part in zip(STORE_FILES, (items, tree, pool), strict=True) if part is not None]
 
         def keep(name: str, text: str) -> None:
             sink.store(Output("CACHE", "step", name, text))
@@ -267,7 +220,7 @@ class Pipeline:
         with provider_errors():
             # --- the store
             if items is None:
-                run.start("Profile breakdown", ITEMS_SECONDS, built=built())
+                run.start("Profile breakdown")
                 with stage("Profile breakdown"):
                     compiler = ItemCompiler(llm=self.llm, system_prompt=self.prompts["items"])
                     items = compiler.compile(profile, today=today)
@@ -275,7 +228,7 @@ class Pipeline:
                     keep("items.md", items_markdown(profile, items))
                     run.done("Profile breakdown", compiler.usage, f"{len(items.items)} items; stored items.json")
             if tree is None:
-                run.start("Skill tree", TREE_SECONDS, built=built())
+                run.start("Skill tree")
                 with stage("Skill tree"):
                     market = with_profile(self.market, items, profile.get("skills") or [])
                     builder = TreeBuilder(
@@ -292,7 +245,7 @@ class Pipeline:
                     keep("tree.md", tree_markdown(tree, items, market))
                     run.done("Skill tree", builder.usage, f"{len(tree.nodes)} nodes; stored tree.json")
             if pool is None:
-                run.start("Bullet writing", POOL_SECONDS, built=built(), what="Bullet writing and Bullet review")
+                run.start("Bullet writing")
                 with stage("Bullet writing"):
                     writer = PoolWriter(
                         llm=self.llm,
@@ -304,7 +257,7 @@ class Pipeline:
                     written = writer.write(items, tree, profile, today=today)
                     run.done("Bullet writing", writer.usage, f"{len(written.experiences)} experience(s) written")
                 # The time for the review was asked before the writing: the written pool is not dropped.
-                run.start("Bullet review", check=False)
+                run.start("Bullet review")
                 with stage("Bullet review"):
                     reviewer = PoolReviewer(llm=self.llm, prompt=self.prompts["pool_review"])
                     pool, calls, moves = reviewer.review(written, profile)
@@ -314,7 +267,7 @@ class Pipeline:
                     run.done("Bullet review", reviewer.usage, f"{len(calls)} replacement(s) asked; stored pool.json")
 
             # --- the job
-            run.start("Job reading", CV_SECONDS, built=built(), what="the CV")
+            run.start("Job reading")
             with stage("Job reading"):
                 allocator = Allocator(llm=self.llm, prompt=self.prompts["allocate"])
                 allocation = allocator.allocate(jd, tree, items)
@@ -395,12 +348,10 @@ class Pipeline:
 
 
 __all__ = [
-    "DEFAULT_BUDGET_SECONDS",
     "Files",
     "Output",
     "Pipeline",
     "ROLES",
     "Sink",
-    "budget_message",
     "resources_dir",
 ]

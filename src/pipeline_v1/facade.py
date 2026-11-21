@@ -18,7 +18,6 @@ from __future__ import annotations
 import json
 import os
 import shutil
-import time
 from pathlib import Path
 from typing import Any, Dict, Mapping
 
@@ -52,10 +51,6 @@ MODEL_ROLES = (
     "highlight",
 )
 
-#: Wall-clock budget for one CV run, checked before each step.
-DEFAULT_BUDGET_SECONDS = 1200.0
-
-
 def _json(data: Any) -> str:
     return json.dumps(data, indent=2, ensure_ascii=False)
 
@@ -70,12 +65,10 @@ class Pipeline:
         llm: ModelSelector,
         bundle: ResourceBundle,
         latex_timeout: float = DEFAULT_LATEX_TIMEOUT,
-        budget_seconds: float = DEFAULT_BUDGET_SECONDS,
     ) -> None:
         self.llm = llm
         self.bundle = bundle
         self.latex_timeout = latex_timeout
-        self.budget_seconds = budget_seconds
 
     @classmethod
     def build(cls) -> "Pipeline":
@@ -84,7 +77,6 @@ class Pipeline:
             llm=build_selector(default_path("models.toml"), "v1", MODEL_ROLES),
             bundle=default_bundle(),
             latex_timeout=float(os.getenv("ATS_LATEX_TIMEOUT") or DEFAULT_LATEX_TIMEOUT),
-            budget_seconds=float(os.getenv("ATS_REQUEST_BUDGET_SECONDS") or DEFAULT_BUDGET_SECONDS),
         )
 
     def info(self) -> Dict[str, Any]:
@@ -143,7 +135,6 @@ class Pipeline:
                 bundle=bundle,
                 candidate=candidate,
                 work_dir=work_dir,
-                deadline=time.monotonic() + self.budget_seconds,
                 latex_timeout=self.latex_timeout,
                 page_limit=pages,
                 progress=sink.status,

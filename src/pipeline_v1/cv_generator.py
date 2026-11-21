@@ -56,7 +56,6 @@ from langgraph.types import Send
 
 from common.cv_renderer import CVRenderer, RenderResult
 from .cv_review import ReplaceInBody, ReplaceInDuties, apply_body, apply_duties, review
-from common.errors import BudgetExceededError
 from common.highlight import SCORES, Highlighter
 from common.models import ModelSelector, Usage
 from common.observability import stage
@@ -216,10 +215,6 @@ class CVGenerator:
         Not cached; it dies with the request.
     work_dir:
         Scratch directory for the renders. Created and removed by the caller.
-    deadline:
-        Optional :func:`time.monotonic` value, checked before each step, so a
-        run that cannot finish in time fails with a clear cause instead of
-        being cut off by a proxy.
     progress, artifact:
         Called as each step starts and with each intermediate result. ``None``
         runs the whole thing silently, which is what most tests do.
@@ -232,7 +227,6 @@ class CVGenerator:
         bundle: ResourceBundle,
         candidate: CandidateInputs,
         work_dir: Path,
-        deadline: Optional[float] = None,
         latex_timeout: Optional[float] = None,
         page_limit: Optional[int] = None,
         progress: Optional[ProgressFn] = None,
@@ -241,7 +235,6 @@ class CVGenerator:
         self.llm = llm
         self.bundle = bundle
         self.candidate = candidate
-        self.deadline = deadline
         self.progress = progress
         self.artifact = artifact
         #: Every model call of the run, so a step can say what it cost.
@@ -273,7 +266,6 @@ class CVGenerator:
         started = time.monotonic()
         steps = iter(STEPS)
         step, done_when = next(steps)
-        self._check_deadline(step)
         self._report(step)
         mark = self._mark()
         handed: set = set()
@@ -288,7 +280,6 @@ class CVGenerator:
                 finished = self._finished(step, state)
                 step, done_when = next(steps, (None, None))
                 if step is not None:
-                    self._check_deadline(step)
                     self._report(step, self._cost(mark, finished))
                     mark = self._mark()
 
@@ -573,11 +564,6 @@ class CVGenerator:
         if step == "validation":
             return f"body and {len(state['checked_experiences'])} experience(s) validated"
         return f"{step} finished"
-
-    def _check_deadline(self, step: str) -> None:
-        """Stop before starting a step that cannot finish in the budget."""
-        if self.deadline is not None and time.monotonic() >= self.deadline:
-            raise BudgetExceededError(f"time budget exhausted before {step}", stage=f"cv.{step}")
 
     def _mark(self) -> Tuple[Usage, float]:
         """Where the ledger stands now; a step's cost is the difference."""

@@ -125,14 +125,13 @@ model invents can never replace a real name, email or address.
 The renders before the last stay in the job's scratch directory. Only the
 final PDF is sent, in the result.
 
-## Retries, budgets and what each failure costs
+## Retries, limits and what each failure costs
 
 | Guard | Limit | Set by | On exhaustion |
 |---|---|---|---|
 | Calls per model request (empty, cut off, or not the JSON asked for) | 3 | `ATTEMPTS` in `common/models/selector.py` | `502 model_output`, except for the highlight |
 | Highlight | the same | the same | a warning; the CV is delivered unmarked |
 | Validation rounds per document | 5 | `MAX_VALIDATIONS` in `pipeline_v1/cv_review.py` | the CV goes on with the last edits |
-| Wall clock for the whole run | 1200 s | `ATS_REQUEST_BUDGET_SECONDS` | `504 budget_exceeded`, checked before each step |
 | One `pdflatex` compile | 120 s | `ATS_LATEX_TIMEOUT` | `504 latex_timeout` |
 
 A reply that is JSON is parsed and its type checked — a list or an object —

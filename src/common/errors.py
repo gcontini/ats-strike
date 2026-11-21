@@ -50,12 +50,6 @@ class ModelOutputError(PipelineError):
     kind = "model_output"
 
 
-class BudgetExceededError(PipelineError):
-    """The run hit its wall-clock budget before a step."""
-
-    kind = "budget_exceeded"
-
-
 class ProviderTimeoutError(PipelineError):
     """The model endpoint did not answer in time."""
 
@@ -110,7 +104,6 @@ __all__ = [
     "LatexCompileError",
     "LatexTimeoutError",
     "ModelOutputError",
-    "BudgetExceededError",
     "ProviderTimeoutError",
     "ProviderUnreachableError",
     "ProviderError",

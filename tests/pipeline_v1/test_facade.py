@@ -63,7 +63,7 @@ def example_pack() -> dict:
 
 @pytest.fixture
 def pipeline(fake_llm, bundle) -> Pipeline:
-    return Pipeline(llm=fake_llm, bundle=bundle, budget_seconds=60.0)
+    return Pipeline(llm=fake_llm, bundle=bundle)
 
 
 def no_model_was_called(fake_llm) -> bool:

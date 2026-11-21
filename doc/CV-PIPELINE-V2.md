@@ -120,15 +120,9 @@ Terms used below:
 ### 3.1 How a CV is made now
 
 Eleven steps. The first four build the store once per profile: about 26
-minutes of model time, so the first job may stop after the store and the next
-one continues. The other seven run for every job: five model calls, five to
-seven minutes. A job has v1's budget, 20 minutes: a part of the store starts
-only when about its time is left (the Time column; Bullet writing and Bullet
-review count as one, since `pool.json` is stored after both), and the CV only
-once the store is complete and about 7 minutes are left. Otherwise the job
-ends saying which files are built, and to run it again. With the full budget,
-the first job usually ends after Skill tree, and the second writes the CV.
-Each job's step files go to its `steps/` folder.
+minutes of model time, in the profile's first job. The other seven run for
+every job: five model calls, five to seven minutes. Each job's step files go
+to its `steps/` folder.
 
 | # | Step | Runs | Model or code | What it does | Writes | Time | Watch for |
 |---|---|---|---|---|---|---|---|
@@ -682,7 +676,7 @@ Then the build, one sub-plan each:
 | Page layout | S7 | done: the v2 template with a compact form, a document built from the plan, render and fit; the line model recalibrated; ten dev CVs fit two pages at the first render |
 | Polish | S8 | done: three calls after the plan — a stored wording per slot and a title per experience, the headline and the summary's sentence, the job's missing terms into the summary and bullets under code's guards; older months weigh less in the selection (half-life three years). On ten dev jobs literal coverage goes from 43-45% to 58-61% (v1 62%); connectives, saved edits and the repeat check cut |
 | Highlight | S9 | done: a guard so a terms-in replacement keeps the job terms and the job title it touches; the shared highlighter, unchanged, fed the allocation's requirements, each bullet's proof scores and the items behind it. On ten dev jobs all on 2 pages, about 80 s per CV; the shared prompt tuned at the gate so the bold is whole job keywords only (2 skills, 1-5 bullet phrases) |
-| Serving and release 2.0.0 | S10 | built 2026-11-20, release pending: `/v2` on the server (`/v2/jd/*` and `/v2/letter` run v1); the store built from the client's cache, missing files first, under the job's budget; the market list's corpus part shipped as a resource; v1 stays at `/v1` |
+| Serving and release 2.0.0 | S10 | built 2026-11-20, release pending: `/v2` on the server (`/v2/jd/*` and `/v2/letter` run v1); the store built from the client's cache, missing files first; the market list's corpus part shipped as a resource; v1 stays at `/v1` |
 | Real run | new | one CV from the real profile and a new job, from an empty cache, read step by step |
 | Evaluation | S11 | the new columns; a thorough run of v1 against v2; the reading checks in short sessions |
 
@@ -746,8 +740,6 @@ to the wire is the pipeline's path in the client's server section.
 4. **Story size.** About ten action and result items at most, split by phase
    above that, so three group views can tell a story? In S1 none of the real
    profile's 26 stories came near ten.
-5. **Compile time.** The probe's compile took about an hour of model time, one
-   call after another: how it fits the protocol's request budget.
 
 ## Appendix A: how the numbers were measured
 

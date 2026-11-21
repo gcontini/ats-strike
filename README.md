@@ -112,10 +112,8 @@ url    = "http://localhost:8080/v2"
 ```
 
 The first time, v2 builds a *store* from your profile: about 26 minutes of
-model calls, more than one job's 20-minute budget. The server sends each piece
-back as it is done, into `v2/cache/`, and a job that runs out of time ends by
-saying which pieces are built: run the same posting again and it continues
-where it stopped. Nothing notices a change to your profile: after you edit it,
+model calls, so the first job takes that much longer. The server sends each
+piece back as it is done, into `v2/cache/`. Nothing notices a change to your profile: after you edit it,
 delete `v2/cache/`. Under `/v2` the posting check, the analysis and the cover
 letter are v1's; v2 writes the CV.
 

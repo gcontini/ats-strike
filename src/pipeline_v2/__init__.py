@@ -6,7 +6,7 @@ models, the observability, the errors) and imports nothing from ``pipeline_v1``.
 ``/v2``.
 
 - ``facade`` — :class:`Pipeline`, the only thing a server calls: the store completed from the
-  pack's ``cache/`` under the time budget, then the CV for one job; and a render of an edited CV.
+  pack's ``cache/``, then the CV for one job; and a render of an edited CV.
 - ``store`` — the items' shapes, the checks a valid one passes, and the view the user reads.
 - ``items`` — :class:`ItemCompiler`: the profile's experiences cut into base items and stories.
 - ``tree_store`` — the competence tree's and the market's shapes, leaf status, checks and view;

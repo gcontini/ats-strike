@@ -1,11 +1,11 @@
 ---
 name: release
-description: Release the 1.x server - dispatch the GitHub Release workflow on main with the next patch version, deploy it to the FC function ats-strike with terraform, and point the ats-integration-tests submodule at the new tag. Use when asked to release, publish or deploy a 1.x version of ats-strike.
+description: Release the 2.0.x server - dispatch the GitHub Release workflow on main with the next patch version, deploy it to the FC function ats-strike with terraform, and point the ats-integration-tests submodule at the new tag. Use when asked to release, publish or deploy a 2.0.x version of ats-strike.
 ---
 
-# Release the 1.x server
+# Release the 2.0.x server
 
-The 1.x line only (branch `main`, FC function `ats-strike`). The 0.5.x line
+The 2.0.x line only (branch `main`, FC function `ats-strike`). The 0.5.x line
 (`fix-0.5.x`, function `ats-strike-v05`) and the client have their own
 releases; do them only when asked.
 
@@ -23,11 +23,11 @@ bump commit and tag; everything else is left in the working tree for the user.
    If the tree is dirty or ahead, stop and ask the user to commit and push.
    If CI is still running, wait for it with `gh run watch <id> -R gcontini/ats-strike --exit-status`.
 
-2. **Version.** Bump only the patch of the highest `v1.*` tag, unless the user
-   names a version (1.2.0 → 1.2.1, never a minor bump on your own):
+2. **Version.** Bump only the patch of the highest `v2.*` tag, unless the user
+   names a version (2.0.2 → 2.0.3, never a minor bump on your own):
 
    ```bash
-   git ls-remote --tags origin | grep -oE 'v1\.[0-9]+\.[0-9]+$' | sort -V | tail -1
+   git ls-remote --tags origin | grep -oE 'v2\.[0-9]+\.[0-9]+$' | sort -V | tail -1
    ```
 
 3. **Dispatch** and wait (about 3 minutes; run the watch in the background):

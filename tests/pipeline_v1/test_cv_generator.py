@@ -22,7 +22,7 @@ from pipeline_v1.cv_generator import (
     without_scores,
 )
 from common.cv_renderer import CVRenderer, RenderResult
-from common.errors import BudgetExceededError, ModelOutputError
+from common.errors import ModelOutputError
 
 from pipeline_helpers import (
     KEY_POINTS,
@@ -359,15 +359,6 @@ def test_an_experience_with_no_duties_is_written_without_and_never_trimmed(bundl
     assert [len(e["duties"]) for e in document["experiences"]] == [5, 3, 1, 0]
     assert document["experiences"][3]["company"] == candidate.profile["experiences"][4]["company"]
     assert "6 duty(s) removed to fit" in summary
-
-
-# --- budget -------------------------------------------------------------------
-def test_the_time_budget_is_checked_before_a_step_starts(bundle, candidate, tmp_path, renders):
-    llm = script_cv(FakeLLM())
-    with pytest.raises(BudgetExceededError) as caught:
-        generator(bundle, candidate, tmp_path, llm, deadline=time.monotonic() - 1).generate("A JD")
-    assert caught.value.stage == "cv.jd_evaluation"
-    assert all(role.calls == [] for role in llm.roles.values())
 
 
 # --- the pure helpers ---------------------------------------------------------

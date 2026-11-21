@@ -73,7 +73,6 @@ _PIPELINE_STATUS = {
     "bad_part": 400,
     "latex_compile": 422,
     "latex_timeout": 504,
-    "budget_exceeded": 504,
     "provider_timeout": 504,
 }
 
