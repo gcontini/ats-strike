@@ -53,18 +53,18 @@ model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "xhigh"
 
-# A CV's three finishing calls, one after the other (S8): pick, headline and sentence, terms in. The S0
-# probe's pick settings (out/probe-s0/probe_models.toml; doc/model-configurations.md), chosen by the user
-# on 2026-11-19 over the headline's qwen3.8-max: DeepSeek's own API, xhigh.
+# A CV's three finishing calls, one after the other: pick, headline and sentence, terms in. qwen3.8-max on the
+# Model Studio workspace of provider 4, as the compile role (chosen by the user on 2026-11-21 over deepseek-flash).
 [models.v2_varnish]
-model                  = "deepseek-flash"
-model_provider         = "deepseek"
-use_alternate_provider = 2
-reasoning_effort       = "xhigh"
+model                  = "qwen3.8-max"
+use_alternate_provider = 4
+thinking               = "on"
+extra_body             = { thinking_budget = 8000 }
 
 # The **bold**/*italic* pass, one call per CV after the varnish (S9): common's highlighter with v2's prompt,
-# and v1's settings for its highlight role (resources/v1/models.toml): OpenAI on Chat Completions.
+# and v1's settings for its highlight role (resources/v1/models.toml): OpenAI on the Responses API.
 [models.v2_highlight]
 model                  = "gpt-6.1-terra"
 use_alternate_provider = 3
+api                    = "responses"
 reasoning_effort       = "medium"

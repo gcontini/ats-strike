@@ -70,12 +70,10 @@ def document(
 
     Raises ``ValueError`` when the summary runs over :data:`SUMMARY_MAX` characters."""
     picks = varnish.picks if varnish else {}
-    texts = varnish.texts if varnish else {}
+    texts = varnish.texts if varnish else {}  # the bullets the terms step edited
     headline = (varnish.headline if varnish else "") or plan.headline or title
     frames = {f.id: f.text for f in pool.frames}
-    text = texts.get("summary") or summary(
-        frames[plan.frame], varnish.keywords if varnish else [], headline, varnish.sentence if varnish else ""
-    )
+    text = summary(frames[plan.frame], varnish.keywords if varnish else [], headline, varnish.sentence if varnish else "")
     if len(text) > SUMMARY_MAX:
         raise ValueError(f"summary of {len(text)} characters, over {SUMMARY_MAX}: {text}")
     blocks = {b.experience: b for b in pool.experiences}

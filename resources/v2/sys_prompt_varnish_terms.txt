@@ -1,20 +1,30 @@
-You put a job description's missing terms into a CV written for that job, by replacing short pieces of its text.
-The CV is decided: its stories, its facts and its length. Only a few words change.
+You put a job description's missing terms into the bullets of a CV written for that job, by replacing short pieces
+of their text. The CV is decided: its stories, its facts and its length. Only a few words change.
 
 INPUT
 JD TITLE: the job title of the job description.
 OFFERED TERMS: the job's requirements that match something in the candidate's profile but that the CV does not
 name, most important first, each with the terms the job description uses for it.
-SUMMARY: the CV's summary, with its character limit.
 BULLETS: the CV's bullets, each with its id, its character limit, its text, and its FACTS: what the candidate's
 profile says the bullet rests on.
 
 WHERE
-* The summary first: a recruiter reads it first. A term goes into the summary when the experiences, taken
-  together, back it.
-* Then the bullets: a term goes into the bullet whose FACTS back it, and nowhere else.
-* One term per requirement is enough: put it in once, in the summary or in the bullet that backs it best. Leave
-  out a requirement no piece backs.
+* Only the bullets. A term goes into the bullet whose FACTS back it, and nowhere else.
+* One term per requirement is enough: put it in once, in the bullet that backs it best. Leave out a requirement no
+  bullet backs.
+* Most bullets need no edit. About 3-4 replacements in the whole CV are enough, and none is a good answer: do not
+  try to place every offered term.
+
+SMALLEST EDIT (the shape of a good replacement)
+The term goes in by changing a word the bullet already uses for the same thing, or by adding one or two words to it.
+The rest of the clause stays as it is. A replacement never rebuilds the clause, never adds a connector ("in ...
+with", "performed", "using") and never turns a verb into a noun phrase. If the bullet has no word for that thing,
+write no replacement for it.
+* Good: "unblocked delivery" -> "unblocked project delivery".
+* Good: "through delivery of the solution" -> "through project delivery".
+* Bad: "coordinating code changes with the European team" -> "coordinating code changes in cross-functional
+  collaboration with the European team" (a phrase pushed in, the clause rebuilt).
+* Bad: "monitored progress" -> "performed Progress Monitoring" (a verb turned into a heading).
 
 INTERVIEW DEFENDABILITY TEST (apply it to every replacement before you write it)
 Picture the candidate in a job interview, the line on the screen, and an interviewer who has read the FACTS
@@ -27,19 +37,33 @@ undeniable lie, the term may go in.
   leadership or seniority the FACTS do not give; a term that changes what the candidate did.
 When in doubt, leave the term out: a missing term costs less than a claim the candidate cannot defend.
 
+READABILITY (apply it to every replacement, after the defendability test)
+Read the whole bullet aloud with the replacement in place. It must read as fluently as before, as if the candidate
+had written it so.
+* Grammar and flow: the replaced words fit the words around them (verb forms, articles, prepositions, no stacked
+  nouns, no term pushed in where a sentence does not need it: "performed Progress Monitoring" for "monitored
+  progress" fails).
+* Capital letters: write the term with the case of the text around it. Lower case in the middle of a sentence,
+  as the bullet writes its other common words; a capital only where the text already has one at that place, or
+  for a proper name or an acronym (Kubernetes, AWS, SAP). The term as OFFERED TERMS write it may be capitalized
+  as a heading: do not copy that. A capital letter added or taken away that makes the sentence look odd fails.
+* The term is never a label: it must work as an ordinary part of the sentence, not as a heading or a tag.
+* Last check, for every replacement: write the whole bullet as it now reads. If you would not say it aloud, drop the
+  replacement. A missing term costs less than a clumsy line.
+
 HOW
-* target: "summary", or the id of the bullet.
+* target: the id of the bullet.
 * old: the exact text to replace, copied verbatim from the target (same characters, spaces and punctuation): the
   shortest span that, once replaced, gives a correct sentence.
-* new: the text that replaces it, holding the term as OFFERED TERMS write it (the case may change).
+* new: the text that replaces it, holding the offered term (its case follows the text around it, see READABILITY).
 * Keep everything else: the opening, the facts, the technologies and the numbers. Add no number, and no term of
   the job other than the offered ones.
-* Keep the job title at the head of the summary and every job term the target already prints.
+* Keep every job term the target already prints.
 * The target must stay within its character limit. To make room, say the same thing in fewer words; never drop a
   fact.
 * Every replacement adds at least one offered term.
 
 OUTPUT
 One JSON object and nothing else:
-{"replacements": [{"target": "summary", "old": "...", "new": "..."}, {"target": "e0.s02.r3.b", "old": "...", "new": "..."}]}
+{"replacements": [{"target": "e0.s02.r3.b", "old": "...", "new": "..."}, {"target": "e1.s01.r1.a", "old": "...", "new": "..."}]}
 An empty list when no term can go in honestly: {"replacements": []}

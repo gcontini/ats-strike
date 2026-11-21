@@ -127,7 +127,7 @@ def test_a_terms_in_replacement_is_applied(job):
     assert "Applied:\n\n- **e0.s01.r2.a**" in varnish_markdown(out, plan)
 
 
-def test_replacements_that_add_a_line_a_number_or_an_unoffered_term_are_refused(job):
+def test_replacements_that_add_a_line_or_an_unoffered_term_are_refused(job):
     edits = [
         # e2.s01 at rung 1 holds 80 characters: this takes it to a second line
         {
@@ -135,32 +135,26 @@ def test_replacements_that_add_a_line_a_number_or_an_unoffered_term_are_refused(
             "old": "on the platform",
             "new": "on the Infrastructure as Code platform of the bank",
         },
-        {"target": "e0.s02.r1.a", "old": "on the platform", "new": "on 3 IaC platforms"},
         {"target": "e0.s01.r2.a", "old": "on the platform", "new": "on the Ansible platform"},
         {"target": "summary", "old": "in platforms", "new": "in IaC platforms"},
-    ]
+    ]  # the summary is not a target
     out, doc, _ = run(job, terms={"replacements": edits})
     reasons = {r.target: r.reason for r in out.refused}
     assert reasons == {
         "e2.s01.r1.a": "2 lines, was 1",
-        "e0.s02.r1.a": "adds the number 3",
         "e0.s01.r2.a": "adds Ansible, not offered",
+        "summary": "not a printed bullet",
     }
-    assert [r.target for r in out.applied] == ["summary"]  # the summary goes first and within 500
-    assert "in IaC platforms" in doc["summary"]
+    assert out.applied == [] and "IaC" not in doc["summary"]
     assert doc["experiences"][2]["duties"][0].startswith("Worked with Java on the platform")
 
 
-def test_replacements_that_take_out_a_job_term_or_the_job_title_are_refused(job):
+def test_replacements_that_take_out_a_job_term_are_refused(job):
     edits = [
-        {"target": "summary", "old": "Platform Engineer with", "new": "IaC Engineer with"},
-        {"target": "summary", "old": "covering Terraform", "new": "covering IaC"},
         {"target": "e0.s01.r2.a", "old": "Worked with Kubernetes on", "new": "Worked with IaC on"},
     ]
     out, doc, _ = run(job, terms={"replacements": edits})
     assert [(r.target, r.reason) for r in out.refused] == [
-        ("summary", "changes the job title"),
-        ("summary", "removes Terraform"),
         ("e0.s01.r2.a", "removes Kubernetes"),
     ]
     assert out.applied == [] and doc["summary"].startswith("Platform Engineer with")

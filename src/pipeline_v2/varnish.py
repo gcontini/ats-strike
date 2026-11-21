@@ -12,11 +12,11 @@
 3. **Terms in** (``sys_prompt_varnish_terms.txt``): code offers the job's terms the CV lacks: the
    keywords of each requirement landed on a proven or weak node of which the CV prints none yet
    (:func:`~.terms.has_term`), most important requirement first. The model returns replacements
-   ``{target, old, new}`` in the summary first, then in the bullets, each bullet shown with the
-   facts it rests on (its ``uses`` items). Code applies one only when the piece keeps its printed
-   lines (a bullet) or the summary stays within ``SUMMARY_MAX``, it adds no number, every job term
-   it adds is an offered one (at least one), it takes out no job term the piece held, and the
-   summary keeps the headline it held. The rest are listed with the reason.
+   ``{target, old, new}`` in the bullets, each bullet shown with the facts it rests on (its ``uses``
+   items); the summary is never edited. The prompt alone states that a replacement must read
+   fluently, with the case of the text around it. Code applies one only when the bullet keeps its
+   printed lines, every job term it adds is an offered one (at least one) and it takes out no job
+   term the bullet held. The rest are listed with the reason.
 
 Each reply is JSON taken as text (:func:`~.pool.json_object`); one that does not parse goes back
 once with the fault, then fails. The result is a :class:`Varnish`, which
@@ -50,8 +50,6 @@ STAGE = "Polish"
 SUMMARY_SOFT = 450
 #: The most keywords the summary's <<keywords>> slot takes.
 KEYWORDS = 3
-#: The terms-in target for the summary; a bullet is its id.
-SUMMARY = "summary"
 #: Requirements whose terms may be offered: they landed where the profile backs them.
 BACKED = ("proven", "weak")
 LETTERS = "abcdefghij"
@@ -70,7 +68,7 @@ class HeadlineReply(BaseModel):
 
 
 class Replacement(BaseModel):
-    target: str  # "summary" or a bullet id
+    target: str  # a bullet id
     old: str
     new: str
 
@@ -95,7 +93,7 @@ class Varnish(_Strict):
     sentence: str = ""  # the summary's sentence, as printed ("" when refused)
     sentence_refused: str = ""  # the model's sentence and why it is not printed
     offered: List[str] = []  # the terms offered, most important first
-    texts: Dict[str, str] = {}  # "summary" and bullet ids -> their text after the replacements
+    texts: Dict[str, str] = {}  # bullet ids -> their text after the replacements
     applied: List[Replacement] = []
     refused: List[Refused] = []
 
@@ -147,14 +145,11 @@ def apply_terms(
     texts: Mapping[str, str],
     offered: Sequence[str],
     terms: Sequence[str],
-    headline: str,
 ) -> Tuple[Dict[str, str], List[Replacement], List[Refused]]:
-    """The replacements applied to ``texts`` (``"summary"`` and the printed bullets, by id) in order,
-    each one only when its old text is in the piece, the summary keeps the ``headline`` it held,
-    the piece keeps every job term (``terms``) it held, it adds at least one job term and only
-    offered ones, it adds no number the piece did not print, and the piece keeps its printed lines
-    (a bullet) or stays within ``SUMMARY_MAX`` characters (the summary). Returns the texts that
-    changed, the replacements applied and those refused, with the reason."""
+    """The replacements applied to ``texts`` (the printed bullets, by id) in order, each one only
+    when its old text is in the bullet, the bullet keeps every job term (``terms``) it held, it adds
+    at least one job term and only offered ones, and the bullet keeps its printed lines. Returns the texts that changed, the replacements applied and
+    those refused, with the reason."""
     current = dict(texts)
     allowed = {t.lower() for t in offered}
     applied: List[Replacement] = []
@@ -165,24 +160,17 @@ def apply_terms(
         added = [t for t in terms if has_term(t, after) and not has_term(t, before or "")]
         removed = [t for t in terms if has_term(t, before or "") and not has_term(t, after)]
         foreign = [t for t in added if t.lower() not in allowed]
-        extra = sorted(_values(after) - _values(texts.get(r.target, "")))
         if before is None:
-            reason = "not the summary nor a printed bullet"
+            reason = "not a printed bullet"
         elif not r.old or r.old not in before:
             reason = "old text not found"
-        elif r.target == SUMMARY and headline and has_term(headline, before) and not has_term(headline, after):
-            reason = "changes the job title"
         elif removed:
             reason = f"removes {', '.join(removed)}"
         elif not added:
             reason = "adds no offered term"
         elif foreign:
             reason = f"adds {', '.join(foreign)}, not offered"
-        elif extra:
-            reason = f"adds the number {', '.join(extra)}"
-        elif r.target == SUMMARY and len(after) > SUMMARY_MAX:
-            reason = f"summary of {len(after)} characters, over {SUMMARY_MAX}"
-        elif r.target != SUMMARY and lines(after) > lines(texts[r.target]):
+        elif lines(after) > lines(texts[r.target]):
             reason = f"{lines(after)} lines, was {lines(texts[r.target])}"
         else:
             current[r.target] = after
@@ -346,7 +334,7 @@ class Varnisher:
             return v
         pieces = {b.id: b for b in _bullets(pool)}
         ids = [b for x in plan.experiences if x.form == "full" for b in printed(x.slots, v.picks)]
-        texts = {SUMMARY: doc["summary"], **{b: pieces[b].text for b in ids}}
+        texts = {b: pieces[b].text for b in ids}
         by_id = {i.id: i for i in items.items}
         bullets = []
         for bid in ids:
@@ -358,14 +346,11 @@ class Varnisher:
         user = (
             f"JD TITLE: {allocation.title}\n\nOFFERED TERMS:\n"
             + "\n".join(f"- {name} ({importance}): {', '.join(terms)}" for name, importance, terms in wanted)
-            + f"\n\nSUMMARY (at most {SUMMARY_MAX} characters, now {len(texts[SUMMARY])}):\n{texts[SUMMARY]}"
             + "\n\nBULLETS:\n"
             + "\n\n".join(bullets)
         )
         reply = self._ask("terms", self.terms_prompt, user, TermsReply)
-        changed, applied, refused = apply_terms(
-            reply.replacements, texts, offered, jd_terms(allocation), doc["job_title"]
-        )
+        changed, applied, refused = apply_terms(reply.replacements, texts, offered, jd_terms(allocation))
         logger.info(
             "  [%s] terms in: %d requirement(s) offered, %d replacement(s) applied, %d refused",
             ROLE,
@@ -425,8 +410,6 @@ def varnish_markdown(v: Varnish, plan: Plan) -> str:
     out += [f"- **{r.target}**: `{r.old}` -> `{r.new}`" for r in v.applied] or ["- (none)"]
     out += ["", "Refused:", ""]
     out += [f"- **{r.target}** ({r.reason}): `{r.old}` -> `{r.new}`" for r in v.refused] or ["- (none)"]
-    if SUMMARY in v.texts:
-        out += ["", "Summary after the terms:", "", f"> {v.texts[SUMMARY]}"]
     return "\n".join(out) + "\n"
 
 

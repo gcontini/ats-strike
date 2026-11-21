@@ -109,10 +109,11 @@ temperature            = 1
 extra_body             = { reasoning = { mode = "pro", effort = "xhigh" } }
 
 # Writes the cover letter, and looks the employer up on the web for its
-# why-this-company paragraph. OpenAI on Chat Completions.
+# why-this-company paragraph. OpenAI on the Responses API.
 [models.v1_letter]
 model                  = "gpt-6-luna"
 use_alternate_provider = 3
+api                    = "responses"
 temperature            = 1
 thinking               = "auto"
 reasoning_effort       = "xhigh"
@@ -144,11 +145,12 @@ model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "medium"
 
-# The body, summary included. OpenAI on Chat Completions (MODEL_API_KEY3 /
+# The body, summary included. OpenAI on the Responses API (MODEL_API_KEY3 /
 # MODEL_BASE_URL3). It runs beside the duties, below.
 [models.v1_cv]
 model                  = "gpt-6.1-sol"
 use_alternate_provider = 3
+api                    = "responses"
 reasoning_effort       = "high"
 
 # One call per experience shown, all at once, beside the body.
@@ -165,8 +167,9 @@ model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "medium"
 
-# The **bold**/*italic* pass. OpenAI on Chat Completions (MODEL_API_KEY3 / MODEL_BASE_URL3).
+# The **bold**/*italic* pass. OpenAI on the Responses API (MODEL_API_KEY3 / MODEL_BASE_URL3).
 [models.v1_highlight]
 model                  = "gpt-6.1-terra"
 use_alternate_provider = 3
+api                    = "responses"
 reasoning_effort       = "medium"

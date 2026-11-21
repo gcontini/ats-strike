@@ -16,10 +16,18 @@ and adjust it to what the candidate held or may use. Never a rank the candidate 
 
 KEYWORDS
 1 to 3 terms (3 is a hard maximum), joined by code as a list ("a, b and c") where <<keywords>> stands. They must
-relate to the words that come before the slot and read naturally there. They are all items of ONE aspect of
-the work, the one that the words before the slot name: never mix two aspects in one list ("including Project
-Management and SLB" is wrong: a discipline next to a tool). Take them from the top requirements the
-candidate's profile backs, in the words the job description uses.
+relate to the words that come before the slot and read naturally there (eg. avoid repetitions).
+They are all items of one aspect of the work, the one that the words before the slot name: never mix two aspects in
+one list ("including Project Management and SLB" is wrong: a discipline next to a tool).
+* Plain words: each term is 1 to 3 ordinary words, as a colleague would say them. No abstract compounds
+  ("end-to-end", "lifecycle", "holistic"), no adjectives. When the job description's label is jargon, use the plain
+  word the experiences use for the same thing.
+* Anchored in the experiences: a keyword names something the EXPERIENCES show the candidate doing. The job
+  description's requirements only decide which of those things to name.
+* Backed: take them only from requirements whose landing is "proven". Never one that is weak, ghost or nowhere, and
+  never a term that is on no requirement.
+* Bad: "end-to-end project lifecycles" (abstract); "stakeholders on <<stakeholder management and stakeholder communication>>" (repeats words of the sentence and keywords also repeat the same word).
+* Good: "project delivery" after "coordinated vendors and internal stakeholders on <<keyword>>".
 
 SENTENCE
 One sentence that fits where <<sentence>> stands and ties the candidate to what the job asks most. It closes the

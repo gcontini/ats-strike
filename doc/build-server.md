@@ -109,8 +109,8 @@ from `MODEL_API_KEY2` / `MODEL_BASE_URL2`, instead; `3` uses
 `MODEL_API_KEY3` / `MODEL_BASE_URL3`, and so on. The shipped six CV steps all
 use `2`, DeepSeek's own API (`https://api.deepseek.com`): the server builds
 every role at startup and does not start without those two. Pipeline 2.0's
-`compile` role (the store, once per profile) uses `4`, so the server needs
-`MODEL_API_KEY4` / `MODEL_BASE_URL4` as well.
+`compile` role (the store, once per profile) and `varnish` role (the CV's finishing calls) use `4`, so the
+server needs `MODEL_API_KEY4` / `MODEL_BASE_URL4` as well.
 
 Per-role overrides need no rebuild either — `ATS_V1_<ROLE>_<FIELD>` or
 `ATS_V2_<ROLE>_<FIELD>`, for any key of a role, for v1's `DETECT`, `ANALYSIS`, `LETTER`, `JD_EVALUATION`,
