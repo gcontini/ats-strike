@@ -371,7 +371,8 @@ class ModelSelector:
         return reply, reply, None
 
 
-def build_selector(path: Path, roles: Iterable[str]) -> ModelSelector:
-    """A pipeline's selector: ``.env`` loaded, then every role in ``roles`` of the ``models.toml`` at ``path`` built."""
+def build_selector(path: Path, pipeline: str, roles: Iterable[str]) -> ModelSelector:
+    """A pipeline's selector: ``.env`` loaded, then every role in ``roles`` of the ``models.toml`` at ``path`` built
+    from its ``[models.<pipeline>_<role>]`` table."""
     load_dotenv()
-    return ModelSelector(load_model_config(path, roles))
+    return ModelSelector(load_model_config(path, pipeline, roles))

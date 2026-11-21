@@ -19,6 +19,7 @@ from pipeline_v2 import select as sel
 from pipeline_v2.document import SUMMARY_MAX, document
 from pipeline_v2.pool_store import Frame
 from pipeline_v2.render import render, room_left
+from pipeline_v2.varnish import Varnish
 
 needs_latex = pytest.mark.skipif(shutil.which("pdflatex") is None, reason="pdflatex not installed")
 
@@ -77,12 +78,14 @@ def test_full_and_compact_experiences(parts):
 def test_the_frame_is_filled_in_and_the_sentence_left_out(parts):
     ctx, pool = parts
     plan = plan_of(ctx, {0: "compact", 2: "compact"}, {})
-    plan = plan.model_copy(update={"headline": "Platform Engineer", "keywords": ["Terraform", "Kubernetes"]})
-    doc = document(plan, PROFILE, pool, "Site Reliability Engineer")
+    plan = plan.model_copy(update={"headline": "Platform Engineer"})
+    doc = document(plan, PROFILE, pool, "Site Reliability Engineer", Varnish(keywords=["Terraform", "Kubernetes"]))
     assert doc["job_title"] == "Platform Engineer"
     assert doc["summary"] == "Platform Engineer with 20 years in platforms, covering Terraform and Kubernetes."
     # no headline: the title given
-    doc = document(plan.model_copy(update={"headline": None}), PROFILE, pool, "Site Reliability Engineer")
+    doc = document(
+        plan.model_copy(update={"headline": None}), PROFILE, pool, "Site Reliability Engineer", Varnish(keywords=["Go"])
+    )
     assert doc["job_title"] == "Site Reliability Engineer" and doc["summary"].startswith(
         "Site Reliability Engineer with"
     )
@@ -90,11 +93,10 @@ def test_the_frame_is_filled_in_and_the_sentence_left_out(parts):
 
 def test_a_summary_over_the_limit_is_refused(parts):
     ctx, pool = parts
-    plan = plan_of(ctx, {0: "compact", 2: "compact"}, {}).model_copy(update={"headline": "X", "keywords": ["Go"]})
-    room = SUMMARY_MAX - len(document(plan, PROFILE, pool, "X")["summary"])
-    plan = plan.model_copy(update={"keywords": ["Go", "a" * room]})  # " and " + room: over by 5
+    plan = plan_of(ctx, {0: "compact", 2: "compact"}, {}).model_copy(update={"headline": "X"})
+    room = SUMMARY_MAX - len(document(plan, PROFILE, pool, "X", Varnish(keywords=["Go"]))["summary"])
     with pytest.raises(ValueError, match="over 500"):
-        document(plan, PROFILE, pool, "X")
+        document(plan, PROFILE, pool, "X", Varnish(keywords=["Go", "a" * room]))  # " and " + room: over by 5
 
 
 # --- the fit step and the render --------------------------------------------------------------------

@@ -4,7 +4,7 @@ the one :meth:`common.cv_renderer.CVRenderer.render_document` takes.
 - the profile's fixed parts (education, certifications); the caller lays the candidate's own data
   (name, contact, languages, place) over the top, as v1 does;
 - the headline: the varnish's, the plan's, or the profile's first title;
-- the summary: the plan's frame with its keywords filled in, ``<<job_title>>`` filled with the
+- the summary: the plan's frame with the varnish's keywords filled in, ``<<job_title>>`` filled with the
   headline, and ``<<sentence>>`` with the varnish's sentence (removed without one); or the
   varnish's summary after its replacements;
 - the skills;
@@ -74,7 +74,7 @@ def document(
     headline = (varnish.headline if varnish else "") or plan.headline or title
     frames = {f.id: f.text for f in pool.frames}
     text = texts.get("summary") or summary(
-        frames[plan.frame], plan.keywords, headline, varnish.sentence if varnish else ""
+        frames[plan.frame], varnish.keywords if varnish else [], headline, varnish.sentence if varnish else ""
     )
     if len(text) > SUMMARY_MAX:
         raise ValueError(f"summary of {len(text)} characters, over {SUMMARY_MAX}: {text}")

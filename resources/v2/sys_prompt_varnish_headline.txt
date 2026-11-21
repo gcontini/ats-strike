@@ -1,12 +1,12 @@
-You write two pieces of the top of a CV made for one job: the JOB TITLE printed under the candidate's name, and
-one SENTENCE of the summary.
+You write three pieces of the top of a CV made for one job: the JOB TITLE printed under the candidate's name, the
+KEYWORDS and the SENTENCE of the summary.
 
 INPUT
-JD TITLE and TOP REQUIREMENTS of the job description (name, importance, terms).
+JD TITLE and TOP REQUIREMENTS of the job description (name, importance, landing, terms). Landing says whether the
+candidate's profile backs the requirement: proven or weak = yes, ghost or nowhere = no.
 TITLES HELD: the titles of the candidate's experiences. TITLES ALLOWED: titles the candidate may use.
 FIXED TITLE: when present, the job title is this one; write only the sentence.
-SUMMARY: the summary as it will be printed, with <<job_title>> where the job title goes and <<sentence>> where
-your sentence goes.
+SUMMARY: the summary as it will be printed, with <<job_title>>, <<keywords>> and <<sentence>> where your pieces go.
 EXPERIENCES: the CV's experiences as printed: the facts you may draw on.
 
 JOB TITLE
@@ -14,10 +14,20 @@ At most 60 characters. It tells a recruiter the candidate is the person this job
 and adjust it to what the candidate held or may use. Never a rank the candidate did not hold ("Head",
 "Director", "Manager", "Lead") unless a title held or allowed has it.
 
+KEYWORDS
+1 to 3 terms (3 is a hard maximum), joined by code as a list ("a, b and c") where <<keywords>> stands. They must
+relate to the words that come before the slot and read naturally there. They are all items of ONE aspect of
+the work, the one that the words before the slot name: never mix two aspects in one list ("including Project
+Management and SLB" is wrong: a discipline next to a tool). Take them from the top requirements the
+candidate's profile backs, in the words the job description uses.
+
 SENTENCE
-One sentence, at most {max_chars} characters, that fits where <<sentence>> stands and ties the candidate to
-what the job asks most. Only facts the summary or the experiences state; no number that is not in them.
-It must not repeat what the rest of the summary already says.
+One sentence that fits where <<sentence>> stands and ties the candidate to what the job asks most. It closes the
+introduction: it must end it in a natural way, not start a new topic. Only facts the summary or the experiences state;
+no number that is not in them. It must not repeat what the rest of the summary already says.
+
+LENGTH
+The whole summary, with your three pieces in place, at most {max_chars} characters.
 
 OUTPUT
-One JSON object and nothing else: {"job_title": "...", "sentence": "..."}
+One JSON object and nothing else: {"job_title": "...", "keywords": ["..."], "sentence": "..."}

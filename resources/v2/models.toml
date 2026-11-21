@@ -1,8 +1,7 @@
 # CV pipeline 2.0 model configuration
 # ===================================
 # The same keys as resources/v1/models.toml, which documents each of them;
-# only the roles differ, and none has a v1 role's name, so an env override reaches
-# one pipeline only. Every role calls [provider], unless it sets
+# only the roles differ, and every table is named [models.v2_<role>]. Every role calls [provider], unless it sets
 # use_alternate_provider = N (N >= 2): then MODEL_API_KEY<N> / MODEL_BASE_URL<N>.
 #
 #   compile   compiles the store: the base items and stories (S1), the
@@ -16,11 +15,11 @@
 #   varnish   one CV's three finishing calls: a wording per slot and a title
 #             per experience, the headline and the summary's sentence, the
 #             job's missing terms into the summary and the bullets (S8)
-#   markup    Highlight: the **bold**/*italic* keyword pass, common's
+#   highlight Highlight: the **bold**/*italic* keyword pass, common's
 #             highlighter with v2's copy of v1's prompt (S9)
 #
-# Every key of a [models.<role>] table can be overridden with an env var,
-# ATS_<ROLE>_<FIELD> (ATS_COMPILE_MODEL, ATS_MARKUP_EXTRA_BODY, ...), as in v1.
+# Every key of a [models.v2_<role>] table can be overridden with an env var,
+# ATS_V2_<ROLE>_<FIELD> (ATS_V2_COMPILE_MODEL, ATS_V2_HIGHLIGHT_EXTRA_BODY, ...), as in v1.
 
 [provider]
 api_key_env  = "MODEL_API_KEY"
@@ -32,7 +31,7 @@ timeout_seconds = 600
 # Compiles the store: base items (S1), the competence tree's shape and its links (S2),
 # the pool (S3). Once per profile, so the strongest writer. The S0 probe's configuration (doc/model-configurations.md,
 # "S0 probe of CV pipeline 2.0"); thinking budget 8,000 by the user's decision of 2026-11-12.
-[models.compile]
+[models.v2_compile]
 model                  = "qwen3.8-max"
 use_alternate_provider = 4
 thinking               = "on"
@@ -40,7 +39,7 @@ extra_body             = { thinking_budget = 8000 }
 
 # Reviews the pool, one experience at a time, up to five rounds each (S4). v1's settings for its
 # validation role (resources/v1/models.toml): DeepSeek's own API, tool calls of replace_in_duties.
-[models.review]
+[models.v2_review]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2
@@ -48,7 +47,7 @@ reasoning_effort       = "medium"
 
 # Places a job description's requirements on the tree, one call per JD (S5). The S0 probe's and
 # S2's settings for the same call (out/s2/allocate_models.toml): DeepSeek's own API, xhigh.
-[models.allocate]
+[models.v2_allocate]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2
@@ -57,16 +56,15 @@ reasoning_effort       = "xhigh"
 # A CV's three finishing calls, one after the other (S8): pick, headline and sentence, terms in. The S0
 # probe's pick settings (out/probe-s0/probe_models.toml; doc/model-configurations.md), chosen by the user
 # on 2026-11-19 over the headline's qwen3.8-max: DeepSeek's own API, xhigh.
-[models.varnish]
+[models.v2_varnish]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "xhigh"
 
 # The **bold**/*italic* pass, one call per CV after the varnish (S9): common's highlighter with v2's prompt,
-# and v1's settings for its highlight role (resources/v1/models.toml).
-[models.markup]
-model                  = "deepseek-flash"
-model_provider         = "deepseek"
-use_alternate_provider = 2
+# and v1's settings for its highlight role (resources/v1/models.toml): OpenAI on Chat Completions.
+[models.v2_highlight]
+model                  = "gpt-6.1-terra"
+use_alternate_provider = 3
 reasoning_effort       = "medium"

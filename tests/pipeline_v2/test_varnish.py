@@ -50,7 +50,7 @@ def job():
     ctx = sel.context(items, tree, pool, allocation, ["Platform Engineer"], {})
     slots = {"e0.s01": 2, "e0.s02": 1, "e2.s01": 1, "e2.s02": 1}
     plan = sel.plan_of({"forms": {0: "full", 1: "compact", 2: "full"}, "slots": slots}, ctx, 0.0)
-    return plan.model_copy(update={"headline": None, "keywords": ["Terraform"]}), pool, items
+    return plan.model_copy(update={"headline": None}), pool, items
 
 
 def varnisher(*replies: dict) -> tuple:
@@ -67,7 +67,7 @@ def run(job, pick=None, headline=None, terms=None):
     plan, pool, items = job
     v, llm = varnisher(
         pick or {"picks": {}, "titles": {}},
-        headline or {"job_title": "Platform Engineer", "sentence": ""},
+        headline or {"job_title": "Platform Engineer", "keywords": ["Terraform"], "sentence": ""},
         terms or {"replacements": []},
     )
     out = v.varnish(plan, PROFILE, pool, items, ALLOCATION, DATA)
@@ -88,18 +88,25 @@ def test_a_pick_and_a_title_are_printed_and_a_pick_the_slot_lacks_is_dropped(job
 
 
 def test_the_headline_and_a_sentence_fill_the_summary(job):
-    out, doc, llm = run(job, headline={"job_title": "Cloud Platform Engineer", "sentence": "I keep releases calm."})
+    reply = {"job_title": "Cloud Platform Engineer", "keywords": ["Terraform"], "sentence": "I keep releases calm."}
+    out, doc, llm = run(job, headline=reply)
     assert out.headline == "Cloud Platform Engineer" and out.sentence == "I keep releases calm."
     assert doc["job_title"] == "Cloud Platform Engineer"
     assert doc["summary"] == (
         "Cloud Platform Engineer with 20 years in platforms, covering Terraform. I keep releases calm."
     )
     system = next(m["content"] for m in llm["varnish"].calls[1]["messages"] if m["role"] == "system")
-    assert "{max_chars}" not in system and "at most 356 characters" in system  # 450 - 1 - 93
+    assert "{max_chars}" not in system and "at most 450 characters" in system
+
+
+def test_the_keywords_are_cut_to_three(job):
+    reply = {"job_title": "Platform Engineer", "keywords": ["A", "B", "C", "D"], "sentence": ""}
+    assert run(job, headline=reply)[0].keywords == ["A", "B", "C"]
 
 
 def test_a_sentence_with_a_number_the_cv_does_not_print_is_refused(job):
-    out, doc, _ = run(job, headline={"job_title": "Platform Engineer", "sentence": "I ran 7 platforms for 20 years."})
+    reply = {"job_title": "Platform Engineer", "keywords": ["Terraform"], "sentence": "I ran 7 platforms for 20 years."}
+    out, doc, _ = run(job, headline=reply)
     assert out.sentence == "" and "7" in out.sentence_refused and "20" not in out.sentence_refused.split("(")[1]
     assert doc["summary"] == "Platform Engineer with 20 years in platforms, covering Terraform."
 

@@ -81,7 +81,7 @@ class Pipeline:
     def build(cls) -> "Pipeline":
         """``models.toml`` and the environment, once at startup."""
         return cls(
-            llm=build_selector(default_path("models.toml"), MODEL_ROLES),
+            llm=build_selector(default_path("models.toml"), "v1", MODEL_ROLES),
             bundle=default_bundle(),
             latex_timeout=float(os.getenv("ATS_LATEX_TIMEOUT") or DEFAULT_LATEX_TIMEOUT),
             budget_seconds=float(os.getenv("ATS_REQUEST_BUDGET_SECONDS") or DEFAULT_BUDGET_SECONDS),

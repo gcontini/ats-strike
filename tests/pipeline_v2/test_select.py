@@ -190,7 +190,6 @@ def test_on_a_roomy_page_everything_is_shown_in_full(ctx):
     assert all(s.rung == 3 for x in plan.experiences for s in x.slots)
     assert plan.headline == "Platform Engineer"
     assert plan.skills[0] == "Terraform"  # the most literal score first
-    assert plan.keywords == ["Terraform", "Kubernetes"]  # proven nodes, most important first
 
 
 def test_the_refill_pass_never_lowers_the_objective(ctx, tight):

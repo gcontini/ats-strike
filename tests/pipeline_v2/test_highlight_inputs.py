@@ -84,11 +84,11 @@ def test_one_highlight_call_puts_its_markers_into_the_rendered_document(job):
         cv["experiences"][2]["duties"][0] = cv["experiences"][2]["duties"][0].replace("Java", "**Java**", 1)
         return json.dumps(cv)
 
-    llm["markup"].replies = [bold_skill_and_bullet]
+    llm["highlight"].replies = [bold_skill_and_bullet]
     sent = inputs(doc, plan, {}, ctx, pool, items)
     prompt = (resources_dir() / "sys_prompt_highlight.txt").read_text(encoding="utf-8")
-    found = marks(sent[1], Highlighter(llm, prompt, "markup").highlight(*sent))
-    asked = user_text(llm["markup"].calls[0])
+    found = marks(sent[1], Highlighter(llm, prompt, "highlight").highlight(*sent))
+    asked = user_text(llm["highlight"].calls[0])
     assert "KEY POINTS:" in asked and "|3-90,2-90" in asked and "EVIDENCE:" in asked
     renderer = Renderer()
     out = render(plan, ctx, PROFILE, pool, {"name": "Ada"}, renderer, None, found)

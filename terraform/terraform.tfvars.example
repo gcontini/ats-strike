@@ -10,7 +10,7 @@ environment = {
   TZ             = "Europe/Rome"
   # The sessions bucket, where main.tf mounts it.
   ATS_WORK_DIR = "/mnt/ats-strike"
-  # ATS_CV_MODEL = "qwen-max"
+  # ATS_V1_CV_MODEL = "qwen-max"
   # Days a CV session nobody acknowledged stays in the bucket.
   # ATS_SESSION_TTL_DAYS = "1"
 }

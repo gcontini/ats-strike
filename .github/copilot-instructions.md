@@ -96,7 +96,7 @@ job's session is the only thing kept
 **`src/common/`** — what every pipeline is built on; no HTTP, imports no pipeline
 - `models/` — `ModelSelector`: one LangChain chat model per role
   (v1's `detect`/`analysis`/`letter` and the six CV steps; v2's `compile`,
-  `review`, `allocate`, `varnish` and `markup`: no name in both, so an env override reaches one) from the `models.toml` a pipeline passes in
+  `review`, `allocate`, `varnish` and `highlight`; tables `[models.v1_<role>]` / `[models.v2_<role>]`, env `ATS_V1_…` / `ATS_V2_…`) from the `models.toml` a pipeline passes in
   (`resources/v1/`, `resources/v2/`), built by the role's `model_provider`
   (`standard.py` on `ChatOpenAI`, `deepseek.py` on `ChatDeepSeek`), and two
   methods: `call_llm(role, type, system_prompt, messages)`, which returns a

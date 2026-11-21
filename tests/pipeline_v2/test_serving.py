@@ -92,7 +92,7 @@ def fake(clock: Clock = None) -> FakeLLM:
         json.dumps({"job_title": "Cloud Engineer", "sentence": ""}),
         json.dumps({"replacements": []}),
     ]
-    llm["markup"].replies = [lambda body: json.dumps(section(body, "CV"))]
+    llm["highlight"].replies = [lambda body: json.dumps(section(body, "CV"))]
     return llm
 
 
@@ -165,7 +165,7 @@ def test_a_full_cache_makes_no_store_call_and_writes_a_cv(tmp_path):
     llm, sink = fake(), Sink()
     summary = Pipeline(llm=llm).cv({**pack(), **built.cache()}, {"job_description.txt": JD}, {}, tmp_path / "b", sink)
     assert store_calls(llm) == 0
-    system = next(m["content"] for m in llm["markup"].calls[0]["messages"] if m["role"] == "system")
+    system = next(m["content"] for m in llm["highlight"].calls[0]["messages"] if m["role"] == "system")
     assert (resources_dir() / "sys_prompt_highlight.txt").read_text(encoding="utf-8").strip() in system
     assert sink.names("CACHE") == []
     assert sink.statuses == ["Job reading", "Content choice", "Polish", "Highlight", "Page layout"]

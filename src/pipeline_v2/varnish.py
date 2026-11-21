@@ -4,8 +4,8 @@
    experience among the titles the profile lists for that job. A pick the slot or the job does not
    have is dropped: the slot prints wording ``a``, the experience its first title.
 2. **Headline** (``sys_prompt_varnish_headline.txt``): the job title under the name (the plan's,
-   when it has one) and the summary's ``<<sentence>>``. The prompt states the room that brings the
-   whole summary to :data:`SUMMARY_SOFT` characters. Code refuses the sentence when the summary then
+   when it has one), the summary's ``<<keywords>>`` (at most :data:`KEYWORDS`) and its
+   ``<<sentence>>``. The prompt states :data:`SUMMARY_SOFT` characters for the whole summary. Code refuses the sentence when the summary then
    runs over :data:`~.document.SUMMARY_MAX`, or when it holds a number (S3's
    :func:`~.pool_store.numbers`) that neither the rest of the summary nor the experiences print.
    The rank rule ("Head", "Manager", ... only when held) is the prompt's alone.
@@ -35,7 +35,7 @@ from common.models import ModelSelector, Usage
 from common.observability import stage
 
 from .allocate import Allocation
-from .document import SUMMARY_MAX, _title, document, framed, printed, summary
+from .document import SUMMARY_MAX, _title, document, printed, summary
 from .pool import _validated, json_object
 from .pool_store import BULLET_LINE, Bullet, Pool, ladder_and_group_bullets, lines, numbers
 from .select import Plan
@@ -48,8 +48,8 @@ ROLE = "varnish"
 STAGE = "Polish"
 #: What the headline prompt aims the whole summary at; code accepts up to SUMMARY_MAX.
 SUMMARY_SOFT = 450
-#: The job title's length the sentence's room assumes when the call writes the title too.
-TITLE_ROOM = 45
+#: The most keywords the summary's <<keywords>> slot takes.
+KEYWORDS = 3
 #: The terms-in target for the summary; a bullet is its id.
 SUMMARY = "summary"
 #: Requirements whose terms may be offered: they landed where the profile backs them.
@@ -65,6 +65,7 @@ class PickReply(BaseModel):
 
 class HeadlineReply(BaseModel):
     job_title: str = ""
+    keywords: List[str] = []
     sentence: str = ""
 
 
@@ -90,6 +91,7 @@ class Varnish(_Strict):
     picks: Dict[str, str] = {}  # story -> the bullet id a ladder slot prints
     titles: Dict[int, str] = {}  # experience -> the title it prints
     headline: str = ""  # "" = the document's fallback
+    keywords: List[str] = []  # the summary's <<keywords>>, at most KEYWORDS
     sentence: str = ""  # the summary's sentence, as printed ("" when refused)
     sentence_refused: str = ""  # the model's sentence and why it is not printed
     offered: List[str] = []  # the terms offered, most important first
@@ -290,33 +292,35 @@ class Varnisher:
     ) -> Varnish:
         frame = {f.id: f.text for f in pool.frames}[plan.frame]
         fixed = plan.headline or ""
-        room = SUMMARY_SOFT - 1 - len(summary(frame, plan.keywords, fixed or "x" * TITLE_ROOM))
         doc = document(plan, profile, pool, title, v)
         reqs = sorted(allocation.requirements, key=lambda r: -r.importance)[:8]
         held = [t for e in profile["experiences"] for t in _title(e)]
         user = (
             f"JD TITLE: {allocation.title}\nTOP REQUIREMENTS:\n"
-            + "\n".join(f"- {r.name} ({r.importance}): {', '.join(r.keywords)}" for r in reqs)
+            + "\n".join(f"- {r.name} ({r.importance}, {r.landing}): {', '.join(r.keywords)}" for r in reqs)
             + f"\n\nTITLES HELD: {'; '.join(held)}\nTITLES ALLOWED: {'; '.join(profile.get('job_title') or [])}\n"
             + (f"FIXED TITLE: {fixed}\n" if fixed else "")
-            + f"\nSUMMARY: {' '.join(framed(frame, plan.keywords).split())}\n\nEXPERIENCES:\n"
+            + f"\nSUMMARY: {' '.join(frame.split())}\n\nEXPERIENCES:\n"
             + _experiences(doc)
         )
-        reply = self._ask("headline", self.headline_prompt.replace("{max_chars}", str(room)), user, HeadlineReply)
+        reply = self._ask("headline", self.headline_prompt.replace("{max_chars}", str(SUMMARY_SOFT)), user, HeadlineReply)
         headline = fixed or " ".join(reply.job_title.split()) or title
+        keywords = [" ".join(k.split()) for k in reply.keywords if k.strip()][:KEYWORDS]
         sentence = " ".join(reply.sentence.split())
-        rest = summary(frame, plan.keywords, headline)
-        fault = sentence_fault(summary(frame, plan.keywords, headline, sentence), sentence, rest, _experiences(doc))
+        rest = summary(frame, keywords, headline)
+        fault = sentence_fault(summary(frame, keywords, headline, sentence), sentence, rest, _experiences(doc))
         logger.info(
-            "  [%s] headline %r, sentence of %d characters%s",
+            "  [%s] headline %r, keywords %s, sentence of %d characters%s",
             ROLE,
             headline,
+            keywords,
             len(sentence),
             f": {fault}" if fault else "",
         )
         return v.model_copy(
             update={
                 "headline": headline,
+                "keywords": keywords,
                 "sentence": "" if fault else sentence,
                 "sentence_refused": f"{sentence} ({fault})" if fault else "",
             }

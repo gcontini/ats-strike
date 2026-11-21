@@ -1,5 +1,5 @@
 """The selection for one job (step 6): which experiences are full or compact, which story at which
-rung or group, the skills, the summary frame and its keywords, the headline, and the scores.
+rung or group, the skills, the summary frame, the headline, and the scores.
 
 No model call. The S0 probe's selector, ported to the pool (S3) and the allocation (S5):
 
@@ -248,7 +248,6 @@ def cv_text(draft: Draft, ctx: Context) -> str:
     return "\n".join(
         [p.text for p in pieces(draft, ctx)]
         + list(draft.get("skills") or [])
-        + list(draft.get("keywords") or [])
         + [draft.get("headline") or ""]
     )
 
@@ -503,9 +502,8 @@ def skills(draft: Draft, ctx: Context) -> List[str]:
     return chosen
 
 
-def frame(ctx: Context) -> Tuple[str, List[str]]:
-    """The summary frame whose items reach the nodes with the most points, and 2-4 keywords of
-    requirements on proven nodes for its keyword slot, most important first."""
+def frame(ctx: Context) -> str:
+    """The summary frame whose items reach the nodes with the most points."""
 
     def reach(f: Frame) -> float:
         nodes = set()
@@ -517,14 +515,7 @@ def frame(ctx: Context) -> Tuple[str, List[str]]:
                     n = parent(n)
         return sum(ctx.points.get(n, 0.0) for n in nodes)
 
-    best = max(ctx.frames, key=reach)
-    words: List[str] = []
-    for r in sorted(ctx.requirements, key=lambda r: -r.importance):
-        if r.node and ctx.status.get(r.node) == "proven" and r.keywords and len(words) < 4:
-            t = r.keywords[0]
-            if t.lower() not in {w.lower() for w in words} and t.lower() != ctx.title.lower():
-                words.append(t)
-    return best.id, words
+    return max(ctx.frames, key=reach).id
 
 
 def headline(ctx: Context) -> Optional[str]:
@@ -562,7 +553,6 @@ class Plan(_Strict):
     experiences: List[Shown]  # by id: most recent first
     skills: List[str]
     frame: str
-    keywords: List[str]
     headline: Optional[str]
     scores: Scores
     greedy_objective: float  # before the refill pass
@@ -596,9 +586,9 @@ def _slots(draft: Draft, ctx: Context, e: int) -> List[Slot]:
 
 
 def finish(draft: Draft, ctx: Context) -> Draft:
-    """The draft with its skills, frame and keywords, and headline."""
+    """The draft with its skills, frame and headline."""
     draft = {**draft, "skills": skills(draft, ctx)}
-    draft["frame"], draft["keywords"] = frame(ctx)
+    draft["frame"] = frame(ctx)
     draft["headline"] = headline(ctx)
     return draft
 
@@ -626,7 +616,6 @@ def plan_of(draft: Draft, ctx: Context, greedy_objective: float) -> Plan:
         ],
         skills=best["skills"],
         frame=best["frame"],
-        keywords=best["keywords"],
         headline=best["headline"],
         scores=scores(best, ctx),
         greedy_objective=greedy_objective,
@@ -673,7 +662,7 @@ def plan_markdown(plan: Plan, pool: Pool) -> str:
             f"{sc.tree:.4f}); narrative {sc.narrative:.4f}"
         ),
         f"- Headline: {plan.headline or '(S8 writes it)'}",
-        f"- Frame {plan.frame}, keywords: {', '.join(plan.keywords)}",
+        f"- Frame {plan.frame}",
         f"  > {frames.get(plan.frame, '')}",
         f"- Skills: {' | '.join(plan.skills)}",
         "",

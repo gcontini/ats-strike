@@ -93,12 +93,12 @@ Each key of a role — `model`, `model_provider` (`standard` or `deepseek`),
 var, without editing `models.toml`. Handy for a Docker deployment:
 
 ```bash
-ATS_CV_MODEL=qwen-max
-ATS_CV_TEMPERATURE=0.2
-ATS_CV_API=responses
-ATS_CV_EXTRA_BODY={"thinking_budget": 4000}
-ATS_CV_USE_ALTERNATE_PROVIDER=2
-ATS_LETTER_EXTRA_BODY={}
+ATS_V1_CV_MODEL=qwen-max
+ATS_V1_CV_TEMPERATURE=0.2
+ATS_V1_CV_API=responses
+ATS_V1_CV_EXTRA_BODY={"thinking_budget": 4000}
+ATS_V1_CV_USE_ALTERNATE_PROVIDER=2
+ATS_V1_LETTER_EXTRA_BODY={}
 ```
 
 `EXTRA_BODY` is JSON and replaces the whole table: it carries what only one
@@ -108,7 +108,7 @@ declared it — an empty `TEMPERATURE` sends none, for an endpoint that rejects
 one (OpenAI's reasoning models). Nothing checks that a combination suits your
 endpoint; the comments in `models.toml` list the known traps.
 
-The pattern is `ATS_<ROLE>_<FIELD>` for `DETECT`, `ANALYSIS`, `LETTER`,
+The pattern is `ATS_V1_<ROLE>_<FIELD>` (`ATS_V2_…` for pipeline 2.0) for `DETECT`, `ANALYSIS`, `LETTER`,
 `JD_EVALUATION`, `PROFILE_SCORING`, `FORMAT_SELECTION`, `CV` (the body), `DUTIES` (the
 experiences), `VALIDATION` and `HIGHLIGHT`; see `.env.example`. A request can do the same for one call with
 `extra_body.<role>` in its `settings`, which replaces every setting of that role.

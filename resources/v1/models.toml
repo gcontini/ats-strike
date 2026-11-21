@@ -24,11 +24,11 @@
 # endpoint works — point base_url (or base_url_env) at it and set each model's
 # `model` to whatever your account has access to.
 #
-# Docker: every key of a [models.<role>] table can be overridden with an env
-# var, without touching this file — ATS_<ROLE>_<FIELD>, e.g.
-# ATS_CV_MODEL, ATS_CV_TEMPERATURE, ATS_PROFILE_SCORING_API (roles:
-# DETECT, ANALYSIS, LETTER, JD_EVALUATION, PROFILE_SCORING, FORMAT_SELECTION,
-# CV, DUTIES, VALIDATION, HIGHLIGHT). An empty value drops the key, as if it were not
+# Every table is named after the pipeline: [models.v1_<role>]. Docker: every key
+# of one can be overridden with an env var, without touching this file —
+# ATS_V1_<ROLE>_<FIELD>, e.g. ATS_V1_CV_MODEL, ATS_V1_CV_TEMPERATURE,
+# ATS_V1_PROFILE_SCORING_API (roles: DETECT, ANALYSIS, LETTER, JD_EVALUATION,
+# PROFILE_SCORING, FORMAT_SELECTION, CV, DUTIES, VALIDATION, HIGHLIGHT). An empty value drops the key, as if it were not
 # declared here; ATS_<ROLE>_EXTRA_BODY is JSON and replaces the whole table.
 # See .env.example.
 #
@@ -88,8 +88,8 @@ timeout_seconds = 600
 # no thinking and a tiny budget — the verdict is one word.
 # temperature = 0: a classifier that samples can file the same posting under
 # errors one time in a few. No client can change it — /v1/jd/detect takes no
-# temperature; only ATS_DETECT_TEMPERATURE on the server does.
-[models.detect]
+# temperature; only ATS_V1_DETECT_TEMPERATURE on the server does.
+[models.v1_detect]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2
@@ -100,7 +100,7 @@ thinking               = "off"
 # Extracts the JD analysis, and looks distances and company facts up on the web
 # when the preferences ask for them. OpenAI (MODEL_API_KEY3 / MODEL_BASE_URL3)
 # on the Responses API, in pro mode.
-[models.analysis]
+[models.v1_analysis]
 model                  = "gpt-6-luna"
 use_alternate_provider = 3
 api                    = "responses"
@@ -110,7 +110,7 @@ extra_body             = { reasoning = { mode = "pro", effort = "xhigh" } }
 
 # Writes the cover letter, and looks the employer up on the web for its
 # why-this-company paragraph. OpenAI on Chat Completions.
-[models.letter]
+[models.v1_letter]
 model                  = "gpt-6-luna"
 use_alternate_provider = 3
 temperature            = 1
@@ -125,20 +125,20 @@ reasoning_effort       = "xhigh"
 # reply is JSON asked for by its prompt (structured_output does not apply),
 # except validation's, which are calls of a replace_in_* tool.
 # No temperature on DeepSeek: it ignores it while thinking.
-[models.jd_evaluation]
+[models.v1_jd_evaluation]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "medium"
 
 # One call per list of the profile, all at once.
-[models.profile_scoring]
+[models.v1_profile_scoring]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "high"
 
-[models.format_selection]
+[models.v1_format_selection]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2
@@ -146,27 +146,27 @@ reasoning_effort       = "medium"
 
 # The body, summary included. OpenAI on Chat Completions (MODEL_API_KEY3 /
 # MODEL_BASE_URL3). It runs beside the duties, below.
-[models.cv]
+[models.v1_cv]
 model                  = "gpt-6.1-sol"
 use_alternate_provider = 3
 reasoning_effort       = "high"
 
 # One call per experience shown, all at once, beside the body.
-[models.duties]
+[models.v1_duties]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "medium"
 
 # Up to five rounds per document; the documents are checked at once.
-[models.validation]
+[models.v1_validation]
 model                  = "deepseek-flash"
 model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "medium"
 
-[models.highlight]
-model                  = "deepseek-flash"
-model_provider         = "deepseek"
-use_alternate_provider = 2
+# The **bold**/*italic* pass. OpenAI on Chat Completions (MODEL_API_KEY3 / MODEL_BASE_URL3).
+[models.v1_highlight]
+model                  = "gpt-6.1-terra"
+use_alternate_provider = 3
 reasoning_effort       = "medium"

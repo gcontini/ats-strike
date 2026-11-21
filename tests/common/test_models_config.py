@@ -1,4 +1,4 @@
-"""models.toml and its ATS_<ROLE>_<FIELD> overrides."""
+"""models.toml and its ATS_<PIPELINE>_<ROLE>_<FIELD> overrides."""
 
 import pytest
 from pydantic import ValidationError
@@ -15,29 +15,29 @@ base_url = "https://provider.example/v1"
 [defaults]
 max_output_tokens = 8000
 
-[models.detect]
+[models.v1_detect]
 model = "detect-1"
-[models.analysis]
+[models.v1_analysis]
 model = "analysis-1"
 temperature = 0.1
-[models.letter]
+[models.v1_letter]
 model = "letter-1"
-[models.jd_evaluation]
+[models.v1_jd_evaluation]
 model = "jd-evaluation-1"
-[models.profile_scoring]
+[models.v1_profile_scoring]
 model = "profile-scoring-1"
-[models.format_selection]
+[models.v1_format_selection]
 model = "format-selection-1"
-[models.cv]
+[models.v1_cv]
 model = "cv-1"
 structured_output = "json_schema"
 extra_body = { thinking_budget = 6000 }
-[models.duties]
+[models.v1_duties]
 model = "duties-1"
-[models.validation]
+[models.v1_validation]
 model = "validation-1"
 use_alternate_provider = 2
-[models.highlight]
+[models.v1_highlight]
 model = "highlight-1"
 """
 
@@ -46,7 +46,7 @@ model = "highlight-1"
 def load(tmp_path):
     def load(toml=TOML):
         (tmp_path / "models.toml").write_text(toml)
-        return load_model_config(tmp_path / "models.toml", MODEL_ROLES)
+        return load_model_config(tmp_path / "models.toml", "v1", MODEL_ROLES)
 
     return load
 
@@ -66,17 +66,17 @@ def test_parses_every_role_with_its_defaults(load):
 
 
 def test_env_overrides_any_key_with_its_type(load, monkeypatch):
-    monkeypatch.setenv("ATS_CV_TEMPERATURE", "0.7")
-    monkeypatch.setenv("ATS_CV_API", "responses")
-    monkeypatch.setenv("ATS_CV_USE_ALTERNATE_PROVIDER", "3")
-    monkeypatch.setenv("ATS_CV_EXTRA_BODY", '{"enable_search": true}')
+    monkeypatch.setenv("ATS_V1_CV_TEMPERATURE", "0.7")
+    monkeypatch.setenv("ATS_V1_CV_API", "responses")
+    monkeypatch.setenv("ATS_V1_CV_USE_ALTERNATE_PROVIDER", "3")
+    monkeypatch.setenv("ATS_V1_CV_EXTRA_BODY", '{"enable_search": true}')
     cv = load().models["cv"]
     assert (cv.temperature, cv.api, cv.use_alternate_provider) == (0.7, "responses", 3)
     assert cv.extra_body == {"enable_search": True}
 
 
 def test_an_empty_env_value_drops_the_key(load, monkeypatch):
-    monkeypatch.setenv("ATS_ANALYSIS_TEMPERATURE", "")
+    monkeypatch.setenv("ATS_V1_ANALYSIS_TEMPERATURE", "")
     assert load().models["analysis"].temperature is None
 
 

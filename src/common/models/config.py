@@ -1,9 +1,11 @@
 """``models.toml`` in, one :class:`ModelSpec` per role out.
 
-Every key of a ``[models.<role>]`` table can be overridden by an env var named
-``ATS_<ROLE>_<FIELD>`` (``ATS_CV_TEMPERATURE``), so a Docker deployment
-can tune a role without editing the file. An empty value drops the key, as if
-the table never declared it; ``ATS_<ROLE>_EXTRA_BODY`` is JSON.
+A role's table is named after its pipeline, ``[models.<pipeline>_<role>]``
+(``[models.v1_cv]``). Every key of it can be overridden by an env var named
+``ATS_<PIPELINE>_<ROLE>_<FIELD>`` (``ATS_V1_CV_TEMPERATURE``), so a Docker
+deployment can tune a role without editing the file. An empty value drops the
+key, as if the table never declared it; ``ATS_<PIPELINE>_<ROLE>_EXTRA_BODY``
+is JSON.
 """
 
 from __future__ import annotations
@@ -19,7 +21,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class ModelSpec(BaseModel):
-    """One ``[models.<role>]`` table, after its env overrides."""
+    """One ``[models.<pipeline>_<role>]`` table, after its env overrides."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -62,26 +64,28 @@ class ModelConfig:
         return key, url
 
 
-def _overridden(role: str, table: Dict[str, Any]) -> Dict[str, Any]:
-    """``table`` with the role's ``ATS_<ROLE>_<FIELD>`` env vars applied."""
+def _overridden(name: str, table: Dict[str, Any]) -> Dict[str, Any]:
+    """``table`` with the ``ATS_<NAME>_<FIELD>`` env vars applied; ``name`` is the table's."""
     table = dict(table)
-    for name in ModelSpec.model_fields:
-        value = os.getenv(f"ATS_{role.upper()}_{name.upper()}")
+    for field in ModelSpec.model_fields:
+        value = os.getenv(f"ATS_{name.upper()}_{field.upper()}")
         if value == "":
-            table.pop(name, None)
+            table.pop(field, None)
         elif value is not None:
-            table[name] = json.loads(value) if name == "extra_body" else value
+            table[field] = json.loads(value) if field == "extra_body" else value
     return table
 
 
-def load_model_config(path: Path, roles: Iterable[str]) -> ModelConfig:
-    """Parse the ``models.toml`` at ``path``; ``roles`` are the tables read.
+def load_model_config(path: Path, pipeline: str, roles: Iterable[str]) -> ModelConfig:
+    """Parse the ``models.toml`` at ``path``; the tables read are ``[models.<pipeline>_<role>]``.
 
-    Each pipeline passes its own file and its own roles.
+    Each pipeline passes its own file, its own name (``v1``) and its own roles.
     """
     raw = tomllib.loads(Path(path).read_text(encoding="utf-8"))
     return ModelConfig(
         provider=raw["provider"],
         defaults=raw.get("defaults", {}),
-        models={role: ModelSpec(**_overridden(role, raw["models"][role])) for role in roles},
+        models={
+            role: ModelSpec(**_overridden(f"{pipeline}_{role}", raw["models"][f"{pipeline}_{role}"])) for role in roles
+        },
     )

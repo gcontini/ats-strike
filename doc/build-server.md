@@ -112,23 +112,22 @@ every role at startup and does not start without those two. Pipeline 2.0's
 `compile` role (the store, once per profile) uses `4`, so the server needs
 `MODEL_API_KEY4` / `MODEL_BASE_URL4` as well.
 
-Per-role overrides need no rebuild either — `ATS_<ROLE>_<FIELD>`, for any
-key of a role, for `DETECT`, `ANALYSIS`, `LETTER`, `JD_EVALUATION`,
+Per-role overrides need no rebuild either — `ATS_V1_<ROLE>_<FIELD>` or
+`ATS_V2_<ROLE>_<FIELD>`, for any key of a role, for v1's `DETECT`, `ANALYSIS`, `LETTER`, `JD_EVALUATION`,
 `PROFILE_SCORING`, `FORMAT_SELECTION`, `CV` (the body), `DUTIES` (the experiences), `VALIDATION` and `HIGHLIGHT`,
-and pipeline 2.0's `COMPILE`, `REVIEW`, `ALLOCATE`, `VARNISH` and `MARKUP` (no name is in both, so each override
-reaches one pipeline):
+and pipeline 2.0's (`ATS_V2_…`) `COMPILE`, `REVIEW`, `ALLOCATE`, `VARNISH` and `HIGHLIGHT`:
 
 ```bash
-ATS_CV_MODEL=qwen-max
-ATS_CV_TEMPERATURE=0.2
-ATS_CV_THINKING=off            # auto | on | off
-ATS_CV_REASONING_EFFORT=high   # any string the provider accepts
-ATS_CV_API=responses           # chat_completions | responses
-ATS_CV_MODEL_PROVIDER=deepseek # standard | deepseek
-ATS_CV_EXTRA_BODY={"thinking_budget": 4000}   # JSON; replaces the whole table
-ATS_CV_USE_ALTERNATE_PROVIDER=2  # MODEL_API_KEY2 / MODEL_BASE_URL2
-ATS_LETTER_TEMPERATURE=        # empty sends no temperature (OpenAI's reasoning models reject one)
-ATS_LETTER_EXTRA_BODY={}       # no enable_search, for an endpoint without DashScope's
+ATS_V1_CV_MODEL=qwen-max
+ATS_V1_CV_TEMPERATURE=0.2
+ATS_V1_CV_THINKING=off            # auto | on | off
+ATS_V1_CV_REASONING_EFFORT=high   # any string the provider accepts
+ATS_V1_CV_API=responses           # chat_completions | responses
+ATS_V1_CV_MODEL_PROVIDER=deepseek # standard | deepseek
+ATS_V1_CV_EXTRA_BODY={"thinking_budget": 4000}   # JSON; replaces the whole table
+ATS_V1_CV_USE_ALTERNATE_PROVIDER=2  # MODEL_API_KEY2 / MODEL_BASE_URL2
+ATS_V1_LETTER_TEMPERATURE=        # empty sends no temperature (OpenAI's reasoning models reject one)
+ATS_V1_LETTER_EXTRA_BODY={}       # no enable_search, for an endpoint without DashScope's
 ```
 
 Nothing checks a combination against what the endpoint supports: what a role

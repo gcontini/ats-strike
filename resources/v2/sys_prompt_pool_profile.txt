@@ -33,10 +33,11 @@ SUMMARY FRAMES, one per role family
 A role family is one kind of job the candidate applies to, named by JOB TITLES. Find 4 to 6.
 A frame is the CV's summary for that family, with three slots that are filled later for each job:
   <<job_title>>  the job title. The frame opens with it, as the MASTER SUMMARIES do.
-  <<keywords>>   2 to 4 competences or technologies the job asks, inserted by code as a list ("Kubernetes,
-                 Terraform and disaster recovery"). The words around the slot must read well with any such list.
-  <<sentence>>   one whole sentence written later for the specific job. Put the slot where that sentence belongs and
-                 write nothing of it.
+  <<keywords>>   1 to 3 competences or technologies the job asks, written later and joined as a list ("Kubernetes,
+                 Terraform and disaster recovery"). The words before the slot must lead into such a list naturally,
+                 and the words after it must read well after it.
+  <<sentence>>   one whole sentence written later for the specific job. It is the LAST thing of the frame: it closes
+                 the introduction. Put the slot at the end and write nothing of it.
 * Each slot exactly once. The rest is fixed text, 230 to 280 characters without the slots, in 2 or 3 sentences: it
   tells a recruiter who knows nothing of the candidate why they fit this family: the years of experience, the kind
   of projects and clients, what the candidate does, backed by the technologies, the scale or the context of the

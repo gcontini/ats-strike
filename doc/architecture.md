@@ -162,11 +162,12 @@ table of `resources/v1/models.toml`. Every role calls it, except a role that set
 See [the CV pipeline](cv-pipeline.md) for how the last six fit together.
 
 Pipeline 2.0 has its own `resources/v2/models.toml`, with the same keys and the
-same `ATS_<ROLE>_<FIELD>` overrides, and its own roles (`pipeline_v2.ROLES`). No
-role name is in both pipelines (`tests/test_architecture.py` checks it), so an
-override such as `ATS_MARKUP_MODEL` reaches one pipeline only;
-`load_model_config` and `build_selector` take the `models.toml` to read and the
-list of roles to build, so `common` knows neither pipeline's.
+same overrides, and its own roles (`pipeline_v2.ROLES`). Every table is named
+after its pipeline, `[models.v1_cv]` and `[models.v2_highlight]`, and so is every
+override, `ATS_V1_CV_MODEL` and `ATS_V2_HIGHLIGHT_MODEL`, so one reaches one
+pipeline only; `load_model_config` and `build_selector` take the `models.toml`
+to read, the pipeline's name and the list of roles to build, so `common` knows
+neither pipeline's.
 `$ATS_RESOURCES` does not reach it yet.
 
 | Role | Used for | Shipped as |
@@ -175,7 +176,7 @@ list of roles to build, so `common` knows neither pipeline's.
 | `review` | Bullet review: the pool reviewed one experience at a time, side by side: v1's duties validation shown the profile's experience and its pieces (role summary, compact line, every bullet), reporting faults as `replace_in_duties` calls that code applies piece by piece, up to five rounds; code refuses a replacement that adds printed lines to a piece, and moves a bullet that gets shorter down to the rung it fills | `deepseek-flash` on provider 2 (`model_provider = deepseek`), `reasoning_effort` medium: v1's settings |
 | `allocate` | Placing a job description's requirements on the competence tree, one call per JD: v1's JD evaluation with a placement block, shown the tree's nodes (id, name, aliases, counts-as terms); each requirement gets a node and a relation (same, broader, narrower), and code sets its landing from the node's status (proven, weak, ghost, nowhere) and the points each node earns | `deepseek-flash` on provider 2 (`model_provider = deepseek`), `reasoning_effort` xhigh: the S0 probe's and S2's settings |
 | `varnish` | Finishing one CV between the selection and the render, three calls one after the other: one stored wording per slot and one title per experience (from the titles the profile lists for it); the job title under the name and the summary's sentence, which code refuses over 500 characters or with a number the CV does not print; the job's missing terms (requirements on proven or weak nodes the CV does not name yet) put into the summary and the bullets as replacements, which code applies only when a bullet keeps its lines, the summary stays within 500 characters, no number is added, every job term added was offered, no job term the piece held is taken out and the summary keeps its job title | `deepseek-flash` on provider 2 (`model_provider = deepseek`), `reasoning_effort` xhigh: the S0 probe's pick settings |
-| `markup` | Highlight: the `**bold**`/`*italic*` keyword pass over one varnished CV, one call: `common`'s highlighter with v2's own copy of v1's prompt (`resources/v2/sys_prompt_highlight.txt`), shown the allocation's requirements as key points, each bullet ending with the requirements it proves and its level there (`\|3-90,7-60`), and the text of the items each bullet uses as evidence | `deepseek-flash` on provider 2 (`model_provider = deepseek`), medium effort: v1's settings for the role |
+| `highlight` | Highlight: the `**bold**`/`*italic*` keyword pass over one varnished CV, one call: `common`'s highlighter with v2's own copy of v1's prompt (`resources/v2/sys_prompt_highlight.txt`), shown the allocation's requirements as key points, each bullet ending with the requirements it proves and its level there (`\|3-90,7-60`), and the text of the items each bullet uses as evidence | `gpt-6.1-terra` on provider 3, medium effort: v1's settings for the role |
 
 Every call goes through `common.models`: one LangChain chat model per
 role, built once at startup by the role's `model_provider` (`standard`, on
@@ -187,7 +188,7 @@ made. Both retry a reply that is empty, cut off or invalid — three calls in
 all, each retry told what was wrong. Provider-specific request fields
 (`thinking_budget`, `enable_search`) are the role's `extra_body`, sent as
 given: nothing checks a combination against what the endpoint supports. Any
-key of a role can be overridden with a `ATS_<ROLE>_<FIELD>` environment
+key of a role can be overridden with a `ATS_<PIPELINE>_<ROLE>_<FIELD>` environment
 variable without editing the file; an empty value drops the key. A request's
 `settings` can bring an `extra_body` for every role but `detect`, which
 supersedes all of that role's settings for that request.
