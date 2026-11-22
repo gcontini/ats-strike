@@ -28,7 +28,7 @@ from pipeline_v2 import (
     validate_pool,
 )
 from pipeline_v2.pool import batches, json_object
-from pipeline_v2.pool_review import dumps
+from pipeline_v2.pool_review import dumps, pieces_of
 from pipeline_v2.pool_store import (
     Bullet,
     ExperiencePool,
@@ -984,3 +984,20 @@ def test_a_bullet_a_replacement_shortens_moves_down_to_the_rung_it_fills(long_it
     assert (ladder[2].text, ladder[2].rung, ladder[2].uses) == ("Moved the platform work.", 1, two_lines.uses)
     assert moves == [("e0.s02.r2.a", "e0.s02.r1.c")]
     assert "- e0.s02.r2.a → **e0.s02.r1.c**" in review_markdown(calls, moves)
+
+
+def test_a_bullet_the_review_empties_is_dropped_and_the_pool_reads_back(long_items, long_tree, long_profile):
+    """An emptied ladder bullet and an emptied group bullet are dropped, not moved to a rung 0, so the
+    stored pool.json reads back; a group left with no bullet goes too."""
+    before = clean_pool(long_items, long_tree).experiences[0]
+    pieces = pieces_of(before)
+    rung = next(i for i, p in enumerate(pieces) if p["id"] == "e0.s02.r2.a")
+    group = next((s, g) for s in before.stories for g in s.groups)
+    emptied = [{"old": pieces[rung]["text"], "new": "", "duty": rung}]
+    emptied += [{"old": b.text, "new": "", "duty": [p["id"] for p in pieces].index(b.id)} for b in group[1].bullets]
+    pool, calls, moves = review(reviewing(emptied), long_items, long_tree, long_profile)
+
+    stories = {s.story: s for s in pool.experiences[0].stories}
+    assert "e0.s02.r2.a" not in [r.id for r in stories["e0.s02"].ladder]
+    assert group[1].id not in [g.id for g in stories[group[0].story].groups]
+    assert Pool.model_validate_json(pool.model_dump_json()) == pool

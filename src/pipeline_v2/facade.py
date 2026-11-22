@@ -180,6 +180,8 @@ class Pipeline:
         self.prompts = {p.stem.removeprefix("sys_prompt_"): p.read_text(encoding="utf-8") for p in folder.glob("*.txt")}
         self.template = (folder / "resume.tex.jinja").read_text(encoding="utf-8")
         self.market = Market.model_validate_json((folder / "market.json").read_text(encoding="utf-8"))
+        #: The blank signature, so the template compiles when the pack has no image of that name.
+        self.assets = {p.name: p.read_bytes() for p in folder.glob("*.png")}
 
     @classmethod
     def build(cls) -> "Pipeline":
@@ -311,7 +313,7 @@ class Pipeline:
             with stage("Page layout"):
                 renderer = CVRenderer(
                     template_source=self.template,
-                    assets=images(pack),
+                    assets={**self.assets, **images(pack)},
                     work_dir=work_dir,
                     latex_timeout=self.latex_timeout,
                 )
@@ -336,7 +338,7 @@ class Pipeline:
 
     def _render(self, pack: Files, job: Files, work_dir: Path, sink: Sink, action: str) -> str:
         renderer = CVRenderer(
-            template_source=self.template, assets=images(pack), work_dir=work_dir, latex_timeout=self.latex_timeout
+            template_source=self.template, assets={**self.assets, **images(pack)}, work_dir=work_dir, latex_timeout=self.latex_timeout
         )
         if action == "render_document":
             result = renderer.render_document(json_file(job, DOCUMENT_FILE, required=True))

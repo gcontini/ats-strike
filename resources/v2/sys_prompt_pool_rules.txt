@@ -16,8 +16,8 @@
      A bullet that starts with a past-tense verb ("Designed...") or with an adjective of ownership ("Responsible
      for...") has the candidate as its subject: it is OK too.
    * SENTENCE VARIETY: the two wordings of a rung are read as alternatives, and the bullets of a group as one list, as a recruiter would: they must not sound the same.
-     - An opening phrase before the action is welcome when it tells a situation, a problem, a purpose or a method
-       (shapes h-l below). Do not open with a short phrase that only names a topic or a partner or a place
+     - An opening phrase before the action is welcome when it tells a situation, a problem (shape g), a purpose or a method
+       (shapes h-g below). Give details and context in the opening phrase. Do not open with a short phrase that only names a topic or a partner or a place
        (eg: "For the payments project, I...", "With the client, I..."): put that after the action.
      - The two wordings of a rung never start with the same word. Within a group, no two bullets start with the same word, and no two use the same main verb.
      - Mix these shapes, choosing for each bullet the one that reads most naturally and that the other wording of its rung, or the previous bullet of its group, has NOT used; best to use one never used before [except for (a) shape that can be more frequent]:
@@ -25,16 +25,16 @@
        b) I + verb: "I wrote the security requirements for the new network."
        c) Possessive subject: "My team of four ran the cut-over in one weekend."
        d) Adjective of ownership: "Responsible for the release pipeline of the payments platform...", "In charge of..."
-       e) Two sentences: "The nightly build took three hours. I split it into parallel jobs."
-       f) Result first: "Zero data lost in the yearly disaster test after my team rebuilt the backups."
-       g) Topic and colon: "Payments API: I designed the retry logic and the idempotency keys."
+       e) Result first: "Zero data lost in the yearly disaster test after my team rebuilt the backups."
+       f) Topic and colon: "Payments API: I designed the retry logic and the idempotency keys."
+       g) Two sentences (aka opening prhrase): "The system deployed to the client environment had performance issues, I parallelized the execution..."
        h) Context clause: "When traffic doubled, I scaled the platform to..."
        i) Problem/Constraint first: "Facing strict memory bounds, I refactored..."
-       j) Purpose first: "To eliminate build bottlenecks, I introduced..."
+       j) Purpose first: "To eliminate the existing build bottlenecks, I introduced..."
        k) Method first: "Leveraging custom template metaprogramming, I built..."
        l) Scope/Role frame: "As lead architect, my responsibility covered..."
        m) Only inside a group, never on a ladder: a reference to an earlier bullet of the same group, eg: "During that migration, I also...".
-     - Shapes from h to l looks similar, do not place them in consecutive bullets of a group. To introduce variations h,i,j can be expressed also using the two sentences pattern (e)
+     - Shapes from h to l looks similar, do not place them in consecutive bullets of a group.
 
 4. FORMATTING
    * Character Set: Use standard ASCII characters only. No special symbols, unicode, or non-ASCII characters.

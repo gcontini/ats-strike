@@ -161,7 +161,7 @@ resource "alicloud_fcv3_function" "main" {
   disk_size   = 512
   # Also how long one event stream can stay open: the stream that follows a
   # CV job should not be cut first.
-  timeout = 1800
+  timeout = 3600
   # Delayed release: the instance stays up this long after its last request,
   # which is what keeps a CV job running while no client is following it.
   idle_timeout = 900

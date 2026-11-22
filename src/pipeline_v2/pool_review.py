@@ -260,8 +260,12 @@ class PoolReviewer:
         reviewed = with_texts(block, {p["id"]: p["text"] for p in pieces})
         stories, moves = [], []
         for s in reviewed.stories:
-            ladder, moved = settle_ladder(s.story, s.ladder)
-            stories.append(s.model_copy(update={"ladder": ladder}))
+            # A bullet the review emptied is dropped, and a group left with none.
+            ladder, moved = settle_ladder(s.story, [r for r in s.ladder if r.text.strip()])
+            groups = [
+                g.model_copy(update={"bullets": kept}) for g in s.groups if (kept := [b for b in g.bullets if b.text.strip()])
+            ]
+            stories.append(s.model_copy(update={"ladder": ladder, "groups": groups}))
             moves += moved
         reviewed = reviewed.model_copy(update={"stories": stories})
         return {"answers": [(task["position"], (reviewed, calls, moves))]}

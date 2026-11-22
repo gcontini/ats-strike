@@ -87,7 +87,7 @@ packages = [
 
 [tool.setuptools.package-data]
 "pipeline_v1.resources" = ["*.txt", "*.json", "*.toml", "*.jinja", "*.png"]
-"pipeline_v2.resources" = ["*.txt", "*.json", "*.toml", "*.jinja"]
+"pipeline_v2.resources" = ["*.txt", "*.json", "*.toml", "*.jinja", "*.png"]
 
 [dependency-groups]
 dev = [

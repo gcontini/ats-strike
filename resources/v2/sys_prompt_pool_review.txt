@@ -66,6 +66,7 @@ Analyze GENERATED EXPERIENCE and REPORT violations in the following categories (
   - Standard resume polishing, active phrasing, and reasonable synthesis of context are valid and must not be flagged.
 * Batch a repeated defect into ONE violation: If the SAME defect appears in more than two duties -- the same stray prefix or leftover marker, the same non-ASCII character throughout, the same banned word reused -- report it exactly once, with ONE replace_in_duties call without duty (it replaces in every duty and in the role_summary).
 * Omissions are OK (are the standard): The GENERATED EXPERIENCE is the result of tailoring EXPERIENCE to a specific job description (not provided). Missing duties or skills are expected and MUST NOT be flagged.
+* Alternative wordings are OK: duties whose duty_ids name the same story (e1.s03.r1.a, e1.s03.r2.b and e1.s03.g1.1 are all story e1.s03) are alternative wordings of that story, not repeats. Never flag or empty a duty for restating another duty of the same story.
 
 ## OUTPUT FORMAT
 Report each violation with ONE call of the replace_in_duties tool, and nothing else.

@@ -118,3 +118,11 @@ def test_render_compiles_the_jobs_cv_json_with_the_v2_template(tmp_path):
     sink = Sink()
     Pipeline(llm=fake()).render(pack(), {"cv.json": document, "cv.tex": b"ignored"}, tmp_path / "b", sink)
     assert [o.name for o in sink.outputs] == ["cv.tex", "cv.pdf"]
+
+
+@needs_latex
+def test_a_pack_with_no_signature_image_compiles_with_the_blank_one(tmp_path):
+    bare = {name: blob for name, blob in pack().items() if not name.endswith(".png")}
+    sink = Sink()
+    Pipeline(llm=fake()).cv(bare, {"job_description.txt": JD}, {}, tmp_path, sink)
+    assert next(o.content for o in sink.outputs if o.name == "cv.pdf").startswith(b"%PDF")
