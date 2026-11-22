@@ -28,7 +28,7 @@
 
 [project]
 name = "ats-strike-server"
-version = "2.0.3"
+version = "2.0.4"
 description = "ats-strike CV server: the HTTP API (packs, sessions, SSE) and the CV pipeline behind it — a job description and a pack of files in, tailored CV data and a compiled LaTeX PDF out."
 requires-python = ">=3.12"
 license = "MIT"
