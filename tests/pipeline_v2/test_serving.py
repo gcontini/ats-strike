@@ -69,9 +69,9 @@ def fake() -> FakeLLM:
     ]
     llm["varnish"].replies = [
         json.dumps({"experiences": {}, "edits": [], "titles": {}}),
-        json.dumps({"job_title": "Cloud Engineer", "sentence": ""}),
         json.dumps({"replacements": []}),
     ]
+    llm["headline"].replies = [json.dumps({"job_title": "Cloud Engineer", "sentence": ""})]
     llm["highlight"].replies = [lambda body: json.dumps(section(body, "CV"))]
     return llm
 

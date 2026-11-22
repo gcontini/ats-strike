@@ -37,7 +37,7 @@ the line passes: do NOT flag it.
 Analyze GENERATED EXPERIENCE and REPORT violations in the following categories (all the violations are relative to GENERATED EXPERIENCE content):
 
 ## 1. Exaggerations and accuracy
-* **Factual mismatches:** Any date, duration, employer, location, or degree in the GENERATED EXPERIENCE that contradicts what EXPERIENCE states.
+* **Factual mismatches:** Any date, duration, employer, location, degree, or relation between people and things (who worked with whom, whose contract, for which client) in the GENERATED EXPERIENCE that contradicts what EXPERIENCE states.
 * **Fake Responsibilities/Titles:** Claims, job titles, roles the candidate never actually held (check against EXPERIENCE).
     - Unearned seniority/leadership (e.g. "Head", "Manager", "Director") if EXPERIENCE shows no people-management or ownership at that level.
     - Check also GENERATED EXPERIENCE->duties for fake responsibilites ("Managed...", "Led..")

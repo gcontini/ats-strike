@@ -72,7 +72,9 @@ def job():
 
 def varnisher(*replies: dict) -> tuple:
     llm = FakeLLM(roles=ROLES)
-    llm["varnish"].replies = [json.dumps(r) for r in replies]
+    compose, headline, terms = (json.dumps(r) for r in replies)
+    llm["varnish"].replies = [compose, terms]  # the headline call has a role of its own
+    llm["headline"].replies = [headline]
     prompts = {
         f"{n}_prompt": (resources_dir() / f"sys_prompt_varnish_{n}.txt").read_text(encoding="utf-8")
         for n in ("compose", "headline", "terms")
@@ -108,7 +110,7 @@ def test_the_composition_orders_the_bullets_and_picks_a_wording_and_a_title(job)
     assert "  e0.s01.r2 PICKED (2 lines, score " in asked
     assert "    e0.s01.r2.b: " + WORDING_B in asked
     assert "TITLES: a) Platform Engineer; b) Ops Engineer" in asked
-    assert len(llm["varnish"].calls) == 3
+    assert len(llm["varnish"].calls) == 2 and len(llm["headline"].calls) == 1
 
 
 def test_a_candidate_the_plan_left_out_is_swapped_in_within_the_lines():
@@ -163,7 +165,7 @@ def test_the_terms_step_edits_the_composed_text(job):
     edit = {"target": "e0.s01.r2.a", "old": "Kubernetes on the platform", "new": "Kubernetes on this platform"}
     term = {"target": "e0.s01.r2.a", "old": "on this platform", "new": "on this IaC platform"}
     out, doc, llm, _ = run(job, compose={"edits": [edit]}, terms={"replacements": [term]})
-    assert "Worked with Kubernetes on this platform" in user_text(llm["varnish"].calls[2])
+    assert "Worked with Kubernetes on this platform" in user_text(llm["varnish"].calls[1])
     assert doc["experiences"][0]["duties"][0].startswith("Worked with Kubernetes on this IaC platform")
     assert [r.target for r in out.edits] == [r.target for r in out.applied] == ["e0.s01.r2.a"]
 
@@ -179,7 +181,7 @@ def test_the_headline_and_a_sentence_fill_the_summary(job):
     assert doc["summary"] == (
         "Cloud Platform Engineer with 20 years in platforms, covering Terraform. I keep releases calm."
     )
-    system = next(m["content"] for m in llm["varnish"].calls[1]["messages"] if m["role"] == "system")
+    system = next(m["content"] for m in llm["headline"].calls[0]["messages"] if m["role"] == "system")
     assert "{max_chars}" not in system and "at most 450 characters" in system
 
 
@@ -202,7 +204,7 @@ def test_a_terms_in_replacement_is_applied(job):
     edit = {"target": "e0.s01.r2.a", "old": "on the platform", "new": "on the IaC platform"}
     out, doc, llm, composed = run(job, terms={"replacements": [edit]})
     # the offer: the backed requirement the CV does not name, not the ones it names or that landed nowhere
-    asked = user_text(llm["varnish"].calls[2])
+    asked = user_text(llm["varnish"].calls[1])
     assert "- Infrastructure as code (80): IaC, Infrastructure as Code" in asked
     assert "Ansible" not in asked and "Kubernetes (50)" not in asked
     assert "[e0.s01.r2.a] (at most 192 characters, now 150)" in asked
@@ -231,3 +233,10 @@ def test_replacements_that_add_a_line_or_an_unoffered_term_are_refused(job):
     }
     assert out.applied == [] and "IaC" not in doc["summary"]
     assert doc["experiences"][2]["duties"][0].startswith("Worked with Java on the platform")
+
+
+def test_a_replacement_that_adds_no_offered_term_is_applied(job):
+    edit = {"target": "e0.s01.r2.a", "old": "on the platform", "new": "on the shared platform"}
+    out, doc, _, _ = run(job, terms={"replacements": [edit]})
+    assert [r.target for r in out.applied] == ["e0.s01.r2.a"] and out.refused == []
+    assert doc["experiences"][0]["duties"][0].startswith("Worked with Kubernetes on the shared platform")

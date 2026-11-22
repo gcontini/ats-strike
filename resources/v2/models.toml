@@ -12,9 +12,11 @@
 #             validation of an experience (S4)
 #   allocate  places a job description's requirements on the competence tree
 #             (S5)
-#   varnish   one CV's three finishing calls: a wording per slot and a title
-#             per experience, the headline and the summary's sentence, the
-#             job's missing terms into the summary and the bullets (S8)
+#   varnish   two of a CV's finishing calls: the composition (each full
+#             experience's bullets, order, wording and edits, and a title per
+#             experience) and the job's missing terms into the bullets (S8)
+#   headline  the finishing call between them: the headline and the summary's
+#             sentence (S8)
 #   highlight Highlight: the **bold**/*italic* keyword pass, common's
 #             highlighter with v2's copy of v1's prompt (S9)
 #
@@ -53,12 +55,20 @@ model_provider         = "deepseek"
 use_alternate_provider = 2
 reasoning_effort       = "xhigh"
 
-# A CV's three finishing calls, one after the other: pick, headline and sentence, terms in. qwen3.8-max on the
-# Model Studio workspace of provider 4, as the compile role (chosen by the user on 2026-11-21 over deepseek-flash).
+# The composition and the terms in: OpenAI on the Responses API, as v1's cv role (the user's choice of 2026-11-22,
+# over qwen3.8-max, which spent its whole thinking budget on the composition and made few edits).
 [models.v2_varnish]
+model                  = "gpt-6.1-sol"
+use_alternate_provider = 3
+api                    = "responses"
+reasoning_effort       = "high"
+
+# The headline and the summary's sentence: qwen3.8-max on the Model Studio workspace of provider 4, at temperature 0.9.
+[models.v2_headline]
 model                  = "qwen3.8-max"
 use_alternate_provider = 4
 thinking               = "on"
+temperature            = 0.9
 extra_body             = { thinking_budget = 9000 }
 
 # The **bold**/*italic* pass, one call per CV after the varnish (S9): common's highlighter with v2's prompt,

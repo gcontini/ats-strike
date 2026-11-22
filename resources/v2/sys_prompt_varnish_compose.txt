@@ -41,7 +41,8 @@ b) A name an earlier bullet already states is not repeated in full: refer back t
    reference does ("the application", "it"); further down, the reference must carry enough context to be found at once ("the three projects above", "the three IaaS applications"), if unsure add context.
    - after you've done the replacement re-read the experience and see if the reference holds or the reader stumbles to find it (because it's too far away). In case either add more context or reorder (4) or use the original text (do not replace).
 d) Say what a thing is when nothing introduced it, with one word: "the fleet" -> "the printer fleet".
-e) Change an article ("the" -> "a" or nothing) to prevent dangling references; 
+e) Change "the" to "a" (or drop it) only when nothing introduces the thing: not the role summary, not an earlier
+   bullet, not the bullet itself. Keep "the" for a system, a project or a team the reader already knows.
 f) Avoid repetitions: sometimes different stories repeat facts. Especially check across consecutive bullets. Cut the repetition in one of the two bullets.
 g) Never add a fact: no number, technology, outcome, client, scale or quality the bullet does not already state.
 h) Never take out a JD TERM [except for repetition cuts (f)]. 

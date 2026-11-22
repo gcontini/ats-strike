@@ -1,4 +1,4 @@
-"""The varnish for one job (step 8): three calls on ``varnish``, after the plan and before the render.
+"""The varnish for one job (step 8): three calls after the plan and before the render, the headline on its own role.
 
 1. **Compose** (``sys_prompt_varnish_compose.txt``): per full experience, which of its candidates
    (:func:`~.select.candidates`: the plan's slots and the stories it left out, each scored) print,
@@ -21,8 +21,8 @@
    ``{target, old, new}`` in the bullets, each bullet as the composition left it and shown with the
    facts it rests on (its ``uses`` items); the summary is never edited. The prompt alone states that
    a replacement must read fluently, with the case of the text around it. Code applies one only
-   when the bullet keeps its printed lines and every job term it adds is an offered one (at least
-   one). The rest are listed with the reason.
+   when the bullet keeps its printed lines and every job term it adds is an offered one. The rest
+   are listed with the reason.
 
 Each reply is JSON taken as text (:func:`~.pool.json_object`); one that does not parse goes back
 once with the fault, then fails. The result is the composed plan and a
@@ -51,6 +51,8 @@ from .terms import has_term
 logger = logging.getLogger("pipeline_v2.varnish")
 
 ROLE = "varnish"
+#: The headline call's own role: another model and temperature than the composition and the terms in.
+HEADLINE_ROLE = "headline"
 STAGE = "Polish"
 #: What the headline prompt aims the whole summary at; code accepts up to SUMMARY_MAX.
 SUMMARY_SOFT = 450
@@ -213,9 +215,9 @@ def apply_terms(
     offered: Sequence[str],
     terms: Sequence[str],
 ) -> Tuple[Dict[str, str], List[Replacement], List[Refused]]:
-    """The replacements applied as :func:`apply_edits` applies the edits, each one also only when it
-    adds at least one job term and only offered ones. Returns the texts that changed, the
-    replacements applied and those refused, with the reason."""
+    """The replacements applied as :func:`apply_edits` applies the edits, each one also only when
+    every job term it adds is an offered one. Returns the texts that changed, the replacements
+    applied and those refused, with the reason."""
     current = dict(texts)
     allowed = {t.lower() for t in offered}
     applied: List[Replacement] = []
@@ -225,9 +227,7 @@ def apply_terms(
         if not reason:
             added = [t for t in terms if has_term(t, after) and not has_term(t, current[r.target])]
             foreign = [t for t in added if t.lower() not in allowed]
-            if not added:
-                reason = "adds no offered term"
-            elif foreign:
+            if foreign:
                 reason = f"adds {', '.join(foreign)}, not offered"
         if reason:
             refused.append(Refused(target=r.target, old=r.old, new=r.new, reason=reason))
@@ -269,15 +269,15 @@ class Varnisher:
             v = self._headline(plan, profile, pool, allocation, v, title)
             return plan, self._terms(plan, profile, pool, items, allocation, data, v, title)
 
-    def _ask(self, step: str, system: str, user: str, reply: type) -> Any:
+    def _ask(self, step: str, system: str, user: str, reply: type, role: str = ROLE) -> Any:
         messages = [{"role": "user", "content": user}]
         for attempt in (1, 2):
-            raw = self.llm.call_llm(ROLE, str, system, messages, usage=self.usage)
+            raw = self.llm.call_llm(role, str, system, messages, usage=self.usage)
             try:
                 return _validated(reply, json_object(raw))
             except ValueError as error:
                 problem = str(error)
-            logger.warning("  ✗ [%s] %s reply %d/2 rejected:\n%s", ROLE, step, attempt, problem)
+            logger.warning("  ✗ [%s] %s reply %d/2 rejected:\n%s", role, step, attempt, problem)
             messages += [
                 {"role": "assistant", "content": raw},
                 {
@@ -286,7 +286,7 @@ class Varnisher:
                     "Reply again with the complete, corrected output only.",
                 },
             ]
-        raise ModelOutputError(f"{ROLE}: the {step} reply was rejected:\n{problem}", stage=STAGE)
+        raise ModelOutputError(f"{role}: the {step} reply was rejected:\n{problem}", stage=STAGE)
 
     # 1. compose ---------------------------------------------------------------------------------
     def _compose(
@@ -376,7 +376,8 @@ class Varnisher:
             + f"\nSUMMARY: {' '.join(frame.split())}\n\nEXPERIENCES:\n"
             + _experiences(doc)
         )
-        reply = self._ask("headline", self.headline_prompt.replace("{max_chars}", str(SUMMARY_SOFT)), user, HeadlineReply)
+        prompt = self.headline_prompt.replace("{max_chars}", str(SUMMARY_SOFT))
+        reply = self._ask("headline", prompt, user, HeadlineReply, HEADLINE_ROLE)
         headline = fixed or " ".join(reply.job_title.split()) or title
         keywords = [" ".join(k.split()) for k in reply.keywords if k.strip()][:KEYWORDS]
         sentence = " ".join(reply.sentence.split())
@@ -522,6 +523,7 @@ def varnish_markdown(v: Varnish, plan: Plan, composed: Plan) -> str:
 
 
 __all__ = [
+    "HEADLINE_ROLE",
     "ROLE",
     "SUMMARY_SOFT",
     "Refused",

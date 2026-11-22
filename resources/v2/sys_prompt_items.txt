@@ -13,6 +13,8 @@ BASE ITEMS
 * text: the statement in the profile's own words, past tense, readable on its own. Resolve every reference
   to another duty ("the projects above", "the implementation above", "there", "the point above") by naming
   what it refers to. Add NOTHING the profile does not say: no number, no technology, no outcome, no adjective.
+  Splitting keeps every relation the duty states: who did what, with whom, for whom, whose it was ("worked
+  with team X on the contracts" gives "team X's contracts", never "the contracts with team X").
 * source: the span or spans the item comes from, copied VERBATIM, character by character, from that duty
   (or from role_summary). Each span is one contiguous piece of the text. Together they hold everything the
   item states.

@@ -86,7 +86,7 @@
       "context": "Continental Multi-Sport Games 2022 -- Results Distribution System",
       "role_summary": "My team supported the delivery of the 'Games Results' system, a mission critical software for the Games: it keeps the scores and generates the official web site. The software was developed in Europe; my team adapted it to the client's cloud environment (Alibaba Cloud) and to the requests of the system integrator.",
       "duties": [
-        "Technical bridge between the European development team and the Chinese system integrator (Alibaba). Designed and implemented solutions to the customer's requests locally where possible; coordinated code changes with the European team.",
+        "Single point of contact between the European development team and the Chinese system integrator (Alibaba). Designed and implemented solutions to the customer's requests locally where possible; coordinated code changes with the European team.",
         "Adapted the software architecture provided by the European team to the client's requirements and to the specifics of Alibaba Cloud, proposing, designing and implementing the necessary changes. For example, the high availability setup of the MSSQL database proposed by the European team was not feasible in that environment, so I placed an SLB in front of it to point to the master instance.",
         "Presented and discussed the system architecture with the client, in Chinese, in a challenging environment (demanding customer, software half legacy and half microservices, limited support from the remote team).",
         "Gathered non-functional requirements from the client (high availability, performance, scalability).",

@@ -58,7 +58,7 @@ from .tree_store import Market, Tree, tree_dump, tree_markdown, with_profile
 from .varnish import Varnisher, varnish_markdown
 
 #: The model roles of ``resources/v2/models.toml``, tables ``[models.v2_<role>]``.
-ROLES = ("compile", "review", "allocate", "varnish", "highlight")
+ROLES = ("compile", "review", "allocate", "varnish", "headline", "highlight")
 #: The role of the highlight call.
 HIGHLIGHT = "highlight"
 
