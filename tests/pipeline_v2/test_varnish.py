@@ -147,19 +147,15 @@ def test_a_group_is_named_by_its_id_and_counts_its_bullets():
     assert chosen(["e0.s02.g1.1"], [group], 4)[2] == "e0.s02.g1.1 is not a candidate"
 
 
-def test_an_edit_applies_and_one_that_adds_a_line_or_takes_out_a_job_term_is_refused(job):
+def test_an_edit_applies_and_one_that_adds_a_line_is_refused(job):
     edits = [
         {"target": "e0.s01.r2.a", "old": "Kubernetes on the platform", "new": "Kubernetes on this platform"},
         # e2.s01 at rung 1 holds 80 characters: this takes it to a second line
         {"target": "e2.s01.r1.a", "old": "on the platform", "new": "on the platform of the bank and its insurer"},
-        {"target": "e0.s02.r1.a", "old": "with Kubernetes on", "new": "on"},
     ]
     out, doc, _, _ = run(job, compose={"edits": edits})
     assert [r.target for r in out.edits] == ["e0.s01.r2.a"]
-    assert {r.target: r.reason for r in out.edits_refused} == {
-        "e2.s01.r1.a": "2 lines, was 1",
-        "e0.s02.r1.a": "removes Kubernetes",
-    }
+    assert {r.target: r.reason for r in out.edits_refused} == {"e2.s01.r1.a": "2 lines, was 1"}
     assert doc["experiences"][0]["duties"][0].startswith("Worked with Kubernetes on this platform")
 
 
@@ -235,14 +231,3 @@ def test_replacements_that_add_a_line_or_an_unoffered_term_are_refused(job):
     }
     assert out.applied == [] and "IaC" not in doc["summary"]
     assert doc["experiences"][2]["duties"][0].startswith("Worked with Java on the platform")
-
-
-def test_replacements_that_take_out_a_job_term_are_refused(job):
-    edits = [
-        {"target": "e0.s01.r2.a", "old": "Worked with Kubernetes on", "new": "Worked with IaC on"},
-    ]
-    out, doc, _, _ = run(job, terms={"replacements": edits})
-    assert [(r.target, r.reason) for r in out.refused] == [
-        ("e0.s01.r2.a", "removes Kubernetes"),
-    ]
-    assert out.applied == [] and doc["summary"].startswith("Platform Engineer with")

@@ -6,7 +6,7 @@
    among the titles the profile lists for that job. Code keeps an experience's reply only when every
    id is one of its candidates, one per story, at least 2 bullets, within the plan's lines for it;
    otherwise the experience prints the plan's slots in profile order, wording ``a``. An edit applies
-   only when the bullet keeps its printed lines and every job term it held. A title the job does not
+   only when the bullet keeps its printed lines. A title the job does not
    have is dropped: the experience prints its first. The result is a new plan
    (:func:`~.select.composed`), which the rest of the CV prints.
 2. **Headline** (``sys_prompt_varnish_headline.txt``): the job title under the name (the plan's,
@@ -21,8 +21,8 @@
    ``{target, old, new}`` in the bullets, each bullet as the composition left it and shown with the
    facts it rests on (its ``uses`` items); the summary is never edited. The prompt alone states that
    a replacement must read fluently, with the case of the text around it. Code applies one only
-   when the bullet keeps its printed lines, every job term it adds is an offered one (at least one)
-   and it takes out no job term the bullet held. The rest are listed with the reason.
+   when the bullet keeps its printed lines and every job term it adds is an offered one (at least
+   one). The rest are listed with the reason.
 
 Each reply is JSON taken as text (:func:`~.pool.json_object`); one that does not parse goes back
 once with the fault, then fails. The result is the composed plan and a
@@ -174,38 +174,31 @@ def chosen(
     return [(c.story, c.rung) for c, _ in taken], {c.story: w for c, w in taken if w}, ""
 
 
-def _edited(
-    r: Replacement, current: Mapping[str, str], texts: Mapping[str, str], terms: Sequence[str]
-) -> Tuple[str, str]:
+def _edited(r: Replacement, current: Mapping[str, str], texts: Mapping[str, str]) -> Tuple[str, str]:
     """The bullet after ``r`` and why it is refused, "" when it is not: not a printed bullet, its
-    old text not found, a job term (``terms``) taken out, or more printed lines than in ``texts``
-    (the bullets as they came)."""
+    old text not found, or more printed lines than in ``texts`` (the bullets as they came)."""
     before = current.get(r.target)
     if before is None:
         return "", "not a printed bullet"
     if not r.old or r.old not in before:
         return "", "old text not found"
     after = before.replace(r.old, r.new, 1)
-    removed = [t for t in terms if has_term(t, before) and not has_term(t, after)]
-    if removed:
-        return after, f"removes {', '.join(removed)}"
     if lines(after) > lines(texts[r.target]):
         return after, f"{lines(after)} lines, was {lines(texts[r.target])}"
     return after, ""
 
 
 def apply_edits(
-    replacements: Sequence[Replacement], texts: Mapping[str, str], terms: Sequence[str]
+    replacements: Sequence[Replacement], texts: Mapping[str, str]
 ) -> Tuple[Dict[str, str], List[Replacement], List[Refused]]:
     """The composition's edits applied to ``texts`` (the printed bullets, by id) in order, each one
-    only when its old text is in the bullet, the bullet keeps every job term (``terms``) it held and
-    its printed lines. Returns the texts that changed, the edits applied and those refused, with the
-    reason."""
+    only when its old text is in the bullet and the bullet keeps its printed lines. Returns the texts
+    that changed, the edits applied and those refused, with the reason."""
     current = dict(texts)
     applied: List[Replacement] = []
     refused: List[Refused] = []
     for r in replacements:
-        after, reason = _edited(r, current, texts, terms)
+        after, reason = _edited(r, current, texts)
         if reason:
             refused.append(Refused(target=r.target, old=r.old, new=r.new, reason=reason))
             continue
@@ -228,7 +221,7 @@ def apply_terms(
     applied: List[Replacement] = []
     refused: List[Refused] = []
     for r in replacements:
-        after, reason = _edited(r, current, texts, terms)
+        after, reason = _edited(r, current, texts)
         if not reason:
             added = [t for t in terms if has_term(t, after) and not has_term(t, current[r.target])]
             foreign = [t for t in added if t.lower() not in allowed]
@@ -345,7 +338,7 @@ class Varnisher:
             picks.update(mine_picks)
         new = composed(plan, ctx, slots)
         ids = [b for x in new.experiences if x.form == "full" for b in printed(x.slots, picks)]
-        texts, edits, refused = apply_edits(reply.edits, {b: text[b] for b in ids}, jd_terms(allocation))
+        texts, edits, refused = apply_edits(reply.edits, {b: text[b] for b in ids})
         titles: Dict[int, str] = {}
         for key, letter in reply.titles.items():
             e = source.get(_int(key.lstrip("e")))

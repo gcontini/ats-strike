@@ -22,7 +22,7 @@ CV: the experiences in printed order.
 * An experience with TITLES lists the titles the candidate held there, lettered.
 
 CHOOSE, FOR EACH FULL EXPERIENCE
-Two aims: a high total SCORE, and bullets that read well together, as the candidate would tell this job.
+Two aims: a high total SCORE, and bullet points (selected options) that read well together, as the candidate would tell this job.
 1) Start from the PICKED options. Leave one out, or swap it for another option, only to make the bullets read
    better (see below). When you swap, take the highest-scoring option that reads well.
 2) Together the bullets take at most LINES lines. At most one option per story. At least 2 bullets per experience.
@@ -31,25 +31,23 @@ Two aims: a high total SCORE, and bullets that read well together, as the candid
    role summary or by an earlier bullet: the reader never stumbles over what it refers to.
    - points that offer context or explain things should go before points that only reference them, better to place a point that describe a situation before another that reference a work in the same area.
 4) Bullets about the same work sit next to each other.
-5) REPEATS. When two bullets state the same fact, prefer leaving one out, or taking another wording or another
-   option that does not repeat it, over keeping both.
-6) WORDING. Neighbouring bullets do not open with the same word or the same sentence shape. When wordings differ in
-   the JD TERMS they carry, prefer the one that carries more of them.
+5) REPEATS. When two bullets state the same fact, prefer leaving one out, or taking another wording or another option that does not repeat it, over keeping both.
+6) WORDING. Neighbouring bullets do not open with the same word or the same sentence shape. When wordings differ in the JD TERMS they carry, prefer the one that carries more of them.
 
 EDITS
 Small edits to the bullets you print, so that they read as one account:
 a) Link bullets about the same work with references and pronouns: "also", "in that situation", "for this application", "this software", "the application", "it".
-b) Do not repeat the same specific words in nearby bullets (eg "File Transfer" in two bullets in a row): after the first mention, refer back to it ("the application", "it").
-c) before doing (a) or (b) evalutate the distance of the reference. If the reference subject is stated several bullets above a reader may have to re-read the cv to find what you are referring to. In this case choose one of the following strategies: 
-   - a reordering (see: 4) - bring the two options close, make the reference.
-   - extend and clarify the reference by adding context: "the three applications i manage" "the three IaaS applications"
-   - skip the replace, leave the repetition.
-   as a result each reference must be obvious and the reader must find what it is referring to naturally.
+b) A name an earlier bullet already states is not repeated in full: refer back to it. Right after it, a short
+   reference does ("the application", "it"); further down, the reference must carry enough context to be found at once ("the three projects above", "the three IaaS applications"), if unsure add context.
+   - after you've done the replacement re-read the experience and see if the reference holds or the reader stumbles to find it (because it's too far away). In case either add more context or reorder (4) or use the original text (do not replace).
 d) Say what a thing is when nothing introduced it, with one word: "the fleet" -> "the printer fleet".
-e) Change an article ("the" -> "a" or nothing) to prevent dangling references; cut a fact an earlier bullet already states.
-Never add a fact: no number, technology, outcome, client, scale or quality the bullet does not already state.
-Never take out a JD TERM. An edit never makes a bullet take more printed lines (a line holds 95 characters).
-Each edit: "target", the id of a bullet you print (a wording id, or a group bullet's id such as e0.s02.g1.2);
+e) Change an article ("the" -> "a" or nothing) to prevent dangling references; 
+f) Avoid repetitions: sometimes different stories repeat facts. Especially check across consecutive bullets. Cut the repetition in one of the two bullets.
+g) Never add a fact: no number, technology, outcome, client, scale or quality the bullet does not already state.
+h) Never take out a JD TERM [except for repetition cuts (f)]. 
+i) An edit never makes a bullet take more printed lines (a line holds 95 characters).
+
+Each edit: "target", the id of a bullet you print (a wording id, or a group bullet's id such as e0.s02.g1.2); 
 "old", text copied exactly from that bullet; "new", what replaces it. Edits apply in order. 
 
 TITLES

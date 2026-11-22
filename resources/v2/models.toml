@@ -59,7 +59,7 @@ reasoning_effort       = "xhigh"
 model                  = "qwen3.8-max"
 use_alternate_provider = 4
 thinking               = "on"
-extra_body             = { thinking_budget = 8000 }
+extra_body             = { thinking_budget = 9000 }
 
 # The **bold**/*italic* pass, one call per CV after the varnish (S9): common's highlighter with v2's prompt,
 # and v1's settings for its highlight role (resources/v1/models.toml): OpenAI on the Responses API.
