@@ -1,0 +1,2358 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Turn a job description into a tailored LaTeX CV, with any OpenAI-compatible model.">
+      
+      
+      
+        <link rel="canonical" href="https://gcontini.github.io/ats-strike/2.0.4/CV-PIPELINE-V2.html">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>CV pipeline v2: design - ats-strike</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-3YNR617DVZ"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-3YNR617DVZ",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-3YNR617DVZ",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cv-pipeline-v2-design" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="ats-strike" class="md-header__button md-logo" aria-label="ats-strike" data-md-component="logo">
+      
+  <img src="images/ats-strike-icon-128.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ats-strike
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CV pipeline v2: design
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gcontini/ats-strike" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="ats-strike" class="md-nav__button md-logo" aria-label="ats-strike" data-md-component="logo">
+      
+  <img src="images/ats-strike-icon-128.png" alt="logo">
+
+    </a>
+    ats-strike
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gcontini/ats-strike" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ats-strike
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How it works
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="architecture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="cv-pipeline.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The CV pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="clipboard-flow.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A run, end to end
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using it
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Using it
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/gcontini/ats-strike-client/blob/main/doc/client.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The client
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="deployment.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running the two halves apart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="development-setup.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developing locally in VS Code
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="protocol.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The HTTP API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="build-server.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building the server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="model-configurations.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model configurations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/gcontini/ats-strike-client/blob/main/doc/build-client.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building the client
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="release.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cutting a release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="credits.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-why-what-v1-does-and-what-it-costs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Why: what v1 does and what it costs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-goals-and-non-goals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Goals and non-goals
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-design-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The design at a glance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. The design at a glance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-how-a-cv-is-made-now" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 How a CV is made now
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-store-once-per-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The store: once per profile
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. The store: once per profile">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-base-items-and-stories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Base items and stories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-the-competence-tree" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 The competence tree
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-the-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 The pool
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Review
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-context-and-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 Context and references
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-per-job-description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Per job description
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Per job description">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-allocate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Allocate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Select
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-render-and-fit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Render and fit
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-varnish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Varnish
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-highlight" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Highlight
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-scoring-and-the-mix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Scoring and the mix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-what-v2-does-without" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. What v2 does without
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-how-v2-keeps-the-house-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. How v2 keeps the house rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Evaluation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Risks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-plan-of-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Plan of work
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-alternatives-considered" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Alternatives considered
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-open-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Open questions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appendix-a-how-the-numbers-were-measured" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Appendix A: how the numbers were measured
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="cv-pipeline-v2-design">CV pipeline v2: design<a class="headerlink" href="#cv-pipeline-v2-design" title="Permanent link">&para;</a></h1>
+<p>Status: draft, 2026-11-12, updated 2026-11-20. The probe of
+<a href="#11-plan-of-work">section 11</a> has run: <strong>go</strong>, on the conditions listed there. The
+repository has the new layout, and v2 is built through the highlight: the store
+(base items, competence tree, reviewed pool) and, per job, allocation,
+selection, polish, highlight and render (<a href="#31-how-a-cv-is-made-now">section 3.1</a>).
+v2 is served at <code>/v2</code>; the 2.0.0 release, a real run and the evaluation remain. This
+replaces the draft of 2026-11-10, which compiled the profile into facts and still
+wrote every CV with a model;
+<a href="#12-alternatives-considered">section 12</a> says what was kept from it. v2 is a second
+pipeline on the same server, served at <code>/v2</code> beside v1 (<code>/v1</code>, described in
+<a href="cv-pipeline.html">doc/cv-pipeline.md</a>), which stays.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>v1 writes every CV from scratch: about 24 model calls and five minutes to
+rewrite duties that are, in most CVs, the same duties. The rewriting is where
+the errors come from (exaggeration, lost context, garbled sentences), and the
+keywords a job description asks for end up crammed into the summary.</p>
+<p>v2 moves the writing out of the per-job path. Once per profile, the profile is
+compiled into a <strong>store</strong>: a tree of competences named in the market's words,
+and a pool of pre-written, reviewed bullets, each tagged with what it proves
+and how many lines it takes. For each job description, one model call places
+the job's requirements on the tree, and code selects the CV: which stories, at
+what length, in which experiences. A model then composes each job's bullets
+from the scored candidates (which, in which order and wording, with small edits
+that link them), writes the headline and one summary sentence, and edits the
+job's own words in where the facts support them.</p>
+<p>The balance between what a keyword search wants and what a reader wants is a
+set of weights sent with each request, so it can change without a redeploy.</p>
+<p>A probe on one real profile and ten held-out job descriptions showed that the
+compiled pool can be trusted (4% of bullets wrong at the candidate's first
+reading), that the allocation is consistent (two runs share 83% of the placed
+importance), that the page budget holds in code (16 of 16 CVs fit at the first
+render), and that selection alone does not carry the job's words into the CV:
+literal coverage was 35% against v1's 62%, almost all of it the summary. So the
+varnish step's edits are part of the design, not a polish.</p>
+<h2 id="1-why-what-v1-does-and-what-it-costs">1. Why: what v1 does and what it costs<a class="headerlink" href="#1-why-what-v1-does-and-what-it-costs" title="Permanent link">&para;</a></h2>
+<p>Measured on 51 CV runs of real applications, their 1,076 rendered bullets, and
+2,547 unique job descriptions, all kept in a private data folder; then by the
+probe. <a href="#appendix-a-how-the-numbers-were-measured">Appendix A</a> says how each
+number was counted.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Measured</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Does v1 tailor the selection?</td>
+<td>Of 32 profile duties, 19 are in at least 70% of CVs, 7 are never shown, and 6 really vary. 47 of 51 CVs show the same 3 experiences.</td>
+<td>The scoring of every duty against every job buys little selection.</td>
+</tr>
+<tr>
+<td>Where do the job's keywords end up?</td>
+<td>Requirements with one of their keywords present, weighted by importance: 40% in the profile's own text, 58% in the CV, 40% in the CV without its summary.</td>
+<td>All of v1's keyword gain is the summary: 743 characters holding 7 of the job's keywords. The rewritten bullets add none.</td>
+</tr>
+<tr>
+<td>Can lines be budgeted in code?</td>
+<td><code>lines = ceil(characters / 98)</code> is exact for 98.8% of bullets. In the probe, a line model in points put 16 of 16 CVs on two pages at the first render.</td>
+<td>Yes. The render is a check, not a loop.</td>
+</tr>
+<tr>
+<td>Are bullet lengths varied?</td>
+<td>94% of bullets are exactly 2 lines, at a median 156 of 196 characters.</td>
+<td>No variety, and about a fifth of the bullet area is blank.</td>
+</tr>
+<tr>
+<td>What does a CV cost?</td>
+<td>v1: a median 24 calls, 290 seconds and 221,000 tokens, 63% of them thinking. v2 in the probe: 5 to 6 calls per CV, about 30 once per profile.</td>
+<td></td>
+</tr>
+<tr>
+<td>Is a job's vocabulary predictable?</td>
+<td>1,796 distinct keywords in 51 jobs; 77% occur in one job only.</td>
+<td>A job's wording cannot be written into the bullets in advance.</td>
+</tr>
+<tr>
+<td>How much of a job can the profile not prove?</td>
+<td>v1: about 25% of a job's importance has no duty that proves it. v2: 18% of importance lands on ghost leaves, 0.3% nowhere.</td>
+<td>This is the ceiling of any keyword score, and it has to be reported.</td>
+</tr>
+<tr>
+<td>Is relevance literal?</td>
+<td>Of v1's 1,098 strong matches between a duty and a requirement, 17% have one of the requirement's keywords in the duty.</td>
+<td>Matching is mostly a judgment of meaning. Keyword matching alone cannot select.</td>
+</tr>
+<tr>
+<td>Can a one-time compile be trusted?</td>
+<td>4.0% of 176 pool bullets wrong at the candidate's first reading; the review edited 12% of lines.</td>
+<td>Yes. Bullets need no validation per job.</td>
+</tr>
+<tr>
+<td>Does selection carry the job's words?</td>
+<td>Literal coverage 35% against v1's 62%; summary alone 19% against 53%.</td>
+<td>No. The varnish must put them in.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-goals-and-non-goals">2. Goals and non-goals<a class="headerlink" href="#2-goals-and-non-goals" title="Permanent link">&para;</a></h2>
+<p>Goals:</p>
+<ol>
+<li><strong>Write once, select many times.</strong> The text of a CV is written and reviewed
+   once per profile, not once per job.</li>
+<li><strong>A tunable balance.</strong> Keyword coverage against a CV that tells the career's
+   important work, as weights in the client's configuration.</li>
+<li><strong>No silent gaps.</strong> An experience is left out only when the balance says so,
+   and the earliest and the most recent are always shown.</li>
+<li><strong>A readable summary.</strong> The job's keywords move to where they cost a reader
+   least.</li>
+<li><strong>Fewer moving parts</strong> per job: 5 to 6 calls instead of 24.</li>
+</ol>
+<p>Non-goals:</p>
+<ul>
+<li>The LaTeX render, the letter, JD detection and analysis, the sessions and the
+  event stream stay as they are.</li>
+<li>No rules on metric density, bullet formulas or action verbs.</li>
+<li>No external skills taxonomy. The tree is built from the profile and from what
+  real job descriptions ask.</li>
+<li>Nothing personal is stored on the server.</li>
+</ul>
+<h2 id="3-the-design-at-a-glance">3. The design at a glance<a class="headerlink" href="#3-the-design-at-a-glance" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    PROF(["candidate_profile.json"]) --&gt;|"once per profile version"| ITEMS["&lt;b&gt;items&lt;/b&gt;&lt;br/&gt;base items and stories"]
+    JDS(["a sample of job descriptions"]) --&gt; TREE
+    ITEMS --&gt; TREE["&lt;b&gt;tree&lt;/b&gt;&lt;br/&gt;competences, market names, aliases"]
+    TREE --&gt; POOL["&lt;b&gt;pool&lt;/b&gt;&lt;br/&gt;bullets on a ladder, groups,&lt;br/&gt;skill phrases, summary frames"]
+    POOL --&gt; REV["&lt;b&gt;review&lt;/b&gt;&lt;br/&gt;code checks, a pool review, the candidate"]
+    REV --&gt; STORE(["the store&lt;br/&gt;in the client's cache, editable"])
+    STORE --&gt; START(["POST /v2/cv&lt;br/&gt;JD + profile + store + mix"])
+    START --&gt; ALLOC["&lt;b&gt;allocate&lt;/b&gt;&lt;br/&gt;the job's requirements onto the tree"]
+    ALLOC --&gt; SEL["select&lt;br/&gt;(code) content and length"]
+    SEL --&gt; FIT{"over the page limit?"}
+    FIT --&gt;|"yes"| DOWN["remove a job's&lt;br/&gt;last bullet"] --&gt; FIT
+    FIT --&gt;|"no"| VAR["&lt;b&gt;varnish&lt;/b&gt;&lt;br/&gt;composition, the job's words,&lt;br/&gt;headline"]
+    VAR --&gt; HL["highlight&lt;br/&gt;(code)"]
+    HL --&gt; FIN(["result"])</code></pre>
+<p>Terms used below:</p>
+<ul>
+<li><strong>base item:</strong> one statement from the profile, typed context, action or result.</li>
+<li><strong>story:</strong> the base items that tell one piece of work together.</li>
+<li><strong>anchor:</strong> the one or two items that say what a story is about.</li>
+<li><strong>narrative weight:</strong> how much a duty mattered in the career, from 1 to 3.</li>
+<li><strong>node:</strong> one competence in the tree. A <strong>leaf</strong> is something a recruiter
+  searches for. A <strong>ghost leaf</strong> is one the profile cannot prove.</li>
+<li><strong>rung:</strong> one length of a story's bullet: 1, 2 or 3 lines.</li>
+<li><strong>wording:</strong> one of the stored versions of a rung.</li>
+<li><strong>group:</strong> bullets that go into the CV together or not at all. A long story
+  has up to three, each a different view of it.</li>
+<li><strong>slot:</strong> one place in a planned CV, to be filled by a wording.</li>
+<li><strong>mix:</strong> the weights that balance the keyword score against the human score.</li>
+</ul>
+<h3 id="31-how-a-cv-is-made-now">3.1 How a CV is made now<a class="headerlink" href="#31-how-a-cv-is-made-now" title="Permanent link">&para;</a></h3>
+<p>Eleven steps. The first four build the store once per profile: about 26
+minutes of model time, in the profile's first job. The other seven run for
+every job: five model calls, five to seven minutes. Each job's step files go
+to its <code>steps/</code> folder.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Step</th>
+<th>Runs</th>
+<th>Model or code</th>
+<th>What it does</th>
+<th>Writes</th>
+<th>Time</th>
+<th>Watch for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Profile breakdown</td>
+<td>once</td>
+<td>model, one call per experience</td>
+<td>cuts each duty into numbered items (context, action, result) with their exact source words, checked in code; groups them into stories, one piece of work each, with its anchor; lists each job's shared context; weighs each duty 1 to 3</td>
+<td><code>items.json</code>, <code>items.md</code></td>
+<td>3 min</td>
+<td>a wrong item type; stories cut too fine; a weight you disagree with</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Skill tree</td>
+<td>once</td>
+<td>model (a shape call and one correction, then one link call per experience); code (market terms, skill status)</td>
+<td>a tree of skills in three levels, named in the job market's words, with aliases; links the items to skills; code marks each skill proven, weak or ghost</td>
+<td><code>tree.json</code>, <code>tree.md</code></td>
+<td>11 min</td>
+<td>a skill proven on thin evidence, or a ghost you can prove</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Bullet writing</td>
+<td>once</td>
+<td>model, one call per experience, per story and for the profile part; code checks</td>
+<td>per experience a two-line role summary and a one-line compact form; per story, bullets of one, two and three lines in two wordings each, and up to three bullet groups for a long story; skill phrases and summary frames. Code checks length, numbers, "led" and what a bullet leans on</td>
+<td><code>pool.json</code>, <code>pool.md</code></td>
+<td>9 min</td>
+<td>a bullet leaning on something never said; a claim bigger than the duty</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Bullet review</td>
+<td>once</td>
+<td>model, one review per experience</td>
+<td>checks every piece against the profile with an interview test, edits through a replace tool; code refuses an edit that adds a line</td>
+<td><code>pool.json</code> edited, <code>review.md</code></td>
+<td>2 min</td>
+<td>different faults found each run</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Job reading</td>
+<td>each job</td>
+<td>model, one call</td>
+<td>the job's requirements with importance and English keywords, each placed on the skill tree; code says where it landed (proven, weak, ghost) and spreads points up the tree</td>
+<td><code>allocation.json</code>, <code>allocation.md</code></td>
+<td>80 s</td>
+<td>a requirement on the wrong skill, loosest on jobs far from the profile</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Content choice</td>
+<td>each job</td>
+<td>code</td>
+<td>fills about 71 lines: which jobs print in full or as one compact line, which stories at what length, ten skill phrases, the summary frame and its terms, the headline. Score: half job keywords (printed words and skill proof), half narrative (the share of career years told; main duties count nine times a one-off; a month weighs half for every three years of age). The earliest and latest jobs always print</td>
+<td><code>plan.json</code>, <code>plan.md</code></td>
+<td>2 s</td>
+<td>a job compact that you want in full; room spent on old jobs; bullet order</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Polish: composition</td>
+<td>each job</td>
+<td>model; code guards</td>
+<td>per full job, from the plan's slots and the stories it left out (each scored), the bullets it prints, in which order and wording, with small edits that link them (references, no repeated names); one title per job from the titles the profile lists. Code keeps a job's reply only within the plan's lines, one bullet per story, at least two; an edit only when it keeps the bullet's lines</td>
+<td><code>varnish.md</code> (Composition)</td>
+<td>70-130 s</td>
+<td>a reference to a later bullet; an edit that changes a fact</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Polish: headline and sentence</td>
+<td>each job</td>
+<td>model</td>
+<td>the title under the name and the summary's one written sentence, aimed at 450 characters; code accepts 500 and refuses a number the profile does not hold</td>
+<td><code>varnish.md</code></td>
+<td>5-17 s</td>
+<td>a title the profile does not license; a generic sentence</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Polish: job terms in</td>
+<td>each job</td>
+<td>model; code guards</td>
+<td>code offers the job keywords the CV lacks, only for requirements the profile proves; the model rewrites the summary first, then bullets; code refuses an edit that adds a line or a number, brings a term not offered or changes the title</td>
+<td><code>varnish.md</code> (applied and refused)</td>
+<td>30-120 s</td>
+<td>terms pasted in as labels ("did Project Monitoring of ...")</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Highlight</td>
+<td>each job</td>
+<td>model, v2's own copy of v1's prompt (split 2026-11-20, so either can be tuned alone)</td>
+<td>bolds two skills and whole job keywords in the bullets, italicises stacks; code keeps the original of any text whose words changed</td>
+<td><code>varnish.md</code> (Highlight)</td>
+<td>80 s</td>
+<td>compact lines never marked; a bold you would not pick</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Page layout</td>
+<td>each job</td>
+<td>code and LaTeX</td>
+<td>builds the document and renders it; over two pages, removes the last bullet of one job (bullets refer only backwards, so no reference breaks), and renders again</td>
+<td><code>cv.pdf</code>, <code>cv.json</code>, <code>cv.tex</code>, <code>varnish.json</code></td>
+<td>seconds</td>
+<td>a strong last bullet removed</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-the-store-once-per-profile">4. The store: once per profile<a class="headerlink" href="#4-the-store-once-per-profile" title="Permanent link">&para;</a></h2>
+<p>The store is compiled from the profile and editable by hand. It is personal
+data, and the server keeps none of it. The server returns the store's files as
+cache items, the client keeps them in its folder for the v2 server (<code>cache/</code>),
+and sends them back with every request, as it does the profile. Protocol 2
+already carries such items, so the store adds nothing to the wire. Each file
+the request lacks is built, in order, and stored as soon as it is done; nothing
+checks the store against the profile, so after a profile change the user
+deletes <code>cache/</code>. The market list the skill tree is named by ships with the
+server (<code>resources/v2/market.json</code>: the corpus part, terms, counts and
+requirement names, no job text and no employer name); the profile's own terms,
+which the server cannot count, are joined to it with no counts.</p>
+<p>For the probe's profile (five experiences) the store came to 120 items in 27
+stories, a tree of 176 nodes, and a pool of 162 bullets, 5 compact lines, 5 role
+summaries, 39 skill phrases and 5 summary frames. Compiling it took about 30
+model calls. Built for the current profile so far: 114 items in 26 stories, a tree of 171
+nodes, and a pool of 165 bullets, 5 role summaries, 5 compact lines, 40 skill
+phrases and 6 summary frames.</p>
+<h3 id="41-base-items-and-stories">4.1 Base items and stories<a class="headerlink" href="#41-base-items-and-stories" title="Permanent link">&para;</a></h3>
+<p>Each experience's duties are cut into numbered base items. From the fictional
+candidate in <code>examples/candidate</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"e1.i21"</span><span class="p">,</span><span class="w"> </span><span class="nt">"experience"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">"story"</span><span class="p">:</span><span class="w"> </span><span class="s2">"e1.s6"</span><span class="p">,</span><span class="w"> </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"action"</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Defined and documented the backup and restore procedures and the disaster recovery plan."</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"Defined and documented the backup and restore procedures and the disaster recovery plan"</span><span class="p">],</span>
+<span class="w"> </span><span class="nt">"agency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"did"</span><span class="p">,</span><span class="w"> </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"disaster recovery"</span><span class="p">,</span><span class="w"> </span><span class="s2">"operational procedures"</span><span class="p">]}</span>
+</code></pre></div>
+<ul>
+<li><strong><code>source</code></strong> is copied verbatim from the profile. Code checks that each span
+  is a substring of its experience and drops an item that fails. In the probe
+  the spans covered 93–97% of each experience's duty text and no item was
+  dropped. S1's build of the step did the same on the current profile: 114
+  items in 26 stories, none dropped, 92–98% covered, in five calls and about
+  three minutes.</li>
+<li><strong><code>type</code></strong> drives repetition. Two bullets never share an action or a result;
+  a context may recur, spelled out once.</li>
+<li><strong><code>agency</code></strong> is <code>led</code>, <code>did</code> or <code>supported</code>, with what the profile's notes
+  say about scope. "I guided my team, NOT the rehearsals" stays attached to the
+  rehearsal item.</li>
+<li>References between duties ("the cloud projects above") are resolved, so each
+  item stands alone.</li>
+<li><strong>Shared context belongs to the experience.</strong> A context item that frames the
+  job (the employer, the team, the mandate, the system the job is about), or
+  that two stories presuppose, goes to the experience's context list. The role
+  summary says it, so any bullet of the job may lean on it. The probe first put
+  job-level context in stories of its own, and the bullets of a call that was
+  not handed it came out bare.</li>
+<li><strong>A story is one piece of work:</strong> one system or programme in one phase, not
+  one duty of the profile. Work done inside it belongs to it, as a service
+  built during a port belongs to the port. The candidate found the probe's
+  stories "a bit granular" and merged five into two.</li>
+<li><strong>Each story names its anchor:</strong> the one or two items that say what it is
+  about. Every bullet that opens the story names what it is about, without
+  restating both items of a two-item anchor.</li>
+<li><strong>Narrative weights.</strong> Each duty gets a weight from 1 to 3 for how much it
+  mattered in the career: years spent building one core product rank high, a
+  one-off presentation low. The compile call proposes each weight with a reason,
+  judged on what the profile says and never on a job, and the candidate
+  corrects it. Each experience weighs by its months, counted in code from its
+  dates.</li>
+</ul>
+<h3 id="42-the-competence-tree">4.2 The competence tree<a class="headerlink" href="#42-the-competence-tree" title="Permanent link">&para;</a></h3>
+<p>One tree, three levels, numbered: disciplines, competences, and leaves. A job's
+requirements are later placed on this same tree, so a general requirement lands
+on a competence and a specific one on a leaf.</p>
+<p>It is built in this order:</p>
+<ol>
+<li><strong>Collect what the market asks,</strong> in code, from data already on disk: the
+   requirements of the candidate's own applications, and the skills the job
+   search's analysis already lists for every job description it collected. The
+   test set's job descriptions, and the held-out ones, are left out.</li>
+<li><strong>Tag what the profile proves.</strong> Each base item gets competence tags.</li>
+<li><strong>Join them.</strong> A model drafts the tree from both lists. Each node takes the
+   market's most frequent name and lists its aliases ("Kubernetes", "K8s"). A
+   broad node asked in many phrasings, such as stakeholder management, is split
+   along the distinctions jobs make. A leaf nobody asks for sits under a parent
+   that is asked for.</li>
+<li><strong>Attach the items.</strong> A second call gives each action or result item the
+   leaves it proves, at three levels: touches, a substantial part, is the work.
+   A context item attaches at the first level at most: a leaf that only the
+   situation supports ("the team worked in Agile") is weakly proven, enough for
+   the varnish to use the word in a bullet carrying that context, never enough
+   for a skill phrase.</li>
+<li><strong>Add ghost leaves:</strong> the most-asked things the profile cannot prove. A
+   requirement can then land precisely as a gap.</li>
+<li><strong>The candidate reviews it.</strong> Numbering is then frozen; new nodes are appended.</li>
+<li><strong>Test it on jobs it was not built from:</strong> how much importance lands on a
+   proven node, on a ghost, or nowhere.</li>
+</ol>
+<p>What the probe taught about the tree:</p>
+<ul>
+<li><strong><code>proven</code> must rest on more than one weak attachment.</strong> Two attach calls on
+  the same tree agreed on every level-3 pair, but six leaves flipped between
+  proven and ghost because each hung on a single level-1 or level-2 item. A leaf
+  is proven by two calls, or the candidate checks every leaf with one weak item.</li>
+<li><strong>Some ghosts are attachment misses.</strong> Two operating-system leaves took
+  importance as ghosts while a story is mixed-OS administration. The held-out
+  test lists the ghosts an item plausibly proves.</li>
+<li><strong>Aliases need their own check.</strong> About 20 nodes came with aliases that are a
+  narrower thing, a broader thing or another product, against an explicit
+  rule. Each node keeps two lists: what is the same thing, and what counts as
+  it. Only the first may ever replace printed words.</li>
+<li><strong>Compound names hide the plain term.</strong> A node called "DevOps &amp; CI/CD" never
+  occurs literally in a job or a bullet; the plain term is the name or an alias.</li>
+<li><strong>Fixed sections prove too.</strong> Languages, certifications and the skills list
+  are not items; a leaf they prove carries an <code>outside</code> note and counts.</li>
+<li>Placement is loosest where the tree is coarse: the job furthest from the
+  profile's centre had the lowest agreement between two allocations (66%). The
+  corpus is where the margins get detail: its job descriptions' analyses add the
+  terms the candidate's own applications never asked. They are read with the
+  test set's job descriptions left out, since every one of them also sits in
+  the corpus.</li>
+</ul>
+<p>Built (2026-11-19), with the probe's lessons applied:</p>
+<ul>
+<li><strong>Leaf status is computed in code</strong> on every load. A leaf is proven by a
+  level-3 link from an action or result item, by two such items, by a fixed
+  section, or by the candidate's confirmation; weak on a single weak link or on
+  context alone; a ghost otherwise. Two attach runs moved four leaves, none
+  between proven and ghost (the probe: six), and 87% of the links were in both
+  (the probe: 77%).</li>
+<li><strong>Naming faults go back to the model</strong> in the shape's one correction, with
+  the structural faults: no compound name was left (the probe: 35).</li>
+<li>The market list counts 788 terms from 2,735 corpus job descriptions and 41
+  applications, with no model call. A part split off a compound skill is kept
+  only where it also stands alone.</li>
+<li>On the ten held-out job descriptions, 81% of the requirements' importance
+  has a keyword the tree knows (the probe: 70%). Two allocations share 81.5% of
+  their points, and 0.35% of importance lands nowhere: G2 still passes. The job
+  furthest from the profile's centre rose from 66% to 73%; the paid sample of
+  job descriptions that was to widen the margins further was not built.</li>
+<li>After the candidate's review: 119 leaves, 60 proven, 12 weak and 47 ghosts.</li>
+</ul>
+<p>The tree's names and aliases are also what gets printed in the skills block
+and in the summary's keyword slot. That is why the naming matters.</p>
+<h3 id="43-the-pool">4.3 The pool<a class="headerlink" href="#43-the-pool" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Bullets on a ladder.</strong> Each story is written at 1, 2 and 3 lines, to the
+  line grid, and each rung in 2 wordings. For the disaster recovery story
+  of the example candidate:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Rung</th>
+<th>Text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 line</td>
+<td>Wrote the disaster recovery plan of the Games' results system against a 2-hour RTO.</td>
+</tr>
+<tr>
+<td>2 lines</td>
+<td>Wrote the backup, restore and disaster recovery procedures of the Games' results system, a core system with a 2-hour RTO. My team tested them at the full-scale rehearsals and met the SLA.</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Groups.</strong> A story told over two or three bullets that refer to each other
+  forms a group. It is selected, placed and trimmed as one unit, so no bullet
+  ever refers to one that was cut. A long story gets up to three groups, each a
+  different view of the whole story that mixes its sides. Each group starts by
+  stating the anchor, and its later bullets may lean on earlier ones ("During
+  the port, ..."). Up to 7 lines each. The candidate's verdict on the probe: "I
+  do love the groups".</li>
+<li><strong>The role summary comes first.</strong> It is written from the experience's shared
+  context before the ladder, and handed to the ladder call, so a bullet carries
+  only the context the header and the role summary do not. Five of the
+  candidate's thirteen notes on the probe's pool were bullets repeating what the
+  header or the role summary already said.</li>
+<li><strong>Compact lines.</strong> One line per experience, dense with terms, for a job shown
+  only to keep the career whole.</li>
+<li><strong>Skill phrases,</strong> composed where it helps: "Terraform IaC", "CI/CD with
+  Jenkins". A phrase needs a leaf proven at level 3, or by two items: the two
+  wrong phrases of the probe each rested on one weak attachment.</li>
+<li><strong>Summary frames,</strong> one per role family: pre-written text with
+  <code>&lt;&lt;job_title&gt;&gt;</code>, a slot for a few keywords, and a slot for one <code>&lt;&lt;sentence&gt;&gt;</code>.
+  They were the weakest pieces of the probe's pool, written far from the items:
+  their numbers and years are checked in code against the profile, and they are
+  reviewed at compile time. A filled summary's soft limit is 450 characters: the
+  prompts state it, and the code checks accept 500.</li>
+</ul>
+<p>Each bullet and group carries:
+- the items it uses and those it fully covers;
+- the items it leans on without stating them (see
+  <a href="#45-context-and-references">section 4.5</a>);
+- its nodes and how fully it proves each;
+- its line count and the terms it contains;
+- its narrative weight: the highest among the duties of the items it covers.</p>
+<p>Built (2026-11-19), for the current profile:</p>
+<ul>
+<li><strong>18 model calls in about 9 minutes</strong>, in two rounds: one call per experience
+  for its role summary and compact line, then the ladder calls (a long story
+  alone, the others up to four to a call) beside one call for the skill phrases
+  and frames. The probe took 10 calls and about 41 minutes. A changed experience
+  costs its own calls only: 3 in the check.</li>
+<li>165 bullets: 138 on ladders and 27 in 13 groups, which cover all six long
+  stories (the probe: 12 in 5). Median lengths per rung 88, 144 and 228
+  characters (the probe: 80, 141, 237). Every action and result item is covered
+  by some piece (the probe missed one of 82).</li>
+<li>Each role summary states the whole of its experience's shared context in two
+  lines. No ladder bullet restates it; 82 of 138 lean on it, and code checks
+  that what a bullet leans on is stated there.</li>
+<li>Every number in a summary frame is traced by code to an item or to the dates.</li>
+<li>Model replies are parsed in code, so a reply whose JSON breaks goes back once
+  with the place it breaks. Asking for groups as a flat list, each bullet with
+  its group's number, stopped the breaks: a list of lists broke 6 of 17 calls.</li>
+<li>Code drops what the rules refuse, with the reason: a group of a short story, a
+  fourth group, a bullet shorter than its rung.</li>
+</ul>
+<h3 id="44-review">4.4 Review<a class="headerlink" href="#44-review" title="Permanent link">&para;</a></h3>
+<p>Code checks first: length against the rung, every number present in the items,
+"led" or "managed" only where an item's agency says so, no bullet made of
+context alone, group size. Then a model reviews each experience's pool against
+the profile, with minimal edits. Then the candidate reads the pool, marking
+each piece ok, taste or wrong, with a note; the marked file is the store's
+editing loop, and a marked bullet is rewritten from the note.</p>
+<p>Two rules the probe forced:</p>
+<ul>
+<li><strong>The pool review has its own prompt.</strong> v1's review, shown one story's ladder
+  alone, read the wordings and rungs as repetitions and replaced 7 of 23 bullets
+  with other stories' facts. Shown the whole experience, told that a story's
+  bullets are alternatives of which one is printed, and allowed to edit only the
+  new pieces, it behaved.</li>
+<li><strong>An edit that breaks the line limit is refused.</strong> One review edit took a
+  three-line bullet to four.</li>
+</ul>
+<p>The review edited 12% of the probe's lines, mostly exaggerations ("led" for a
+part of the work, "eliminated" for "saved"). It is not consistent across
+wordings and missed exaggerations the candidate caught, so the candidate's
+reading stays the last check. It is sized for a quarter of an hour at a time.</p>
+<p>The catalog the evaluation's judge uses stays out of this step: a generator
+tuned on its grader cannot be graded by it.</p>
+<p>Every bullet is keyed to its source items, so a profile change regenerates only
+what it touches, and a hand-edited bullet is locked.</p>
+<h3 id="45-context-and-references">4.5 Context and references<a class="headerlink" href="#45-context-and-references" title="Permanent link">&para;</a></h3>
+<p>What breaks a CV assembled from a pool is a bullet that leans on something the
+reader has not been told. In the probe, five of the seven bullets the candidate
+marked wrong at the first reading did that: "the solution" named nothing, "the
+new stack" was never said, or the context came after the claim. A bullet can
+lean on three things, and each has its own carrier:</p>
+<table>
+<thead>
+<tr>
+<th>Leans on</th>
+<th>Example</th>
+<th>Carrier</th>
+<th>Checked by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a fact of the job</td>
+<td>"the results system"</td>
+<td>the role summary, printed with every full experience</td>
+<td>code, when the pool is built</td>
+</tr>
+<tr>
+<td>an earlier point of its own story</td>
+<td>"During the port, ..."</td>
+<td>a group, printed whole and in order</td>
+<td>code, when the pool is built</td>
+</tr>
+<tr>
+<td>another story</td>
+<td>"Responsible also for ...", "On the same platform, ..."</td>
+<td>the varnish, once the order is final</td>
+<td>the varnish's guards</td>
+</tr>
+</tbody>
+</table>
+<p>Each piece lists the items it states and the items it leans on without stating
+them, keyed by item id. Code checks, when the pool is built, that a single
+bullet leans only on what the role summary states, and that a group's bullet
+leans only on that and on its group's earlier bullets. Selection does not need
+to know.</p>
+<p>Between stories, two different things happen:
+- <strong>Connectives</strong> ("also", "in parallel", "after the go-live") depend on what is
+  printed just before, which only the varnish knows. A connective is added for
+  one CV and never saved to the pool.
+- <strong>Presuppositions</strong> (one story assumes a fact another introduced) are not
+  allowed in the pool. The fact either belongs to the experience, where the role
+  summary says it, or the story states it. When the introducing story is
+  printed right before, the varnish may shorten the second to lean on it, for
+  that CV only, removing words and never adding a fact.</p>
+<p>A dependency-aware selection, where a bullet may lean on another story when
+that story is printed first, is left out for now (see
+<a href="#12-alternatives-considered">section 12</a>).</p>
+<h2 id="5-per-job-description">5. Per job description<a class="headerlink" href="#5-per-job-description" title="Permanent link">&para;</a></h2>
+<h3 id="51-allocate">5.1 Allocate<a class="headerlink" href="#51-allocate" title="Permanent link">&para;</a></h3>
+<p>One model call, about a minute. It extracts the job's requirements as
+<code>jd_evaluation</code> does today, each with its importance, and places each on the
+tree:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Container orchestration in production"</span><span class="p">,</span><span class="w"> </span><span class="nt">"importance"</span><span class="p">:</span><span class="w"> </span><span class="mi">80</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">"terms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"Kubernetes"</span><span class="p">],</span><span class="w"> </span><span class="nt">"node"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.2.1"</span><span class="p">,</span><span class="w"> </span><span class="nt">"relation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"same"</span><span class="p">}</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Relation</th>
+<th>Meaning</th>
+<th>Points on the node</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>same</code>, <code>broader</code></td>
+<td>the node is what is asked, or the job asks more generally</td>
+<td>importance</td>
+</tr>
+<tr>
+<td><code>narrower</code></td>
+<td>the job asks something more specific than the node</td>
+<td>half</td>
+</tr>
+<tr>
+<td><code>sibling</code></td>
+<td>the node is a ghost leaf (code labels this; the model is not told which leaves are ghosts)</td>
+<td>importance, on the ghost</td>
+</tr>
+<tr>
+<td><code>none</code></td>
+<td>nothing in the tree</td>
+<td>none; the requirement is reported as unmatched</td>
+</tr>
+</tbody>
+</table>
+<p>Points flow up at half per level, and what a node inherits is capped at its
+largest single contribution, so a discipline and its own skills do not count
+twice.</p>
+<p>The job's <strong>literal terms</strong> are the requirement's keywords in English, as
+<code>jd_evaluation</code> returns them, plus the job's own words when the text has them.
+The probe counted only words found in the job text, which left the selector
+blind to every requirement of a job written in Italian (six of the ten) while
+the measurement counted them. A <code>same</code> term the tree did not know comes back
+as a pending alias for the store; the probe produced 47 in ten jobs, too many
+to apply unreviewed.</p>
+<h3 id="52-select">5.2 Select<a class="headerlink" href="#52-select" title="Permanent link">&para;</a></h3>
+<p>Pure code, about two seconds. It decides what is said and how many lines it
+takes, for the whole CV at once:</p>
+<ul>
+<li>which stories, at which rung, or as a group;</li>
+<li>which experiences are shown in full, in compact form, or not at all. The
+  earliest and the most recent are always shown;</li>
+<li>the 10 skill phrases, on 2 lines, taken by the job's terms they add;</li>
+<li>the summary frame and the terms for its keyword slot.</li>
+</ul>
+<p>It starts from the two mandatory experiences in compact form and repeatedly
+takes the move with the best gain per line under the objective of
+<a href="#6-scoring-and-the-mix">section 6</a>: add a story, step one up a rung, open an
+experience with its two best slots at any rung, add one in compact form. It
+goes on with the least-loss move while one fits, so the page is filled; then
+a refill pass drops the weakest slot and runs again, keeping the result if it
+scores higher. Inside a job, the plan keeps the profile's order (story ids
+follow the duties, and a duty refers only to earlier ones); the polish's
+composition then chooses and orders the bullets so that none refers to a later
+one. The role summary cannot introduce every system a job's stories name.</p>
+<p>Each of the first three rules is a correction from the probe: a stop-at-no-gain
+rule left one CV at 31 of 71 lines; opening an experience with two one-line
+bullets kept a core experience compact in 6 of 10 CVs; and the greedy is
+path-dependent, so one job scored lower on the keyword score at a higher
+keyword weight.</p>
+<h3 id="53-render-and-fit">5.3 Render and fit<a class="headerlink" href="#53-render-and-fit" title="Permanent link">&para;</a></h3>
+<p>The plan is rendered and its pages counted. While it runs over the limit, the
+last bullet of one job is removed: of each job's last, the one that loses least
+per line freed. Bullets refer only backwards, so this breaks no reference, and
+the polish's choices survive it. The line model is in points,
+calibrated from two renders and one check of the template: the line pitch,
+the gap between items (a third of a line each), the header of a full and of a
+compact experience. In the probe it put 16 of 16 CVs on two pages at the
+first render, with one to four lines to spare.</p>
+<h3 id="54-varnish">5.4 Varnish<a class="headerlink" href="#54-varnish" title="Permanent link">&para;</a></h3>
+<p>Three model calls after the selection, before the render:</p>
+<ul>
+<li><strong>composition:</strong> per full experience, the bullets it prints from the plan's
+  slots and the stories it left out (each scored), in an order where no bullet
+  refers to a later one, in which wording, with small edits that link them; and
+  one title per experience from the titles the profile lists for that job;</li>
+<li><strong>headline and sentence:</strong> the job title under the name and the summary's one
+  sentence. The prompt aims the summary at 450 characters; code accepts 500
+  and refuses a number that neither the summary nor the experiences hold;</li>
+<li><strong>the job's words in.</strong> This is the step the probe made mandatory: selection
+  alone reached 35% literal coverage against v1's 62%. Code offers the keywords
+  of each requirement that lands on a proven or weakly proven skill and that the
+  CV does not yet name. The model replaces text in the summary first, then in
+  the bullets, under an interview defendability test: a term goes in only where
+  the bullet's facts back it. Code applies a replacement only if a bullet keeps
+  its printed lines, the summary stays within 500 characters, no number is
+  added, and every keyword it brings was offered.</li>
+</ul>
+<p>On ten development jobs literal coverage rose from 43-45% before the varnish to
+58-61% after, against v1's 62%; on the allocation's own keywords, 76-80%
+against v1's 50-54%. Every CV fitted two pages, at about 170 seconds and three
+calls per CV.</p>
+<p>The model chooses between reviewed sentences and edits only where code lets it,
+so it cannot add a number or a line. Next, code will also refuse a replacement
+that takes a job keyword out of the text it edits, or that changes the job
+title at the head of the summary.</p>
+<p>Not built, to keep the step small: a repeat check between slots, connectives
+and shortenings between stories (<a href="#45-context-and-references">section 4.5</a>),
+saved local edits, a final validation call, and the alias swap. A new sentence
+written on request was dropped.</p>
+<h3 id="55-highlight">5.5 Highlight<a class="headerlink" href="#55-highlight" title="Permanent link">&para;</a></h3>
+<p>v1's highlighter, shared by both pipelines: one model call marks the job's
+key-point terms in bold and the technical stacks in italics, and code keeps the
+original of any text whose words the model changed. For v2 the key points come
+from the allocation's English keywords (the job's own words gave an Italian job
+none). Each bullet carries the requirements it proves, with a score from how
+strongly it proves them, and the items behind it serve as the evidence; code
+strips the scores before the render. Bold goes only on whole job keywords, so
+fewer bullets are bold when fewer keywords appear (this changed v1's bold too).
+Compact lines are never marked.</p>
+<h2 id="6-scoring-and-the-mix">6. Scoring and the mix<a class="headerlink" href="#6-scoring-and-the-mix" title="Permanent link">&para;</a></h2>
+<p><strong>The keyword score</strong> is measured against everything the job asks, unmatched
+requirements included. It has two parts:</p>
+<ul>
+<li><strong>literal:</strong> a first occurrence of any of a requirement's terms counts its
+  weight in full, a second occurrence a third more;</li>
+<li><strong>proof:</strong> per node, the best piece counts in full, the next a third, the
+  next a fifth, capped at one. A compact line is a piece.</li>
+</ul>
+<p>The divisors 1, 3, 5 make covering a new requirement worth more than repeating
+one, and give each requirement a share of the CV close to its share of the job
+[2]. A sum of this shape is monotone submodular, the class for which greedy
+selection under a budget is the standard method [1].</p>
+<p><strong>The human score is the narrative score:</strong> the share of the career's years
+the CV tells. Each job counts its years, and its duties share them by points: a
+weight of 1, 2 or 3 counts 1, 3 or 9 points, and a duty's years are the job's
+years times its points over the job's points, so a job's duties add up to its
+years. A duty counts its years times the share of its action and result items
+that are printed; a compact line counts for the items it uses. Skipping a long
+experience therefore costs in proportion to its length, and, within a job,
+leaving out main work costs nine times as much as leaving out a one-off.</p>
+<p><strong>Older months weigh less:</strong> each month of a job counts half as much for every
+three years of age, in the years told and in the career's years alike. Without
+it, the two oldest jobs took about 40% of the experience lines; with it, a
+fifth, and the earliest job usually prints as one compact line.</p>
+<p>The weights are judged once per duty, on three levels, when the store is
+compiled, where the candidate can read and correct them. Nothing is judged per
+job: a model scoring on a fine scale is inconsistent from one call to the next
+[3], and v1's scores were multiples of 5 in 99.9% of cases. The points triple
+at each level because, counted as 1, 2 and 3, a one-off in a long job outweighed
+main work in a shorter one.</p>
+<p>The probe's human score had five terms (continuity, completeness, rhythm, and
+pre-scored context and success). It stayed within 0.04 across every plan and
+every mix, so the lever moved the CV little; the narrative score replaces them.</p>
+<p><strong>The mix</strong> is a table in the client's <code>cv.toml</code>, sent with each request as
+<code>pages</code> already is:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[mix]</span>
+<span class="n">ats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span><span class="w">           </span><span class="c1"># 0 = human only, 1 = keyword score only</span>
+<span class="n">literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5</span><span class="w">       </span><span class="c1"># inside the keyword score: the job's own words against proven coverage</span>
+</code></pre></div>
+<p>The weights stay internal until the evaluation shows they move the CV.</p>
+<h2 id="7-what-v2-does-without">7. What v2 does without<a class="headerlink" href="#7-what-v2-does-without" title="Permanent link">&para;</a></h2>
+<p>v1 stays, served at <code>/v1</code>. v2 has none of v1's:</p>
+<ul>
+<li><strong><code>profile_scoring</code></strong> and the <code>|3-80,7-40</code> score suffixes.</li>
+<li><strong><code>format_selection</code></strong> and the formats.</li>
+<li><strong>Per-experience writers</strong> and their validation rounds.</li>
+<li><strong>Highlight call.</strong></li>
+<li><strong><code>capped_coverage</code>.</strong></li>
+<li><strong>Two meta requirements</strong> added to every job, "success stories" and
+  "concrete examples".</li>
+</ul>
+<h2 id="8-how-v2-keeps-the-house-rules">8. How v2 keeps the house rules<a class="headerlink" href="#8-how-v2-keeps-the-house-rules" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>The pipeline is a library.</strong> Points, selection and fit are pure
+  functions of values. The store arrives with the request.</li>
+<li><strong>One server, several pipelines.</strong> v1 and v2 are packages side by side in
+  one project (<code>src/pipeline_v1</code>, <code>src/pipeline_v2</code>), each with its own
+  resources and model roles, each served under its own path behind the same
+  facade. What both use sits in <code>src/common</code>: the model layer, logging, errors,
+  the LaTeX renderer and the highlighter. v2 imports nothing
+  from v1. The 0.5 line keeps its own server.</li>
+<li><strong>No hidden global state.</strong> The mix and the page geometry are arguments.</li>
+<li><strong>Contracts.</strong> Unchanged. The store's pydantic model lives in the v2 pipeline:
+  the client stores and sends the store's files without reading them.</li>
+<li><strong>Tests.</strong> The pure functions get unit tests on hand-made values; the graph
+  test keeps the fake HTTP client inside a real <code>ModelSelector</code>; the golden
+  render stays.</li>
+</ul>
+<h2 id="9-evaluation">9. Evaluation<a class="headerlink" href="#9-evaluation" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Thorough runs decide,</strong> v1 against v2, on the same day with the same judge.
+  Literal coverage is scored on both v1's key points and v2's allocation.</li>
+<li><strong>New columns in the evaluation,</strong> checked in code on any CV: pages, the
+  career span shown, the headline against the job's title, the summary's length,
+  and bullets that refer to another bullet outside a group. Each is a feature
+  that changed when v1 replaced the pipeline before it: CVs showing the whole
+  career fell from 62% to 6%, headlines naming the job's kind of role from 66%
+  to 36%, the summary grew from 528 to 734 characters, and bullets referring to
+  another rose from 0.2% to 1.9%. v2 passes most of these by construction, so
+  they guard against regressions more than they measure progress. The last one
+  also says whether the checks of <a href="#45-context-and-references">section 4.5</a> are
+  enough.</li>
+<li><strong>The human score has no ground truth</strong> beyond the candidate's own reading.
+  Three checks, in this order: blind pairwise reading of CVs built at different
+  mixes, which also sets the weights; a direction check on CVs already sent,
+  where the score should rate the set that did better in practice above the
+  other; and the evaluation's readability and style columns, which stay
+  independent of the pipeline. The probe could do only three blind pairs (v2
+  preferred in two); the rest is the evaluation's, in short sessions.</li>
+<li><strong>Similarity between the CV and the job</strong> stays an evaluation column. In the
+  probe, the tree's top-eight stories fell four to eight inside the stories the
+  selector chose, an embedding ranking three to seven; nothing says which is
+  right until the candidate's own picks are measured.</li>
+</ul>
+<h2 id="10-risks">10. Risks<a class="headerlink" href="#10-risks" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>An unusual job gets generic bullets: the pool cannot reframe a story for a requirement nobody anticipated</td>
+<td>the polish's choice among stored wordings and its job terms; the unmatched report shows when it happens</td>
+</tr>
+<tr>
+<td>The job's words stay out: selection alone reached 35% literal coverage</td>
+<td>the varnish's edits are on the critical path, and the evaluation scores coverage on both key-point sets</td>
+</tr>
+<tr>
+<td>The tree's abstract nodes do not discriminate, and a leaf on one weak item flips</td>
+<td>split along the distinctions jobs make; <code>proven</code> by two calls or the candidate's check</td>
+</tr>
+<tr>
+<td>A wrong alias prints a false claim</td>
+<td>two alias lists per node; only "same thing" may replace words, and a new alias waits for review</td>
+</tr>
+<tr>
+<td>The review misses what the candidate catches</td>
+<td>the candidate's reading is the last check, sized for a quarter of an hour</td>
+</tr>
+<tr>
+<td>The scores are proxies with no outcome data behind them</td>
+<td>few weights, kept internal until the evaluation shows they move the CV</td>
+</tr>
+<tr>
+<td>A client's own template has its own geometry</td>
+<td>the line constants are calibrated from the template; the render stays the judge</td>
+</tr>
+</tbody>
+</table>
+<h2 id="11-plan-of-work">11. Plan of work<a class="headerlink" href="#11-plan-of-work" title="Permanent link">&para;</a></h2>
+<p><strong>The probe ran first, with no repository change,</strong> in a git-ignored scratch
+folder on the private data: items, tree and pool for one real profile; ten
+held-out job descriptions allocated twice, selected, varnished and rendered;
+the candidate reviewed the items and tree, the whole pool, and three blind
+pairs against v1.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Criterion</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G1</td>
+<td>the candidate marks at most 5% of the pool's bullets as wrong</td>
+<td><strong>pass</strong>: 4.0% at the first reading, 1.2% after one rewrite</td>
+</tr>
+<tr>
+<td>G2</td>
+<td>two allocations share at least 80% of their points; at most 10% of importance lands nowhere</td>
+<td><strong>pass</strong>: 83%; 0.3% nowhere</td>
+</tr>
+<tr>
+<td>G3</td>
+<td>keyword coverage at least v1's, with a summary under 500 characters and 10 skills on 2 lines</td>
+<td><strong>fail</strong>: 35% against 62%; the summary and skills limits held</td>
+</tr>
+<tr>
+<td>G4</td>
+<td>two pages with the earliest and the most recent job; the first render fits in 8 of 10</td>
+<td><strong>pass</strong>: 16 of 16 at the first render</td>
+</tr>
+<tr>
+<td>G5</td>
+<td>the candidate prefers the new CV in at least 7 of 10 blind pairs</td>
+<td><strong>direction only</strong>: 2 of 3; ten pairs were too many to read</td>
+</tr>
+</tbody>
+</table>
+<p>Go, on four conditions: the varnish puts the job's words in (G3); the selector
+fills the page, opens experiences with their best slots and counts completeness
+over the whole career; the pool review has its own prompt; context sits at the
+experience level.</p>
+<p>Then the build, one sub-plan each:</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Code</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Repository layout</td>
+<td>R</td>
+<td>done: one project, with <code>src/pipeline_v1</code> (the former pipeline package), <code>src/cv_server</code>, the contracts submodule in <code>src/contracts</code>, <code>resources/v1</code>, <code>resources/docker</code> and <code>terraform/</code>; v1 unchanged</td>
+</tr>
+<tr>
+<td>Profile breakdown</td>
+<td>S1</td>
+<td>done: the decomposition prompt, the source check, item types; shared context at the experience level; stories by piece of work, with anchors; narrative weights; code in <code>src/pipeline_v2</code></td>
+</tr>
+<tr>
+<td>Skill tree</td>
+<td>S2</td>
+<td>done: the market list in code (the test set's copies left out), the shape and attach prompts, leaf status in code (proven, weak, ghost), two term lists per node, ghost leaves, the held-out test</td>
+</tr>
+<tr>
+<td>Bullet writing</td>
+<td>S3</td>
+<td>done: role summary first, ladder, wordings, up to three group views per long story, what each piece leans on and its check, compact lines, skill phrases on strong leaves, summary frames with checks</td>
+</tr>
+<tr>
+<td>Bullet review</td>
+<td>S4</td>
+<td>done: one model review per experience against the profile, with an interview defendability test; an edit may not add printed lines, and a bullet it shortens moves down a rung</td>
+</tr>
+<tr>
+<td>Shared server</td>
+<td>H</td>
+<td>done: each pipeline under its own path, and the client's server URL names it; a <code>common</code> package with the model layer, the renderer, the review and the highlighter. The 0.5 line stays on its own server</td>
+</tr>
+<tr>
+<td>Job reading</td>
+<td>S5</td>
+<td>done: one call places the job's requirements on the tree (v1's job evaluation prompt plus placement); keywords are the literal terms; ten dev jobs share 81% of their points with the earlier check's runs, 80% of importance lands on proven skills, none nowhere</td>
+</tr>
+<tr>
+<td>Content choice</td>
+<td>S6</td>
+<td>done: code picks the slots for the page; on ten dev jobs every plan fills the page and shows every job; the human score is the share of career years told</td>
+</tr>
+<tr>
+<td>Page layout</td>
+<td>S7</td>
+<td>done: the v2 template with a compact form, a document built from the plan, render and fit; the line model recalibrated; ten dev CVs fit two pages at the first render</td>
+</tr>
+<tr>
+<td>Polish</td>
+<td>S8</td>
+<td>done: three calls after the plan — a stored wording per slot and a title per experience, the headline and the summary's sentence, the job's missing terms into the summary and bullets under code's guards; older months weigh less in the selection (half-life three years). On ten dev jobs literal coverage goes from 43-45% to 58-61% (v1 62%); connectives, saved edits and the repeat check cut</td>
+</tr>
+<tr>
+<td>Highlight</td>
+<td>S9</td>
+<td>done: a guard so a terms-in replacement keeps the job terms and the job title it touches; the shared highlighter, unchanged, fed the allocation's requirements, each bullet's proof scores and the items behind it. On ten dev jobs all on 2 pages, about 80 s per CV; the shared prompt tuned at the gate so the bold is whole job keywords only (2 skills, 1-5 bullet phrases)</td>
+</tr>
+<tr>
+<td>Serving and release 2.0.0</td>
+<td>S10</td>
+<td>built 2026-11-20, release pending: <code>/v2</code> on the server (<code>/v2/jd/*</code> and <code>/v2/letter</code> run v1); the store built from the client's cache, missing files first; the market list's corpus part shipped as a resource; v1 stays at <code>/v1</code></td>
+</tr>
+<tr>
+<td>Real run</td>
+<td>new</td>
+<td>one CV from the real profile and a new job, from an empty cache, read step by step</td>
+</tr>
+<tr>
+<td>Evaluation</td>
+<td>S11</td>
+<td>the new columns; a thorough run of v1 against v2; the reading checks in short sessions</td>
+</tr>
+</tbody>
+</table>
+<p>Order: as listed, with Shared server before Bullet review. The store needs no new
+endpoint: protocol 2 already carries the cache items it travels as. What H adds
+to the wire is the pipeline's path in the client's server section.</p>
+<h2 id="12-alternatives-considered">12. Alternatives considered<a class="headerlink" href="#12-alternatives-considered" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Writing each CV from compiled facts</strong> (the draft of 2026-11-10). It fixed
+  the units but kept a writer and a verifier in every CV, which is where v1's
+  errors and cost are. Kept from it: facts and stories, the diminishing
+  coverage objective, header costs instead of formats, highlight in code, and
+  the fit rule.</li>
+<li><strong>Validating every bullet per job.</strong> The probe showed it is not needed: 4%
+  of pool bullets were wrong at the candidate's first reading, and the review
+  loop plus the candidate's marks brought it to about 1%.</li>
+<li><strong>A tree per job description, matched to the candidate's.</strong> Aligning two
+  trees is noisier than placing each requirement on a fixed one, and
+  <code>jd_evaluation</code> already overlaps with itself by only about half from run to
+  run.</li>
+<li><strong>Similarity of bullets to the job as the selector.</strong> It knows no importance,
+  says "similar" rather than "proves", and has no diminishing returns, so the
+  bullets nearest the job are near-duplicates of each other. It is also what the
+  evaluation measures.</li>
+<li><strong>Swapping aliases for the job's words in code.</strong> It never fired in the probe
+  (0 swaps in 16 CVs), and with the aliases as the model wrote them it would
+  have swapped one product for another. The model's guarded edits do the job.</li>
+<li><strong>A model choosing the content.</strong> <code>format_selection</code> chose the same format in
+  about 96% of its decisions until its prompt was rebalanced.</li>
+<li><strong>Code choosing the wording.</strong> Code cannot judge how a page reads.</li>
+<li><strong>A long skills list as the keyword carrier.</strong> Rejected for the reader: 10
+  items on 2 lines.</li>
+<li><strong>A summary written whole per job, or pre-written whole.</strong> The first is what
+  gets stuffed; the second carries none of the job's words. Frames with slots
+  sit between them, and the varnish edits the job's words into the frame.</li>
+<li><strong>A hard rule against career gaps.</strong> An irrelevant job may be left out; it
+  costs in proportion to its length.</li>
+<li><strong>Selection that follows dependencies between stories.</strong> Each piece would
+  declare what it needs said before it, and selection would print a bullet only
+  after the story it leans on, ordering stories and dropping dependents with
+  what they depend on. It would trust the model to label every dependency,
+  which is what the probe's writer missed, and it makes selection, fit and
+  ordering interdependent. Left out until the evaluation still finds dead
+  references with the checks of <a href="#45-context-and-references">section 4.5</a> and
+  the varnish in place.</li>
+<li><strong>One group per aspect of a story.</strong> Groups instead give different views of
+  the whole story, each mixing its sides.</li>
+<li><strong>Context and success scored per bullet.</strong> They hardly moved the human score
+  in the probe; the narrative weights replace them.</li>
+<li><strong>A separate deployment per pipeline version.</strong> One server serves every
+  pipeline under its own path.</li>
+</ul>
+<h2 id="13-open-questions">13. Open questions<a class="headerlink" href="#13-open-questions" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Allocation.</strong> One call that extracts and places (the probe's choice), or two?</li>
+<li><strong>Similarity.</strong> A selection term with its own weight, a check on the
+   allocation, or evaluation only?</li>
+<li><strong>Geometry.</strong> Constants in the client's configuration, or measured from a
+   calibration render of the template (the probe's choice)?</li>
+<li><strong>Story size.</strong> About ten action and result items at most, split by phase
+   above that, so three group views can tell a story? In S1 none of the real
+   profile's 26 stories came near ten.</li>
+</ol>
+<h2 id="appendix-a-how-the-numbers-were-measured">Appendix A: how the numbers were measured<a class="headerlink" href="#appendix-a-how-the-numbers-were-measured" title="Permanent link">&para;</a></h2>
+<p>All from the artifacts each v1 run stores under <code>steps/</code>, the rendered PDFs and
+the job descriptions in the private data folder; the probe's numbers from its
+own outputs in a git-ignored folder. The scripts were throwaway; these are the
+counting rules.</p>
+<ul>
+<li><strong>Selection.</strong> A CV duty maps to the profile duty of the same experience with
+  the same score suffix. A duty's rate is the share of runs that show it, over
+  duties present in at least 10 runs.</li>
+<li><strong>Keywords.</strong> For each run, the requirements of <code>key_points.json</code> without the
+  two meta items. A requirement counts when one of its keywords occurs as a
+  whole word, ignoring case, in the text measured: the profile, the final CV,
+  or the CV without its summary. Shares are weighted by importance and averaged
+  over runs. The probe scored its CVs by the same rule, on v1's key points of
+  the same ten jobs and on its own allocation's keywords.</li>
+<li><strong>Lines.</strong> Each bullet of the final document is matched to its lines in the
+  PDF's text layout. The model <code>ceil(characters / 98)</code> is compared with the
+  count. The probe's line model in points was calibrated from the text
+  positions of two renders.</li>
+<li><strong>Cost.</strong> The last line of each run's log; for the probe, one line per model
+  request.</li>
+<li><strong>Vocabulary.</strong> Keywords of all requirements, lower-cased.</li>
+<li><strong>Unproven demand.</strong> The importance of requirements whose best duty score is
+  under 40, over the run's total; for the probe, the importance landing on
+  ghost leaves or on no node.</li>
+<li><strong>Literal against judged matches.</strong> For each match scored 60 or more, whether
+  any keyword of its requirement occurs in the duty.</li>
+<li><strong>Market terms.</strong> Regular expressions, in English and Italian, over the unique
+  job descriptions.</li>
+<li><strong>Pool quality.</strong> The candidate marked every bullet ok, taste or wrong; the
+  wrong share is over all bullets. Review edits are counted per line.</li>
+<li><strong>Allocation consistency.</strong> The two runs' point vectors, after the flow
+  upward, normalized; the shared mass is the sum of the minimum per node.</li>
+</ul>
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<ol>
+<li>H. Lin, J. Bilmes. <a href="https://preview.aclanthology.org/fix_video/P11-1052.pdf">A Class of Submodular Functions for Document Summarization</a>. ACL 2011.</li>
+<li>M. Brill, J.-F. Laslier, P. Skowron. <a href="https://arxiv.org/abs/1611.08691v2">Multiwinner Approval Rules as Apportionment Methods</a>. AAAI 2017; Journal of Theoretical Politics 30(3), 2018.</li>
+<li>R. Stureborg, D. Alikaniotis, Y. Suhara. <a href="https://arxiv.org/abs/2405.01724v1">Large Language Models are Inconsistent and Biased Evaluators</a>. 2024.</li>
+</ol>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+  
+
+
+<h4>Cookie consent</h4>
+<p>We use cookies to recognize your repeated visits and preferences, as well as to measure the effectiveness of our documentation and whether users find what they're searching for. With your consent, you're helping us to make our documentation better.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="github" checked>
+      <span class="task-list-indicator"></span>
+      GitHub
+    </label>
+  </li>
+
+      
+    
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">Accept</button>
+    
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">Manage settings</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.sections", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "provider": "mike"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
