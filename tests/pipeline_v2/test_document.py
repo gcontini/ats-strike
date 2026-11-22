@@ -100,19 +100,20 @@ def test_a_summary_over_the_limit_is_refused(parts):
 
 
 # --- the fit step and the render --------------------------------------------------------------------
-def test_a_fit_step_steps_a_story_down_before_removing_one(parts):
+def test_a_fit_step_removes_an_experience_last_bullet_and_never_steps_one_down(parts):
     ctx, _ = parts
-    draft = {"forms": {0: "full", 2: "full"}, "slots": {"e0.s01": 2, "e0.s02": 1, "e2.s01": 1, "e2.s02": 1}}
-    assert sel.fit(draft, ctx)["slots"] == {"e0.s01": 1, "e0.s02": 1, "e2.s01": 1, "e2.s02": 1}
-    # nothing left to step down: a removal, and an experience left with one bullet goes compact
-    after = sel.fit(sel.fit(draft, ctx), ctx)
-    assert len(after["slots"]) < 4 and "compact" in after["forms"].values()
+    draft = {"forms": {0: "full", 2: "full"}, "slots": {"e0.s02": 1, "e0.s01": 2, "e2.s01": 1, "e2.s02": 1}}
+    # e0's last bullet would leave the latest job one: e2's goes, and e2, left with one, goes compact
+    after = sel.fit(draft, ctx)
+    assert after == {"forms": {0: "full", 2: "compact"}, "slots": {"e0.s02": 1, "e0.s01": 2}}
+    assert list(after["slots"]) == ["e0.s02", "e0.s01"]
+    assert sel.fit(after, ctx) is None  # the latest job keeps its 2 bullets
 
 
 @needs_latex
 def test_a_small_document_renders_and_fits(parts, tmp_path):
-    """Everything full at rung 3 runs over one page; with a one-page limit the fit steps it down
-    until it fits."""
+    """Everything full at rung 3 runs over one page; with a one-page limit the fit removes last
+    bullets until it fits."""
     ctx, pool = parts
     data = json.loads((EXAMPLE_CANDIDATE / "candidate_data.json").read_text())
     renderer = CVRenderer(
@@ -125,6 +126,6 @@ def test_a_small_document_renders_and_fits(parts, tmp_path):
     plan = plan_of(ctx, {0: "full", 1: "full", 2: "compact"}, slots)
     out = render(plan, ctx, PROFILE, pool, data, renderer)
     assert out.first_pages == 2 and out.result.pages == 1
-    assert out.steps and out.steps[0].split(": ", 1)[1].startswith("down")
+    assert out.steps and out.steps[0].split(": ", 1)[1].startswith("removed")
     assert room_left(out.result.pdf, data["location"], sel.PITCH_PT) >= 0
     assert out.document["name"] == data["name"]  # the candidate's data over the document

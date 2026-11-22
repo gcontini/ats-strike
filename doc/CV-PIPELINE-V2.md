@@ -24,9 +24,10 @@ compiled into a **store**: a tree of competences named in the market's words,
 and a pool of pre-written, reviewed bullets, each tagged with what it proves
 and how many lines it takes. For each job description, one model call places
 the job's requirements on the tree, and code selects the CV: which stories, at
-what length, in which experiences. A model then chooses between stored
-wordings, writes the headline and one summary sentence, and edits the job's
-own words in where the facts support them.
+what length, in which experiences. A model then composes each job's bullets
+from the scored candidates (which, in which order and wording, with small edits
+that link them), writes the headline and one summary sentence, and edits the
+job's own words in where the facts support them.
 
 The balance between what a keyword search wants and what a reader wants is a
 set of weights sent with each request, so it can change without a redeploy.
@@ -96,8 +97,8 @@ flowchart TD
     START --> ALLOC["<b>allocate</b><br/>the job's requirements onto the tree"]
     ALLOC --> SEL["select<br/>(code) content and length"]
     SEL --> FIT{"over the page limit?"}
-    FIT -->|"yes"| DOWN["step a story down a rung,<br/>then remove"] --> FIT
-    FIT -->|"no"| VAR["<b>varnish</b><br/>wording, the job's words,<br/>headline"]
+    FIT -->|"yes"| DOWN["remove a job's<br/>last bullet"] --> FIT
+    FIT -->|"no"| VAR["<b>varnish</b><br/>composition, the job's words,<br/>headline"]
     VAR --> HL["highlight<br/>(code)"]
     HL --> FIN(["result"])
 ```
@@ -132,11 +133,11 @@ to its `steps/` folder.
 | 4 | Bullet review | once | model, one review per experience | checks every piece against the profile with an interview test, edits through a replace tool; code refuses an edit that adds a line | `pool.json` edited, `review.md` | 2 min | different faults found each run |
 | 5 | Job reading | each job | model, one call | the job's requirements with importance and English keywords, each placed on the skill tree; code says where it landed (proven, weak, ghost) and spreads points up the tree | `allocation.json`, `allocation.md` | 80 s | a requirement on the wrong skill, loosest on jobs far from the profile |
 | 6 | Content choice | each job | code | fills about 71 lines: which jobs print in full or as one compact line, which stories at what length, ten skill phrases, the summary frame and its terms, the headline. Score: half job keywords (printed words and skill proof), half narrative (the share of career years told; main duties count nine times a one-off; a month weighs half for every three years of age). The earliest and latest jobs always print | `plan.json`, `plan.md` | 2 s | a job compact that you want in full; room spent on old jobs; bullet order |
-| 7 | Polish: wording pick | each job | model | one of the stored wordings per bullet, and one title per job from the titles the profile lists | `varnish.md` | 70-130 s | a wording that drops a fact |
+| 7 | Polish: composition | each job | model; code guards | per full job, from the plan's slots and the stories it left out (each scored), the bullets it prints, in which order and wording, with small edits that link them (references, no repeated names); one title per job from the titles the profile lists. Code keeps a job's reply only within the plan's lines, one bullet per story, at least two; an edit only when it keeps the bullet's lines and job terms | `varnish.md` (Composition) | 70-130 s | a reference to a later bullet; an edit that changes a fact |
 | 8 | Polish: headline and sentence | each job | model | the title under the name and the summary's one written sentence, aimed at 450 characters; code accepts 500 and refuses a number the profile does not hold | `varnish.md` | 5-17 s | a title the profile does not license; a generic sentence |
 | 9 | Polish: job terms in | each job | model; code guards | code offers the job keywords the CV lacks, only for requirements the profile proves; the model rewrites the summary first, then bullets; code refuses an edit that adds a line or a number, brings a term not offered, removes a job term or changes the title | `varnish.md` (applied and refused) | 30-120 s | terms pasted in as labels ("did Project Monitoring of ...") |
 | 10 | Highlight | each job | model, v2's own copy of v1's prompt (split 2026-11-20, so either can be tuned alone) | bolds two skills and whole job keywords in the bullets, italicises stacks; code keeps the original of any text whose words changed | `varnish.md` (Highlight) | 80 s | compact lines never marked; a bold you would not pick |
-| 11 | Page layout | each job | code and LaTeX | builds the document and renders it; over two pages, shortens a story by one length or removes one, and renders again | `cv.pdf`, `cv.json`, `cv.tex`, `varnish.json` | seconds | a shortened bullet prints its plain stored wording, without polish or bold |
+| 11 | Page layout | each job | code and LaTeX | builds the document and renders it; over two pages, removes the last bullet of one job (bullets refer only backwards, so no reference breaks), and renders again | `cv.pdf`, `cv.json`, `cv.tex`, `varnish.json` | seconds | a strong last bullet removed |
 
 ## 4. The store: once per profile
 
@@ -458,8 +459,10 @@ takes the move with the best gain per line under the objective of
 experience with its two best slots at any rung, add one in compact form. It
 goes on with the least-loss move while one fits, so the page is filled; then
 a refill pass drops the weakest slot and runs again, keeping the result if it
-scores higher. Inside a job, bullets go most relevant first. The role summary
-introduces the job's system, so no story has to come first to explain it.
+scores higher. Inside a job, the plan keeps the profile's order (story ids
+follow the duties, and a duty refers only to earlier ones); the polish's
+composition then chooses and orders the bullets so that none refers to a later
+one. The role summary cannot introduce every system a job's stories name.
 
 Each of the first three rules is a correction from the probe: a stop-at-no-gain
 rule left one CV at 31 of 71 lines; opening an experience with two one-line
@@ -469,9 +472,10 @@ keyword weight.
 
 ### 5.3 Render and fit
 
-The plan is rendered and its pages counted. While it runs over the limit, a
-story steps down a rung, or a group becomes its single bullet; only when no
-story can step down is something removed. The line model is in points,
+The plan is rendered and its pages counted. While it runs over the limit, the
+last bullet of one job is removed: of each job's last, the one that loses least
+per line freed. Bullets refer only backwards, so this breaks no reference, and
+the polish's choices survive it. The line model is in points,
 calibrated from two renders and one check of the template: the line pitch,
 the gap between items (a third of a line each), the header of a full and of a
 compact experience. In the probe it put 16 of 16 CVs on two pages at the
@@ -481,8 +485,10 @@ first render, with one to four lines to spare.
 
 Three model calls after the selection, before the render:
 
-- **pick:** one stored wording per slot, and one title per experience from the
-  titles the profile lists for that job;
+- **composition:** per full experience, the bullets it prints from the plan's
+  slots and the stories it left out (each scored), in an order where no bullet
+  refers to a later one, in which wording, with small edits that link them; and
+  one title per experience from the titles the profile lists for that job;
 - **headline and sentence:** the job title under the name and the summary's one
   sentence. The prompt aims the summary at 450 characters; code accepts 500
   and refuses a number that neither the summary nor the experiences hold;

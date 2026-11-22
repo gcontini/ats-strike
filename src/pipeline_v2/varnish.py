@@ -1,8 +1,14 @@
 """The varnish for one job (step 8): three calls on ``varnish``, after the plan and before the render.
 
-1. **Pick** (``sys_prompt_varnish_pick.txt``): one wording per ladder slot, and one title per
-   experience among the titles the profile lists for that job. A pick the slot or the job does not
-   have is dropped: the slot prints wording ``a``, the experience its first title.
+1. **Compose** (``sys_prompt_varnish_compose.txt``): per full experience, which of its candidates
+   (:func:`~.select.candidates`: the plan's slots and the stories it left out, each scored) print,
+   in which order and wording, with small edits that link the bullets; and one title per experience
+   among the titles the profile lists for that job. Code keeps an experience's reply only when every
+   id is one of its candidates, one per story, at least 2 bullets, within the plan's lines for it;
+   otherwise the experience prints the plan's slots in profile order, wording ``a``. An edit applies
+   only when the bullet keeps its printed lines and every job term it held. A title the job does not
+   have is dropped: the experience prints its first. The result is a new plan
+   (:func:`~.select.composed`), which the rest of the CV prints.
 2. **Headline** (``sys_prompt_varnish_headline.txt``): the job title under the name (the plan's,
    when it has one), the summary's ``<<keywords>>`` (at most :data:`KEYWORDS`) and its
    ``<<sentence>>``. The prompt states :data:`SUMMARY_SOFT` characters for the whole summary. Code refuses the sentence when the summary then
@@ -12,21 +18,21 @@
 3. **Terms in** (``sys_prompt_varnish_terms.txt``): code offers the job's terms the CV lacks: the
    keywords of each requirement landed on a proven or weak node of which the CV prints none yet
    (:func:`~.terms.has_term`), most important requirement first. The model returns replacements
-   ``{target, old, new}`` in the bullets, each bullet shown with the facts it rests on (its ``uses``
-   items); the summary is never edited. The prompt alone states that a replacement must read
-   fluently, with the case of the text around it. Code applies one only when the bullet keeps its
-   printed lines, every job term it adds is an offered one (at least one) and it takes out no job
-   term the bullet held. The rest are listed with the reason.
+   ``{target, old, new}`` in the bullets, each bullet as the composition left it and shown with the
+   facts it rests on (its ``uses`` items); the summary is never edited. The prompt alone states that
+   a replacement must read fluently, with the case of the text around it. Code applies one only
+   when the bullet keeps its printed lines, every job term it adds is an offered one (at least one)
+   and it takes out no job term the bullet held. The rest are listed with the reason.
 
 Each reply is JSON taken as text (:func:`~.pool.json_object`); one that does not parse goes back
-once with the fault, then fails. The result is a :class:`Varnish`, which
-:func:`~.document.document` prints over the plan.
+once with the fault, then fails. The result is the composed plan and a
+:class:`Varnish`, which :func:`~.document.document` prints over it.
 """
 
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
 from pydantic import BaseModel
 
@@ -38,7 +44,7 @@ from .allocate import Allocation
 from .document import SUMMARY_MAX, _title, document, printed, summary
 from .pool import _validated, json_object
 from .pool_store import BULLET_LINE, Bullet, Pool, ladder_and_group_bullets, lines, numbers
-from .select import Plan
+from .select import Candidate, Context, Plan, RungKey, candidates, composed
 from .store import Items, _Strict
 from .terms import has_term
 
@@ -56,8 +62,15 @@ LETTERS = "abcdefghij"
 
 
 # --- the replies ---------------------------------------------------------------------------------
-class PickReply(BaseModel):
-    picks: Dict[str, str] = {}  # story -> wording letter
+class Replacement(BaseModel):
+    target: str  # a bullet id
+    old: str
+    new: str
+
+
+class ComposeReply(BaseModel):
+    experiences: Dict[str, List[str]] = {}  # "e0" -> the wording and group ids it prints, in order
+    edits: List[Replacement] = []
     titles: Dict[str, str] = {}  # "e0" -> title letter
 
 
@@ -65,12 +78,6 @@ class HeadlineReply(BaseModel):
     job_title: str = ""
     keywords: List[str] = []
     sentence: str = ""
-
-
-class Replacement(BaseModel):
-    target: str  # a bullet id
-    old: str
-    new: str
 
 
 class TermsReply(BaseModel):
@@ -88,12 +95,15 @@ class Refused(_Strict):
 class Varnish(_Strict):
     picks: Dict[str, str] = {}  # story -> the bullet id a ladder slot prints
     titles: Dict[int, str] = {}  # experience -> the title it prints
+    kept: Dict[int, str] = {}  # experience -> why it prints the plan's slots, not the reply's
+    edits: List[Replacement] = []  # the composition's edits applied
+    edits_refused: List[Refused] = []
     headline: str = ""  # "" = the document's fallback
     keywords: List[str] = []  # the summary's <<keywords>>, at most KEYWORDS
     sentence: str = ""  # the summary's sentence, as printed ("" when refused)
     sentence_refused: str = ""  # the model's sentence and why it is not printed
     offered: List[str] = []  # the terms offered, most important first
-    texts: Dict[str, str] = {}  # bullet ids -> their text after the replacements
+    texts: Dict[str, str] = {}  # bullet ids -> their text after the edits and the replacements
     applied: List[Replacement] = []
     refused: List[Refused] = []
 
@@ -140,43 +150,97 @@ def sentence_fault(full: str, sentence: str, rest: str, experiences: str) -> str
     return f"the number {', '.join(unknown)} is in neither the summary nor the experiences" if unknown else ""
 
 
+def chosen(
+    ids: Sequence[str], options: Sequence[Candidate], budget: int
+) -> Tuple[List[Tuple[str, RungKey]], Dict[str, str], str]:
+    """The (story, rung) slots, in order, and the wording picks (story -> wording id) that a reply's
+    ids name for one experience, with "" as the fault; or nothing, with why they are refused: an id
+    that is no candidate, two of one story, fewer than 2 bullets, or more lines than ``budget``."""
+    named: Dict[str, Tuple[Candidate, str]] = {c.id: (c, "") for c in options if isinstance(c.rung, str)}
+    named.update({b: (c, b) for c in options if not isinstance(c.rung, str) for b in c.bullets})
+    taken: List[Tuple[Candidate, str]] = []
+    for i in ids:
+        if i not in named:
+            return [], {}, f"{i} is not a candidate"
+        if named[i][0].story in {c.story for c, _ in taken}:
+            return [], {}, f"two of {named[i][0].story}"
+        taken.append(named[i])
+    bullets = sum(len(c.bullets) if isinstance(c.rung, str) else 1 for c, _ in taken)
+    used = sum(c.lines for c, _ in taken)
+    if bullets < 2:
+        return [], {}, f"{bullets} bullet(s), fewer than 2"
+    if used > budget:
+        return [], {}, f"{used} lines, over {budget}"
+    return [(c.story, c.rung) for c, _ in taken], {c.story: w for c, w in taken if w}, ""
+
+
+def _edited(
+    r: Replacement, current: Mapping[str, str], texts: Mapping[str, str], terms: Sequence[str]
+) -> Tuple[str, str]:
+    """The bullet after ``r`` and why it is refused, "" when it is not: not a printed bullet, its
+    old text not found, a job term (``terms``) taken out, or more printed lines than in ``texts``
+    (the bullets as they came)."""
+    before = current.get(r.target)
+    if before is None:
+        return "", "not a printed bullet"
+    if not r.old or r.old not in before:
+        return "", "old text not found"
+    after = before.replace(r.old, r.new, 1)
+    removed = [t for t in terms if has_term(t, before) and not has_term(t, after)]
+    if removed:
+        return after, f"removes {', '.join(removed)}"
+    if lines(after) > lines(texts[r.target]):
+        return after, f"{lines(after)} lines, was {lines(texts[r.target])}"
+    return after, ""
+
+
+def apply_edits(
+    replacements: Sequence[Replacement], texts: Mapping[str, str], terms: Sequence[str]
+) -> Tuple[Dict[str, str], List[Replacement], List[Refused]]:
+    """The composition's edits applied to ``texts`` (the printed bullets, by id) in order, each one
+    only when its old text is in the bullet, the bullet keeps every job term (``terms``) it held and
+    its printed lines. Returns the texts that changed, the edits applied and those refused, with the
+    reason."""
+    current = dict(texts)
+    applied: List[Replacement] = []
+    refused: List[Refused] = []
+    for r in replacements:
+        after, reason = _edited(r, current, texts, terms)
+        if reason:
+            refused.append(Refused(target=r.target, old=r.old, new=r.new, reason=reason))
+            continue
+        current[r.target] = after
+        applied.append(r)
+    return {k: v for k, v in current.items() if v != texts[k]}, applied, refused
+
+
 def apply_terms(
     replacements: Sequence[Replacement],
     texts: Mapping[str, str],
     offered: Sequence[str],
     terms: Sequence[str],
 ) -> Tuple[Dict[str, str], List[Replacement], List[Refused]]:
-    """The replacements applied to ``texts`` (the printed bullets, by id) in order, each one only
-    when its old text is in the bullet, the bullet keeps every job term (``terms``) it held, it adds
-    at least one job term and only offered ones, and the bullet keeps its printed lines. Returns the texts that changed, the replacements applied and
-    those refused, with the reason."""
+    """The replacements applied as :func:`apply_edits` applies the edits, each one also only when it
+    adds at least one job term and only offered ones. Returns the texts that changed, the
+    replacements applied and those refused, with the reason."""
     current = dict(texts)
     allowed = {t.lower() for t in offered}
     applied: List[Replacement] = []
     refused: List[Refused] = []
     for r in replacements:
-        before = current.get(r.target)
-        after = before.replace(r.old, r.new, 1) if before is not None and r.old else ""
-        added = [t for t in terms if has_term(t, after) and not has_term(t, before or "")]
-        removed = [t for t in terms if has_term(t, before or "") and not has_term(t, after)]
-        foreign = [t for t in added if t.lower() not in allowed]
-        if before is None:
-            reason = "not a printed bullet"
-        elif not r.old or r.old not in before:
-            reason = "old text not found"
-        elif removed:
-            reason = f"removes {', '.join(removed)}"
-        elif not added:
-            reason = "adds no offered term"
-        elif foreign:
-            reason = f"adds {', '.join(foreign)}, not offered"
-        elif lines(after) > lines(texts[r.target]):
-            reason = f"{lines(after)} lines, was {lines(texts[r.target])}"
-        else:
-            current[r.target] = after
-            applied.append(r)
+        after, reason = _edited(r, current, texts, terms)
+        if not reason:
+            added = [t for t in terms if has_term(t, after) and not has_term(t, current[r.target])]
+            foreign = [t for t in added if t.lower() not in allowed]
+            if not added:
+                reason = "adds no offered term"
+            elif foreign:
+                reason = f"adds {', '.join(foreign)}, not offered"
+        if reason:
+            refused.append(Refused(target=r.target, old=r.old, new=r.new, reason=reason))
             continue
-        refused.append(Refused(target=r.target, old=r.old, new=r.new, reason=reason))
+        current[r.target] = after
+        applied.append(r)
     return {k: v for k, v in current.items() if v != texts[k]}, applied, refused
 
 
@@ -184,9 +248,9 @@ def apply_terms(
 class Varnisher:
     """The three varnish calls for one job's plan."""
 
-    def __init__(self, *, llm: ModelSelector, pick_prompt: str, headline_prompt: str, terms_prompt: str) -> None:
+    def __init__(self, *, llm: ModelSelector, compose_prompt: str, headline_prompt: str, terms_prompt: str) -> None:
         self.llm = llm
-        self.pick_prompt = pick_prompt
+        self.compose_prompt = compose_prompt
         self.headline_prompt = headline_prompt
         self.terms_prompt = terms_prompt
         #: Every model call of every varnish, failed ones included.
@@ -195,20 +259,22 @@ class Varnisher:
     def varnish(
         self,
         plan: Plan,
+        ctx: Context,
         profile: Mapping[str, Any],
         pool: Pool,
         items: Items,
         allocation: Allocation,
         data: Mapping[str, Any],
-    ) -> Varnish:
-        """Pick, headline and sentence, terms in. ``data`` is the candidate's own data the render
-        lays over the document (languages count as printed). Raises :class:`ModelOutputError` when
-        a reply does not parse twice."""
+    ) -> Tuple[Plan, Varnish]:
+        """Compose, headline and sentence, terms in: the composed plan and its varnish. ``ctx`` is
+        the selection's context of ``plan``; ``data`` is the candidate's own data the render lays over
+        the document (languages count as printed). Raises :class:`ModelOutputError` when a reply does
+        not parse twice."""
         title = (profile.get("job_title") or [""])[0]
         with stage(STAGE):
-            v = self._pick(plan, profile, pool, allocation)
+            plan, v = self._compose(plan, ctx, profile, pool, allocation)
             v = self._headline(plan, profile, pool, allocation, v, title)
-            return self._terms(plan, profile, pool, items, allocation, data, v, title)
+            return plan, self._terms(plan, profile, pool, items, allocation, data, v, title)
 
     def _ask(self, step: str, system: str, user: str, reply: type) -> Any:
         messages = [{"role": "user", "content": user}]
@@ -229,50 +295,76 @@ class Varnisher:
             ]
         raise ModelOutputError(f"{ROLE}: the {step} reply was rejected:\n{problem}", stage=STAGE)
 
-    # 1. pick ------------------------------------------------------------------------------------
-    def _pick(self, plan: Plan, profile: Mapping[str, Any], pool: Pool, allocation: Allocation) -> Varnish:
+    # 1. compose ---------------------------------------------------------------------------------
+    def _compose(
+        self, plan: Plan, ctx: Context, profile: Mapping[str, Any], pool: Pool, allocation: Allocation
+    ) -> Tuple[Plan, Varnish]:
         text = {b.id: b.text for b in _bullets(pool)}
+        roles = {b.experience: b.role_summary.text for b in pool.experiences}
         source = {e["id"]: e for e in profile["experiences"]}
+        options = candidates(plan, ctx)
+        budget = {x.experience: sum(s.lines for s in x.slots) for x in plan.experiences if x.form == "full"}
         out = []
         for x in plan.experiences:
             e = source[x.experience]
             head = f"EXPERIENCE e{x.experience}: {e['company']} ({e['dates']})"
-            out.append(f"{head} COMPACT: {_compact(pool, x.experience)}" if x.form == "compact" else head)
+            full = x.form == "full"
+            out.append(
+                f"{head} FULL, at most {budget[x.experience]} LINES"
+                if full
+                else f"{head} COMPACT: {_compact(pool, x.experience)}"
+            )
             titles = _title(e)
             if len(titles) > 1:
                 out.append("  TITLES: " + "; ".join(f"{LETTERS[i]}) {t}" for i, t in enumerate(titles)))
-            for s in x.slots:
-                if isinstance(s.rung, str):
-                    out.append(f"  {s.story} GROUP:\n" + "\n".join(f"    - {text[b]}" for b in s.bullets))
-                elif len(s.bullets) == 1:
-                    out.append(f"  {s.story} (one wording): {text[s.bullets[0]]}")
-                else:
-                    out.append(
-                        f"  {s.story}:\n" + "\n".join(f"    {b.rsplit('.', 1)[1]}) {text[b]}" for b in s.bullets)
-                    )
+            if not full:
+                continue
+            out += [f"  ROLE SUMMARY: {roles[x.experience]}", "  OPTIONS:"]
+            for c in options[x.experience]:
+                kind = " GROUP" if isinstance(c.rung, str) else ""
+                out.append(
+                    f"  {c.id}{kind}{' PICKED' if c.picked else ''} ({c.lines} line{'s' * (c.lines != 1)}, "
+                    f"score {round(c.score * 1000)})"
+                )
+                out += [f"    {b}: {text[b]}" for b in c.bullets]
         user = f"JD TITLE: {allocation.title}\nJD TERMS: {', '.join(jd_terms(allocation))}\n\nCV:\n" + "\n".join(out)
-        reply = self._ask("pick", self.pick_prompt, user, PickReply)
+        reply = self._ask("compose", self.compose_prompt, user, ComposeReply)
 
-        ladder = {s.story: s for x in plan.experiences for s in x.slots if not isinstance(s.rung, str)}
-        picks = {}
-        for story, letter in reply.picks.items():
-            chosen = [b for b in ladder[story].bullets if b.endswith("." + letter.strip())] if story in ladder else []
-            if chosen:
-                picks[story] = chosen[0]
+        slots: Dict[int, List[Tuple[str, RungKey]]] = {}
+        picks: Dict[str, str] = {}
+        kept: Dict[int, str] = {}
+        for key, ids in reply.experiences.items():
+            e = _int(key.lstrip("e"))
+            if e not in options:
+                continue
+            mine, mine_picks, fault = chosen(ids, options[e], budget[e])
+            if fault:
+                kept[e] = fault
+                continue
+            slots[e] = mine
+            picks.update(mine_picks)
+        new = composed(plan, ctx, slots)
+        ids = [b for x in new.experiences if x.form == "full" for b in printed(x.slots, picks)]
+        texts, edits, refused = apply_edits(reply.edits, {b: text[b] for b in ids}, jd_terms(allocation))
         titles: Dict[int, str] = {}
         for key, letter in reply.titles.items():
             e = source.get(_int(key.lstrip("e")))
             index = LETTERS.find(letter.strip()[:1]) if letter.strip() else -1
-            if e is not None and 0 <= index < len(_title(e)) and any(x.experience == e["id"] for x in plan.experiences):
+            if e is not None and 0 <= index < len(_title(e)) and any(x.experience == e["id"] for x in new.experiences):
                 titles[e["id"]] = _title(e)[index]
         logger.info(
-            "  [%s] pick: %d of %d slots, %d title(s)",
+            "  [%s] compose: %d of %d full experience(s) composed%s; %d edit(s) applied, %d refused; "
+            "objective %.4f -> %.4f",
             ROLE,
-            len(picks),
-            sum(len(s.bullets) > 1 for s in ladder.values()),
-            len(titles),
+            len(slots),
+            len(options),
+            "".join(f"; e{e} kept: {why}" for e, why in kept.items()),
+            len(edits),
+            len(refused),
+            plan.scores.objective,
+            new.scores.objective,
         )
-        return Varnish(picks=picks, titles=titles)
+        return new, Varnish(picks=picks, titles=titles, kept=kept, texts=texts, edits=edits, edits_refused=refused)
 
     # 2. headline and sentence -------------------------------------------------------------------
     def _headline(
@@ -334,7 +426,7 @@ class Varnisher:
             return v
         pieces = {b.id: b for b in _bullets(pool)}
         ids = [b for x in plan.experiences if x.form == "full" for b in printed(x.slots, v.picks)]
-        texts = {b: pieces[b].text for b in ids}
+        texts = {b: v.texts.get(b, pieces[b].text) for b in ids}
         by_id = {i.id: i for i in items.items}
         bullets = []
         for bid in ids:
@@ -358,7 +450,9 @@ class Varnisher:
             len(applied),
             len(refused),
         )
-        return v.model_copy(update={"offered": offered, "texts": changed, "applied": applied, "refused": refused})
+        return v.model_copy(
+            update={"offered": offered, "texts": {**v.texts, **changed}, "applied": applied, "refused": refused}
+        )
 
 
 # --- views -----------------------------------------------------------------------------------------
@@ -388,8 +482,16 @@ def _fact(item: Any) -> str:
     return item.text + (f" (tech: {', '.join(item.tech)})" if item.tech else "")
 
 
-def varnish_markdown(v: Varnish, plan: Plan) -> str:
-    """The view: headline and sentence, the picks, the terms offered, applied and refused."""
+def _changes(rs: Sequence[Union[Replacement, Refused]]) -> List[str]:
+    return [
+        f"- **{r.target}**" + (f" ({r.reason})" if isinstance(r, Refused) else "") + f": `{r.old}` -> `{r.new}`"
+        for r in rs
+    ] or ["- (none)"]
+
+
+def varnish_markdown(v: Varnish, plan: Plan, composed: Plan) -> str:
+    """The view: headline and sentence, the composition of ``plan`` into ``composed``, the terms
+    offered, applied and refused."""
     out = [
         f"# Varnish: {plan.title}",
         "",
@@ -398,18 +500,31 @@ def varnish_markdown(v: Varnish, plan: Plan) -> str:
     ]
     if v.sentence_refused:
         out.append(f"- Sentence refused: {v.sentence_refused}")
-    out += ["", "## Picks", ""]
-    for x in plan.experiences:
-        if x.experience in v.titles:
-            out.append(f"- e{x.experience} title: {v.titles[x.experience]}")
-        for s in x.slots:
-            if not isinstance(s.rung, str) and len(s.bullets) > 1:
-                pick = v.picks.get(s.story)
-                out.append(f"- {s.story} r{s.rung}: " + (pick.rsplit(".", 1)[1] if pick else "a (no pick)"))
+    out += [
+        "",
+        "## Composition",
+        "",
+        f"- Objective: plan {plan.scores.objective:.4f}, composed {composed.scores.objective:.4f}",
+    ]
+    before = {x.experience: [s.story for s in x.slots] for x in plan.experiences}
+    for x in composed.experiences:
+        e = x.experience
+        if e in v.titles:
+            out.append(f"- e{e} title: {v.titles[e]}")
+        if x.form != "full":
+            continue
+        shown = [
+            (f"{s.story}.{s.rung}" if isinstance(s.rung, str) else v.picks.get(s.story, s.bullets[0]))
+            + (" (swapped in)" if s.story not in before.get(e, []) else "")
+            for s in x.slots
+        ]
+        gone = [s for s in before.get(e, []) if s not in {t.story for t in x.slots}]
+        out.append(f"- e{e}: {', '.join(shown)}" + (f"; left out {', '.join(gone)}" if gone else ""))
+        if e in v.kept:
+            out.append(f"  - kept the plan's slots: {v.kept[e]}")
+    out += ["", "Edits applied:", "", *_changes(v.edits), "", "Edits refused:", "", *_changes(v.edits_refused)]
     out += ["", "## Terms in", "", f"Offered: {', '.join(v.offered) or '(none)'}", "", "Applied:", ""]
-    out += [f"- **{r.target}**: `{r.old}` -> `{r.new}`" for r in v.applied] or ["- (none)"]
-    out += ["", "Refused:", ""]
-    out += [f"- **{r.target}** ({r.reason}): `{r.old}` -> `{r.new}`" for r in v.refused] or ["- (none)"]
+    out += [*_changes(v.applied), "", "Refused:", "", *_changes(v.refused)]
     return "\n".join(out) + "\n"
 
 
@@ -420,7 +535,9 @@ __all__ = [
     "Replacement",
     "Varnish",
     "Varnisher",
+    "apply_edits",
     "apply_terms",
+    "chosen",
     "cv_text",
     "jd_terms",
     "offer",

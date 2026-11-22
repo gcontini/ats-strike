@@ -27,6 +27,11 @@ higher, stop at the first try that is not.
 A slot's text for scoring is its wording ``a`` (the first wording of its rung); its lines are the
 longest wording's, so any wording fits. Groups are a long story's alternatives above its top rung.
 
+Inside a full experience the plan prints its slots in profile order (story ids follow the duties);
+the Polish call may choose and order them again from :func:`candidates`, and :func:`composed` keeps
+its order. A fit step (:func:`fit`) only removes an experience's last slot, so it never breaks a
+reference to an earlier bullet.
+
 Pure: values in, values out.
 """
 
@@ -421,12 +426,12 @@ def greedy(ctx: Context, start: Draft, log: Optional[Callable[[str], None]] = No
     return tidy(draft, ctx)
 
 
-def weakest(draft: Draft, ctx: Context) -> Optional[Tuple[str, Draft]]:
-    """The slot whose removal loses least objective per line freed, and the draft without it; the
-    most recent experience keeps its 2 bullets (:func:`floor_kept`)."""
+def weakest(draft: Draft, ctx: Context, among: Optional[Sequence[str]] = None) -> Optional[Tuple[str, Draft]]:
+    """The slot (of ``among``, default all) whose removal loses least objective per line freed, and
+    the draft without it; the most recent experience keeps its 2 bullets (:func:`floor_kept`)."""
     base, used = objective(draft, ctx), height(draft, ctx)
     best = None
-    for s in draft["slots"]:
+    for s in draft["slots"] if among is None else among:
         cand = tidy(_with(draft, drop=(s,)), ctx)
         freed = used - height(cand, ctx)
         if freed <= 0 or not floor_kept(cand, ctx):
@@ -454,25 +459,15 @@ def refill(ctx: Context, draft: Draft, log: Optional[Callable[[str], None]] = No
 
 
 def fit(draft: Draft, ctx: Context) -> Optional[Draft]:
-    """One step towards a shorter CV (S0's): the step down that loses least objective per line
-    saved (a group to its story's top rung, a rung to the one below); only when no story can step
-    down, the removal that loses least, keeping the most recent experience's 2 bullets
-    (:func:`floor_kept`). None when nothing is left to take away."""
-    base, used = objective(draft, ctx), height(draft, ctx)
-
-    def cost(cand: Draft) -> float:
-        saved = used - height(cand, ctx)
-        return (base - objective(cand, ctx)) / saved if saved > 0 else math.inf
-
-    downs, removals = [], []
-    for s, r in draft["slots"].items():
-        ladder = list(ctx.ladder[s])
-        below = ladder[-1] if isinstance(r, str) else next((k for k in reversed(ladder) if k < r), None)
-        if below is not None:
-            downs.append(_with(draft, slots={s: below}))
-        removals.append(tidy(_with(draft, drop=(s,)), ctx))
-    options = [c for c in (downs or removals) if cost(c) < math.inf and floor_kept(c, ctx)]
-    return min(options, key=cost) if options else None
+    """One step towards a shorter CV: the removal, among each full experience's last slot, of the
+    one that loses least objective per line freed, keeping the most recent experience's 2 bullets
+    (:func:`floor_kept`); an experience left with fewer than 2 bullets goes compact. A bullet refers
+    only to earlier ones, so this breaks no reference. None when nothing is left to take away."""
+    last: Dict[int, str] = {}
+    for s in draft["slots"]:
+        last[ctx.story_exp[s]] = s
+    found = weakest(draft, ctx, list(last.values()))
+    return found[1] if found else None
 
 
 # --- skills, frame, headline -----------------------------------------------------------------------
@@ -537,7 +532,7 @@ class Slot(_Strict):
 class Shown(_Strict):
     experience: int
     form: str  # "full" | "compact"
-    slots: List[Slot] = []  # most relevant first
+    slots: List[Slot] = []  # in printed order
 
 
 class Scores(_Strict):
@@ -561,8 +556,8 @@ class Plan(_Strict):
 
 
 def _slots(draft: Draft, ctx: Context, e: int) -> List[Slot]:
-    """A full experience's slots, most relevant first: by the points its pieces earn on this
-    job's nodes, each node counted at the piece's level / 3."""
+    """A full experience's slots in the draft's order, each with its relevance: the points its
+    pieces earn on this job's nodes, each node counted at the piece's level / 3."""
     out = []
     for story, rung in draft["slots"].items():
         if ctx.story_exp[story] != e:
@@ -582,7 +577,7 @@ def _slots(draft: Draft, ctx: Context, e: int) -> List[Slot]:
                 relevance=round(relevance, 4),
             )
         )
-    return sorted(out, key=lambda s: -s.relevance)
+    return out
 
 
 def finish(draft: Draft, ctx: Context) -> Draft:
@@ -632,15 +627,81 @@ def draft_of(plan: Plan) -> Draft:
     }
 
 
+# --- the composition's inputs (the Polish call chooses and orders) ---------------------------------
+@dataclass(frozen=True)
+class Candidate:
+    """Something a full experience may print: a story at a rung (one of its wordings) or a group."""
+
+    id: str  # "e0.s02.r3" or "e0.s02.g1"
+    story: str
+    rung: RungKey
+    bullets: Tuple[str, ...]  # a rung's wording ids, or a group's bullet ids in order
+    lines: int
+    score: float  # what the objective loses without it (picked) or gains with it (not picked)
+    picked: bool
+
+
+def candidates(plan: Plan, ctx: Context) -> Dict[int, List[Candidate]]:
+    """Per full experience: the plan's slots, then every story of the experience the plan leaves out
+    at each of its rungs (not its groups), each with its lines and score."""
+    draft = draft_of(plan)
+    base = objective(draft, ctx)
+    out: Dict[int, List[Candidate]] = {}
+    for x in plan.experiences:
+        if x.form != "full":
+            continue
+        mine = [
+            Candidate(
+                id=f"{s.story}.{s.rung if isinstance(s.rung, str) else f'r{s.rung}'}",
+                story=s.story,
+                rung=s.rung,
+                bullets=tuple(s.bullets),
+                lines=s.lines,
+                score=base - objective(_with(draft, drop=(s.story,)), ctx),
+                picked=True,
+            )
+            for s in x.slots
+        ]
+        for story in _stories(ctx, x.experience):
+            if story in draft["slots"]:
+                continue
+            mine += [
+                Candidate(
+                    id=f"{story}.r{r}",
+                    story=story,
+                    rung=r,
+                    bullets=tuple(p.id for p in ctx.ladder[story][r]),
+                    lines=sum(slot_lines(ctx, story, r)),
+                    score=objective(_with(draft, slots={story: r}), ctx) - base,
+                    picked=False,
+                )
+                for r in ctx.ladder[story]
+            ]
+        out[x.experience] = mine
+    return out
+
+
+def composed(plan: Plan, ctx: Context, chosen: Mapping[int, Sequence[Tuple[str, RungKey]]]) -> Plan:
+    """``plan`` with the slots of each experience ``chosen`` names replaced by its (story, rung)
+    list, printed in that order; the other experiences keep theirs."""
+    slots: Dict[str, RungKey] = {}
+    for x in plan.experiences:
+        slots.update(dict(chosen[x.experience]) if x.experience in chosen else {s.story: s.rung for s in x.slots})
+    draft: Draft = {"forms": {x.experience: x.form for x in plan.experiences}, "slots": slots}
+    return plan_of(draft, ctx, plan.greedy_objective)
+
+
 def select(ctx: Context, log: Optional[Callable[[str], None]] = None) -> Plan:
     """The plan for one job: the greedy from the most recent experience in full, the refill pass,
-    then skills, frame and headline."""
+    then skills, frame and headline; each experience's slots in profile order."""
     e = ctx.experiences[0]
     start: Draft = {"forms": {e: "compact"}, "slots": {}}
     if len(_stories(ctx, e)) >= 2:
         start = opened({"forms": {}, "slots": {}}, ctx, e)
     first = greedy(ctx, start, log)
-    return plan_of(refill(ctx, first, log), ctx, round(objective(finish(first, ctx), ctx), 4))
+    best = refill(ctx, first, log)
+    best = {**best, "slots": dict(sorted(best["slots"].items()))}  # profile order: story ids follow the duties
+    return plan_of(best, ctx, round(objective(finish(first, ctx), ctx), 4))
 
 
 def plan_markdown(plan: Plan, pool: Pool) -> str:
@@ -685,8 +746,11 @@ def plan_markdown(plan: Plan, pool: Pool) -> str:
 __all__ = [
     "ATS_WEIGHT",
     "LITERAL_WEIGHT",
+    "Candidate",
     "Context",
     "Plan",
+    "candidates",
+    "composed",
     "context",
     "draft_of",
     "duty_years",

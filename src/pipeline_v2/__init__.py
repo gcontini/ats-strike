@@ -25,16 +25,18 @@ models, the observability, the errors) and imports nothing from ``pipeline_v1``.
   call, code's rules on the reply, and each node's points.
 - ``select`` — the selection for one job, no model: which experiences are full or compact, which
   story at which rung or group, the skills, the summary frame, the headline, and the scores
-  (keywords and narrative); the greedy fills the page, then a refill pass.
+  (keywords and narrative); the greedy fills the page, then a refill pass; each experience's
+  slots in profile order. Also the scored candidates the composition chooses from.
 - ``document`` — a plan into the template's namespace: the frame filled in, each experience full
   or compact. Pure.
-- ``varnish`` — :class:`Varnisher`: three calls between the plan and the render: one wording per
-  slot and one title per experience, the headline and the summary's sentence, and the job's
-  missing terms put into the summary and the bullets; code's guards on each reply.
+- ``varnish`` — :class:`Varnisher`: three calls between the plan and the render: each full
+  experience's bullets composed (which, in which order and wording, small linking edits) and one
+  title per experience, the headline and the summary's sentence, and the job's missing terms put
+  into the summary and the bullets; code's guards on each reply.
 - ``highlight`` — the inputs ``common``'s highlighter reads (key points, the CV with each bullet's
   scores, the evidence), built from the varnished document, and its markers laid back. Pure.
-- ``render`` — the document compiled by ``common``'s renderer; while over two pages, a story
-  steps down a rung (or one goes) and it renders again; the page's lines read back.
+- ``render`` — the document compiled by ``common``'s renderer; while over two pages, a job's last
+  bullet goes and it renders again; the page's lines read back.
 
 Its prompts, its template, the market list's corpus part (``market.json``, built by
 ``scripts/v2_market.py``) and its own ``models.toml`` are ``resources/v2``, packaged as

@@ -1,8 +1,8 @@
 """Render and fit (step 7): the plan's document compiled by :class:`common.cv_renderer.CVRenderer`;
-while the PDF runs over the renderer's page limit, one :func:`select.fit` step (a story down a
-rung before one is removed) and render again; the highlight's markers, when given, laid over each
-document (:func:`~.highlight.marked`). And the measure of a rendered page: its text lines,
-and the lines left free above the signature.
+while the PDF runs over the renderer's page limit, one :func:`select.fit` step (an experience's
+last bullet removed, so no reference breaks) and render again; the highlight's markers, when
+given, laid over each document (:func:`~.highlight.marked`). And the measure of a rendered page:
+its text lines, and the lines left free above the signature.
 
 The renderer is the caller's, built on its scratch directory with the v2 template; this module
 writes nothing else. No model call.
@@ -46,9 +46,7 @@ class Rendered:
 
 def _step(before: Plan, after: Plan) -> str:
     old, new = draft_of(before)["slots"], draft_of(after)["slots"]
-    gone = sorted(set(old) - set(new))
-    moved = [f"{s} {old[s]} -> {new[s]}" for s in sorted(new) if s in old and new[s] != old[s]]
-    return "; ".join([*(f"removed {s}" for s in gone), *(f"down {m}" for m in moved)]) or "no change"
+    return "; ".join(f"removed {s}" for s in old if s not in new) or "no change"
 
 
 def render(
@@ -62,10 +60,8 @@ def render(
     marks: Optional[Mapping[str, str]] = None,
 ) -> Rendered:
     """Render ``plan`` with ``varnish``'s choices and the highlight's ``marks``; while over the page
-    limit, fit one step and render again (a slot the step changes prints wording ``a``, unmarked).
-    ``data`` (the candidate's name,
-    contact, languages, place) goes over the document, as in v1. The headline falls back to the
-    profile's first title."""
+    limit, fit one step and render again. ``data`` (the candidate's name, contact, languages,
+    place) goes over the document, as in v1. The headline falls back to the profile's first title."""
     title = (profile.get("job_title") or [""])[0]
 
     def build(p: Plan) -> Tuple[Dict[str, Any], RenderResult]:

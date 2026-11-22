@@ -291,18 +291,24 @@ class Pipeline:
             with stage("Polish"):
                 varnisher = Varnisher(
                     llm=self.llm,
-                    pick_prompt=self.prompts["varnish_pick"],
+                    compose_prompt=self.prompts["varnish_compose"],
                     headline_prompt=self.prompts["varnish_headline"],
                     terms_prompt=self.prompts["varnish_terms"],
                 )
-                varnish = varnisher.varnish(plan, profile, pool, items, allocation, data)
-                run.done("Polish", varnisher.usage, f"{len(varnish.applied)} term edit(s) applied")
+                composed, varnish = varnisher.varnish(plan, ctx, profile, pool, items, allocation, data)
+                run.done(
+                    "Polish",
+                    varnisher.usage,
+                    f"{len(varnish.edits)} edit(s), {len(varnish.applied)} term edit(s) applied",
+                )
 
             run.start("Highlight")
             with stage("Highlight"):
                 highlighted = Usage()
                 title = profile["job_title"][0]
-                sent = inputs(document(plan, profile, pool, title, varnish), plan, varnish.picks, ctx, pool, items)
+                sent = inputs(
+                    document(composed, profile, pool, title, varnish), composed, varnish.picks, ctx, pool, items
+                )
                 found = marks(
                     sent[1],
                     Highlighter(self.llm, self.prompts["highlight"], HIGHLIGHT).highlight(*sent, usage=highlighted),
@@ -317,11 +323,11 @@ class Pipeline:
                     work_dir=work_dir,
                     latex_timeout=self.latex_timeout,
                 )
-                out = render(plan, ctx, profile, pool, data, renderer, varnish, found)
+                out = render(composed, ctx, profile, pool, data, renderer, varnish, found)
                 for fit in out.steps:
                     logger.info("  fit: %s", fit)
                 step("varnish.json", _dump(varnish))
-                step("varnish.md", varnish_markdown(varnish, plan) + highlight_markdown(out.document))
+                step("varnish.md", varnish_markdown(varnish, plan, composed) + highlight_markdown(out.document))
                 run.done("Page layout", what=f"{out.result.pages} page(s) after {len(out.steps)} fit step(s)")
 
         sink.store(Output("CV", "step", DOCUMENT_FILE, json.dumps(out.document, indent=2, ensure_ascii=False)))

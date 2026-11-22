@@ -68,7 +68,7 @@ def fake() -> FakeLLM:
         json.dumps({"title": "Cloud Engineer", "requirements": [{**r, "relation": "same"} for r in requirements]})
     ]
     llm["varnish"].replies = [
-        json.dumps({"picks": {}, "titles": {}}),
+        json.dumps({"experiences": {}, "edits": [], "titles": {}}),
         json.dumps({"job_title": "Cloud Engineer", "sentence": ""}),
         json.dumps({"replacements": []}),
     ]

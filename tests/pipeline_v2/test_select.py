@@ -179,9 +179,24 @@ def test_the_plan_fits_the_budget_and_shows_the_latest_job_in_full(ctx, tight):
     assert len(shown) < 3 or "compact" in [x.form for x in plan.experiences]  # not everything fits
     # S0's fix: the page is filled even by moves that lose, so no line is left
     assert plan.budget_lines - plan.lines < 1
-    # slots most relevant first
+    # slots in profile order: story ids follow the duties
     for x in plan.experiences:
-        assert [s.relevance for s in x.slots] == sorted((s.relevance for s in x.slots), reverse=True)
+        assert [s.story for s in x.slots] == sorted(s.story for s in x.slots)
+
+
+def test_candidates_score_both_ways_and_composed_keeps_the_given_order(ctx):
+    slots = {"e0.s01": 2, "e2.s01": 1, "e2.s02": 1}
+    plan = sel.plan_of({"forms": {0: "full", 1: "compact", 2: "full"}, "slots": slots}, ctx, 0.0)
+    options = sel.candidates(plan, ctx)
+    assert set(options) == {0, 2}  # full experiences only
+    e0 = {c.id: c for c in options[0]}
+    assert set(e0) == {"e0.s01.r2", "e0.s02.r1", "e0.s02.r2", "e0.s02.r3"}  # a picked story at its rung only
+    assert e0["e0.s01.r2"].picked and e0["e0.s01.r2"].score > 0  # what the objective loses without it
+    assert not e0["e0.s02.r1"].picked and e0["e0.s02.r1"].bullets == ("e0.s02.r1.a", "e0.s02.r1.b")
+    assert [e0[f"e0.s02.r{r}"].lines for r in (1, 2, 3)] == [1, 2, 3]
+    new = sel.composed(plan, ctx, {0: [("e0.s02", 1), ("e0.s01", 2)]})
+    assert [s.story for s in new.experiences[0].slots] == ["e0.s02", "e0.s01"]
+    assert list(sel.draft_of(new)["slots"].items()) == [("e0.s02", 1), ("e0.s01", 2), ("e2.s01", 1), ("e2.s02", 1)]
 
 
 def test_on_a_roomy_page_everything_is_shown_in_full(ctx):
