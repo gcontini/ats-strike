@@ -15,6 +15,7 @@ VALID = {
     "job_title": "Staff Platform Engineer",
     "work_location": "Lisbon, Portugal",
     "work_mode": "hybrid",
+    "jd_language": "eng",
     "expected_salary": "EUR 70k-90k",
     "max_salary": 90000,
     "hard_skills": ["Kubernetes", "Go"],

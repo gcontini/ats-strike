@@ -23,6 +23,7 @@ ANALYSIS = {
     "job_title": "Head of IT",
     "work_location": "Milan, Italy",
     "work_mode": "hybrid",
+    "jd_language": "eng",
     "expected_salary": None,
     "max_salary": -1,
     "salary_match": None,
