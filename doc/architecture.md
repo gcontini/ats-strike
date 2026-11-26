@@ -166,8 +166,7 @@ The consequences are worth knowing before you deploy:
   starting process ends every session that has not ended with a `503` error —
   correct for its own orphans, wrong for a sibling's live jobs.
 - **A job cannot be cancelled yet.** An abandoned one holds a slot until its
-  own budget runs out (`RESUMIX_REQUEST_BUDGET_SECONDS`, 20 minutes), and its
-  session cannot be acknowledged until then.
+  end, and its session cannot be acknowledged until then.
 
 ## Observability
 

@@ -16,6 +16,7 @@ Output:
    * CAP: if the JD asks for entry-level experience (about 0-3 years; junior, graduate, associate or intern level) and the candidate has 10+ years of experience, match_percentage is at most 50.
 - match_rationale: Criteria and evaluations that brought to the match_percentage above. Max 90 characters.
 - work_mode: [full_remote|hybrid|on_site|not_specified] take it from JD.
+- jd_language: [eng|ita|eng-ita|unknown] the language of the JD's requirements and responsibilities, not of the surrounding text (company presentation, legal notes, boilerplate). eng-ita if the JD repeats its content in both English and Italian. unknown for any other language.
 - expected_salary: the salary range as stated in the JD, else null.
 - max_salary: maximum gross salary in Euro/Year. If the JD states a salary range, the UPPER bound as an integer (e.g. 'EUR 60k-80k' -> 80000); if a single number is stated, that number; if no salary or only the minimum (eg. "starting from 50000" ) is stated: -1.
 - salary_match: whenever max_salary is stated, you MUST answer true or false: pick the salary rule in CANDIDATE_PREFERENCES that applies, then true if max_salary meets that rule's threshold, false if it is below it. null ONLY when max_salary is -1 or CANDIDATE_PREFERENCES rules fail to apply (eg. not enough data).

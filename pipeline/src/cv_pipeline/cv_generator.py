@@ -37,7 +37,7 @@ from .observability import LOGGER_ROOT, stage
 from .cv_renderer import CVRenderer
 from .cv_schema import TailoredCVData
 from .cv_validator import CVValidator
-from .errors import BudgetExceededError, ModelOutputError
+from .errors import ModelOutputError
 from .parsing import raw_excerpt
 
 logger = logging.getLogger(f"{LOGGER_ROOT}.cv")
@@ -106,10 +106,6 @@ class CVGenerator:
     max_attempts:
         Generate -> validate rounds before giving up and delivering the last
         CV anyway.
-    deadline:
-        Optional :func:`time.monotonic` value. Checked between rounds so a run
-        that cannot finish in time fails with a clear cause instead of being
-        cut off by a proxy.
     progress:
         Called at each step boundary. ``None`` runs the whole thing silently,
         which is what every test does.
@@ -125,7 +121,6 @@ class CVGenerator:
         work_dir: Path,
         highlight: bool = True,
         max_attempts: int = 4,
-        deadline: Optional[float] = None,
         latex_timeout: Optional[float] = None,
         page_limit: Optional[int] = None,
         progress: Optional[ProgressFn] = None,
@@ -137,7 +132,6 @@ class CVGenerator:
         self.inputs = inputs
         self.work_dir = Path(work_dir)
         self.max_attempts = max_attempts
-        self.deadline = deadline
         self.progress = progress
         #: Every model call of the run, so a step can say what it cost.
         self.usage = Usage()
@@ -263,13 +257,6 @@ class CVGenerator:
         self._report("generate")
 
         for attempt in range(self.max_attempts):
-            # Stop before starting a round that cannot finish in the budget.
-            if self.deadline is not None and time.monotonic() >= self.deadline:
-                raise BudgetExceededError(
-                    f"time budget exhausted after {attempt} attempt(s)",
-                    stage="cv.generate",
-                    detail={"attempts": attempt},
-                )
             logger.info("--- attempt %d ---", attempt + 1)
 
             mark = self._mark()

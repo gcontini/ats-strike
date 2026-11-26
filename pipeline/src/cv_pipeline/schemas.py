@@ -19,6 +19,13 @@ class JDAnalysis(BaseModel):
         description="One-line reason for the match score"
     )
     job_title: str = Field(description="Job title extracted from the JD")
+    jd_language: Literal["eng", "ita", "eng-ita", "unknown"] = Field(
+        description=(
+            "Language of the JD's requirements and responsibilities, not of the surrounding text "
+            "(company presentation, legal notes). eng-ita if the JD repeats its content in both "
+            "English and Italian; unknown for any other language"
+        ),
+    )
     work_location: Optional[str] = Field(
         None, description="Work location stated in the JD, e.g. 'Milan, Italy'"
     )

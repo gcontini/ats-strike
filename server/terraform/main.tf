@@ -139,9 +139,8 @@ resource "alicloud_fcv3_function" "main" {
   # with "Transport endpoint is not connected".
   memory_size = 1024
   disk_size   = 512
-  # Also how long one event stream can stay open. A CV job checks its 1200 s
-  # budget only between attempts, so it can run past it, and the stream that
-  # follows it should not be cut first.
+  # Also how long one event stream can stay open: the stream that follows a
+  # CV job should not be cut first.
   timeout = 1800
   # Delayed release: the instance stays up this long after its last request,
   # which is what keeps a CV job running while no client is following it.

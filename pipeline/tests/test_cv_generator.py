@@ -345,15 +345,6 @@ def test_highlighting_replaces_the_content_when_it_works(bundle, candidate, tmp_
     assert document["summary"] == "**Bold** summary."
 
 
-def test_the_time_budget_stops_the_loop(bundle, candidate, tmp_path, no_latex):
-    from cv_pipeline.errors import BudgetExceededError
-
-    model = fake(cv_json())
-    gen = build(bundle, candidate, tmp_path, model, deadline=0.0)
-    with pytest.raises(BudgetExceededError):
-        gen.generate("JD")
-
-
 @pytest.mark.skipif(shutil.which("pdflatex") is None, reason="pdflatex not installed")
 def test_end_to_end_with_a_real_compile(bundle, candidate, tmp_path):
     """No model, but a real render: the page check runs on a real PDF."""

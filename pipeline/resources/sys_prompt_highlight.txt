@@ -19,6 +19,7 @@ Your only job is to add Markdown **bold** and *italics* markers inside the exist
 * Across ALL duties in the entire CV combined, select **EXACTLY 5** short key phrases (2–3 words each) to wrap in `**...**`.
 * Constraint: Maximum **1** bold phrase per duty. Place the 5 bold phrases across 5 different duties.
 * Each bolded phrase MUST be a specific, high-value technical or domain entity found in both JOB_DESCRIPTION and CV_DATA. If a tech stack is listed (e.g., "Built with Docker and Go"), bold the specific tools ("Docker", "Go"), NEVER the phrase introducing them ("Built with").
+* Bolded prhases must be a technology, a responsibility, an action, a result the candidate actively owned or did. 
 * Prefer the experiences related to what is already highlighted in the Skills Array
 
 #### 4. Technical Stacks & Methodologies (Italics)

@@ -23,7 +23,7 @@ def own_prompt(text: str, *inputs: str) -> bytes:
 LETTER = " ".join(["word"] * 200)
 ANALYSIS = {
     "match_percentage": 82, "match_rationale": "Strong overlap.",
-    "job_title": "Head of IT", "work_location": "Milan, Italy", "work_mode": "hybrid",
+    "job_title": "Head of IT", "work_location": "Milan, Italy", "work_mode": "hybrid", "jd_language": "eng",
     "expected_salary": None, "max_salary": -1, "salary_match": None,
     "hard_skills": ["AWS"], "soft_skills": ["Communication"], "company_name": "Acme Corp",
     "posting_url": None, "gaps": "No SAP.", "pers_preferences": "Hybrid is fine.",
@@ -57,7 +57,7 @@ def example_pack() -> dict:
 
 @pytest.fixture
 def pipeline(fake_llm, bundle) -> Pipeline:
-    return Pipeline(llm=fake_llm, bundle=bundle, budget_seconds=60.0)
+    return Pipeline(llm=fake_llm, bundle=bundle)
 
 
 def a_good_run(fake_llm, **overrides) -> None:
@@ -77,18 +77,17 @@ def no_model_was_called(fake_llm) -> bool:
 def test_build_reads_the_limits_from_the_environment(monkeypatch, fake_llm):
     monkeypatch.setattr("cv_pipeline.facade.build_selector", lambda: fake_llm)
     monkeypatch.setenv("RESUMIX_LATEX_TIMEOUT", "30")
-    monkeypatch.setenv("RESUMIX_REQUEST_BUDGET_SECONDS", "600")
     monkeypatch.setenv("RESUMIX_MAX_ATTEMPTS", "2")
     built = Pipeline.build()
-    assert (built.latex_timeout, built.budget_seconds, built.max_attempts) == (30.0, 600.0, 2)
+    assert (built.latex_timeout, built.max_attempts) == (30.0, 2)
 
 
 def test_build_defaults_when_the_environment_says_nothing(monkeypatch, fake_llm):
     monkeypatch.setattr("cv_pipeline.facade.build_selector", lambda: fake_llm)
-    for name in ("RESUMIX_LATEX_TIMEOUT", "RESUMIX_REQUEST_BUDGET_SECONDS", "RESUMIX_MAX_ATTEMPTS"):
+    for name in ("RESUMIX_LATEX_TIMEOUT", "RESUMIX_MAX_ATTEMPTS"):
         monkeypatch.delenv(name, raising=False)
     built = Pipeline.build()
-    assert (built.latex_timeout, built.budget_seconds, built.max_attempts) == (120.0, 1200.0, 4)
+    assert (built.latex_timeout, built.max_attempts) == (120.0, 4)
 
 
 # --- writing a CV -------------------------------------------------------------
@@ -153,7 +152,7 @@ def test_pages_reaches_the_page_check(pipeline, fake_llm, example_pack, tmp_path
 def test_max_attempts_bounds_the_rounds(fake_llm, bundle, example_pack, tmp_path, attempts):
     a_good_run(fake_llm)
     fake_llm["review"].replies = ["invented a job at NASA"]
-    pipeline = Pipeline(llm=fake_llm, bundle=bundle, budget_seconds=60.0, max_attempts=attempts)
+    pipeline = Pipeline(llm=fake_llm, bundle=bundle, max_attempts=attempts)
     pipeline.cv(example_pack, JD, {}, tmp_path, Recorder())
     assert len(fake_llm["cv"].calls) == attempts
 

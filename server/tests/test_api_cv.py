@@ -305,7 +305,6 @@ def test_a_request_id_cannot_name_a_directory_of_its_own_choosing(client, app_st
     (Failing("missing_part", "file 'candidate_data.json' is required"), 400,
      "missing_part: file 'candidate_data.json' is required"),
     (Failing("bad_part", "setting 'pages' must be ..."), 400, "bad_part: setting 'pages'"),
-    (Failing("budget_exceeded", "time budget exhausted"), 504, "budget_exceeded: "),
     (Failing("provider_timeout", "the model endpoint failed: X"), 504, "provider_timeout: "),
     (Failing("provider_error", "the model endpoint failed: X"), 502, "provider_error: "),
     (RuntimeError("a bug"), 500, "internal_error: RuntimeError: a bug"),

@@ -13,9 +13,7 @@ count.
 
 ```mermaid
 flowchart TD
-    START(["POST /v1/cv accepted<br/>202 + request_id"]) --> DL{"time budget left?<br/>REQUEST_BUDGET_SECONDS"}
-    DL -->|"no"| BUDGET["504 budget_exceeded"]
-    DL -->|"yes"| GEN["<b>generate</b><br/>cv model, TailoredCVData schema"]
+    START(["POST /v1/cv accepted<br/>202 + request_id"]) --> GEN["<b>generate</b><br/>cv model, TailoredCVData schema"]
 
     GEN --> VAL{"valid against<br/>the schema?"}
     VAL -->|"no, &lt;3 tries"| FEED["feed the validation<br/>error back"] --> GEN
@@ -28,7 +26,7 @@ flowchart TD
 
     RENDER --> VERDICT{"anything wrong?<br/>content, then length"}
     VERDICT -->|"yes"| VIO["one list of violations,<br/>verbatim, into the next prompt"] --> NEXT{"attempts left?<br/>MAX_ATTEMPTS = 4"}
-    NEXT -->|"yes"| DL
+    NEXT -->|"yes"| GEN
     NEXT -->|"no"| LAST["keep the last render,<br/>violations and all"]
     VERDICT -->|"no"| HL
     LAST --> HL["<b>highlight</b><br/>highlight model, **bold** markers"]
@@ -63,7 +61,7 @@ no usable answer at all — empty or cut off, every call — leaves the CV
 unreviewed, not passed: the next round reviews the same CV again instead of
 writing a new one, and only the last round delivers it unreviewed.
 
-## Retries, budgets and what each failure costs
+## Retries, limits and what each failure costs
 
 | Guard | Limit | Set by | On exhaustion |
 |---|---|---|---|
@@ -71,7 +69,6 @@ writing a new one, and only the last round delivers it unreviewed.
 | Calls per model request (empty, cut off or invalid reply) | 3 | `ATTEMPTS` in `models/selector.py` | `502 model_output` for the CV; see the next two rows |
 | Review calls | 3 | the same | the round does not pass; the next one reviews the same CV again |
 | Highlight calls | 3 | the same | a warning; the un-highlighted CV is returned |
-| Wall clock for the whole run | 1200 s | `RESUMIX_REQUEST_BUDGET_SECONDS` | `504`, checked between rounds |
 | One `pdflatex` compile | 120 s | `RESUMIX_LATEX_TIMEOUT` | `504 latex_timeout` |
 
 Both checks are therefore best-effort. A CV that never satisfies the reviewer

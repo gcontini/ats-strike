@@ -18,7 +18,6 @@ from __future__ import annotations
 import json
 import os
 import shutil
-import time
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
@@ -42,8 +41,6 @@ from .models import ModelSelector, build_selector
 
 Files = Mapping[str, bytes]
 
-#: Wall-clock budget for one CV run, checked between attempts.
-DEFAULT_BUDGET_SECONDS = 1200.0
 #: Generate -> review -> render rounds before the last CV is delivered anyway.
 DEFAULT_MAX_ATTEMPTS = 4
 
@@ -95,13 +92,11 @@ class Pipeline:
         llm: ModelSelector,
         bundle: ResourceBundle,
         latex_timeout: float = DEFAULT_LATEX_TIMEOUT,
-        budget_seconds: float = DEFAULT_BUDGET_SECONDS,
         max_attempts: int = DEFAULT_MAX_ATTEMPTS,
     ) -> None:
         self.llm = llm
         self.bundle = bundle
         self.latex_timeout = latex_timeout
-        self.budget_seconds = budget_seconds
         self.max_attempts = max_attempts
 
     @classmethod
@@ -111,9 +106,6 @@ class Pipeline:
             llm=build_selector(),
             bundle=default_bundle(),
             latex_timeout=float(os.getenv("RESUMIX_LATEX_TIMEOUT") or DEFAULT_LATEX_TIMEOUT),
-            budget_seconds=float(
-                os.getenv("RESUMIX_REQUEST_BUDGET_SECONDS") or DEFAULT_BUDGET_SECONDS
-            ),
             max_attempts=int(os.getenv("RESUMIX_MAX_ATTEMPTS") or DEFAULT_MAX_ATTEMPTS),
         )
 
@@ -167,7 +159,6 @@ class Pipeline:
                 inputs=inputs,
                 work_dir=work_dir,
                 max_attempts=self.max_attempts,
-                deadline=time.monotonic() + self.budget_seconds,
                 latex_timeout=self.latex_timeout,
                 page_limit=pages,
                 progress=sink.status,

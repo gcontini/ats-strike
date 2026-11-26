@@ -117,7 +117,6 @@ to.
 | `ATS_SESSION_TTL_DAYS` | `1` | Days a session nobody acknowledged is kept after its last event |
 | `ATS_MAX_CONCURRENT_JOBS` | `10` | Requests in flight; the rest get `429` |
 | `RESUMIX_LATEX_TIMEOUT` | `120` | Seconds before a compile is killed |
-| `RESUMIX_REQUEST_BUDGET_SECONDS` | `1200` | Wall clock for one CV run before `504` |
 | `RESUMIX_MAX_ATTEMPTS` | `4` | Generate → validate rounds |
 | `ATS_MAX_PART_BYTES` | `2000000` | Cap on any one uploaded file |
 | `ATS_JD_MIN_CHARS` / `_MAX_CHARS` | `500` / `30000` | Length band for the free JD check |
@@ -218,7 +217,7 @@ answered. That is the one thing to plan around.
 - **A stream lasts as long as its job.** Every other call returns in seconds;
   only `/v1/cv/render` waits on a compile. A CV's event stream stays open for
   the minutes the job takes, pinging every 15 s, so a platform request timeout
-  has to outlast `RESUMIX_REQUEST_BUDGET_SECONDS` plus the round in flight —
+  has to outlast the longest job —
   the client reconnects after a cut, but some platforms restart the instance
   on a timeout.
 - **Concurrency.** Ten jobs in flight is the default; each is mostly idle
